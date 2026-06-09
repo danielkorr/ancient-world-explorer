@@ -1,4 +1,4 @@
-# CLAUDE.md
+keep# CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -33,3 +33,14 @@ Interaction model:
 - Adding a site = append to `SITES` in `data.js`. No registration step.
 - Adding a road = append to `ROADS`; coords are `[lng, lat]` pairs (note the order — flipped when fed to Leaflet at `app.js:46`).
 - Adding a new `type` or `quest` value requires adding a matching entry to the `TYPE` / `QUEST` config objects in `app.js`.
+
+## gstack
+
+This environment has the [gstack](https://github.com/garrytan/gstack) skill suite installed.
+
+- Use the `/browse` skill for all web browsing, screenshots, and live-site testing.
+- Never use the `mcp__claude-in-chrome__*` tools; `/browse` replaces them.
+
+Available gstack skills:
+
+`/office-hours`, `/plan-ceo-review`, `/plan-eng-review`, `/plan-design-review`, `/design-consultation`, `/design-shotgun`, `/design-html`, `/review`, `/ship`, `/land-and-deploy`, `/canary`, `/benchmark`, `/browse`, `/connect-chrome`, `/qa`, `/qa-only`, `/design-review`, `/setup-browser-cookies`, `/setup-deploy`, `/setup-gbrain`, `/retro`, `/investigate`, `/document-release`, `/document-generate`, `/codex`, `/cso`, `/autoplan`, `/plan-devex-review`, `/devex-review`, `/careful`, `/freeze`, `/guard`, `/unfreeze`, `/gstack-upgrade`, `/learn`.

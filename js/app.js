@@ -17,6 +17,68 @@ const QUEST = {
   text:     { color:'#9b6fcf', icon:'📜', label:'Text Quest',     text:'Known only from ancient texts. Physical site not yet confirmed.' },
 };
 
+// ── ORBIS LOOKUP ─────────────────────────────────────────
+// ORBIS_BY_PLEIADES and ORBIS_NODES come from js/orbis-days.js
+// (auto-generated from the Stanford ORBIS network via Dijkstra from Rome).
+// At marker click time we resolve a site's travel-to-Rome cost in this order:
+//   1. exact Pleiades id match in ORBIS_BY_PLEIADES
+//   2. nearest ORBIS node within 75km (haversine)
+//   3. legacy hardcoded site.rome_days (only the original curated sites have this)
+
+const ORBIS_NEAREST_KM = 75;
+
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a = Math.sin(dLat/2)**2 +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng/2)**2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+}
+
+function orbisLookup(site) {
+  if (typeof ORBIS_BY_PLEIADES !== 'undefined' && site.pleiades) {
+    const hit = ORBIS_BY_PLEIADES[site.pleiades];
+    if (hit) return { days: hit.days, mode: hit.mode, source: 'direct' };
+  }
+  if (typeof ORBIS_NODES !== 'undefined') {
+    let best = null, bestDist = Infinity;
+    for (const n of ORBIS_NODES) {
+      const d = haversineKm(site.lat, site.lng, n.lat, n.lng);
+      if (d < bestDist) { bestDist = d; best = n; }
+    }
+    if (best && bestDist <= ORBIS_NEAREST_KM) {
+      return { days: best.days, mode: best.mode, source: 'nearest', distKm: bestDist };
+    }
+  }
+  if (site.rome_days > 0) {
+    return { days: site.rome_days, mode: site.rome_mode || 'road', source: 'legacy' };
+  }
+  return null;
+}
+
+function orbisFormatDays(days) {
+  if (days < 0.5)  return '<1';
+  if (days < 1.5)  return '1';
+  return String(Math.round(days));
+}
+
+function orbisDetailLine(orbis) {
+  const modeLabel = {
+    road:  'by road',
+    sea:   'by sea',
+    river: 'by river',
+    ferry: 'by ferry',
+    mixed: 'via the network',
+  }[orbis.mode] || 'via the network';
+  const parts = [`${modeLabel} · summer · civilian`];
+  if      (orbis.source === 'nearest') parts.push(`ORBIS node ~${Math.round(orbis.distKm)} km away`);
+  else if (orbis.source === 'legacy')  parts.push('estimate · not on ORBIS network');
+  else                                 parts.push('ORBIS network model');
+  return parts.join(' · ');
+}
+
 // ── MAP INIT ─────────────────────────────────────────────
 
 const ancientLayer = L.tileLayer(
@@ -199,13 +261,16 @@ function showPanel(site) {
   document.getElementById('panel-period').innerHTML        = `<span style="font-size:13px">⏳</span>&nbsp;${site.period}`;
   document.getElementById('panel-desc').textContent        = site.desc;
 
-  // ORBIS card
+  // ORBIS card — live values from the Stanford ORBIS network.
+  // Direct Pleiades match wins; else nearest ORBIS node within 75km;
+  // else fall back to the curated hardcoded estimate on the site.
   const orbisCard = document.getElementById('orbis-card');
-  if (site.rome_days > 0) {
-    const mode = site.rome_mode === 'sea' ? 'by sea (summer)' : 'by road (July)';
-    document.getElementById('orbis-days').textContent   = site.rome_days;
-    document.getElementById('orbis-unit').textContent   = site.rome_days === 1 ? 'day to Rome' : 'days to Rome';
-    document.getElementById('orbis-detail').textContent = `${mode} · civilian travel · ORBIS network model`;
+  const orbis = orbisLookup(site);
+  if (orbis) {
+    const dStr = orbisFormatDays(orbis.days);
+    document.getElementById('orbis-days').textContent = dStr;
+    document.getElementById('orbis-unit').textContent = dStr === '1' ? 'day to Rome' : 'days to Rome';
+    document.getElementById('orbis-detail').textContent = orbisDetailLine(orbis);
     orbisCard.classList.add('visible');
   } else {
     orbisCard.classList.remove('visible');

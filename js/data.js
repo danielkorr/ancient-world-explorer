@@ -12,7 +12,7 @@
 //              in July (ORBIS model). Sea routes noted separately.
 // ═══════════════════════════════════════════════════════════
 
-const SITES = [
+const SITES_CURATED = [
 
   // ── ITALY ────────────────────────────────────────────────
 
@@ -389,3 +389,16 @@ const ROADS = [
   { name:"Desert Road",       built:"Roman period", desc:"Palmyra to the Euphrates frontier",
     coords:[[36.16,36.20],[37.5,35.5],[38.27,34.55],[40.73,34.75]] },
 ];
+
+// ── MERGED SITES ─────────────────────────────────────────
+// Curated sites first (rich, hand-written), then auto-imported Pleiades
+// sites that don't already exist in the curated set (deduped by pleiades id).
+
+const SITES = (typeof SITES_PLEIADES !== 'undefined')
+  ? [
+      ...SITES_CURATED,
+      ...SITES_PLEIADES.filter(p =>
+        !SITES_CURATED.some(c => c.pleiades === p.pleiades)
+      ),
+    ]
+  : SITES_CURATED;

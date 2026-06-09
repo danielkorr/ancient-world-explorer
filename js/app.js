@@ -395,6 +395,11 @@ function refreshProfilePill() {
   }
 }
 
+// Drives the modal's data-state attribute. CSS shows the matching panel.
+function setAuthState(state) {
+  document.getElementById('auth-modal').setAttribute('data-state', state);
+}
+
 function openAuthModal() {
   // On mobile the bottom-sheet panel + the modal would otherwise stack
   // visibly. Close the panel first so the modal owns the viewport.
@@ -404,13 +409,20 @@ function openAuthModal() {
   const modal = document.getElementById('auth-modal');
   const user  = VIA.auth.currentUser();
   if (user) {
-    modal.classList.add('signed-in');
-    document.getElementById('auth-user-name').textContent = user.name;
-    const n = VIA.auth.getUserCheckins().length;
-    document.getElementById('auth-checkin-count').textContent = `${n} ${n === 1 ? 'site' : 'sites'} visited`;
+    if (VIA.auth.isGuest()) {
+      document.getElementById('auth-guest-name').textContent = user.name;
+      const n = VIA.auth.getUserCheckins().length;
+      document.getElementById('auth-guest-count').textContent = `${n} ${n === 1 ? 'site' : 'sites'} visited`;
+      setAuthState('guest');
+    } else {
+      document.getElementById('auth-user-name').textContent = user.name;
+      const n = VIA.auth.getUserCheckins().length;
+      document.getElementById('auth-checkin-count').textContent = `${n} ${n === 1 ? 'site' : 'sites'} visited`;
+      setAuthState('signed-in');
+    }
   } else {
-    modal.classList.remove('signed-in');
-    setTimeout(() => document.getElementById('auth-name-input').focus(), 60);
+    resetToEmail();
+    setTimeout(() => document.getElementById('auth-email-input').focus(), 60);
   }
   modal.classList.add('open');
 }
@@ -419,14 +431,79 @@ function closeAuthModal() {
   document.getElementById('auth-modal').classList.remove('open');
 }
 
-function submitSignIn() {
-  const name = document.getElementById('auth-name-input').value;
-  try { VIA.auth.signIn(name); } catch { return; }
+function resetToEmail() {
+  document.getElementById('auth-error').textContent = '';
+  setAuthState('signed-out');
+}
+
+async function submitSignIn() {
+  const errEl = document.getElementById('auth-error');
+  const btn   = document.getElementById('auth-submit-btn');
+  errEl.textContent = '';
+  const input = document.getElementById('auth-email-input');
+  const value = (input ? input.value : '').trim();
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  try {
+    const result = await VIA.auth.signIn(value);
+    if (result && result.pending) {
+      document.getElementById('auth-link-email').textContent = result.email;
+      setAuthState('link-sent');
+    } else {
+      closeAuthModal();
+    }
+  } catch (e) {
+    errEl.textContent = (e && e.message) ? e.message : 'Sign-in failed. Try again.';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Send Sign-in Link';
+  }
+}
+
+async function signOutAndClose() {
+  await VIA.auth.signOut();
   closeAuthModal();
 }
 
-function signOutAndClose() {
-  VIA.auth.signOut();
+function continueAsGuest() {
+  VIA.auth.enterGuestMode();
+}
+
+function leaveGuestAndSignIn() {
+  VIA.auth.leaveGuestMode();
+}
+
+// First-cloud-sign-in helpers (modal state E)
+let pendingImportCount = 0;
+
+function showImportPromptIfNeeded() {
+  if (VIA.auth.backend !== 'supabase') return;
+  if (!VIA.auth.currentUser()) return;
+  const n = VIA.auth.localCheckinCount();
+  if (n <= 0) return;
+  pendingImportCount = n;
+  document.getElementById('auth-import-name').textContent = VIA.auth.currentUser().name;
+  document.getElementById('auth-import-count').textContent = n;
+  setAuthState('import');
+  document.getElementById('auth-modal').classList.add('open');
+}
+
+async function confirmImport() {
+  const btn = document.getElementById('auth-import-btn');
+  btn.disabled = true;
+  btn.textContent = 'Importing…';
+  try {
+    await VIA.auth.importLocalCheckins();
+    closeAuthModal();
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = 'Import Travels';
+    document.getElementById('auth-error') && (document.getElementById('auth-error').textContent = 'Import failed: ' + (e.message || ''));
+  }
+}
+
+function skipImport() {
+  // Leave local data alone — user may want to keep it or import later.
   closeAuthModal();
 }
 
@@ -472,10 +549,31 @@ function refreshAllMarkers() {
   sitesGroup.eachLayer(m => m.setIcon(makeIcon(m._site, m === activeMarker)));
 }
 
+let _lastAuthUserId = null;
+
 VIA.auth.onChange(() => {
   refreshProfilePill();
   refreshCheckinRow();
   refreshAllMarkers();
+  // Detect transitions from signed-out → signed-in (cloud only) so we can
+  // offer to import any localStorage check-ins from prior guest sessions.
+  const user = VIA.auth.currentUser();
+  const currentId = user ? user.id : null;
+  if (_lastAuthUserId === null && currentId && VIA.auth.backend === 'supabase') {
+    showImportPromptIfNeeded();
+  }
+  _lastAuthUserId = currentId;
 });
 
 refreshProfilePill();
+
+// On boot: if the URL has ?signin=1 (set by guest-mode → cloud transition),
+// pop the sign-in modal automatically.
+try {
+  const url = new URL(window.location.href);
+  if (url.searchParams.get('signin') === '1') {
+    setTimeout(openAuthModal, 80);
+    url.searchParams.delete('signin');
+    history.replaceState(null, '', url.toString());
+  }
+} catch {}

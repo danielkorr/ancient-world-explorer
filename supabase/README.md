@@ -1,4 +1,4 @@
-# VIA · Supabase backend
+bgore # VIA · Supabase backend
 
 The cloud half of VIA's social layer. Pure Postgres + Supabase's batteries (auth,
 RLS, realtime). The frontend stays a static site; this directory holds the

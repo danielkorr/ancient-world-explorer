@@ -306,37 +306,108 @@
   };
 
   // ── BACKEND SELECTION ────────────────────────────────────
-  // LocalBackend stays the default. Opt into Supabase for testing by
-  // setting localStorage['via.use_supabase'] = '1' and reloading, or by
-  // appending ?cloud=1 to the URL. Phase 3 will make Supabase the default
-  // once the magic-link sign-in UI lands.
+  // Default is Supabase whenever the client is available. Guest mode
+  // (LocalBackend) is opt-in via `localStorage['via.guest']` or the URL
+  // override `?guest=1`. The legacy `?cloud=1` / `via.use_supabase` flags
+  // still force Supabase for backwards compatibility.
+
+  function isGuest() {
+    try {
+      const url = new URL(window.location.href);
+      if (url.searchParams.get('guest') === '1') return true;
+      if (url.searchParams.get('cloud') === '1') return false;
+    } catch {}
+    try {
+      if (localStorage.getItem('via.guest') === '1') return true;
+      if (localStorage.getItem('via.use_supabase') === '1') return false;
+    } catch {}
+    return false;
+  }
 
   function pickBackend() {
     if (!window.VIA_SB) return LocalBackend;
-    try {
-      const url = new URL(window.location.href);
-      if (url.searchParams.get('cloud') === '1') return SupabaseBackend;
-    } catch {}
-    try {
-      if (localStorage.getItem('via.use_supabase') === '1') return SupabaseBackend;
-    } catch {}
-    return LocalBackend;
+    return isGuest() ? LocalBackend : SupabaseBackend;
   }
 
   const backend = pickBackend();
   if (backend === SupabaseBackend) backend.init();
 
+  // ── ONE-SHOT LOCAL → CLOUD IMPORT ────────────────────────
+  // Reads localStorage checkins (written by any prior LocalBackend session
+  // on this device) and upserts them under the currently signed-in cloud
+  // user. Safe to call multiple times — the unique(user_id, site_pleiades)
+  // constraint dedupes. Returns the number of rows imported.
+
+  async function importLocalCheckins() {
+    if (backend !== SupabaseBackend) return 0;
+    const user = SupabaseBackend.currentUser();
+    if (!user) return 0;
+    let local = [];
+    try { local = JSON.parse(localStorage.getItem(LS_CHECKINS) || '[]'); } catch {}
+    if (!local.length) return 0;
+    const rows = local.map(c => ({
+      user_id:       user.id,
+      site_pleiades: c.site_pleiades,
+      site_name:     c.site_name,
+      lat:           c.lat,
+      lng:           c.lng,
+      user_lat:      c.user_lat ?? null,
+      user_lng:      c.user_lng ?? null,
+      note:          c.note ?? null,
+      visited_at:    c.visited_at || new Date().toISOString(),
+    }));
+    const { error } = await window.VIA_SB
+      .from('checkins')
+      .upsert(rows, { onConflict: 'user_id,site_pleiades' });
+    if (error) throw error;
+    // Reload cloud state so the UI reflects the merge.
+    await SupabaseBackend._loadMyCheckins();
+    await SupabaseBackend._loadSiteCounts();
+    // Wipe local-only state — they're now in the cloud.
+    try {
+      localStorage.removeItem(LS_USER);
+      localStorage.removeItem(LS_CHECKINS);
+    } catch {}
+    emit();
+    return rows.length;
+  }
+
+  function localCheckinCount() {
+    try { return (JSON.parse(localStorage.getItem(LS_CHECKINS) || '[]')).length; }
+    catch { return 0; }
+  }
+
+  function enterGuestMode() {
+    try { localStorage.setItem('via.guest', '1'); } catch {}
+    // Force a reload so pickBackend() re-runs against LocalBackend.
+    const url = new URL(window.location.href);
+    url.searchParams.delete('signin');
+    window.location.replace(url.toString());
+  }
+
+  function leaveGuestMode() {
+    try { localStorage.removeItem('via.guest'); } catch {}
+    const url = new URL(window.location.href);
+    url.searchParams.set('signin', '1');
+    window.location.replace(url.toString());
+  }
+
   window.VIA = window.VIA || {};
   window.VIA.auth = {
-    backend:           backend.name,
-    currentUser:       () => backend.currentUser(),
-    signIn:            v      => { const r = backend.signIn(v);      emit(); return r; },
-    signOut:           ()     => { const r = backend.signOut();      emit(); return r; },
-    checkIn:           (s, o) => { const r = backend.checkIn(s, o);  emit(); return r; },
-    removeCheckIn:     s      => { const r = backend.removeCheckIn(s); emit(); return r; },
-    getCheckin:        s      => backend.getCheckin(s),
-    getUserCheckins:   ()     => backend.getUserCheckins(),
-    getSiteVisitCount: s      => backend.getSiteVisitCount(s),
-    onChange:          fn     => { listeners.add(fn); return () => listeners.delete(fn); },
+    backend:            backend.name,
+    isGuest:            () => backend === LocalBackend && !!window.VIA_SB,
+    currentUser:        () => backend.currentUser(),
+    signIn:             v      => { const r = backend.signIn(v);      emit(); return r; },
+    signOut:            ()     => { const r = backend.signOut();      emit(); return r; },
+    checkIn:            (s, o) => { const r = backend.checkIn(s, o);  emit(); return r; },
+    removeCheckIn:      s      => { const r = backend.removeCheckIn(s); emit(); return r; },
+    getCheckin:         s      => backend.getCheckin(s),
+    getUserCheckins:    ()     => backend.getUserCheckins(),
+    getSiteVisitCount:  s      => backend.getSiteVisitCount(s),
+    onChange:           fn     => { listeners.add(fn); return () => listeners.delete(fn); },
+    importLocalCheckins,
+    localCheckinCount,
+    enterGuestMode,
+    leaveGuestMode,
   };
 })();

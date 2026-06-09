@@ -233,7 +233,7 @@ body {
   margin-bottom: 18px;
 }
 
-#auth-name-input {
+#auth-email-input {
   width: 100%;
   background: rgba(212,168,83,0.06);
   border: 1px solid var(--border);
@@ -245,9 +245,17 @@ body {
   margin-bottom: 12px;
   outline: none;
 }
-#auth-name-input:focus { border-color: var(--gold-dim); background: rgba(212,168,83,0.1); }
+#auth-email-input:focus { border-color: var(--gold-dim); background: rgba(212,168,83,0.1); }
 
-.auth-primary, .auth-secondary {
+#auth-error {
+  font-size: 12px;
+  color: var(--quest-location);
+  margin-bottom: 10px;
+  min-height: 16px;
+  line-height: 1.3;
+}
+
+.auth-primary, .auth-secondary, .auth-tertiary {
   width: 100%;
   padding: 11px;
   border: none;
@@ -264,16 +272,42 @@ body {
   color: var(--ink);
 }
 .auth-primary:hover { box-shadow: 0 2px 14px rgba(212,168,83,0.4); }
+.auth-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 .auth-secondary {
   background: transparent;
   color: var(--gold-dim);
   border: 1px solid var(--border);
 }
 .auth-secondary:hover { color: var(--gold); border-color: var(--gold-dim); }
+.auth-tertiary {
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 9px;
+  margin-top: 4px;
+}
+.auth-tertiary:hover { color: var(--gold-dim); }
 
-#auth-signed-in { display: none; }
-#auth-modal.signed-in #auth-signed-in   { display: block; }
-#auth-modal.signed-in #auth-signed-out  { display: none; }
+.auth-state                          { display: none; }
+.auth-state + .auth-state            { margin-top: 0; }
+button.auth-primary + button.auth-secondary,
+button.auth-primary + button.auth-tertiary,
+button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
+
+#auth-modal[data-state="signed-out"] #auth-signed-out { display: block; }
+#auth-modal[data-state="link-sent"]  #auth-link-sent  { display: block; }
+#auth-modal[data-state="signed-in"]  #auth-signed-in  { display: block; }
+#auth-modal[data-state="guest"]      #auth-guest      { display: block; }
+#auth-modal[data-state="import"]     #auth-import     { display: block; }
+
+.auth-glyph-large {
+  font-size: 40px;
+  color: var(--gold);
+  text-align: center;
+  margin-bottom: 14px;
+  text-shadow: 0 0 18px rgba(212,168,83,0.4);
+}
 
 /* ── CHECK-IN ROW (info panel) ── */
 #checkin-row {

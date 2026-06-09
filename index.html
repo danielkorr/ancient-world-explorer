@@ -48,16 +48,46 @@
 <div id="auth-modal" onclick="if(event.target===this)closeAuthModal()">
   <div id="auth-modal-card">
     <button class="auth-close" onclick="closeAuthModal()">✕</button>
-    <div id="auth-signed-out">
+
+    <!-- State A: signed out, ready to send a magic link -->
+    <div class="auth-state" id="auth-signed-out">
       <h2 class="auth-title">Sign in to VIA</h2>
-      <div class="auth-sub">Track which ancient sites you've visited. Stored locally for now — accounts move to the cloud when the backend ships.</div>
-      <input id="auth-name-input" type="text" placeholder="Your traveler name" maxlength="40" autocomplete="off" onkeydown="if(event.key==='Enter')submitSignIn()">
-      <button class="auth-primary" onclick="submitSignIn()">Begin Travels</button>
+      <div class="auth-sub">Save your travels across devices. We'll send a sign-in link to your email.</div>
+      <input id="auth-email-input" type="email" placeholder="you@example.com" autocomplete="email" inputmode="email" onkeydown="if(event.key==='Enter')submitSignIn()">
+      <div id="auth-error"></div>
+      <button class="auth-primary" id="auth-submit-btn" onclick="submitSignIn()">Send Sign-in Link</button>
+      <button class="auth-tertiary" onclick="continueAsGuest()">Continue as guest</button>
     </div>
-    <div id="auth-signed-in">
+
+    <!-- State B: magic link sent, waiting for click -->
+    <div class="auth-state" id="auth-link-sent">
+      <div class="auth-glyph-large">✉</div>
+      <h2 class="auth-title">Check your inbox</h2>
+      <div class="auth-sub">We sent a sign-in link to <strong id="auth-link-email"></strong>. Click it to begin your travels. You can close this tab.</div>
+      <button class="auth-secondary" onclick="resetToEmail()">Use a different email</button>
+    </div>
+
+    <!-- State C: signed in (cloud) -->
+    <div class="auth-state" id="auth-signed-in">
       <h2 class="auth-title">Welcome, <span id="auth-user-name"></span></h2>
       <div class="auth-sub" id="auth-checkin-count">0 sites visited</div>
       <button class="auth-secondary" onclick="signOutAndClose()">Sign out</button>
+    </div>
+
+    <!-- State D: signed in as guest (local only) -->
+    <div class="auth-state" id="auth-guest">
+      <h2 class="auth-title">Welcome, <span id="auth-guest-name"></span></h2>
+      <div class="auth-sub"><span id="auth-guest-count">0 sites visited</span> · saved on this device only</div>
+      <button class="auth-primary" onclick="leaveGuestAndSignIn()">Sign in to sync across devices</button>
+      <button class="auth-secondary" onclick="signOutAndClose()">Sign out (clear local data)</button>
+    </div>
+
+    <!-- State E: first cloud sign-in with local data to import -->
+    <div class="auth-state" id="auth-import">
+      <h2 class="auth-title">Welcome, <span id="auth-import-name"></span></h2>
+      <div class="auth-sub">You have <strong id="auth-import-count">0</strong> travels saved on this device from before signing in. Import them?</div>
+      <button class="auth-primary" id="auth-import-btn" onclick="confirmImport()">Import Travels</button>
+      <button class="auth-tertiary" onclick="skipImport()">Skip</button>
     </div>
   </div>
 </div>

@@ -29,6 +29,13 @@ body {
   height: 100dvh;
 }
 
+/* Keyboard focus ring — gold against ink, only on keyboard navigation. */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 /* ── MAP ── */
 #map {
   position: fixed;
@@ -205,7 +212,7 @@ body {
   width: 28px; height: 28px;
   background: transparent;
   border: none;
-  color: var(--text-muted);
+  color: var(--gold-dim);
   cursor: pointer;
   font-size: 14px;
   border-radius: 50%;
@@ -570,6 +577,7 @@ body {
   font-weight: 700;
   color: var(--gold);
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
 #orbis-unit {

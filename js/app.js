@@ -396,6 +396,11 @@ function refreshProfilePill() {
 }
 
 function openAuthModal() {
+  // On mobile the bottom-sheet panel + the modal would otherwise stack
+  // visibly. Close the panel first so the modal owns the viewport.
+  if (window.innerWidth <= 640 && document.getElementById('info-panel').classList.contains('open')) {
+    closePanel();
+  }
   const modal = document.getElementById('auth-modal');
   const user  = VIA.auth.currentUser();
   if (user) {

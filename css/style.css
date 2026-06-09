@@ -36,6 +36,34 @@ body {
   z-index: 1;
 }
 
+/* Sepia-tint the modern fallback basemap so the ancient view still feels period. */
+.ancient-fallback {
+  filter: sepia(0.85) saturate(0.7) contrast(0.95) brightness(0.92) hue-rotate(-8deg);
+}
+
+/* DARE fallback banner — hidden until activated by app.js */
+#dare-fallback-banner {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 850;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(10,5,0,0.92);
+  border: 1px solid var(--quest-photo);
+  border-radius: 4px;
+  color: var(--parchment);
+  font-size: 11px;
+  letter-spacing: 1px;
+  font-family: 'Cinzel', serif;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.5);
+}
+#dare-fallback-banner.visible { display: flex; }
+#dare-fallback-banner .dfb-icon { color: var(--quest-photo); font-size: 14px; }
+
 /* ── TOP BAR ── */
 #topbar {
   position: fixed;

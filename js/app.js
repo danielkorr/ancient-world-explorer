@@ -24,6 +24,17 @@ const ancientLayer = L.tileLayer(
   { maxZoom:11, attribution:'© <a href="https://dare.ht.lu.se/" target="_blank">Digital Atlas of the Roman Empire</a>' }
 );
 
+// Sepia-toned modern basemap used as a fallback when DARE tiles fail.
+// CSS class `ancient-fallback` applies the sepia filter (see style.css).
+const ancientFallbackLayer = L.tileLayer(
+  'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+  {
+    maxZoom: 18,
+    className: 'ancient-fallback',
+    attribution: 'Ancient tiles offline — © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
+  }
+);
+
 const modernLayer = L.tileLayer(
   'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
   { maxZoom:19, attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>' }
@@ -37,6 +48,38 @@ const map = L.map('map', {
 });
 
 let currentEra = 'ancient';
+
+// ── DARE FALLBACK ────────────────────────────────────────
+// dh.gu.se is a single-origin university server with no CDN. If a handful
+// of tiles fail within a short window, swap to the sepia fallback so the
+// ancient view still renders something map-shaped.
+
+let dareErrors = 0;
+let dareFallbackActive = false;
+const DARE_ERROR_THRESHOLD = 4;
+
+ancientLayer.on('tileerror', () => {
+  if (dareFallbackActive) return;
+  dareErrors++;
+  if (dareErrors >= DARE_ERROR_THRESHOLD) activateDareFallback();
+});
+
+ancientLayer.on('tileload', () => {
+  // Successful loads decay the error count so a transient blip doesn't trip us.
+  if (dareErrors > 0) dareErrors--;
+});
+
+function activateDareFallback() {
+  dareFallbackActive = true;
+  if (currentEra === 'ancient') {
+    map.removeLayer(ancientLayer);
+    map.addLayer(ancientFallbackLayer);
+    roadsGroup.bringToFront();
+    sitesGroup.bringToFront();
+  }
+  const banner = document.getElementById('dare-fallback-banner');
+  if (banner) banner.classList.add('visible');
+}
 
 // ── ROADS ────────────────────────────────────────────────
 
@@ -219,11 +262,12 @@ function setEra(era) {
   document.getElementById('btn-ancient').classList.toggle('active', era === 'ancient');
   document.getElementById('btn-modern').classList.toggle('active',  era === 'modern');
 
+  const ancient = dareFallbackActive ? ancientFallbackLayer : ancientLayer;
   if (era === 'ancient') {
     map.removeLayer(modernLayer);
-    map.addLayer(ancientLayer);
+    map.addLayer(ancient);
   } else {
-    map.removeLayer(ancientLayer);
+    map.removeLayer(ancient);
     map.addLayer(modernLayer);
   }
   roadsGroup.bringToFront();

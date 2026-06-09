@@ -39,7 +39,7 @@ Interaction model:
 
 `js/auth.js` exposes a provider-agnostic API at `window.VIA.auth` — `currentUser`, `signIn(name)`, `signOut`, `checkIn(site)`, `removeCheckIn(site)`, `getCheckin(site)`, `getUserCheckins`, `getSiteVisitCount(site)`, `onChange(fn)`. Today it's backed by `LocalBackend` (localStorage); the file's data-model header doubles as the **Supabase schema spec** for when we provision the cloud backend.
 
-**Migration path to Supabase**: replace `LocalBackend` with a `SupabaseBackend` object that satisfies the same shape — UI code in `app.js` consumes only `VIA.auth.*` and doesn't need to change. The `users` and `checkins` tables in `auth.js`'s header comment are the target schema; `lat/lng` on check-ins captures the user's actual GPS position at visit time (foundation for the future "near me" stage).
+**Backend selection (live, dual-mode)**: `auth.js` now ships both `LocalBackend` and `SupabaseBackend` behind the same `VIA.auth.*` interface. The active backend is chosen at boot by `pickBackend()`: LocalBackend by default; SupabaseBackend if `localStorage['via.use_supabase'] === '1'` OR the URL has `?cloud=1`. UI code is backend-agnostic. The cloud schema lives in `supabase/migrations/0001_init.sql`; setup + migration sequence is documented in `supabase/README.md`. `lat/lng` on check-ins captures the user's actual GPS at visit time (foundation for the future "near me" stage).
 
 UI bindings live at the bottom of `app.js`:
 - `refreshProfilePill` — topbar pill state (signed-in vs anonymous)

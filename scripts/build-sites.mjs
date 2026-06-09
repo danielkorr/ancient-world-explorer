@@ -9,7 +9,7 @@
 //  Re-run: same — cached dump in .cache/ is reused unless --refresh.
 // ═══════════════════════════════════════════════════════════
 
-import { mkdir, writeFile, stat } from 'node:fs/promises';
+import { mkdir, readFile, writeFile, stat } from 'node:fs/promises';
 import { createWriteStream, createReadStream } from 'node:fs';
 import { pipeline } from 'node:stream/promises';
 import { createGunzip } from 'node:zlib';
@@ -243,6 +243,16 @@ function emit(sites) {
 
 // ── MAIN ──────────────────────────────────────────────────
 
+// Photo-quest overlay: js/pleiades-photos.json (produced by
+// scripts/detect-pleiades-photos.mjs). For each Pleiades id, if
+// has_photo === false we promote the site to quest:"photo" (unless a
+// stronger quest tier like "location" is already set).
+async function loadPhotoOverlay() {
+  const p = path.join(ROOT, 'js', 'pleiades-photos.json');
+  try { return JSON.parse(await readFile(p, 'utf8')); }
+  catch { return {}; }
+}
+
 async function main() {
   await ensureDump();
   console.log(`⊙ streaming CSV ...`);
@@ -255,13 +265,27 @@ async function main() {
   console.log(`✓ scanned ${scanned} places, ${kept.length} passed filter`);
 
   kept.sort((a, b) => b._descLen - a._descLen);
-  const sites = kept.slice(0, MAX_SITES).map(({ _descLen, ...rest }) => rest);
+  let sites = kept.slice(0, MAX_SITES).map(({ _descLen, ...rest }) => rest);
   console.log(`✓ ${sites.length} sites after cap (MAX_SITES=${MAX_SITES})`);
+
+  // Apply photo-quest overlay. Existing "location" quests win over "photo"
+  // (a missing GPS is a stronger problem than a missing portrait photo).
+  const photos = await loadPhotoOverlay();
+  let photoTagged = 0;
+  for (const s of sites) {
+    if (s.quest) continue;
+    const p = photos[s.pleiades];
+    if (p && p.has_photo === false) { s.quest = 'photo'; photoTagged++; }
+  }
+  console.log(`✓ photo-quest overlay applied: ${photoTagged} sites tagged`);
 
   const byType = sites.reduce((m, s) => (m[s.type] = (m[s.type] || 0) + 1, m), {});
   console.log(`  by type:`, byType);
-  const quests = sites.filter(s => s.quest).length;
-  console.log(`  location quests: ${quests}`);
+  const questCounts = sites.reduce((m, s) => {
+    if (s.quest) m[s.quest] = (m[s.quest] || 0) + 1;
+    return m;
+  }, {});
+  console.log(`  quests:`, questCounts);
 
   await writeFile(OUT_PATH, emit(sites));
   console.log(`✓ wrote ${path.relative(ROOT, OUT_PATH)}`);

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="VIA — Explore the ancient Roman world overlaid on the modern map. Discover 2,000-year-old roads, cities, and unsolved historical quests.">
+  <meta name="theme-color" content="#110a00">
+  <title>VIA — Ancient World Explorer</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- App styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Map -->
+<div id="map"></div>
+
+<!-- Top Bar -->
+<div id="topbar">
+  <div id="app-brand">
+    <div id="app-title">VIA</div>
+    <div id="app-subtitle">Ancient World Explorer</div>
+  </div>
+  <div id="era-toggle">
+    <button class="era-btn active" id="btn-ancient" onclick="setEra('ancient')">ANCIENT</button>
+    <button class="era-btn"        id="btn-modern"  onclick="setEra('modern')">MODERN</button>
+  </div>
+</div>
+
+<!-- Bottom Controls -->
+<div id="bottom-controls">
+  <button class="ctrl-btn active" id="btn-roads" onclick="toggleLayer('roads')">
+    <div class="swatch-line"></div>Roman Roads
+  </button>
+  <button class="ctrl-btn active" id="btn-sites" onclick="toggleLayer('sites')">
+    <div class="swatch-dot"></div>Sites &amp; Cities
+  </button>
+</div>
+
+<!-- Quest Legend -->
+<div id="quest-legend">
+  <div class="legend-row"><div class="legend-dot" style="background:#d4a853"></div>Documented</div>
+  <div class="legend-row"><div class="legend-dot" style="background:#e07a3a"></div>Photo Quest</div>
+  <div class="legend-row"><div class="legend-dot" style="background:#c94040"></div>Location Quest</div>
+</div>
+
+<!-- Info Panel -->
+<div id="info-panel">
+  <div id="panel-hero">
+    <div id="hero-inner">
+      <div id="hero-icon">⊕</div>
+      <div id="hero-coords">SELECT A SITE</div>
+      <div id="hero-modern">tap any marker on the map</div>
+    </div>
+    <button id="panel-close" onclick="closePanel()">✕</button>
+  </div>
+
+  <!-- Quest banner (hidden until quest site selected) -->
+  <div id="panel-quest-banner">
+    <span class="quest-banner-icon" id="quest-banner-icon">📷</span>
+    <div>
+      <div class="quest-banner-title" id="quest-banner-title">QUEST</div>
+      <div class="quest-banner-text"  id="quest-banner-text"></div>
+    </div>
+  </div>
+
+  <div id="panel-body">
+    <div id="panel-badge"></div>
+    <div id="panel-name">—</div>
+    <div id="panel-modern-name"></div>
+    <div class="p-rule"></div>
+    <div id="panel-period"></div>
+    <div id="panel-desc"></div>
+
+    <!-- ORBIS Travel Time Card -->
+    <div id="orbis-card">
+      <div id="orbis-label">⚡ ORBIS · Travel to Rome</div>
+      <div id="orbis-content">
+        <span id="orbis-days"></span>
+        <span id="orbis-unit"></span>
+      </div>
+      <div id="orbis-detail"></div>
+    </div>
+
+    <div class="p-actions" id="panel-actions"></div>
+  </div>
+</div>
+
+<!-- Data + App -->
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

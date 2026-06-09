@@ -152,13 +152,19 @@ ancientLayer.on('tileload', () => {
   if (dareErrors > 0) dareErrors--;
 });
 
+// L.LayerGroup has no bringToFront. Re-add the group to put it on top of
+// any tile layer that was just inserted under it.
+function raiseOverlays() {
+  if (map.hasLayer(roadsGroup)) { map.removeLayer(roadsGroup); map.addLayer(roadsGroup); }
+  if (map.hasLayer(sitesGroup)) { map.removeLayer(sitesGroup); map.addLayer(sitesGroup); }
+}
+
 function activateDareFallback() {
   dareFallbackActive = true;
   if (currentEra === 'ancient') {
     map.removeLayer(ancientLayer);
     map.addLayer(ancientFallbackLayer);
-    roadsGroup.bringToFront();
-    sitesGroup.bringToFront();
+    raiseOverlays();
   }
   const banner = document.getElementById('dare-fallback-banner');
   if (banner) banner.classList.add('visible');
@@ -371,8 +377,7 @@ function setEra(era) {
     map.removeLayer(ancient);
     map.addLayer(modernLayer);
   }
-  roadsGroup.bringToFront();
-  sitesGroup.bringToFront();
+  raiseOverlays();
 }
 
 // ── LAYER TOGGLES ────────────────────────────────────────

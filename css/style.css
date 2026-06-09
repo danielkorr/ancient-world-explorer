@@ -660,10 +660,19 @@ body {
    ════════════════════════════════ */
 @media (max-width: 640px) {
 
-  #app-title    { font-size: 18px; letter-spacing: 4px; }
-  #app-subtitle { display: none; }
+  /* Tighter topbar so era toggle + profile pill fit on a 375px viewport
+     (FINDING-001, FINDING-012). */
+  #topbar         { padding: 12px 14px 30px; }
+  #app-title      { font-size: 18px; letter-spacing: 4px; }
+  #app-subtitle   { display: none; }
+  #topbar-right   { gap: 6px; }
 
-  .era-btn { padding: 7px 13px; font-size: 9px; }
+  .era-btn { padding: 7px 11px; font-size: 9px; letter-spacing: 1.5px; }
+
+  /* Collapse the profile pill to icon-only on mobile — keeps the affordance
+     present without crowding the era toggle. */
+  #profile-pill        { padding: 5px; gap: 0; }
+  #profile-pill-label  { display: none; }
 
   #bottom-controls { bottom: 20px; left: 12px; }
   .ctrl-btn { padding: 7px 11px; font-size: 9px; }

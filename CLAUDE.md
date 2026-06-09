@@ -35,6 +35,18 @@ Interaction model:
 - Adding a road = append to `ROADS`; coords are `[lng, lat]` pairs (note the order — flipped when fed to Leaflet at `app.js:46`).
 - Adding a new `type` or `quest` value requires adding a matching entry to the `TYPE` / `QUEST` config objects in `app.js`.
 
+## Social layer (auth + check-ins)
+
+`js/auth.js` exposes a provider-agnostic API at `window.VIA.auth` — `currentUser`, `signIn(name)`, `signOut`, `checkIn(site)`, `removeCheckIn(site)`, `getCheckin(site)`, `getUserCheckins`, `getSiteVisitCount(site)`, `onChange(fn)`. Today it's backed by `LocalBackend` (localStorage); the file's data-model header doubles as the **Supabase schema spec** for when we provision the cloud backend.
+
+**Migration path to Supabase**: replace `LocalBackend` with a `SupabaseBackend` object that satisfies the same shape — UI code in `app.js` consumes only `VIA.auth.*` and doesn't need to change. The `users` and `checkins` tables in `auth.js`'s header comment are the target schema; `lat/lng` on check-ins captures the user's actual GPS position at visit time (foundation for the future "near me" stage).
+
+UI bindings live at the bottom of `app.js`:
+- `refreshProfilePill` — topbar pill state (signed-in vs anonymous)
+- `refreshCheckinRow` — info panel check-in button + visit-count line
+- `refreshAllMarkers` — re-renders all site icons so the visited green badge appears/disappears live when check-ins change
+- All three subscribe to `VIA.auth.onChange` so any backend write fans out to the UI without manual plumbing.
+
 ## gstack
 
 This environment has the [gstack](https://github.com/garrytan/gstack) skill suite installed.

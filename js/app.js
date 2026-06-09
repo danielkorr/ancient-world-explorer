@@ -174,11 +174,20 @@ function makeIcon(site, hovered) {
     ? `<div class="quest-ring" style="color:${color};"></div>`
     : '';
 
+  // Visited badge: green ring around any site this user has checked in to.
+  const visited = (typeof VIA !== 'undefined' && VIA.auth && VIA.auth.currentUser())
+    ? !!VIA.auth.getCheckin(site)
+    : false;
+  const visitedBadge = visited
+    ? `<div style="position:absolute;inset:-4px;border:1.5px solid #7bc47b;border-radius:50%;box-shadow:0 0 6px rgba(123,196,123,0.55);pointer-events:none;"></div>`
+    : '';
+
   return L.divIcon({
     className: '',
     html: `<div style="position:relative;width:${sz}px;height:${sz}px;">
              <div style="width:${sz}px;height:${sz}px;background:${color};border:2px solid ${border};border-radius:50%;cursor:pointer;${glow};transition:all .15s;"></div>
              ${ring}
+             ${visitedBadge}
            </div>`,
     iconSize:   [sz, sz],
     iconAnchor: [sz/2, sz/2],
@@ -297,6 +306,8 @@ function showPanel(site) {
   `;
 
   document.getElementById('info-panel').classList.add('open');
+  currentPanelSite = site;
+  refreshCheckinRow();
   // Offset map pan: right on desktop, up on mobile
   const isMobile = window.innerWidth <= 640;
   map.panTo(
@@ -312,6 +323,7 @@ function closePanel() {
     activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
     activeMarker = null;
   }
+  currentPanelSite = null;
 }
 
 // Close on map click
@@ -354,5 +366,108 @@ function toggleLayer(which) {
 // ── KEYBOARD ─────────────────────────────────────────────
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closePanel();
+  if (e.key === 'Escape') { closeAuthModal(); closePanel(); }
 });
+
+// ── AUTH + CHECK-INS ─────────────────────────────────────
+// All identity + visit storage lives in js/auth.js behind VIA.auth so the
+// UI here doesn't care whether the backend is localStorage or Supabase.
+
+let currentPanelSite = null;
+
+function refreshProfilePill() {
+  const user = VIA.auth.currentUser();
+  const pill  = document.getElementById('profile-pill');
+  const glyph = document.getElementById('profile-pill-glyph');
+  const label = document.getElementById('profile-pill-label');
+  if (user) {
+    pill.classList.add('signed-in');
+    glyph.textContent = user.name.slice(0, 1).toUpperCase();
+    label.textContent = user.name.split(/\s+/)[0];
+    pill.title = `Signed in as ${user.name}`;
+  } else {
+    pill.classList.remove('signed-in');
+    glyph.textContent = '⊙';
+    label.textContent = 'Sign in';
+    pill.title = 'Sign in';
+  }
+}
+
+function openAuthModal() {
+  const modal = document.getElementById('auth-modal');
+  const user  = VIA.auth.currentUser();
+  if (user) {
+    modal.classList.add('signed-in');
+    document.getElementById('auth-user-name').textContent = user.name;
+    document.getElementById('auth-checkin-count').textContent = VIA.auth.getUserCheckins().length;
+  } else {
+    modal.classList.remove('signed-in');
+    setTimeout(() => document.getElementById('auth-name-input').focus(), 60);
+  }
+  modal.classList.add('open');
+}
+
+function closeAuthModal() {
+  document.getElementById('auth-modal').classList.remove('open');
+}
+
+function submitSignIn() {
+  const name = document.getElementById('auth-name-input').value;
+  try { VIA.auth.signIn(name); } catch { return; }
+  closeAuthModal();
+}
+
+function signOutAndClose() {
+  VIA.auth.signOut();
+  closeAuthModal();
+}
+
+function refreshCheckinRow() {
+  const row   = document.getElementById('checkin-row');
+  if (!currentPanelSite) { row.style.display = 'none'; return; }
+  row.style.display = 'flex';
+
+  const btn   = document.getElementById('checkin-btn');
+  const stats = document.getElementById('checkin-stats');
+  const user  = VIA.auth.currentUser();
+  const existing = user ? VIA.auth.getCheckin(currentPanelSite) : null;
+  const total = VIA.auth.getSiteVisitCount(currentPanelSite);
+
+  stats.textContent = total === 0
+    ? 'Be the first traveler to mark a visit here.'
+    : `${total} ${total === 1 ? 'traveler has' : 'travelers have'} checked in.`;
+
+  if (!user) {
+    btn.textContent = 'Sign in to check in';
+    btn.classList.remove('visited');
+  } else if (existing) {
+    const when = new Date(existing.visited_at).toLocaleDateString();
+    btn.textContent = `✓ Visited ${when} — undo`;
+    btn.classList.add('visited');
+  } else {
+    btn.textContent = '◎ Check in here';
+    btn.classList.remove('visited');
+  }
+}
+
+function onCheckInClick() {
+  if (!currentPanelSite) return;
+  if (!VIA.auth.currentUser()) { openAuthModal(); return; }
+  const existing = VIA.auth.getCheckin(currentPanelSite);
+  if (existing) VIA.auth.removeCheckIn(currentPanelSite);
+  else          VIA.auth.checkIn(currentPanelSite);
+}
+
+// Refresh marker icons after sign-in / check-in changes so the visited
+// badge appears/disappears live.
+function refreshAllMarkers() {
+  sitesGroup.eachLayer(m => m.setIcon(makeIcon(m._site, m === activeMarker)));
+}
+
+VIA.auth.onChange(() => {
+  refreshProfilePill();
+  refreshCheckinRow();
+  refreshAllMarkers();
+});
+
+refreshProfilePill();

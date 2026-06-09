@@ -29,9 +29,33 @@
     <div id="app-title">VIA</div>
     <div id="app-subtitle">Ancient World Explorer</div>
   </div>
-  <div id="era-toggle">
-    <button class="era-btn active" id="btn-ancient" onclick="setEra('ancient')">ANCIENT</button>
-    <button class="era-btn"        id="btn-modern"  onclick="setEra('modern')">MODERN</button>
+  <div id="topbar-right">
+    <div id="era-toggle">
+      <button class="era-btn active" id="btn-ancient" onclick="setEra('ancient')">ANCIENT</button>
+      <button class="era-btn"        id="btn-modern"  onclick="setEra('modern')">MODERN</button>
+    </div>
+    <button id="profile-pill" onclick="openAuthModal()" title="Sign in">
+      <span id="profile-pill-glyph">⊙</span>
+      <span id="profile-pill-label">Sign in</span>
+    </button>
+  </div>
+</div>
+
+<!-- Sign-in / profile modal -->
+<div id="auth-modal" onclick="if(event.target===this)closeAuthModal()">
+  <div id="auth-modal-card">
+    <button class="auth-close" onclick="closeAuthModal()">✕</button>
+    <div id="auth-signed-out">
+      <div class="auth-title">Sign in to VIA</div>
+      <div class="auth-sub">Track which ancient sites you've visited. Stored locally for now — accounts move to the cloud when the backend ships.</div>
+      <input id="auth-name-input" type="text" placeholder="Your traveler name" maxlength="40" autocomplete="off" onkeydown="if(event.key==='Enter')submitSignIn()">
+      <button class="auth-primary" onclick="submitSignIn()">Begin Travels</button>
+    </div>
+    <div id="auth-signed-in">
+      <div class="auth-title">Welcome, <span id="auth-user-name"></span></div>
+      <div class="auth-sub"><span id="auth-checkin-count">0</span> sites visited</div>
+      <button class="auth-secondary" onclick="signOutAndClose()">Sign out</button>
+    </div>
   </div>
 </div>
 
@@ -97,6 +121,12 @@
     </div>
 
     <div class="p-actions" id="panel-actions"></div>
+
+    <!-- Check-in row -->
+    <div id="checkin-row">
+      <div id="checkin-stats"></div>
+      <button id="checkin-btn" onclick="onCheckInClick()"></button>
+    </div>
   </div>
 </div>
 
@@ -104,6 +134,7 @@
 <script src="js/orbis-days.js"></script>
 <script src="js/sites-pleiades.js"></script>
 <script src="js/data.js"></script>
+<script src="js/auth.js"></script>
 <script src="js/app.js"></script>
 
 </body>

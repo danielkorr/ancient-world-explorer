@@ -278,7 +278,9 @@ function showPanel(site) {
   if (orbis) {
     const dStr = orbisFormatDays(orbis.days);
     document.getElementById('orbis-days').textContent = dStr;
-    document.getElementById('orbis-unit').textContent = dStr === '1' ? 'day to Rome' : 'days to Rome';
+    // "<1" is a sub-day count, still singular ("less than 1 day").
+    const isSingular = dStr === '1' || dStr === '<1';
+    document.getElementById('orbis-unit').textContent = isSingular ? 'day to Rome' : 'days to Rome';
     document.getElementById('orbis-detail').textContent = orbisDetailLine(orbis);
     orbisCard.classList.add('visible');
   } else {
@@ -399,7 +401,8 @@ function openAuthModal() {
   if (user) {
     modal.classList.add('signed-in');
     document.getElementById('auth-user-name').textContent = user.name;
-    document.getElementById('auth-checkin-count').textContent = VIA.auth.getUserCheckins().length;
+    const n = VIA.auth.getUserCheckins().length;
+    document.getElementById('auth-checkin-count').textContent = `${n} ${n === 1 ? 'site' : 'sites'} visited`;
   } else {
     modal.classList.remove('signed-in');
     setTimeout(() => document.getElementById('auth-name-input').focus(), 60);

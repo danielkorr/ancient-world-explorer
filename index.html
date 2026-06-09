@@ -26,7 +26,7 @@
 <!-- Top Bar -->
 <div id="topbar">
   <div id="app-brand">
-    <div id="app-title">VIA</div>
+    <h1 id="app-title">VIA</h1>
     <div id="app-subtitle">Ancient World Explorer</div>
   </div>
   <div id="topbar-right">
@@ -46,13 +46,13 @@
   <div id="auth-modal-card">
     <button class="auth-close" onclick="closeAuthModal()">✕</button>
     <div id="auth-signed-out">
-      <div class="auth-title">Sign in to VIA</div>
+      <h2 class="auth-title">Sign in to VIA</h2>
       <div class="auth-sub">Track which ancient sites you've visited. Stored locally for now — accounts move to the cloud when the backend ships.</div>
       <input id="auth-name-input" type="text" placeholder="Your traveler name" maxlength="40" autocomplete="off" onkeydown="if(event.key==='Enter')submitSignIn()">
       <button class="auth-primary" onclick="submitSignIn()">Begin Travels</button>
     </div>
     <div id="auth-signed-in">
-      <div class="auth-title">Welcome, <span id="auth-user-name"></span></div>
+      <h2 class="auth-title">Welcome, <span id="auth-user-name"></span></h2>
       <div class="auth-sub" id="auth-checkin-count">0 sites visited</div>
       <button class="auth-secondary" onclick="signOutAndClose()">Sign out</button>
     </div>
@@ -104,7 +104,7 @@
 
   <div id="panel-body">
     <div id="panel-badge"></div>
-    <div id="panel-name">—</div>
+    <h2 id="panel-name">—</h2>
     <div id="panel-modern-name"></div>
     <div class="p-rule"></div>
     <div id="panel-period"></div>

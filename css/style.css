@@ -475,30 +475,170 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   font-style: italic;
 }
 
-/* Quest banner inside panel */
+/* Quest banner inside panel — louder treatment, the signature CTA */
 #panel-quest-banner {
   display: none;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
   border-bottom: 1px solid var(--border);
   font-size: 11px;
   line-height: 1.5;
+  position: relative;
+  overflow: hidden;
 }
 
-#panel-quest-banner.visible { display: flex; }
+/* Subtle pulse on the banner background so it doesn't fade into the panel. */
+#panel-quest-banner.visible { display: flex; animation: questPulseBg 3.4s ease-in-out infinite; }
 
-.quest-banner-icon { font-size: 20px; flex-shrink: 0; }
+@keyframes questPulseBg {
+  0%, 100% { box-shadow: inset 0 0 0 1px transparent; }
+  50%      { box-shadow: inset 0 0 0 1px rgba(224,122,58,0.18); }
+}
+
+.quest-banner-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 6px rgba(224,122,58,0.55));
+  animation: questIconPulse 2.6s ease-in-out infinite;
+}
+@keyframes questIconPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.08); }
+}
+
+.quest-banner-body { flex: 1; }
 
 .quest-banner-title {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
-  letter-spacing: 2px;
+  font-size: 10px;
+  letter-spacing: 2.5px;
   text-transform: uppercase;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
+  font-weight: 700;
 }
 
-.quest-banner-text { font-size: 11px; color: var(--text-body); }
+.quest-banner-text { font-size: 12px; color: var(--text-body); margin-bottom: 8px; }
+
+.quest-banner-cta {
+  background: transparent;
+  border: 1px solid currentColor;
+  color: inherit;
+  padding: 6px 12px;
+  border-radius: 3px;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1.8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.quest-banner-cta:hover {
+  background: rgba(255,255,255,0.08);
+  transform: translateX(2px);
+}
+/* Color of the CTA is inherited from the banner title's color so it
+   matches the quest tier (photo orange, location red, text purple). */
+#panel-quest-banner .quest-banner-cta { color: var(--quest-photo); }
+#panel-quest-banner.quest-location .quest-banner-cta { color: var(--quest-location); }
+#panel-quest-banner.quest-text     .quest-banner-cta { color: var(--quest-text); }
+
+/* ── QUEST MODAL ── */
+#quest-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10,5,0,0.78);
+  backdrop-filter: blur(4px);
+}
+#quest-modal.open { display: flex; }
+
+#quest-modal-card {
+  position: relative;
+  width: min(440px, 92vw);
+  background: var(--ink-panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 30px 26px 24px;
+  box-shadow: 0 14px 50px rgba(0,0,0,0.6);
+  max-height: 92vh;
+  overflow-y: auto;
+}
+
+.quest-glyph-large {
+  font-size: 44px;
+  text-align: center;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 0 12px rgba(224,122,58,0.5));
+}
+
+.quest-steps {
+  list-style: none;
+  padding: 0;
+  margin: 18px 0 14px;
+  counter-reset: quest-step;
+}
+.quest-steps li {
+  counter-increment: quest-step;
+  padding: 12px 0 12px 38px;
+  position: relative;
+  font-size: 13px;
+  color: var(--text-body);
+  border-top: 1px solid rgba(212,168,83,0.12);
+  line-height: 1.5;
+}
+.quest-steps li:first-child { border-top: none; }
+.quest-steps li::before {
+  content: counter(quest-step);
+  position: absolute;
+  left: 0;
+  top: 11px;
+  width: 26px; height: 26px;
+  background: rgba(212,168,83,0.12);
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.quest-steps li strong { color: var(--parchment); font-weight: 500; }
+.quest-steps code {
+  background: rgba(212,168,83,0.15);
+  color: var(--gold);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-family: 'Inter', monospace;
+  font-size: 12px;
+}
+
+/* ── QUESTS-ONLY filter swatch + badge ── */
+.swatch-quest {
+  background: var(--quest-photo);
+  box-shadow: 0 0 8px rgba(224,122,58,0.7);
+}
+#quest-count-badge {
+  display: inline-block;
+  min-width: 16px;
+  margin-left: 4px;
+  padding: 0 5px;
+  background: var(--quest-photo);
+  color: var(--ink);
+  border-radius: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+}
+#bottom-controls .ctrl-btn#btn-quests.active {
+  border-color: var(--quest-photo);
+  color: var(--quest-photo);
+}
 
 #panel-close {
   position: absolute;

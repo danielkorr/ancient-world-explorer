@@ -12,9 +12,30 @@ const TYPE = {
 };
 
 const QUEST = {
-  photo:    { color:'#e07a3a', icon:'📷', label:'Photo Quest',    text:'No portrait photo exists in the scholarly record. Be the first.' },
-  location: { color:'#c94040', icon:'📍', label:'Location Quest', text:'Coordinates are unverified in Pleiades. Field confirmation needed.' },
-  text:     { color:'#9b6fcf', icon:'📜', label:'Text Quest',     text:'Known only from ancient texts. Physical site not yet confirmed.' },
+  photo: {
+    color: '#e07a3a',
+    icon:  '📷',
+    label: 'Photo Quest · Open',
+    text:  'This place has no portrait photo in the scholarly record. Be the traveler who closes the gap.',
+    pitch: 'No one has ever submitted a portrait photograph of this place to humanity’s authoritative atlas of the ancient world. You can change that.',
+    cta:   'Take this Quest →',
+  },
+  location: {
+    color: '#c94040',
+    icon:  '📍',
+    label: 'Location Quest · Open',
+    text:  'The coordinates for this place are unverified. A field GPS confirmation would lock it into the record.',
+    pitch: 'Pleiades flags this site’s position as approximate. A traveler on the ground with a GPS reading would give scholars certainty.',
+    cta:   'Take this Quest →',
+  },
+  text: {
+    color: '#9b6fcf',
+    icon:  '📜',
+    label: 'Text Quest · Open',
+    text:  'This place is known only from ancient texts. The physical site has never been confirmed.',
+    pitch: 'Mentioned by ancient authors but not yet located on the ground. If your travels take you near, look carefully.',
+    cta:   'Take this Quest →',
+  },
 };
 
 // ── ORBIS LOOKUP ─────────────────────────────────────────
@@ -249,15 +270,16 @@ function showPanel(site) {
   // Quest banner
   const banner = document.getElementById('panel-quest-banner');
   if (quest) {
-    banner.style.background     = `${quest.color}12`;
-    banner.style.borderColor    = `${quest.color}33`;
+    banner.style.background  = `${quest.color}14`;
+    banner.style.borderColor = `${quest.color}33`;
+    banner.className = `visible quest-${site.quest}`;
     document.getElementById('quest-banner-icon').textContent  = quest.icon;
     document.getElementById('quest-banner-title').textContent = quest.label;
     document.getElementById('quest-banner-text').textContent  = quest.text;
     document.getElementById('quest-banner-title').style.color = quest.color;
-    banner.classList.add('visible');
+    document.getElementById('quest-banner-cta').textContent   = quest.cta;
   } else {
-    banner.classList.remove('visible');
+    banner.className = '';
   }
 
   // Type badge
@@ -368,7 +390,7 @@ function toggleLayer(which) {
 // ── KEYBOARD ─────────────────────────────────────────────
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeAuthModal(); closePanel(); }
+  if (e.key === 'Escape') { closeQuestModal(); closeAuthModal(); closePanel(); }
 });
 
 // ── AUTH + CHECK-INS ─────────────────────────────────────
@@ -577,3 +599,74 @@ try {
     history.replaceState(null, '', url.toString());
   }
 } catch {}
+
+// ── QUEST MODAL + FILTER ─────────────────────────────────
+// The signature feature: surface "Pleiades has no portrait photo here"
+// (and the other quest tiers) as an open call to travelers.
+
+function openQuestModal() {
+  if (!currentPanelSite || !currentPanelSite.quest) return;
+  const q     = QUEST[currentPanelSite.quest];
+  const site  = currentPanelSite;
+  const orbis = orbisLookup(site);
+
+  document.getElementById('quest-modal-glyph').textContent = q.icon;
+  document.getElementById('quest-modal-title').textContent = `${q.label.replace(' · Open','')} · ${site.name}`;
+  document.getElementById('quest-modal-pitch').textContent = q.pitch;
+
+  // Step 1's "Travel there." sub-line gets concrete coords + ORBIS days if known.
+  const coords = `${Math.abs(site.lat).toFixed(3)}°${site.lat>=0?'N':'S'}, ${Math.abs(site.lng).toFixed(3)}°${site.lng>=0?'E':'W'}`;
+  const days   = orbis
+    ? `, ~${orbisFormatDays(orbis.days)} ${orbisFormatDays(orbis.days)==='1'?'day':'days'} from Rome via the ${({road:'ORBIS road network',sea:'sea routes',river:'river routes',ferry:'ferry network',mixed:'ORBIS network'}[orbis.mode]||'ORBIS network')}`
+    : '';
+  document.getElementById('quest-modal-coords').textContent = `${coords}${days}.`;
+
+  document.getElementById('quest-modal').classList.add('open');
+}
+
+function closeQuestModal() {
+  document.getElementById('quest-modal').classList.remove('open');
+}
+
+async function shareQuest() {
+  if (!currentPanelSite) return;
+  const q    = QUEST[currentPanelSite.quest] || QUEST.photo;
+  const site = currentPanelSite;
+  const url  = `https://pleiades.stoa.org/places/${site.pleiades}`;
+  const text = `${q.label.replace(' · Open','')}: ${site.name} (${site.modern || 'ancient world'}). ${q.text} ${url} #VIAquest`;
+
+  if (navigator.share) {
+    try { await navigator.share({ title: `${site.name} — VIA quest`, text, url }); return; }
+    catch { /* fall through to clipboard */ }
+  }
+  try {
+    await navigator.clipboard.writeText(text);
+    const btn = document.getElementById('quest-share-btn');
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied — paste into a tweet';
+    setTimeout(() => { btn.textContent = orig; }, 2400);
+  } catch {
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+  }
+}
+
+// "Quests Only" map filter — re-renders sitesGroup with quest sites only.
+let questsOnly = false;
+const allMarkers = [];
+sitesGroup.eachLayer(m => allMarkers.push(m));
+
+function toggleQuestsOnly() {
+  questsOnly = !questsOnly;
+  document.getElementById('btn-quests').classList.toggle('active', questsOnly);
+  sitesGroup.clearLayers();
+  for (const m of allMarkers) {
+    if (!questsOnly || m._site.quest) sitesGroup.addLayer(m);
+  }
+}
+
+function refreshQuestBadge() {
+  const n  = SITES.filter(s => !!s.quest).length;
+  const el = document.getElementById('quest-count-badge');
+  if (el) el.textContent = n > 99 ? '99+' : String(n);
+}
+refreshQuestBadge();

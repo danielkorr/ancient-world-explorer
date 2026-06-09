@@ -92,6 +92,23 @@
   </div>
 </div>
 
+<!-- Quest modal (instructions + share affordance for chosen quest) -->
+<div id="quest-modal" onclick="if(event.target===this)closeQuestModal()">
+  <div id="quest-modal-card">
+    <button class="auth-close" onclick="closeQuestModal()">✕</button>
+    <div class="quest-glyph-large" id="quest-modal-glyph">📷</div>
+    <h2 class="auth-title" id="quest-modal-title">Photo Quest</h2>
+    <div class="auth-sub" id="quest-modal-pitch"></div>
+    <ol class="quest-steps">
+      <li><strong>Travel there.</strong> <span id="quest-modal-coords"></span></li>
+      <li><strong>Photograph it.</strong> Daylight, full structure in frame, GPS metadata on if your camera supports it.</li>
+      <li><strong>Submit it.</strong> Share the photo on social with <code>#VIAquest</code> and tag the site. We'll relay confirmed submissions back to Pleiades' scholarly record.</li>
+    </ol>
+    <button class="auth-primary" id="quest-share-btn" onclick="shareQuest()">Share This Quest</button>
+    <button class="auth-secondary" onclick="closeQuestModal()">Close</button>
+  </div>
+</div>
+
 <!-- Bottom Controls -->
 <div id="bottom-controls">
   <button class="ctrl-btn active" id="btn-roads" onclick="toggleLayer('roads')">
@@ -99,6 +116,9 @@
   </button>
   <button class="ctrl-btn active" id="btn-sites" onclick="toggleLayer('sites')">
     <div class="swatch-dot"></div>Sites &amp; Cities
+  </button>
+  <button class="ctrl-btn" id="btn-quests" onclick="toggleQuestsOnly()">
+    <div class="swatch-dot swatch-quest"></div>Quests Only <span id="quest-count-badge"></span>
   </button>
 </div>
 
@@ -129,9 +149,10 @@
   <!-- Quest banner (hidden until quest site selected) -->
   <div id="panel-quest-banner">
     <span class="quest-banner-icon" id="quest-banner-icon">📷</span>
-    <div>
+    <div class="quest-banner-body">
       <div class="quest-banner-title" id="quest-banner-title">QUEST</div>
       <div class="quest-banner-text"  id="quest-banner-text"></div>
+      <button class="quest-banner-cta" id="quest-banner-cta" onclick="openQuestModal()">Take this Quest →</button>
     </div>
   </div>
 

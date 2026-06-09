@@ -15,6 +15,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+  <!-- Supabase client (loaded as global; we wire it in js/auth.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <!-- App styles -->
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -131,6 +134,7 @@
 </div>
 
 <!-- Data + App -->
+<script src="js/config.js"></script>
 <script src="js/orbis-days.js"></script>
 <script src="js/sites-pleiades.js"></script>
 <script src="js/data.js"></script>

@@ -28,6 +28,18 @@
   const LS_USER     = 'via.user';
   const LS_CHECKINS = 'via.checkins';
 
+  // ── SUPABASE CLIENT (Phase 1: wired, not yet used) ─────
+  // Initialize the global Supabase client if both the config and the
+  // CDN-loaded `supabase` global are present. Phase 2 will introduce
+  // a SupabaseBackend that uses this; for now we just expose it as
+  // window.VIA_SB so the console / future code can reach it.
+  try {
+    const cfg = window.VIA_CONFIG;
+    if (cfg && cfg.SUPABASE_URL && cfg.SUPABASE_KEY && window.supabase) {
+      window.VIA_SB = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_KEY);
+    }
+  } catch (_) { /* silent — local mode still works without the client */ }
+
   function uuid() {
     // Good-enough for local stage; backend will mint real uuids.
     return (crypto && crypto.randomUUID)

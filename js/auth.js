@@ -279,8 +279,22 @@
     },
 
     async signOut() {
-      await window.VIA_SB.auth.signOut();
-      // Auth listener will null _user and emit.
+      // sb.auth.signOut() also wedges on ES256 tokens (hits getUser()
+      // internally). Clear the stored session by hand, null local state,
+      // emit, then reload so the next boot starts cleanly with no token.
+      try {
+        const cfg = window.VIA_CONFIG;
+        const projectRef = cfg.SUPABASE_URL.replace(/^https:\/\//, '').split('.')[0];
+        localStorage.removeItem(`sb-${projectRef}-auth-token`);
+      } catch (_) {}
+      this._user = null;
+      this._myCheckins = [];
+      emit();
+      // Fire-and-forget the supabase-side sign-out so the refresh token
+      // gets invalidated server-side. We don't await — it may hang.
+      try { window.VIA_SB.auth.signOut(); } catch (_) {}
+      // Reload to drop any in-memory client state.
+      setTimeout(() => location.reload(), 50);
     },
 
     async checkIn(site, opts = {}) {

@@ -225,8 +225,10 @@
       // Manual session hydration. sb.auth.getSession() wedges on ES256
       // tokens (calls getUser() internally, hangs forever). Decode the
       // persisted JWT ourselves — same pattern the magic-link hash handler
-      // uses. .from() queries still authenticate because supabase-js
-      // reads the Authorization header from the same storage key.
+      // uses. Set _user immediately from the JWT so the pill paints on
+      // the first frame; enhance from the profiles table in the background.
+      // .from() queries still authenticate because supabase-js reads the
+      // Authorization header from the same storage key.
       try {
         const cfg = window.VIA_CONFIG;
         const projectRef = cfg.SUPABASE_URL.replace(/^https:\/\//, '').split('.')[0];
@@ -240,15 +242,23 @@
             const payload = JSON.parse(atob(pad));
             const nowSec = Math.floor(Date.now() / 1000);
             if (payload.exp && payload.exp > nowSec) {
-              await this._loadProfile(payload.sub);
-              await this._loadMyCheckins();
+              // Optimistic _user from the JWT — pill renders immediately.
+              const displayName = (payload.user_metadata && payload.user_metadata.name)
+                || (payload.email && payload.email.split('@')[0])
+                || 'Traveler';
+              this._user = { id: payload.sub, name: displayName, email: payload.email };
+              emit();
+              // Background enhance — fill in profile row + checkins. If
+              // the .from() queries fail, the optimistic _user stays.
+              this._loadProfile(payload.sub).then(() => emit()).catch(() => {});
+              this._loadMyCheckins().then(() => emit()).catch(() => {});
             } else {
               localStorage.removeItem(`sb-${projectRef}-auth-token`);
             }
           }
         }
       } catch (_) { /* signed-out fall-through */ }
-      await this._loadSiteCounts();
+      this._loadSiteCounts().then(() => emit()).catch(() => {});
       this._ready = true;
       emit();
     },
@@ -350,7 +360,14 @@
         .select('id, name, avatar_url, bio, created_at')
         .eq('id', userId)
         .maybeSingle();
-      this._user = data || { id: userId, name: 'Traveler' };
+      // Merge: keep any optimistic fields (email, JWT-derived name) and
+      // overlay the profile row on top. If no profile row exists, the
+      // optimistic _user stays untouched.
+      if (data) {
+        this._user = { ...(this._user || { id: userId }), ...data };
+      } else if (!this._user) {
+        this._user = { id: userId, name: 'Traveler' };
+      }
     },
 
     async _loadMyCheckins() {

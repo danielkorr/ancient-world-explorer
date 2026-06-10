@@ -40,12 +40,28 @@
         auth: {
           persistSession: true,
           autoRefreshToken: true,
-          detectSessionInUrl: true,
+          detectSessionInUrl: false,
           lock: (_name, _timeout, fn) => fn(),
         },
       });
     }
   } catch (_) { /* silent — local mode still works without the client */ }
+
+  // Manual magic-link hash handler. supabase-js 2.49.4's built-in
+  // detectSessionInUrl hangs forever on this project's ES256-signed
+  // token format, so we parse the redirect hash ourselves.
+  try {
+    if (window.VIA_SB && window.location.hash.includes('access_token=')) {
+      const params = new URLSearchParams(window.location.hash.slice(1));
+      const access_token  = params.get('access_token');
+      const refresh_token = params.get('refresh_token');
+      if (access_token && refresh_token) {
+        window.VIA_SB.auth.setSession({ access_token, refresh_token })
+          .catch(() => {});
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    }
+  } catch (_) { /* silent */ }
 
   function uuid() {
     // Good-enough for local stage; backend will mint real uuids.

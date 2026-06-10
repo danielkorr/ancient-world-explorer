@@ -48,17 +48,39 @@
   } catch (_) { /* silent — local mode still works without the client */ }
 
   // Manual magic-link hash handler. supabase-js 2.49.4's built-in
-  // detectSessionInUrl hangs forever on this project's ES256-signed
-  // token format, so we parse the redirect hash ourselves.
+  // detectSessionInUrl and setSession both call getUser() internally,
+  // which hangs forever on this project's ES256-signed tokens. Instead
+  // we decode the JWT ourselves, write the full session shape directly
+  // to localStorage in the format persistSession reads at boot, then
+  // reload so the client picks it up via the proven path.
   try {
-    if (window.VIA_SB && window.location.hash.includes('access_token=')) {
+    const cfg = window.VIA_CONFIG;
+    if (cfg && window.location.hash.includes('access_token=')) {
       const params = new URLSearchParams(window.location.hash.slice(1));
       const access_token  = params.get('access_token');
       const refresh_token = params.get('refresh_token');
+      const expires_in    = parseInt(params.get('expires_in'),  10) || 3600;
+      const expires_at    = parseInt(params.get('expires_at'),  10) || (Math.floor(Date.now()/1000) + expires_in);
       if (access_token && refresh_token) {
-        window.VIA_SB.auth.setSession({ access_token, refresh_token })
-          .catch(() => {});
+        const b64 = access_token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+        const pad = b64 + '='.repeat((4 - b64.length % 4) % 4);
+        const payload = JSON.parse(atob(pad));
+        const user = {
+          id:             payload.sub,
+          email:          payload.email,
+          aud:            payload.aud,
+          role:           payload.role,
+          app_metadata:   payload.app_metadata  || {},
+          user_metadata:  payload.user_metadata || {},
+          created_at:     new Date().toISOString(),
+        };
+        const session = { access_token, refresh_token, expires_in, expires_at, token_type: 'bearer', user };
+        const projectRef = cfg.SUPABASE_URL.replace(/^https:\/\//, '').split('.')[0];
+        localStorage.setItem(`sb-${projectRef}-auth-token`, JSON.stringify(session));
+        // Strip the hash and reload so VIA_SB constructs with the token
+        // already in storage. This avoids any setSession() code path.
         history.replaceState(null, '', window.location.pathname + window.location.search);
+        location.reload();
       }
     }
   } catch (_) { /* silent */ }

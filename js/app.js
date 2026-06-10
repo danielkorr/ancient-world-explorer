@@ -107,14 +107,18 @@ const ancientLayer = L.tileLayer(
   { maxZoom:11, attribution:'© <a href="https://dare.ht.lu.se/" target="_blank">Digital Atlas of the Roman Empire</a>' }
 );
 
-// Sepia-toned modern basemap used as a fallback when DARE tiles fail.
-// CSS class `ancient-fallback` applies the sepia filter (see style.css).
+// Sepia-toned modern basemap that sits permanently underneath DARE in
+// ancient mode. Where DARE has coverage (Roman world), its tiles render
+// on top. Where DARE 404s (panning outside the empire, or a temporary
+// server hiccup), the sepia fallback shows through naturally — no mode
+// swap, no banner, no permanent confusion. CSS class `ancient-fallback`
+// applies the sepia filter (see style.css).
 const ancientFallbackLayer = L.tileLayer(
   'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
   {
     maxZoom: 18,
     className: 'ancient-fallback',
-    attribution: 'Ancient tiles offline — © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
   }
 );
 
@@ -123,51 +127,22 @@ const modernLayer = L.tileLayer(
   { maxZoom:19, attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>' }
 );
 
+// Boot with the fallback below + DARE on top. Leaflet stacks tile layers
+// in the order they're added, so fallback-first keeps DARE visually on top.
 const map = L.map('map', {
   center: [38.5, 17.0],
   zoom: 5,
   zoomControl: false,
-  layers: [ancientLayer],
+  layers: [ancientFallbackLayer, ancientLayer],
 });
 
 let currentEra = 'ancient';
-
-// ── DARE FALLBACK ────────────────────────────────────────
-// dh.gu.se is a single-origin university server with no CDN. If a handful
-// of tiles fail within a short window, swap to the sepia fallback so the
-// ancient view still renders something map-shaped.
-
-let dareErrors = 0;
-let dareFallbackActive = false;
-const DARE_ERROR_THRESHOLD = 4;
-
-ancientLayer.on('tileerror', () => {
-  if (dareFallbackActive) return;
-  dareErrors++;
-  if (dareErrors >= DARE_ERROR_THRESHOLD) activateDareFallback();
-});
-
-ancientLayer.on('tileload', () => {
-  // Successful loads decay the error count so a transient blip doesn't trip us.
-  if (dareErrors > 0) dareErrors--;
-});
 
 // L.LayerGroup has no bringToFront. Re-add the group to put it on top of
 // any tile layer that was just inserted under it.
 function raiseOverlays() {
   if (map.hasLayer(roadsGroup)) { map.removeLayer(roadsGroup); map.addLayer(roadsGroup); }
   if (map.hasLayer(sitesGroup)) { map.removeLayer(sitesGroup); map.addLayer(sitesGroup); }
-}
-
-function activateDareFallback() {
-  dareFallbackActive = true;
-  if (currentEra === 'ancient') {
-    map.removeLayer(ancientLayer);
-    map.addLayer(ancientFallbackLayer);
-    raiseOverlays();
-  }
-  const banner = document.getElementById('dare-fallback-banner');
-  if (banner) banner.classList.add('visible');
 }
 
 // ── ROADS ────────────────────────────────────────────────
@@ -369,13 +344,14 @@ function setEra(era) {
   document.getElementById('btn-ancient').classList.toggle('active', era === 'ancient');
   document.getElementById('btn-modern').classList.toggle('active',  era === 'modern');
 
-  const ancient = dareFallbackActive ? ancientFallbackLayer : ancientLayer;
   if (era === 'ancient') {
-    map.removeLayer(modernLayer);
-    map.addLayer(ancient);
+    if (map.hasLayer(modernLayer)) map.removeLayer(modernLayer);
+    if (!map.hasLayer(ancientFallbackLayer)) map.addLayer(ancientFallbackLayer);
+    if (!map.hasLayer(ancientLayer))         map.addLayer(ancientLayer);
   } else {
-    map.removeLayer(ancient);
-    map.addLayer(modernLayer);
+    if (map.hasLayer(ancientLayer))         map.removeLayer(ancientLayer);
+    if (map.hasLayer(ancientFallbackLayer)) map.removeLayer(ancientFallbackLayer);
+    if (!map.hasLayer(modernLayer))         map.addLayer(modernLayer);
   }
   raiseOverlays();
 }

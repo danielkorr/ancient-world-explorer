@@ -206,21 +206,48 @@
     async init() {
       const sb = window.VIA_SB;
       if (!sb) return;
+      // Listener stays for future SIGNED_OUT / cross-tab events. Never
+      // rely on it for boot hydration — INITIAL_SESSION doesn't fire
+      // reliably on this project's ES256 tokens in supabase-js 2.49.4.
       sb.auth.onAuthStateChange(async (_event, session) => {
+        if (_event === 'SIGNED_OUT') {
+          this._user = null;
+          this._myCheckins = [];
+          emit();
+          return;
+        }
         if (session && session.user) {
           await this._loadProfile(session.user.id);
           await this._loadMyCheckins();
-        } else {
-          this._user = null;
-          this._myCheckins = [];
+          emit();
         }
-        emit();
       });
-      const { data: { session } } = await sb.auth.getSession();
-      if (session && session.user) {
-        await this._loadProfile(session.user.id);
-        await this._loadMyCheckins();
-      }
+      // Manual session hydration. sb.auth.getSession() wedges on ES256
+      // tokens (calls getUser() internally, hangs forever). Decode the
+      // persisted JWT ourselves — same pattern the magic-link hash handler
+      // uses. .from() queries still authenticate because supabase-js
+      // reads the Authorization header from the same storage key.
+      try {
+        const cfg = window.VIA_CONFIG;
+        const projectRef = cfg.SUPABASE_URL.replace(/^https:\/\//, '').split('.')[0];
+        const raw = localStorage.getItem(`sb-${projectRef}-auth-token`);
+        if (raw) {
+          const stored = JSON.parse(raw);
+          const tok = stored && stored.access_token;
+          if (tok) {
+            const b64 = tok.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+            const pad = b64 + '='.repeat((4 - b64.length % 4) % 4);
+            const payload = JSON.parse(atob(pad));
+            const nowSec = Math.floor(Date.now() / 1000);
+            if (payload.exp && payload.exp > nowSec) {
+              await this._loadProfile(payload.sub);
+              await this._loadMyCheckins();
+            } else {
+              localStorage.removeItem(`sb-${projectRef}-auth-token`);
+            }
+          }
+        }
+      } catch (_) { /* signed-out fall-through */ }
       await this._loadSiteCounts();
       this._ready = true;
       emit();

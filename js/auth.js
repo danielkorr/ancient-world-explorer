@@ -39,7 +39,7 @@
       window.VIA_SB = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_KEY, {
         auth: {
           persistSession: true,
-          autoRefreshToken: true,
+          autoRefreshToken: false,
           detectSessionInUrl: false,
           lock: (_name, _timeout, fn) => fn(),
         },

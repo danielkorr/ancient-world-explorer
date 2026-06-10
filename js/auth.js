@@ -36,7 +36,14 @@
   try {
     const cfg = window.VIA_CONFIG;
     if (cfg && cfg.SUPABASE_URL && cfg.SUPABASE_KEY && window.supabase) {
-      window.VIA_SB = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_KEY);
+      window.VIA_SB = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_KEY, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true,
+          lock: (_name, _timeout, fn) => fn(),
+        },
+      });
     }
   } catch (_) { /* silent — local mode still works without the client */ }
 

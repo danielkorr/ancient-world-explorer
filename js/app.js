@@ -138,22 +138,55 @@ const map = L.map('map', {
 
 let currentEra = 'ancient';
 
-// L.LayerGroup has no bringToFront. Re-add the group to put it on top of
-// any tile layer that was just inserted under it.
+// L.LayerGroup has no bringToFront. Re-add each group in stacking order
+// (bottom to top) to put them above any tile layer just inserted under
+// them. Itiner-e baseline first, named roads next, sites on top.
 function raiseOverlays() {
+  if (typeof itinereRoadsGroup !== 'undefined' && map.hasLayer(itinereRoadsGroup)) {
+    map.removeLayer(itinereRoadsGroup); map.addLayer(itinereRoadsGroup);
+  }
   if (map.hasLayer(roadsGroup)) { map.removeLayer(roadsGroup); map.addLayer(roadsGroup); }
   if (map.hasLayer(sitesGroup)) { map.removeLayer(sitesGroup); map.addLayer(sitesGroup); }
 }
 
 // ── ROADS ────────────────────────────────────────────────
-// Hand-curated named roads (Via Appia, etc.) render with a road-casing
-// style: dark outer stroke + bright inner stroke. Luminance contrast
-// (dark→bright→map) reads unambiguously to all color-vision types, so the
-// road network pops on sepia/DARE tiles without depending on hue alone.
-// The Itiner-e baseline (when wired in) will render as thin subtle lines
-// in a separate group beneath this one, so these stay the visual lead.
+// Two-layer roads model:
+//   itinereRoadsGroup — ~14,800 segments / 80k vertices from the Itiner-e
+//     scholarly dataset (CC BY 4.0, De Soto et al. 2025). Rendered on a
+//     shared Canvas for performance, styled as a subtle amber baseline
+//     so the eye reads "Roman road network density" without competing
+//     with the curated highlights.
+//   roadsGroup — the 14 hand-curated named roads (Via Appia, Via Egnatia,
+//     etc.). Road-casing style: dark outer stroke + bright inner stroke.
+//     Luminance contrast (dark→bright→map) reads unambiguously to all
+//     color-vision types, so the named roads pop on sepia/DARE tiles
+//     without depending on hue alone.
+// Order matters: itinere group added first → curated covers it on
+// overlap, and the Itiner-e baseline fills the rest of the empire.
 
-const roadsGroup = L.layerGroup().addTo(map);
+const itinereRenderer = L.canvas({ padding: 0.2 });
+const itinereRoadsGroup = L.layerGroup().addTo(map);
+const roadsGroup        = L.layerGroup().addTo(map);
+
+if (typeof ROADS_ITINERE !== 'undefined') {
+  for (const seg of ROADS_ITINERE) {
+    // coords are [lng, lat] from the build script; Leaflet wants [lat, lng].
+    const latlngs = seg.coords.map(c => [c[1], c[0]]);
+    L.polyline(latlngs, {
+      renderer: itinereRenderer,
+      color: '#a17840',
+      weight: 1,
+      opacity: 0.42,
+      interactive: false,
+      lineCap: 'round',
+      lineJoin: 'round',
+    }).addTo(itinereRoadsGroup);
+  }
+  // CC BY 4.0 attribution — required by the dataset license.
+  map.attributionControl.addAttribution(
+    'Roads: <a href="https://itiner-e.org" target="_blank" rel="noopener">Itiner-e</a> (CC BY 4.0)'
+  );
+}
 
 const ROAD_CASING_COLOR = '#1a0e00';     // deep umber — dark enough vs both sepia and DARE
 const ROAD_CASING_WEIGHT = 6;
@@ -388,10 +421,19 @@ const layerState = { roads:true, sites:true };
 
 function toggleLayer(which) {
   layerState[which] = !layerState[which];
-  const group = which === 'roads' ? roadsGroup : sitesGroup;
-  const btn   = document.getElementById('btn-' + which);
-  if (layerState[which]) { map.addLayer(group);    btn.classList.add('active');    }
-  else                   { map.removeLayer(group); btn.classList.remove('active'); }
+  // The "roads" toggle covers both the curated named roads and the
+  // Itiner-e baseline — the user thinks of them as one concept.
+  const groups = which === 'roads'
+    ? [itinereRoadsGroup, roadsGroup]
+    : [sitesGroup];
+  const btn = document.getElementById('btn-' + which);
+  if (layerState[which]) {
+    for (const g of groups) if (g) map.addLayer(g);
+    btn.classList.add('active');
+  } else {
+    for (const g of groups) if (g) map.removeLayer(g);
+    btn.classList.remove('active');
+  }
 }
 
 // ── KEYBOARD ─────────────────────────────────────────────

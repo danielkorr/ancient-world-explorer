@@ -146,12 +146,38 @@ function raiseOverlays() {
 }
 
 // ── ROADS ────────────────────────────────────────────────
+// Hand-curated named roads (Via Appia, etc.) render with a road-casing
+// style: dark outer stroke + bright inner stroke. Luminance contrast
+// (dark→bright→map) reads unambiguously to all color-vision types, so the
+// road network pops on sepia/DARE tiles without depending on hue alone.
+// The Itiner-e baseline (when wired in) will render as thin subtle lines
+// in a separate group beneath this one, so these stay the visual lead.
 
 const roadsGroup = L.layerGroup().addTo(map);
 
+const ROAD_CASING_COLOR = '#1a0e00';     // deep umber — dark enough vs both sepia and DARE
+const ROAD_CASING_WEIGHT = 6;
+const ROAD_FILL_COLOR    = '#ffd66b';     // bright saffron — high luminance vs casing
+const ROAD_FILL_WEIGHT   = 3;
+
 ROADS.forEach(road => {
   const latlngs = road.coords.map(c => [c[1], c[0]]);
-  L.polyline(latlngs, { color:'#c9a45a', weight:1.8, opacity:0.58 })
+  // Casing first, then fill on top — same coords, different stroke weight.
+  L.polyline(latlngs, {
+    color: ROAD_CASING_COLOR,
+    weight: ROAD_CASING_WEIGHT,
+    opacity: 0.85,
+    lineCap: 'round',
+    lineJoin: 'round',
+    interactive: false,
+  }).addTo(roadsGroup);
+  L.polyline(latlngs, {
+    color: ROAD_FILL_COLOR,
+    weight: ROAD_FILL_WEIGHT,
+    opacity: 1,
+    lineCap: 'round',
+    lineJoin: 'round',
+  })
    .bindTooltip(
      `<b style="color:#d4a853">${road.name}</b><br>${road.desc}<br><span style="opacity:.55">Est. ${road.built}</span>`,
      { className:'road-tip', sticky:true }

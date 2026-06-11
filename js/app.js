@@ -174,7 +174,7 @@ if (typeof ROADS_ITINERE !== 'undefined') {
     const latlngs = seg.coords.map(c => [c[1], c[0]]);
     L.polyline(latlngs, {
       renderer: itinereRenderer,
-      color: '#a17840',
+      color: '#8a6a3a',
       weight: 1,
       opacity: 0.42,
       interactive: false,

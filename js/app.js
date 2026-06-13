@@ -4,9 +4,15 @@
 
 // ── TYPE CONFIG ──────────────────────────────────────────
 
+// Documented-site palette. Deliberately cool/muted so the warm quest signal
+// colors (photo-orange, location-red, text-purple) own the "go do something"
+// end of the spectrum. The old city terracotta (#e07a5f) collided with
+// photo-quest orange (#e07a3a) at marker size — they were indistinguishable,
+// which is what made the map read as undifferentiated orange. City is now a
+// muted parchment-stone; capitals stay bright gold so they still pop.
 const TYPE = {
-  capital: { color:'#d4a853', icon:'⚡' },
-  city:    { color:'#e07a5f', icon:'⊕' },
+  capital: { color:'#e8c25a', icon:'⚡' },
+  city:    { color:'#b89a6a', icon:'⊕' },
   port:    { color:'#5e9fd4', icon:'⚓' },
   fortress:{ color:'#7bc47b', icon:'⚔' },
 };
@@ -104,7 +110,15 @@ function orbisDetailLine(orbis) {
 
 const ancientLayer = L.tileLayer(
   'https://dh.gu.se/tiles/imperium/{z}/{x}/{y}.png',
-  { maxZoom:11, attribution:'© <a href="https://dare.ht.lu.se/" target="_blank">Digital Atlas of the Roman Empire</a>' }
+  {
+    // DARE only ships tiles to z11. maxNativeZoom lets Leaflet upscale those
+    // z11 tiles past 11 instead of dropping the layer entirely (which used to
+    // make the ancient map silently vanish on deep zoom). maxZoom matches the
+    // sepia fallback so both layers cover the same zoom range.
+    maxNativeZoom: 11,
+    maxZoom: 18,
+    attribution:'© <a href="https://dh.gu.se/dare/" target="_blank">Digital Atlas of the Roman Empire</a>',
+  }
 );
 
 // Sepia-toned modern basemap that sits permanently underneath DARE in
@@ -258,6 +272,12 @@ function makeIcon(site, hovered) {
 const sitesGroup   = L.layerGroup().addTo(map);
 let   activeMarker = null;
 
+// Curated sites are the ~95 hand-written entries in SITES_CURATED. The global
+// SITES array spreads those same object references in first (see data.js), so
+// identity membership is exact. Used for progressive disclosure: the landing
+// shows only these, the dense Pleiades set reveals as you zoom in.
+const CURATED_SET = new Set(typeof SITES_CURATED !== 'undefined' ? SITES_CURATED : []);
+
 SITES.forEach(site => {
   const marker = L.marker([site.lat, site.lng], {
     icon: makeIcon(site, false),
@@ -407,6 +427,7 @@ function setEra(era) {
     if (map.hasLayer(modernLayer)) map.removeLayer(modernLayer);
     if (!map.hasLayer(ancientFallbackLayer)) map.addLayer(ancientFallbackLayer);
     if (!map.hasLayer(ancientLayer))         map.addLayer(ancientLayer);
+    updateAncientLayer();  // re-apply zoom-staged opacity for current zoom
   } else {
     if (map.hasLayer(ancientLayer))         map.removeLayer(ancientLayer);
     if (map.hasLayer(ancientFallbackLayer)) map.removeLayer(ancientFallbackLayer);
@@ -699,23 +720,70 @@ async function shareQuest() {
   }
 }
 
-// "Quests Only" map filter — re-renders sitesGroup with quest sites only.
+// "Quests Only" map filter + progressive zoom disclosure both drive which
+// markers live in sitesGroup. One function owns the membership so they can't
+// fight each other.
 let questsOnly = false;
 const allMarkers = [];
 sitesGroup.eachLayer(m => allMarkers.push(m));
 
+// Zoom-staged reveal. The landing (z<=5) shows only the ~95 curated sites +
+// nothing else — clean, legible, an empire of great cities rather than 473
+// dots of orange measles. z6 adds the quests (the actionable game layer).
+// z>=7, where DARE itself becomes readable, reveals the full Pleiades set.
+function siteVisibleAtZoom(site, z) {
+  if (z >= 7) return true;
+  if (z >= 6) return CURATED_SET.has(site) || !!site.quest;
+  return CURATED_SET.has(site);
+}
+
+function refreshVisibleMarkers() {
+  const z = map.getZoom();
+  sitesGroup.clearLayers();
+  for (const m of allMarkers) {
+    // Quests Only is an explicit "show me the game" mode — it bypasses the
+    // zoom gate so toggling it at the landing doesn't show an empty map.
+    if (questsOnly) {
+      if (m._site.quest) sitesGroup.addLayer(m);
+    } else if (siteVisibleAtZoom(m._site, z)) {
+      sitesGroup.addLayer(m);
+    }
+  }
+}
+
 function toggleQuestsOnly() {
   questsOnly = !questsOnly;
   document.getElementById('btn-quests').classList.toggle('active', questsOnly);
-  sitesGroup.clearLayers();
-  for (const m of allMarkers) {
-    if (!questsOnly || m._site.quest) sitesGroup.addLayer(m);
-  }
+  refreshVisibleMarkers();
 }
+
+// DARE only becomes legible around z7; at the z5 landing its shrunk atlas
+// plate is pure label noise, while the sepia terrain fallback underneath is
+// clean and beautiful. Fade DARE in as you zoom so the ancient world resolves
+// the deeper you go — turning zoom into a reveal.
+function ancientOpacityForZoom(z) {
+  if (z <= 5) return 0;
+  if (z >= 7) return 1;
+  return 0.5;
+}
+
+function updateAncientLayer() {
+  if (currentEra !== 'ancient') return;
+  ancientLayer.setOpacity(ancientOpacityForZoom(map.getZoom()));
+}
+
+map.on('zoomend', () => {
+  updateAncientLayer();
+  if (!questsOnly) refreshVisibleMarkers();
+});
+
+// Prime both at boot (zoom 5, ancient era): sepia landing + curated sites only.
+updateAncientLayer();
+refreshVisibleMarkers();
 
 function refreshQuestBadge() {
   const n  = SITES.filter(s => !!s.quest).length;
   const el = document.getElementById('quest-count-badge');
-  if (el) el.textContent = n > 99 ? '99+' : String(n);
+  if (el) el.textContent = String(n);  // real count (289) beats a flat "99+"
 }
 refreshQuestBadge();

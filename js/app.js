@@ -472,6 +472,18 @@ function toggleLayer(which) {
   }
 }
 
+// Filtering quests is meaningless with the sites layer hidden, so engaging any
+// quest filter turns Sites & Cities back on. Fixes "Quests Only does nothing
+// unless Sites & Cities is already selected".
+function ensureSitesLayerOn() {
+  if (!layerState.sites) {
+    layerState.sites = true;
+    map.addLayer(sitesGroup);
+    document.getElementById('btn-sites').classList.add('active');
+    raiseOverlays();
+  }
+}
+
 // ── KEYBOARD ─────────────────────────────────────────────
 
 document.addEventListener('keydown', e => {
@@ -788,6 +800,10 @@ const questSites     = SITES.filter(s => !!s.quest);
 const TOTAL_QUESTS   = questSites.length;
 const QUEST_PLEIADES = new Set(questSites.map(s => s.pleiades).filter(Boolean));
 
+// Quest tiers that actually have sites — "Quests Only" selects exactly these
+// (so the empty Text tier doesn't get spuriously toggled on).
+const presentQuestTiers = QUEST_TIERS.filter(t => tierCounts[t]);
+
 // Zoom-staged reveal. The landing (z<=5) shows only the ~95 curated sites +
 // nothing else — clean, legible, an empire of great cities rather than 473
 // dots of orange measles. z6 adds the quests (the actionable game layer).
@@ -827,8 +843,8 @@ function syncFilterUI() {
   }
   const qBtn = document.getElementById('btn-quests');
   if (qBtn) {
-    const questsExactly = activeTiers.size === QUEST_TIERS.length &&
-                          QUEST_TIERS.every(t => activeTiers.has(t));
+    const questsExactly = activeTiers.size === presentQuestTiers.length &&
+                          presentQuestTiers.every(t => activeTiers.has(t));
     qBtn.classList.toggle('active', questsExactly);
   }
 }
@@ -838,6 +854,7 @@ function toggleTier(tier) {
   if (!tierCounts[tier]) return;
   if (activeTiers.has(tier)) activeTiers.delete(tier);
   else                       activeTiers.add(tier);
+  if (activeTiers.size > 0) ensureSitesLayerOn();
   syncFilterUI();
   refreshVisibleMarkers();
 }
@@ -861,10 +878,11 @@ function decorateLegend() {
 // again from that exact state clears back to the full zoom-staged map. Open to
 // everyone — previewing quests is the hook; the sign-in wall is at check-in.
 function toggleQuestsOnly() {
-  const questsExactly = activeTiers.size === QUEST_TIERS.length &&
-                        QUEST_TIERS.every(t => activeTiers.has(t));
+  const questsExactly = activeTiers.size === presentQuestTiers.length &&
+                        presentQuestTiers.every(t => activeTiers.has(t));
   activeTiers.clear();
-  if (!questsExactly) QUEST_TIERS.forEach(t => activeTiers.add(t));
+  if (!questsExactly) presentQuestTiers.forEach(t => activeTiers.add(t));
+  if (activeTiers.size > 0) ensureSitesLayerOn();
   syncFilterUI();
   refreshVisibleMarkers();
 }

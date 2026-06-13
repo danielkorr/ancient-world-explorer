@@ -154,6 +154,15 @@ const map = L.map('map', {
   zoom: 5,
   zoomControl: false,
   layers: [ancientFallbackLayer, ancientLayer],
+
+  // Navigation feel. Leaflet's defaults make a small flick fling the map a long
+  // way (inertiaMaxSpeed is Infinity by default) and scroll-zoom jumps fast.
+  // Tame both so the map tracks the finger/cursor calmly instead of darting.
+  inertiaDeceleration: 4500,   // stop the glide sooner (default 3000)
+  inertiaMaxSpeed: 1200,       // cap fling speed (default Infinity) — the big one
+  easeLinearity: 0.2,
+  wheelPxPerZoomLevel: 140,    // ~2.3x more scroll per zoom step (default 60)
+  wheelDebounceTime: 60,       // default 40
 });
 
 let currentEra = 'ancient';

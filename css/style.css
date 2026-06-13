@@ -362,13 +362,6 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 
 .ctrl-btn:hover { border-color: rgba(212,168,83,0.55); }
 
-/* Quests Only is locked until sign-in. Dim it and reveal the padlock so the
-   button reads "available, but you have to join" rather than "broken". */
-#quests-lock { display: none; margin-left: 5px; font-size: 9px; opacity: 0.8; }
-.ctrl-btn.locked { opacity: 0.6; }
-.ctrl-btn.locked #quest-count-badge { opacity: 0.5; }
-.ctrl-btn.locked #quests-lock { display: inline; }
-
 .swatch-line {
   width: 18px; height: 3px;
   border-radius: 2px;

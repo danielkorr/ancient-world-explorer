@@ -662,7 +662,6 @@ VIA.auth.onChange(() => {
   refreshProfilePill();
   refreshCheckinRow();
   refreshAllMarkers();
-  refreshQuestsButton();
   // Detect transitions from signed-out → signed-in (cloud only) so we can
   // offer to import any localStorage check-ins from prior guest sessions.
   const user = VIA.auth.currentUser();
@@ -768,34 +767,12 @@ function refreshVisibleMarkers() {
 }
 
 function toggleQuestsOnly() {
-  // Quests are the game layer — you have to join to play. Signed-out users get
-  // the sign-in modal instead of the filter. Once signed in the button works
-  // normally (and refreshQuestsButton unlocks it live via VIA.auth.onChange).
-  if (!VIA.auth.currentUser()) {
-    openAuthModal();
-    return;
-  }
+  // Open to everyone — previewing the quests is the hook that makes people
+  // want to join. The sign-in wall lives at check-in (onCheckInClick), not
+  // here.
   questsOnly = !questsOnly;
   document.getElementById('btn-quests').classList.toggle('active', questsOnly);
   refreshVisibleMarkers();
-}
-
-// Reflect auth state on the Quests Only control: locked (with a hint) when
-// signed out, active when signed in. Also drops the filter if the user signs
-// out while it's on, so the map doesn't get stuck in a mode they can't exit.
-function refreshQuestsButton() {
-  const btn  = document.getElementById('btn-quests');
-  if (!btn) return;
-  const signedIn = !!VIA.auth.currentUser();
-  btn.classList.toggle('locked', !signedIn);
-  btn.title = signedIn
-    ? 'Show only sites with open quests'
-    : 'Sign in to unlock quests and start contributing';
-  if (!signedIn && questsOnly) {
-    questsOnly = false;
-    btn.classList.remove('active');
-    refreshVisibleMarkers();
-  }
 }
 
 // DARE only becomes legible around z7; at the z5 landing its shrunk atlas
@@ -828,8 +805,3 @@ function refreshQuestBadge() {
   if (el) el.textContent = String(n);  // real count (289) beats a flat "99+"
 }
 refreshQuestBadge();
-
-// Prime the Quests Only lock state for the current auth status (onChange keeps
-// it in sync afterward). Runs here, after `questsOnly` is initialized, to stay
-// clear of its temporal dead zone.
-refreshQuestsButton();

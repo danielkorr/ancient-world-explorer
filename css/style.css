@@ -293,6 +293,43 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 }
 
 /* ── CHECK-IN ROW (info panel) ── */
+/* Quest progress meter — only rendered when signed in (.visible). */
+#quest-progress {
+  display: none;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+#quest-progress.visible { display: block; }
+#qp-label {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-body);
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+#qp-count {
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+#qp-track {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(212,168,83,0.12);
+  overflow: hidden;
+}
+#qp-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--gold), #b8893a);
+  box-shadow: 0 0 8px rgba(212,168,83,0.5);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 #checkin-row {
   margin-top: 16px;
   padding-top: 14px;
@@ -339,12 +376,12 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 }
 
 .ctrl-btn {
-  background: rgba(10,5,0,0.9);
-  border: 1px solid var(--border);
-  color: rgba(212,168,83,0.55);
-  padding: 8px 14px;
+  background: rgba(8,4,0,0.96);
+  border: 1px solid rgba(212,168,83,0.4);
+  color: rgba(240,230,211,0.92);
+  padding: 9px 15px;
   border-radius: 7px;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   cursor: pointer;
@@ -356,11 +393,11 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 }
 
 .ctrl-btn.active {
-  border-color: rgba(212,168,83,0.45);
+  border-color: var(--gold);
   color: var(--gold);
 }
 
-.ctrl-btn:hover { border-color: rgba(212,168,83,0.55); }
+.ctrl-btn:hover { border-color: rgba(212,168,83,0.7); }
 
 .swatch-line {
   width: 18px; height: 3px;
@@ -382,34 +419,34 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   bottom: 28px;
   right: 18px;
   z-index: 900;
-  background: rgba(10,5,0,0.9);
-  border: 1px solid var(--border);
+  background: rgba(8,4,0,0.96);
+  border: 1px solid rgba(212,168,83,0.4);
   border-radius: 8px;
-  padding: 10px 14px;
+  padding: 11px 15px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
 }
 
 /* Small affordance so it's clear the legend rows are now controls, not a
    static key. */
 .legend-hint {
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 9px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: rgba(212,168,83,0.4);
-  margin-bottom: 1px;
+  color: rgba(212,168,83,0.7);
+  margin-bottom: 2px;
 }
 
 .legend-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 9px;
+  gap: 9px;
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: rgba(240,230,211,0.9);
   font-family: 'Cinzel', serif;
   white-space: nowrap;
   cursor: pointer;
@@ -434,9 +471,9 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 /* Per-tier count, right-aligned into a column. */
 .legend-count {
   margin-left: auto;
-  padding-left: 10px;
-  font-size: 8px;
-  color: rgba(212,168,83,0.5);
+  padding-left: 12px;
+  font-size: 10px;
+  color: rgba(212,168,83,0.85);
   font-variant-numeric: tabular-nums;
 }
 
@@ -445,7 +482,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 .legend-row.disabled:hover { color: var(--text-muted); }
 
 .legend-dot {
-  width: 8px; height: 8px;
+  width: 10px; height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -880,20 +917,22 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   #profile-pill        { padding: 5px; gap: 0; }
   #profile-pill-label  { display: none; }
 
-  #bottom-controls { bottom: 20px; left: 12px; }
-  .ctrl-btn { padding: 7px 11px; font-size: 9px; }
+  #bottom-controls { bottom: 20px; left: 12px; gap: 7px; }
+  .ctrl-btn { padding: 9px 13px; font-size: 11px; }
 
   /* Legend stays visible on mobile (it's the key to the quest colors, which
-     matter most to travelers in the field). Compacted so it clears the
-     bottom-left controls on a 375px viewport. */
+     matter most to travelers in the field). Kept readable — high contrast,
+     not shrunk into illegibility. */
   #quest-legend {
     bottom: 20px;
     right: 12px;
-    padding: 8px 10px;
-    gap: 5px;
+    padding: 10px 12px;
+    gap: 6px;
   }
-  .legend-row { font-size: 8px; letter-spacing: 0.5px; }
-  .legend-dot { width: 7px; height: 7px; }
+  .legend-hint { font-size: 8px; }
+  .legend-row { font-size: 10px; letter-spacing: 0.5px; }
+  .legend-dot { width: 9px; height: 9px; }
+  .legend-count { font-size: 9px; padding-left: 10px; }
 
   /* Panel becomes full-screen bottom sheet on mobile */
   :root { --panel-width: 100vw; }

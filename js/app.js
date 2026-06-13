@@ -640,6 +640,32 @@ function refreshCheckinRow() {
     btn.textContent = '◎ Check in here';
     btn.classList.remove('visited');
   }
+
+  updateQuestProgress(user);
+}
+
+// Quest progress meter: how many distinct quest sites the signed-in user has
+// checked in to, out of TOTAL_QUESTS. Hidden when signed out (the check-in
+// button already prompts sign-in there). Updates live via refreshCheckinRow,
+// which fires on every check-in and auth change.
+function updateQuestProgress(user) {
+  const wrap = document.getElementById('quest-progress');
+  if (!wrap) return;
+  if (!user) { wrap.classList.remove('visible'); return; }
+
+  const visited = new Set(
+    VIA.auth.getUserCheckins()
+      .map(c => c.site_pleiades)
+      .filter(p => QUEST_PLEIADES.has(p))
+  );
+  const done   = visited.size;
+  const pctRaw = TOTAL_QUESTS ? (done / TOTAL_QUESTS) * 100 : 0;
+  // Floor a non-zero count at a visible sliver — 1/289 is 0.3% and would
+  // otherwise render as an empty bar despite real progress.
+  const pct = done > 0 ? Math.max(2, pctRaw) : 0;
+  document.getElementById('qp-count').textContent = `${done} / ${TOTAL_QUESTS}`;
+  document.getElementById('qp-fill').style.width = pct + '%';
+  wrap.classList.add('visible');
 }
 
 function onCheckInClick() {
@@ -755,6 +781,12 @@ const tierCounts = SITES.reduce((acc, s) => {
   acc[t] = (acc[t] || 0) + 1;
   return acc;
 }, {});
+
+// Quest-progress denominator + the set of quest Pleiades ids a check-in can
+// count against. Total matches the 289 shown on the Quests Only badge.
+const questSites     = SITES.filter(s => !!s.quest);
+const TOTAL_QUESTS   = questSites.length;
+const QUEST_PLEIADES = new Set(questSites.map(s => s.pleiades).filter(Boolean));
 
 // Zoom-staged reveal. The landing (z<=5) shows only the ~95 curated sites +
 // nothing else — clean, legible, an empire of great cities rather than 473

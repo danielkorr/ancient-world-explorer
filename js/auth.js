@@ -186,6 +186,29 @@
   const listeners = new Set();
   function emit() { for (const fn of listeners) try { fn(); } catch {} }
 
+  // Read + decode the persisted Supabase session straight from localStorage,
+  // returning { payload, key } when a valid, unexpired token is present, else
+  // null. Single source of truth for "are we actually signed in?" — used by
+  // both boot hydration and the spurious-SIGNED_OUT guard below.
+  function readStoredSession() {
+    try {
+      const cfg = window.VIA_CONFIG;
+      const projectRef = cfg.SUPABASE_URL.replace(/^https:\/\//, '').split('.')[0];
+      const key = `sb-${projectRef}-auth-token`;
+      const raw = localStorage.getItem(key);
+      if (!raw) return null;
+      const stored = JSON.parse(raw);
+      const tok = stored && stored.access_token;
+      if (!tok) return null;
+      const b64 = tok.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      const pad = b64 + '='.repeat((4 - b64.length % 4) % 4);
+      const payload = JSON.parse(atob(pad));
+      const nowSec = Math.floor(Date.now() / 1000);
+      if (payload.exp && payload.exp <= nowSec) return null;
+      return { payload, key };
+    } catch (_) { return null; }
+  }
+
   // ── SUPABASE BACKEND ─────────────────────────────────────
   // Same shape as LocalBackend. All operations are best-effort optimistic:
   // mutate the in-memory cache, emit() so the UI updates immediately, then
@@ -211,6 +234,14 @@
       // reliably on this project's ES256 tokens in supabase-js 2.49.4.
       sb.auth.onAuthStateChange(async (_event, session) => {
         if (_event === 'SIGNED_OUT') {
+          // On desktop, supabase-js fires a spurious SIGNED_OUT during boot
+          // (its internal session recovery calls getUser(), which fails on
+          // this project's ES256 tokens). That would wipe the user we just
+          // hydrated from localStorage — the "refresh logs me out on PC, but
+          // not mobile" bug. A real sign-out removes the stored token FIRST
+          // (see signOut), so if a valid token is still present this event is
+          // spurious and we ignore it.
+          if (readStoredSession()) return;
           this._user = null;
           this._myCheckins = [];
           emit();
@@ -230,32 +261,28 @@
       // .from() queries still authenticate because supabase-js reads the
       // Authorization header from the same storage key.
       try {
-        const cfg = window.VIA_CONFIG;
-        const projectRef = cfg.SUPABASE_URL.replace(/^https:\/\//, '').split('.')[0];
-        const raw = localStorage.getItem(`sb-${projectRef}-auth-token`);
-        if (raw) {
-          const stored = JSON.parse(raw);
-          const tok = stored && stored.access_token;
-          if (tok) {
-            const b64 = tok.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-            const pad = b64 + '='.repeat((4 - b64.length % 4) % 4);
-            const payload = JSON.parse(atob(pad));
-            const nowSec = Math.floor(Date.now() / 1000);
-            if (payload.exp && payload.exp > nowSec) {
-              // Optimistic _user from the JWT — pill renders immediately.
-              const displayName = (payload.user_metadata && payload.user_metadata.name)
-                || (payload.email && payload.email.split('@')[0])
-                || 'Traveler';
-              this._user = { id: payload.sub, name: displayName, email: payload.email };
-              emit();
-              // Background enhance — fill in profile row + checkins. If
-              // the .from() queries fail, the optimistic _user stays.
-              this._loadProfile(payload.sub).then(() => emit()).catch(() => {});
-              this._loadMyCheckins().then(() => emit()).catch(() => {});
-            } else {
-              localStorage.removeItem(`sb-${projectRef}-auth-token`);
-            }
-          }
+        const session = readStoredSession();
+        if (session) {
+          const { payload } = session;
+          // Optimistic _user from the JWT — pill renders immediately.
+          const displayName = (payload.user_metadata && payload.user_metadata.name)
+            || (payload.email && payload.email.split('@')[0])
+            || 'Traveler';
+          this._user = { id: payload.sub, name: displayName, email: payload.email };
+          emit();
+          // Background enhance — fill in profile row + checkins. If the
+          // .from() queries fail, the optimistic _user stays.
+          this._loadProfile(payload.sub).then(() => emit()).catch(() => {});
+          this._loadMyCheckins().then(() => emit()).catch(() => {});
+        } else {
+          // Token absent or expired — drop any stale key so a later boot is
+          // clean. readStoredSession() returns null for expired tokens too.
+          try {
+            const cfg = window.VIA_CONFIG;
+            const projectRef = cfg.SUPABASE_URL.replace(/^https:\/\//, '').split('.')[0];
+            const raw = localStorage.getItem(`sb-${projectRef}-auth-token`);
+            if (raw) localStorage.removeItem(`sb-${projectRef}-auth-token`);
+          } catch (_) {}
         }
       } catch (_) { /* signed-out fall-through */ }
       this._loadSiteCounts().then(() => emit()).catch(() => {});

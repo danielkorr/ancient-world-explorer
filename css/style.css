@@ -362,6 +362,13 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 
 .ctrl-btn:hover { border-color: rgba(212,168,83,0.55); }
 
+/* Quests Only is locked until sign-in. Dim it and reveal the padlock so the
+   button reads "available, but you have to join" rather than "broken". */
+#quests-lock { display: none; margin-left: 5px; font-size: 9px; opacity: 0.8; }
+.ctrl-btn.locked { opacity: 0.6; }
+.ctrl-btn.locked #quest-count-badge { opacity: 0.5; }
+.ctrl-btn.locked #quests-lock { display: inline; }
+
 .swatch-line {
   width: 18px; height: 3px;
   border-radius: 2px;
@@ -842,7 +849,17 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   #bottom-controls { bottom: 20px; left: 12px; }
   .ctrl-btn { padding: 7px 11px; font-size: 9px; }
 
-  #quest-legend { display: none; }
+  /* Legend stays visible on mobile (it's the key to the quest colors, which
+     matter most to travelers in the field). Compacted so it clears the
+     bottom-left controls on a 375px viewport. */
+  #quest-legend {
+    bottom: 20px;
+    right: 12px;
+    padding: 8px 10px;
+    gap: 5px;
+  }
+  .legend-row { font-size: 8px; letter-spacing: 0.5px; }
+  .legend-dot { width: 7px; height: 7px; }
 
   /* Panel becomes full-screen bottom sheet on mobile */
   :root { --panel-width: 100vw; }

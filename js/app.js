@@ -234,10 +234,20 @@ ROADS.forEach(road => {
 
 // ── SITE MARKERS ─────────────────────────────────────────
 
+// Touch screens get a larger invisible tap target wrapped around the visible
+// dot. The dots are 9-11px — fine for a mouse cursor, but far below Apple's
+// ~44px guidance, so on a phone fingers miss them and "no panel appears". The
+// hit padding makes the clickable box ~37-39px without growing the visible dot
+// (which would clutter the map). Detected once at load via the pointer media
+// query rather than user-agent sniffing.
+const COARSE_POINTER = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+const HIT_PAD = COARSE_POINTER ? 14 : 0;
+
 function makeIcon(site, hovered) {
   const quest  = site.quest ? QUEST[site.quest] : null;
   const color  = quest ? quest.color : (TYPE[site.type]?.color || '#d4a853');
   const sz     = hovered ? 15 : (quest ? 11 : 9);
+  const hit    = sz + HIT_PAD * 2;  // transparent tap area around the dot
   const border = hovered ? 'rgba(255,255,255,0.9)' : (quest ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.4)');
   const glow   = hovered
     ? `box-shadow:0 0 14px ${color};`
@@ -257,15 +267,20 @@ function makeIcon(site, hovered) {
     ? `<div style="position:absolute;inset:-4px;border:1.5px solid #7bc47b;border-radius:50%;box-shadow:0 0 6px rgba(123,196,123,0.55);pointer-events:none;"></div>`
     : '';
 
+  // Outer box = tap target (transparent, centers its child). Inner relative
+  // box = dot size, so .quest-ring and the visited badge still anchor to the
+  // dot, not the padded hit area.
   return L.divIcon({
     className: '',
-    html: `<div style="position:relative;width:${sz}px;height:${sz}px;">
-             <div style="width:${sz}px;height:${sz}px;background:${color};border:2px solid ${border};border-radius:50%;cursor:pointer;${glow};transition:all .15s;"></div>
-             ${ring}
-             ${visitedBadge}
+    html: `<div style="width:${hit}px;height:${hit}px;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+             <div style="position:relative;width:${sz}px;height:${sz}px;">
+               <div style="width:${sz}px;height:${sz}px;background:${color};border:2px solid ${border};border-radius:50%;${glow};transition:all .15s;"></div>
+               ${ring}
+               ${visitedBadge}
+             </div>
            </div>`,
-    iconSize:   [sz, sz],
-    iconAnchor: [sz/2, sz/2],
+    iconSize:   [hit, hit],
+    iconAnchor: [hit/2, hit/2],
   });
 }
 
@@ -647,6 +662,7 @@ VIA.auth.onChange(() => {
   refreshProfilePill();
   refreshCheckinRow();
   refreshAllMarkers();
+  refreshQuestsButton();
   // Detect transitions from signed-out → signed-in (cloud only) so we can
   // offer to import any localStorage check-ins from prior guest sessions.
   const user = VIA.auth.currentUser();
@@ -752,9 +768,34 @@ function refreshVisibleMarkers() {
 }
 
 function toggleQuestsOnly() {
+  // Quests are the game layer — you have to join to play. Signed-out users get
+  // the sign-in modal instead of the filter. Once signed in the button works
+  // normally (and refreshQuestsButton unlocks it live via VIA.auth.onChange).
+  if (!VIA.auth.currentUser()) {
+    openAuthModal();
+    return;
+  }
   questsOnly = !questsOnly;
   document.getElementById('btn-quests').classList.toggle('active', questsOnly);
   refreshVisibleMarkers();
+}
+
+// Reflect auth state on the Quests Only control: locked (with a hint) when
+// signed out, active when signed in. Also drops the filter if the user signs
+// out while it's on, so the map doesn't get stuck in a mode they can't exit.
+function refreshQuestsButton() {
+  const btn  = document.getElementById('btn-quests');
+  if (!btn) return;
+  const signedIn = !!VIA.auth.currentUser();
+  btn.classList.toggle('locked', !signedIn);
+  btn.title = signedIn
+    ? 'Show only sites with open quests'
+    : 'Sign in to unlock quests and start contributing';
+  if (!signedIn && questsOnly) {
+    questsOnly = false;
+    btn.classList.remove('active');
+    refreshVisibleMarkers();
+  }
 }
 
 // DARE only becomes legible around z7; at the z5 landing its shrunk atlas
@@ -787,3 +828,8 @@ function refreshQuestBadge() {
   if (el) el.textContent = String(n);  // real count (289) beats a flat "99+"
 }
 refreshQuestBadge();
+
+// Prime the Quests Only lock state for the current auth status (onChange keeps
+// it in sync afterward). Runs here, after `questsOnly` is initialized, to stay
+// clear of its temporal dead zone.
+refreshQuestsButton();

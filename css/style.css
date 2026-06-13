@@ -1011,6 +1011,12 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 }
 .road-tip::before { display: none !important; }
 
+/* Kill the browser's focus outline on clicked SVG paths — clicking a road's
+   (invisible) hit-line drew a rectangle around its bounding box (the "perimeter"
+   artifact). Roads/markers are mouse/touch targets, not keyboard-focus targets. */
+.leaflet-interactive:focus { outline: none !important; }
+path.leaflet-interactive { outline: none !important; }
+
 /* ════════════════════════════════
    MOBILE  (≤ 640px)
    ════════════════════════════════ */

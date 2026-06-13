@@ -15,9 +15,12 @@
   --text-muted: rgba(240,230,211,0.55);
   --text-body:  rgba(240,230,211,0.78);
   --border:     rgba(212,168,83,0.22);
-  --quest-photo:    #e07a3a;
-  --quest-location: #c94040;
-  --quest-text:     #9b6fcf;
+  /* Colorblind-safe quest palette: amber / blue / purple, no red-green pair.
+     Tiers are ALSO shape-coded on the map (circle / diamond / triangle) so
+     they're distinguishable without relying on color at all. */
+  --quest-photo:    #ff9e2c;
+  --quest-location: #2b8cde;
+  --quest-text:     #b15ad6;
   --panel-width: 380px;
 }
 
@@ -486,6 +489,9 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   border-radius: 50%;
   flex-shrink: 0;
 }
+/* Shape-coded swatches mirror the map markers for red-green color vision. */
+.legend-dot.diamond  { border-radius: 2px; transform: rotate(45deg); }
+.legend-dot.triangle { border-radius: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
 
 /* ── INFO PANEL ── */
 #info-panel {

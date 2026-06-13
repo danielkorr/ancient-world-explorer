@@ -17,9 +17,13 @@ const TYPE = {
   fortress:{ color:'#7bc47b', icon:'⚔' },
 };
 
+// Colorblind-safe palette + shape coding (see makeIcon). Colors must mirror
+// the --quest-* CSS variables; shapes give a color-independent signal for
+// red-green color vision.
 const QUEST = {
   photo: {
-    color: '#e07a3a',
+    color: '#ff9e2c',
+    shape: 'circle',
     icon:  '📷',
     label: 'Photo Quest · Open',
     text:  'This place has no portrait photo in the scholarly record. Be the traveler who closes the gap.',
@@ -27,7 +31,8 @@ const QUEST = {
     cta:   'Take this Quest →',
   },
   location: {
-    color: '#c94040',
+    color: '#2b8cde',
+    shape: 'diamond',
     icon:  '📍',
     label: 'Location Quest · Open',
     text:  'The coordinates for this place are unverified. A field GPS confirmation would lock it into the record.',
@@ -35,7 +40,8 @@ const QUEST = {
     cta:   'Take this Quest →',
   },
   text: {
-    color: '#9b6fcf',
+    color: '#b15ad6',
+    shape: 'triangle',
     icon:  '📜',
     label: 'Text Quest · Open',
     text:  'This place is known only from ancient texts. The physical site has never been confirmed.',
@@ -243,28 +249,57 @@ ROADS.forEach(road => {
 const COARSE_POINTER = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
 const HIT_PAD = COARSE_POINTER ? 14 : 0;
 
+// Per-tier shape so quests are distinguishable without color (red-green color
+// vision). Returns the CSS that turns the inner box into a circle, diamond, or
+// triangle. White outline + glow makes quests pop against the busy map.
+function shapeStyle(shape, sz, color, border) {
+  const glow = `box-shadow:0 0 9px ${color}, 0 0 3px rgba(255,255,255,0.75);`;
+  if (shape === 'diamond') {
+    return `width:${sz}px;height:${sz}px;background:${color};border:2px solid ${border};border-radius:2px;transform:rotate(45deg);${glow}`;
+  }
+  if (shape === 'triangle') {
+    // clip-path clips the border, so lean on a bright drop-shadow for contrast.
+    return `width:${sz}px;height:${sz}px;background:${color};clip-path:polygon(50% 0,100% 100%,0 100%);filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 5px ${color});`;
+  }
+  return `width:${sz}px;height:${sz}px;background:${color};border:2px solid ${border};border-radius:50%;${glow}`;
+}
+
 function makeIcon(site, hovered) {
   const quest  = site.quest ? QUEST[site.quest] : null;
   const color  = quest ? quest.color : (TYPE[site.type]?.color || '#d4a853');
-  const sz     = hovered ? 15 : (quest ? 11 : 9);
+  // Quests render larger than documented dots — they're the actionable layer
+  // and need to be easy to spot.
+  const sz     = hovered ? 18 : (quest ? 14 : 9);
   const hit    = sz + HIT_PAD * 2;  // transparent tap area around the dot
-  const border = hovered ? 'rgba(255,255,255,0.9)' : (quest ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.4)');
-  const glow   = hovered
-    ? `box-shadow:0 0 14px ${color};`
-    : quest
-      ? `box-shadow:0 0 8px ${color}99;`
-      : `box-shadow:0 0 5px ${color}55;`;
+  const shape  = quest ? (quest.shape || 'circle') : 'circle';
 
+  let dotStyle;
+  if (quest) {
+    const border = hovered ? '#ffffff' : 'rgba(255,255,255,0.92)';
+    dotStyle = shapeStyle(shape, sz, color, border) + 'transition:all .15s;';
+  } else {
+    // Documented dots stay small, muted, circular — deliberately the quiet
+    // background layer so the shaped quest markers carry the eye.
+    const border = hovered ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.45)';
+    const glow   = hovered ? `box-shadow:0 0 12px ${color};` : `box-shadow:0 0 5px ${color}55;`;
+    dotStyle = `width:${sz}px;height:${sz}px;background:${color};border:2px solid ${border};border-radius:50%;${glow}transition:all .15s;`;
+  }
+
+  // Pulsing ring on quests — a motion cue that reads regardless of color, the
+  // strongest accessibility signal for "act here". Always circular even around
+  // a diamond/triangle; it's an attention halo, not an outline.
   const ring = quest && !hovered
     ? `<div class="quest-ring" style="color:${color};"></div>`
     : '';
 
-  // Visited badge: green ring around any site this user has checked in to.
+  // Visited badge: a check on a gold ring around any site the user checked in
+  // to. Gold + the ✓ glyph (not green alone) so it survives red-green vision.
   const visited = (typeof VIA !== 'undefined' && VIA.auth && VIA.auth.currentUser())
     ? !!VIA.auth.getCheckin(site)
     : false;
   const visitedBadge = visited
-    ? `<div style="position:absolute;inset:-4px;border:1.5px solid #7bc47b;border-radius:50%;box-shadow:0 0 6px rgba(123,196,123,0.55);pointer-events:none;"></div>`
+    ? `<div style="position:absolute;inset:-5px;border:1.5px solid #ffd66b;border-radius:50%;box-shadow:0 0 6px rgba(255,214,107,0.6);pointer-events:none;"></div>
+       <div style="position:absolute;top:-9px;right:-9px;width:11px;height:11px;border-radius:50%;background:#ffd66b;color:#1a0e00;font-size:8px;line-height:11px;text-align:center;font-weight:700;pointer-events:none;">✓</div>`
     : '';
 
   // Outer box = tap target (transparent, centers its child). Inner relative
@@ -274,7 +309,7 @@ function makeIcon(site, hovered) {
     className: '',
     html: `<div style="width:${hit}px;height:${hit}px;display:flex;align-items:center;justify-content:center;cursor:pointer;">
              <div style="position:relative;width:${sz}px;height:${sz}px;">
-               <div style="width:${sz}px;height:${sz}px;background:${color};border:2px solid ${border};border-radius:50%;${glow};transition:all .15s;"></div>
+               <div style="${dotStyle}"></div>
                ${ring}
                ${visitedBadge}
              </div>
@@ -859,10 +894,14 @@ function toggleTier(tier) {
   refreshVisibleMarkers();
 }
 
-// Stamp each legend row with its tier count and grey out empty tiers.
+// Stamp each legend row with its tier count. Tiers with no sites (Text Quest
+// today) are hidden entirely — a dead, do-nothing row just confuses. The row
+// reappears automatically once data for that tier exists.
 function decorateLegend() {
   document.querySelectorAll('#quest-legend .legend-row[data-tier]').forEach(row => {
     const n = tierCounts[row.dataset.tier] || 0;
+    row.style.display = n === 0 ? 'none' : '';
+    if (n === 0) return;
     let badge = row.querySelector('.legend-count');
     if (!badge) {
       badge = document.createElement('span');
@@ -870,7 +909,6 @@ function decorateLegend() {
       row.appendChild(badge);
     }
     badge.textContent = n;
-    row.classList.toggle('disabled', n === 0);
   });
 }
 

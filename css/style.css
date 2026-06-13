@@ -1050,9 +1050,13 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   /* Panel becomes full-screen bottom sheet on mobile */
   :root { --panel-width: 100vw; }
 
+  /* Slide the bottom sheet with transform, not an animated dvh-based `bottom`.
+     iOS Safari mis-places fixed elements positioned with calc(dvh) + bottom (the
+     panel opened offscreen — "tapping a city does nothing" on iPhone). A
+     translateY transform is the reliable, GPU-accelerated bottom-sheet pattern. */
   #info-panel {
     top: auto;
-    bottom: calc(-100dvh + 60px);
+    bottom: 0;
     right: 0;
     left: 0;
     width: 100%;
@@ -1060,10 +1064,11 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
     border-left: none;
     border-top: 1px solid var(--border);
     border-radius: 16px 16px 0 0;
-    transition: bottom 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(100%);              /* fully hidden below the viewport */
+    transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  #info-panel.open { bottom: 0; right: 0; }
+  #info-panel.open { transform: translateY(0); right: 0; }
 
   #panel-hero { height: 120px; }
   #hero-icon  { font-size: 26px; }

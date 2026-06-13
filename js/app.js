@@ -530,12 +530,19 @@ function toggleLayer(which) {
       layerState.roads ? map.addLayer(g) : map.removeLayer(g);
     }
   } else {
-    // Sites: the group stays on the map PERMANENTLY; we only change its contents.
-    // Re-adding a layer group and then mutating it in the same tap handler does
-    // not repaint on mobile Safari — that's the "Quests Only shows nothing from an
-    // empty map (but works if you tap Sites first)" bug. Desktop repaints
-    // synchronously, which is why it only bit on phones. Never removing the group
-    // sidesteps it: refreshVisibleMarkers just shows nothing when sites is off.
+    // Sites & Cities is the MASTER layer switch, conceptually above the quest
+    // filter. Operating it clears any active tier filter so the toggle always
+    // means the full sites layer. Without this, a leftover Quests/legend filter
+    // makes "Sites & Cities" show only quest cities every time, and the result
+    // depended on whatever state the Quests button was left in (user-reported,
+    // on both mobile and desktop).
+    activeTiers.clear();
+    syncFilterUI();   // un-light the Quests button + legend rows to match
+    // The group stays on the map PERMANENTLY; we only change its contents.
+    // Re-adding a layer group then mutating it in the same tap handler does not
+    // repaint on mobile Safari (the "Quests Only shows nothing from an empty map"
+    // bug). Never removing the group sidesteps it: refreshVisibleMarkers shows
+    // nothing when sites is off.
     refreshVisibleMarkers();
   }
 }

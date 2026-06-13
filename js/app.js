@@ -239,11 +239,20 @@ ROADS.forEach(road => {
     opacity: 1,
     lineCap: 'round',
     lineJoin: 'round',
+    interactive: false,          // purely the visible stroke; the hit-line below handles taps
+  }).addTo(roadsGroup);
+  // Invisible fat hit-line. A 3px road is nearly impossible to land a finger on,
+  // and the name tooltip used to be hover-only (no hover exists on touch — that's
+  // why road names vanished on mobile). This wide transparent stroke makes the road
+  // tappable, and `click` opens the name on a phone while hover still works on desktop.
+  L.polyline(latlngs, {
+    color: '#000', weight: 22, opacity: 0, lineCap: 'round', lineJoin: 'round',
   })
    .bindTooltip(
      `<b style="color:#d4a853">${road.name}</b><br>${road.desc}<br><span style="opacity:.55">Est. ${road.built}</span>`,
      { className:'road-tip', sticky:true }
    )
+   .on('click', function (e) { this.openTooltip(e.latlng); })
    .addTo(roadsGroup);
 });
 
@@ -255,8 +264,18 @@ ROADS.forEach(road => {
 // hit padding makes the clickable box ~37-39px without growing the visible dot
 // (which would clutter the map). Detected once at load via the pointer media
 // query rather than user-agent sniffing.
-const COARSE_POINTER = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
-const HIT_PAD = COARSE_POINTER ? 14 : 0;
+// Three signals, not one — a single media query is too fragile for a load-bearing
+// hit target. If ANY says "this is a touch device", pad the tap area. iOS Safari,
+// Android, and touch-laptops all trip at least one of these.
+const COARSE_POINTER = !!(
+     (window.matchMedia && window.matchMedia('(pointer: coarse)').matches)
+  || (navigator.maxTouchPoints > 0)
+  || ('ontouchstart' in window)
+);
+// 18px of padding around a 9px dot = a 45px tap target (50px on the 14px quests),
+// clearing Apple's 44px minimum. Visible dot size is unchanged — only the
+// invisible hit box grows, so the map looks identical but fingers stop missing.
+const HIT_PAD = COARSE_POINTER ? 18 : 0;
 
 // Per-tier shape so quests are distinguishable without color (red-green color
 // vision). Returns the CSS that turns the inner box into a circle, diamond, or
@@ -316,7 +335,7 @@ function makeIcon(site, hovered) {
   // dot, not the padded hit area.
   return L.divIcon({
     className: '',
-    html: `<div style="width:${hit}px;height:${hit}px;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+    html: `<div style="width:${hit}px;height:${hit}px;display:flex;align-items:center;justify-content:center;cursor:pointer;touch-action:manipulation;">
              <div style="position:relative;width:${sz}px;height:${sz}px;">
                <div style="${dotStyle}"></div>
                ${ring}
@@ -501,30 +520,33 @@ const layerState = { roads:true, sites:true };
 
 function toggleLayer(which) {
   layerState[which] = !layerState[which];
-  // The "roads" toggle covers both the curated named roads and the
-  // Itiner-e baseline — the user thinks of them as one concept.
-  const groups = which === 'roads'
-    ? [itinereRoadsGroup, roadsGroup]
-    : [sitesGroup];
   const btn = document.getElementById('btn-' + which);
-  if (layerState[which]) {
-    for (const g of groups) if (g) map.addLayer(g);
-    btn.classList.add('active');
+  btn.classList.toggle('active', layerState[which]);
+  if (which === 'roads') {
+    // The "roads" toggle covers both the curated named roads and the Itiner-e
+    // baseline — the user thinks of them as one concept.
+    for (const g of [itinereRoadsGroup, roadsGroup]) {
+      if (!g) continue;
+      layerState.roads ? map.addLayer(g) : map.removeLayer(g);
+    }
   } else {
-    for (const g of groups) if (g) map.removeLayer(g);
-    btn.classList.remove('active');
+    // Sites: the group stays on the map PERMANENTLY; we only change its contents.
+    // Re-adding a layer group and then mutating it in the same tap handler does
+    // not repaint on mobile Safari — that's the "Quests Only shows nothing from an
+    // empty map (but works if you tap Sites first)" bug. Desktop repaints
+    // synchronously, which is why it only bit on phones. Never removing the group
+    // sidesteps it: refreshVisibleMarkers just shows nothing when sites is off.
+    refreshVisibleMarkers();
   }
 }
 
 // Filtering quests is meaningless with the sites layer hidden, so engaging any
-// quest filter turns Sites & Cities back on. Fixes "Quests Only does nothing
-// unless Sites & Cities is already selected".
+// quest filter turns Sites & Cities back on. The group is always on the map now,
+// so this only flips state + the button; the caller's refreshVisibleMarkers paints.
 function ensureSitesLayerOn() {
   if (!layerState.sites) {
     layerState.sites = true;
-    map.addLayer(sitesGroup);
     document.getElementById('btn-sites').classList.add('active');
-    raiseOverlays();
   }
 }
 
@@ -885,9 +907,10 @@ function siteVisibleAtZoom(site, z) {
 }
 
 function refreshVisibleMarkers() {
+  sitesGroup.clearLayers();
+  if (!layerState.sites) return;   // sites hidden: the group stays on the map but empty
   const z = map.getZoom();
   const filtering = activeTiers.size > 0;
-  sitesGroup.clearLayers();
   for (const m of allMarkers) {
     // An explicit tier filter shows every matching site regardless of zoom —
     // tapping a tier is an intent to see all of them. With no filter, fall

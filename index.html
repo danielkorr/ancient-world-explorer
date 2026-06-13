@@ -20,7 +20,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=8">
+  <link rel="stylesheet" href="css/style.css?v=9">
 </head>
 <body>
 
@@ -131,11 +131,28 @@
 
 <!-- Quest Legend — each row is a tap-to-filter toggle -->
 <div id="quest-legend">
-  <div class="legend-hint">Tap to filter</div>
+  <div class="legend-hint">Tap to filter<button id="legend-info-btn" onclick="openLegendInfo()" aria-label="What do these terms mean?" title="What do these mean?">?</button></div>
   <div class="legend-row" data-tier="documented" role="button" tabindex="0" onclick="toggleTier('documented')"><div class="legend-dot" style="background:#b89a6a"></div>Documented</div>
   <div class="legend-row" data-tier="photo" role="button" tabindex="0" onclick="toggleTier('photo')"><div class="legend-dot" style="background:#ff9e2c"></div>Photo Quest</div>
   <div class="legend-row" data-tier="location" role="button" tabindex="0" onclick="toggleTier('location')"><div class="legend-dot diamond" style="background:#2b8cde"></div>Location Quest</div>
   <div class="legend-row" data-tier="text" role="button" tabindex="0" onclick="toggleTier('text')"><div class="legend-dot triangle" style="background:#b15ad6"></div>Text Quest</div>
+</div>
+
+<!-- Legend term toast (slides up when a tier is selected) -->
+<div id="legend-toast" aria-live="polite">
+  <div id="legend-toast-title"></div>
+  <div id="legend-toast-body"></div>
+</div>
+
+<!-- Legend explainer modal (opened by the legend "?" button) -->
+<div id="legend-info" onclick="if(event.target===this)closeLegendInfo()">
+  <div id="legend-info-card">
+    <button class="auth-close" onclick="closeLegendInfo()">✕</button>
+    <h2 class="auth-title">What's on the map</h2>
+    <div class="auth-sub">Every site is one of these. Tap a tier in the legend to show only those.</div>
+    <div id="legend-info-list"></div>
+    <button class="auth-secondary" onclick="closeLegendInfo()">Got it</button>
+  </div>
 </div>
 
 <!-- Info Panel -->
@@ -195,13 +212,13 @@
 
 <!-- Data + App. ?v= must match the value on css/style.css above — bump both
      together each deploy to force fresh assets past the cache. -->
-<script src="js/config.js?v=8"></script>
-<script src="js/orbis-days.js?v=8"></script>
-<script src="js/sites-pleiades.js?v=8"></script>
-<script src="js/roads-itinere.js?v=8"></script>
-<script src="js/data.js?v=8"></script>
-<script src="js/auth.js?v=8"></script>
-<script src="js/app.js?v=8"></script>
+<script src="js/config.js?v=9"></script>
+<script src="js/orbis-days.js?v=9"></script>
+<script src="js/sites-pleiades.js?v=9"></script>
+<script src="js/roads-itinere.js?v=9"></script>
+<script src="js/data.js?v=9"></script>
+<script src="js/auth.js?v=9"></script>
+<script src="js/app.js?v=9"></script>
 
 </body>
 </html>

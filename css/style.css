@@ -484,6 +484,113 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 .legend-row.disabled { cursor: default; opacity: 0.3; }
 .legend-row.disabled:hover { color: var(--text-muted); }
 
+/* "?" explainer button on the legend header. */
+#legend-info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px; height: 15px;
+  margin-left: 6px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(212,168,83,0.6);
+  background: transparent;
+  color: rgba(212,168,83,0.95);
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+  vertical-align: middle;
+}
+#legend-info-btn:hover { background: rgba(212,168,83,0.18); color: var(--gold); }
+
+/* Legend term toast — slides up when a tier is selected, fades on its own. */
+#legend-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 96px;
+  transform: translateX(-50%) translateY(14px);
+  z-index: 1500;
+  width: min(340px, 88vw);
+  background: rgba(8,4,0,0.97);
+  border: 1px solid rgba(212,168,83,0.5);
+  border-radius: 9px;
+  padding: 13px 17px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+  box-shadow: 0 12px 34px rgba(0,0,0,0.55);
+}
+#legend-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+#legend-toast-title {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 5px;
+}
+#legend-toast-body {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: rgba(240,230,211,0.92);
+}
+
+/* Legend explainer modal — reuses the shared modal look. */
+#legend-info {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10,5,0,0.78);
+  backdrop-filter: blur(4px);
+}
+#legend-info.open { display: flex; }
+#legend-info-card {
+  position: relative;
+  width: min(420px, 92vw);
+  background: var(--ink-panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 28px 24px 22px;
+  box-shadow: 0 14px 50px rgba(0,0,0,0.6);
+  max-height: 92vh;
+  overflow-y: auto;
+}
+#legend-info-list { margin: 18px 0 16px; }
+.li-row {
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+  padding: 13px 0;
+  border-top: 1px solid rgba(212,168,83,0.12);
+}
+.li-row:first-child { border-top: none; }
+.li-dot {
+  width: 14px; height: 14px;
+  margin-top: 3px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 7px currentColor;
+}
+.li-dot.diamond  { border-radius: 2px; transform: rotate(45deg); }
+.li-dot.triangle { border-radius: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.li-title {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.li-count { font-size: 10px; color: rgba(212,168,83,0.7); font-variant-numeric: tabular-nums; }
+.li-blurb { font-size: 12.5px; line-height: 1.5; color: var(--text-body); }
+
 .legend-dot {
   width: 10px; height: 10px;
   border-radius: 50%;

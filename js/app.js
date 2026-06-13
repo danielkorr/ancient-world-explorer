@@ -522,7 +522,7 @@ function ensureSitesLayerOn() {
 // ── KEYBOARD ─────────────────────────────────────────────
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeQuestModal(); closeAuthModal(); closePanel(); }
+  if (e.key === 'Escape') { closeLegendInfo(); closeQuestModal(); closeAuthModal(); closePanel(); }
 });
 
 // ── AUTH + CHECK-INS ─────────────────────────────────────
@@ -839,6 +839,32 @@ const QUEST_PLEIADES = new Set(questSites.map(s => s.pleiades).filter(Boolean));
 // (so the empty Text tier doesn't get spuriously toggled on).
 const presentQuestTiers = QUEST_TIERS.filter(t => tierCounts[t]);
 
+// Plain-language explanation of each tier, surfaced by the legend toast (on
+// tap) and the "?" explainer modal. Quest blurbs echo the per-site copy in
+// QUEST so the language is consistent end to end.
+const TIER_INFO = {
+  documented: {
+    label: 'Documented',
+    color: '#b89a6a',
+    blurb: 'A known site — located, photographed, and recorded in the Pleiades scholarly gazetteer. The established Roman world.',
+  },
+  photo: {
+    label: 'Photo Quest',
+    color: QUEST.photo.color,
+    blurb: 'No portrait photo exists in the scholarly record. Visit one and photograph it to close the gap.',
+  },
+  location: {
+    label: 'Location Quest',
+    color: QUEST.location.color,
+    blurb: 'The coordinates are unverified. A GPS reading on the ground would lock the site into the record.',
+  },
+  text: {
+    label: 'Text Quest',
+    color: QUEST.text.color,
+    blurb: 'Known only from ancient texts — the physical site has never been confirmed on the ground.',
+  },
+};
+
 // Zoom-staged reveal. The landing (z<=5) shows only the ~95 curated sites +
 // nothing else — clean, legible, an empire of great cities rather than 473
 // dots of orange measles. z6 adds the quests (the actionable game layer).
@@ -887,11 +913,66 @@ function syncFilterUI() {
 // Tap a legend tier to toggle it in/out of the filter. Empty tiers are inert.
 function toggleTier(tier) {
   if (!tierCounts[tier]) return;
-  if (activeTiers.has(tier)) activeTiers.delete(tier);
-  else                       activeTiers.add(tier);
+  const adding = !activeTiers.has(tier);
+  if (adding) activeTiers.add(tier);
+  else        activeTiers.delete(tier);
   if (activeTiers.size > 0) ensureSitesLayerOn();
+  if (adding) showLegendToast(tier);   // explain the tier the moment it's picked
   syncFilterUI();
   refreshVisibleMarkers();
+}
+
+// ── LEGEND EXPLANATIONS ──────────────────────────────────
+// A toast on tap (in-the-moment context) + a "?" modal (the full key, anytime).
+
+let _toastTimer = null;
+function showLegendToast(tier) {
+  const info = TIER_INFO[tier];
+  const el   = document.getElementById('legend-toast');
+  if (!info || !el) return;
+  document.getElementById('legend-toast-title').textContent = `${info.label} · ${tierCounts[tier]}`;
+  document.getElementById('legend-toast-body').textContent  = info.blurb;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 4800);
+}
+
+function showQuestsToast() {
+  const el = document.getElementById('legend-toast');
+  if (!el) return;
+  const n = presentQuestTiers.reduce((s, t) => s + tierCounts[t], 0);
+  document.getElementById('legend-toast-title').textContent = `All quests · ${n}`;
+  document.getElementById('legend-toast-body').textContent  =
+    'Places missing a photo or a verified location in the scholarly record. Tap any marker to help.';
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 4800);
+}
+
+// Build + open the "?" explainer. Lists only tiers that have sites, with the
+// matching shape swatch so the colorblind shape key is reinforced here too.
+function openLegendInfo() {
+  const list = document.getElementById('legend-info-list');
+  if (!list) return;
+  const shapeClass = { location: 'diamond', text: 'triangle' };
+  list.innerHTML = ['documented', 'photo', 'location', 'text']
+    .filter(t => tierCounts[t])
+    .map(t => {
+      const info = TIER_INFO[t];
+      const cls  = shapeClass[t] || '';
+      return `<div class="li-row">
+                <div class="li-dot ${cls}" style="background:${info.color}"></div>
+                <div class="li-text">
+                  <div class="li-title">${info.label}<span class="li-count">${tierCounts[t]}</span></div>
+                  <div class="li-blurb">${info.blurb}</div>
+                </div>
+              </div>`;
+    }).join('');
+  document.getElementById('legend-info').classList.add('open');
+}
+
+function closeLegendInfo() {
+  document.getElementById('legend-info').classList.remove('open');
 }
 
 // Stamp each legend row with its tier count. Tiers with no sites (Text Quest
@@ -919,8 +1000,11 @@ function toggleQuestsOnly() {
   const questsExactly = activeTiers.size === presentQuestTiers.length &&
                         presentQuestTiers.every(t => activeTiers.has(t));
   activeTiers.clear();
-  if (!questsExactly) presentQuestTiers.forEach(t => activeTiers.add(t));
-  if (activeTiers.size > 0) ensureSitesLayerOn();
+  if (!questsExactly) {
+    presentQuestTiers.forEach(t => activeTiers.add(t));
+    ensureSitesLayerOn();
+    showQuestsToast();
+  }
   syncFilterUI();
   refreshVisibleMarkers();
 }

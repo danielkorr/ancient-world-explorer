@@ -18,8 +18,9 @@
   <!-- Supabase client (loaded as global; we wire it in js/auth.js) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4"></script>
 
-  <!-- App styles -->
-  <link rel="stylesheet" href="css/style.css">
+  <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
+       bump it whenever css/js change so a normal refresh picks them up. -->
+  <link rel="stylesheet" href="css/style.css?v=8">
 </head>
 <body>
 
@@ -192,14 +193,15 @@
   </div>
 </div>
 
-<!-- Data + App -->
-<script src="js/config.js"></script>
-<script src="js/orbis-days.js"></script>
-<script src="js/sites-pleiades.js"></script>
-<script src="js/roads-itinere.js"></script>
-<script src="js/data.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/app.js"></script>
+<!-- Data + App. ?v= must match the value on css/style.css above — bump both
+     together each deploy to force fresh assets past the cache. -->
+<script src="js/config.js?v=8"></script>
+<script src="js/orbis-days.js?v=8"></script>
+<script src="js/sites-pleiades.js?v=8"></script>
+<script src="js/roads-itinere.js?v=8"></script>
+<script src="js/data.js?v=8"></script>
+<script src="js/auth.js?v=8"></script>
+<script src="js/app.js?v=8"></script>
 
 </body>
 </html>

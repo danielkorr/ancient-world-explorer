@@ -735,12 +735,26 @@ async function shareQuest() {
   }
 }
 
-// "Quests Only" map filter + progressive zoom disclosure both drive which
-// markers live in sitesGroup. One function owns the membership so they can't
-// fight each other.
-let questsOnly = false;
+// Marker visibility is governed by two things: zoom-staged disclosure when no
+// filter is active, and an explicit tier filter when the user taps legend rows
+// or "Quests Only". A single Set of active tiers drives BOTH the legend and the
+// Quests Only button, so the two controls can never disagree — tapping the
+// three quest tiers and tapping "Quests Only" land on the same state.
 const allMarkers = [];
 sitesGroup.eachLayer(m => allMarkers.push(m));
+
+const QUEST_TIERS  = ['photo', 'location', 'text'];
+const activeTiers  = new Set();              // empty = no filter (zoom disclosure)
+const siteTier     = site => site.quest || 'documented';
+
+// How many sites sit in each tier. Drives the legend counts and disables tiers
+// with nothing in them (e.g. Text Quest is 0 today) so tapping can't filter to
+// an empty map.
+const tierCounts = SITES.reduce((acc, s) => {
+  const t = siteTier(s);
+  acc[t] = (acc[t] || 0) + 1;
+  return acc;
+}, {});
 
 // Zoom-staged reveal. The landing (z<=5) shows only the ~95 curated sites +
 // nothing else — clean, legible, an empire of great cities rather than 473
@@ -754,24 +768,72 @@ function siteVisibleAtZoom(site, z) {
 
 function refreshVisibleMarkers() {
   const z = map.getZoom();
+  const filtering = activeTiers.size > 0;
   sitesGroup.clearLayers();
   for (const m of allMarkers) {
-    // Quests Only is an explicit "show me the game" mode — it bypasses the
-    // zoom gate so toggling it at the landing doesn't show an empty map.
-    if (questsOnly) {
-      if (m._site.quest) sitesGroup.addLayer(m);
+    // An explicit tier filter shows every matching site regardless of zoom —
+    // tapping a tier is an intent to see all of them. With no filter, fall
+    // back to the zoom-staged reveal.
+    if (filtering) {
+      if (activeTiers.has(siteTier(m._site))) sitesGroup.addLayer(m);
     } else if (siteVisibleAtZoom(m._site, z)) {
       sitesGroup.addLayer(m);
     }
   }
 }
 
+// Reflect the active tier set onto both controls: highlight selected legend
+// rows (and dim the rest), and light up Quests Only only when the selection is
+// exactly the three quest tiers.
+function syncFilterUI() {
+  const legend = document.getElementById('quest-legend');
+  if (legend) {
+    legend.classList.toggle('filtering', activeTiers.size > 0);
+    legend.querySelectorAll('.legend-row[data-tier]').forEach(row => {
+      row.classList.toggle('active', activeTiers.has(row.dataset.tier));
+    });
+  }
+  const qBtn = document.getElementById('btn-quests');
+  if (qBtn) {
+    const questsExactly = activeTiers.size === QUEST_TIERS.length &&
+                          QUEST_TIERS.every(t => activeTiers.has(t));
+    qBtn.classList.toggle('active', questsExactly);
+  }
+}
+
+// Tap a legend tier to toggle it in/out of the filter. Empty tiers are inert.
+function toggleTier(tier) {
+  if (!tierCounts[tier]) return;
+  if (activeTiers.has(tier)) activeTiers.delete(tier);
+  else                       activeTiers.add(tier);
+  syncFilterUI();
+  refreshVisibleMarkers();
+}
+
+// Stamp each legend row with its tier count and grey out empty tiers.
+function decorateLegend() {
+  document.querySelectorAll('#quest-legend .legend-row[data-tier]').forEach(row => {
+    const n = tierCounts[row.dataset.tier] || 0;
+    let badge = row.querySelector('.legend-count');
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'legend-count';
+      row.appendChild(badge);
+    }
+    badge.textContent = n;
+    row.classList.toggle('disabled', n === 0);
+  });
+}
+
+// "Quests Only" is a shortcut for "select all three quest tiers". Tapping it
+// again from that exact state clears back to the full zoom-staged map. Open to
+// everyone — previewing quests is the hook; the sign-in wall is at check-in.
 function toggleQuestsOnly() {
-  // Open to everyone — previewing the quests is the hook that makes people
-  // want to join. The sign-in wall lives at check-in (onCheckInClick), not
-  // here.
-  questsOnly = !questsOnly;
-  document.getElementById('btn-quests').classList.toggle('active', questsOnly);
+  const questsExactly = activeTiers.size === QUEST_TIERS.length &&
+                        QUEST_TIERS.every(t => activeTiers.has(t));
+  activeTiers.clear();
+  if (!questsExactly) QUEST_TIERS.forEach(t => activeTiers.add(t));
+  syncFilterUI();
   refreshVisibleMarkers();
 }
 
@@ -792,12 +854,28 @@ function updateAncientLayer() {
 
 map.on('zoomend', () => {
   updateAncientLayer();
-  if (!questsOnly) refreshVisibleMarkers();
+  // Zoom only changes the visible set under the disclosure rule; an explicit
+  // tier filter already shows all matches, so there's nothing to recompute.
+  if (activeTiers.size === 0) refreshVisibleMarkers();
 });
 
-// Prime both at boot (zoom 5, ancient era): sepia landing + curated sites only.
+// Prime at boot (zoom 5, ancient era): sepia landing + curated sites only.
 updateAncientLayer();
+decorateLegend();
+syncFilterUI();
 refreshVisibleMarkers();
+
+// Keyboard activation for the legend filter rows (they're role="button").
+const _legendEl = document.getElementById('quest-legend');
+if (_legendEl) {
+  _legendEl.addEventListener('keydown', e => {
+    const tier = e.target && e.target.dataset ? e.target.dataset.tier : null;
+    if (tier && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      toggleTier(tier);
+    }
+  });
+}
 
 function refreshQuestBadge() {
   const n  = SITES.filter(s => !!s.quest).length;

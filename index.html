@@ -128,12 +128,13 @@
   Ancient tiles unavailable — showing sepia modern map
 </div>
 
-<!-- Quest Legend -->
+<!-- Quest Legend — each row is a tap-to-filter toggle -->
 <div id="quest-legend">
-  <div class="legend-row"><div class="legend-dot" style="background:#b89a6a"></div>Documented</div>
-  <div class="legend-row"><div class="legend-dot" style="background:#e07a3a"></div>Photo Quest</div>
-  <div class="legend-row"><div class="legend-dot" style="background:#c94040"></div>Location Quest</div>
-  <div class="legend-row"><div class="legend-dot" style="background:#9b6fcf"></div>Text Quest</div>
+  <div class="legend-hint">Tap to filter</div>
+  <div class="legend-row" data-tier="documented" role="button" tabindex="0" onclick="toggleTier('documented')"><div class="legend-dot" style="background:#b89a6a"></div>Documented</div>
+  <div class="legend-row" data-tier="photo" role="button" tabindex="0" onclick="toggleTier('photo')"><div class="legend-dot" style="background:#e07a3a"></div>Photo Quest</div>
+  <div class="legend-row" data-tier="location" role="button" tabindex="0" onclick="toggleTier('location')"><div class="legend-dot" style="background:#c94040"></div>Location Quest</div>
+  <div class="legend-row" data-tier="text" role="button" tabindex="0" onclick="toggleTier('text')"><div class="legend-dot" style="background:#9b6fcf"></div>Text Quest</div>
 </div>
 
 <!-- Info Panel -->

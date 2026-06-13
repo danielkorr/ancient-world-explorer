@@ -391,6 +391,17 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   gap: 6px;
 }
 
+/* Small affordance so it's clear the legend rows are now controls, not a
+   static key. */
+.legend-hint {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(212,168,83,0.4);
+  margin-bottom: 1px;
+}
+
 .legend-row {
   display: flex;
   align-items: center;
@@ -401,7 +412,37 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   color: var(--text-muted);
   font-family: 'Cinzel', serif;
   white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.15s, color 0.15s;
+  outline: none;
 }
+
+.legend-row:hover,
+.legend-row:focus-visible,
+.legend-row.active { color: var(--gold); }
+
+/* Selected tier: ring the dot so the choice is unmistakable on touch (no
+   hover state to lean on). */
+.legend-row.active .legend-dot {
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.55);
+}
+
+/* When a filter is on, fade the tiers that are filtered out. */
+#quest-legend.filtering .legend-row:not(.active) { opacity: 0.3; }
+
+/* Per-tier count, right-aligned into a column. */
+.legend-count {
+  margin-left: auto;
+  padding-left: 10px;
+  font-size: 8px;
+  color: rgba(212,168,83,0.5);
+  font-variant-numeric: tabular-nums;
+}
+
+/* A tier with no sites (e.g. Text Quest today) isn't tappable. */
+.legend-row.disabled { cursor: default; opacity: 0.3; }
+.legend-row.disabled:hover { color: var(--text-muted); }
 
 .legend-dot {
   width: 8px; height: 8px;

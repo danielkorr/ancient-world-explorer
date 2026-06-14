@@ -425,6 +425,31 @@ if (COARSE_POINTER) {
   }, { passive: false });
 }
 
+// Roads hit the same iOS wall (SVG paths, ~1 tap in 10). Delegate touchend on the
+// overlay pane, match the tapped <path> to its road layer, open the name tooltip.
+if (COARSE_POINTER) {
+  const overlayPane = map.getPane('overlayPane');
+  let _rStart = null;
+  overlayPane.addEventListener('touchstart', e => {
+    const t = e.changedTouches && e.changedTouches[0];
+    _rStart = t ? { x: t.clientX, y: t.clientY } : null;
+  }, { passive: true });
+  overlayPane.addEventListener('touchend', e => {
+    const t = e.changedTouches && e.changedTouches[0];
+    if (_rStart && t && (Math.abs(t.clientX - _rStart.x) > 12 || Math.abs(t.clientY - _rStart.y) > 12)) return;
+    const pathEl = e.target.closest && e.target.closest('path');
+    if (!pathEl) return;
+    let road = null;
+    roadsGroup.eachLayer(l => { if (l._path === pathEl && l.getTooltip && l.getTooltip()) road = l; });
+    if (!road) return;
+    e.preventDefault();
+    roadsGroup.eachLayer(l => { if (l.closeTooltip) l.closeTooltip(); });  // one at a time
+    let ll; try { ll = map.mouseEventToLatLng(t); } catch (_) {}
+    road.openTooltip(ll);
+    dbg('✓ TAP→road shown');
+  }, { passive: false });
+}
+
 // ── INFO PANEL ───────────────────────────────────────────
 
 function showPanel(site) {

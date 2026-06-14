@@ -12,7 +12,7 @@ No build, no package manager, no tests. It's plain HTML/CSS/JS with Leaflet load
 
 - Open `index.html` directly works for read-only map browsing, but auth + Supabase need a real origin. Serve with `python -m http.server 8000` and load `http://localhost:8000`. The Supabase redirect-URL allowlist must include whatever origin you use.
 - Deploy target is GitHub Pages — pushing to `main` ships the site.
-- **Cache-bust on every css/js change.** Local assets carry a `?v=N` token in `index.html` (currently `v10`). Bump it on *every* css/js edit or mobile Safari serves stale code — it caches sub-resources hard. A `?v=` on the page URL alone does not work (the HTML refreshes but the cached sub-resources don't). When a deployed mobile site shows old behavior after a fix, suspect a stale URL/HTML cache *before* the code: confirm the canonical Pages URL (nothing after the base path), force a fresh HTML fetch with a throwaway `?fresh=1`, and verify the served asset `?v=` matches HEAD.
+- **Cache-bust on every css/js change.** Local assets carry a `?v=N` token in `index.html` (currently `v22`). Bump it on *every* css/js edit or mobile Safari serves stale code — it caches sub-resources hard. A `?v=` on the page URL alone does not work (the HTML refreshes but the cached sub-resources don't). When a deployed mobile site shows old behavior after a fix, suspect a stale URL/HTML cache *before* the code: confirm the canonical Pages URL (nothing after the base path), force a fresh HTML fetch with a throwaway `?fresh=1`, and verify the served asset `?v=` matches HEAD.
 
 ## Architecture
 

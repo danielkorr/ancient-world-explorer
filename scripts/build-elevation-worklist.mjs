@@ -262,10 +262,12 @@ function slugify(s) {
 }
 
 // Build js/sites-vici.js from the net-new vici-photo Pleiades places.
-// `candidates` are the elevation sites ALREADY in VIA (deduped out of SITES_VICI);
-// they get an overlay (VICI_ELEVATION, by pleiades id) that data.js applies onto
-// the existing records so they show the same vici hero + "help elevate" treatment.
-async function emitSites(viciPhotoByPleiades, viaSites, photos, candidates = []) {
+// `matched` are the vici-photo sites ALREADY in VIA (deduped out of SITES_VICI);
+// they get an overlay (VICI_OVERLAY, by pleiades id) that data.js applies onto the
+// existing records so they show the vici hero + button. Entries carry an
+// `elevation` flag (true = no Wikidata P18) so candidates also get the "help
+// elevate" banner while documented sites just get the photo.
+async function emitSites(viciPhotoByPleiades, viaSites, photos, matched = []) {
   await mkdir(PL_CACHE, { recursive: true });
   const newIds = [...viciPhotoByPleiades.keys()].filter(pid => !viaSites.has(pid));
   console.log(`\n── --emit-sites: ${newIds.length} net-new vici-photo Pleiades places ──`);
@@ -343,19 +345,28 @@ async function emitSites(viciPhotoByPleiades, viaSites, photos, candidates = [])
     `// ═══════════════════════════════════════════════════════════\n\n` +
     `const SITES_VICI = [\n${records.map(r => '  ' + JSON.stringify(r)).join(',\n')}\n];\n`;
 
-  // Overlay for elevation candidates already in VIA (deduped out of SITES_VICI).
-  // data.js applies these onto the matching site by pleiades id.
+  // Overlay: vici data for vici-photo sites already in VIA (deduped out of
+  // SITES_VICI). data.js applies these onto the matching site by pleiades id —
+  // all get the vici hero + button; `elevation:true` (no P18) also gets the
+  // "help elevate" banner, documented ones just get the photo.
   const overlay = {};
-  for (const c of candidates) {
-    const im = c.images[0];
-    overlay[c.pleiades] = { url: c.vici_url, name: c.vici_name, image: im.image, creator: im.creator || null, license: im.license || null };
+  for (const m of matched) {
+    const im = m.images[0];
+    overlay[m.pleiades] = {
+      url: m.vici_url, name: m.vici_name, image: im.image,
+      creator: im.creator || null, license: im.license || null,
+      // elevation only when we KNOW there's no P18 (has_photo===false); an
+      // unknown/errored P18 status must not claim "not in the scholarly record".
+      elevation: (photos[m.pleiades] && photos[m.pleiades].has_photo === false) || false,
+    };
   }
+  const elevN = Object.values(overlay).filter(o => o.elevation).length;
   const overlayBody =
-    `\n// Elevation overlay: vici data for candidates already present in VIA's\n` +
-    `// curated/Pleiades sets (so they get the same hero + "help elevate" panel).\n` +
-    `// data.js merges this onto the matching site by pleiades id.\n` +
-    `const VICI_ELEVATION = ${JSON.stringify(overlay, null, 2)};\n`;
+    `\n// vici overlay: data for vici-photo sites already present in VIA's curated/\n` +
+    `// Pleiades sets. data.js merges this onto the matching site by pleiades id.\n` +
+    `const VICI_OVERLAY = ${JSON.stringify(overlay, null, 2)};\n`;
   await writeFile(OUT_SITES, body + overlayBody);
+  console.log(`✓ VICI_OVERLAY: ${Object.keys(overlay).length} in-VIA sites (${elevN} elevation, ${Object.keys(overlay).length - elevN} documented)`);
   await writeFile(PHOTOS, JSON.stringify(photos, null, 2));
   console.log(`✓ wrote ${path.relative(ROOT, OUT_SITES)} — ${records.length} sites (${elev} elevation candidates, ${records.length - elev} documented)`);
   console.log(`✓ updated ${path.relative(ROOT, PHOTOS)} with ${newIds.length} new P18 results`);
@@ -546,7 +557,7 @@ async function main() {
   console.log(`\n  top 8 candidates:`);
   for (const c of candidates.slice(0, 8)) console.log(`    ${c.pleiades.padEnd(11)} ${(c.via_name||'').slice(0,32).padEnd(33)} ${c.image_count} img  ${c.images[0].license || '?'}`);
 
-  if (EMIT_SITES) await emitSites(viciPhotoByPleiades, viaSites, photos, candidates);
+  if (EMIT_SITES) await emitSites(viciPhotoByPleiades, viaSites, photos, matched);
 }
 
 main().catch(e => { console.error(e); process.exit(1); });

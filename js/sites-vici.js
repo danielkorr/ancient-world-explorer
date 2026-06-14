@@ -498,29 +498,279 @@ const SITES_VICI = [
   {"id":"vici-2401","name":"Zeugma","modern":"","type":"city","lat":37.0577,"lng":37.8702,"period":"Roman period","pleiades":"658636","rome_days":0,"desc":"An ancient settlement whose site is located in the Gaziantep province of modern Turkey, at the modern village of Belkis (a.k.a. Kavunlu). The majority of the ancient remains were covered by water in the year 2000, due to the construction of the Birecik Dam.","vici":{"url":"https://vici.org/vici/2401/","name":"Zeugma","image":"https://images.vici.org/cover/w1600xh1600/uploads/zeugma02.jpg","creator":"Livius.org","license":"CC BY-SA 3.0"}}
 ];
 
-// Elevation overlay: vici data for candidates already present in VIA's
-// curated/Pleiades sets (so they get the same hero + "help elevate" panel).
-// data.js merges this onto the matching site by pleiades id.
-const VICI_ELEVATION = {
+// vici overlay: data for vici-photo sites already present in VIA's curated/
+// Pleiades sets. data.js merges this onto the matching site by pleiades id.
+const VICI_OVERLAY = {
+  "148107": {
+    "url": "https://vici.org/vici/16599/",
+    "name": "Lattara",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/lattes_musee_henri_prades_vue_du_site_archeologique_de_lattara.jpg",
+    "creator": "Arnaud Fafournoux",
+    "license": "CC BY-SA 3.0",
+    "elevation": false
+  },
+  "177659": {
+    "url": "https://vici.org/vici/16836/",
+    "name": "Villards-d'Héria",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/site_romain_heria.jpg",
+    "creator": "Neri.jp",
+    "license": "CC BY-SA 3.0",
+    "elevation": false
+  },
+  "207447": {
+    "url": "https://vici.org/vici/2022/",
+    "name": "Sirmium",
+    "image": "https://images.vici.org/cover/w1600xh1600/livius/serbia/01sirmium/01museum/amphora_si_mus_sirmium.jpg",
+    "creator": "Jona Lendering",
+    "license": "CC BY 4.0",
+    "elevation": false
+  },
   "246139": {
     "url": "https://vici.org/vici/30262/",
     "name": "Panissars",
     "image": "https://images.vici.org/cover/w1600xh1600/uploads/summum_pyrenaeum_1_1_.jpg",
     "creator": null,
-    "license": "CC BY-SA 3.0"
+    "license": "CC BY-SA 3.0",
+    "elevation": true
+  },
+  "246410": {
+    "url": "https://vici.org/vici/10600/",
+    "name": "La Graufesenque",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/graugresenque_sigillata.jpg",
+    "creator": "Nfhudson",
+    "license": "CC BY-SA 3.0",
+    "elevation": false
+  },
+  "314912": {
+    "url": "https://vici.org/vici/2613/",
+    "name": "Bulla Regia",
+    "image": "https://images.vici.org/cover/w1600xh1600/livius/tunisia/01bulla_regia/01museum_pieces/bulla_regia_lucilla_1_mndb.jpg",
+    "creator": "Jona Lendering",
+    "license": "CC BY 4.0",
+    "elevation": false
+  },
+  "314921": {
+    "url": "https://vici.org/vici/2562/",
+    "name": "Carthago",
+    "image": "https://images.vici.org/cover/w1600xh1600/livius/tunisia/01carthage/02thinissut/carthage-perhaps_dioscure_rmo.jpg",
+    "creator": "Jona Lendering",
+    "license": "CC BY 4.0",
+    "elevation": false
+  },
+  "315223": {
+    "url": "https://vici.org/vici/7850/",
+    "name": "Thugga",
+    "image": "https://images.vici.org/cover/w1600xh1600/livius/tunisia/01thugga/01house_dionysus_ulysses/dougga_dionysus_ship_bardo-museum1.jpg",
+    "creator": "Jan van Vliet",
+    "license": "CC BY 4.0",
+    "elevation": false
   },
   "324835": {
     "url": "https://vici.org/vici/2190/",
     "name": "Thisdro Col.",
     "image": "https://images.vici.org/cover/w1600xh1600/livius/tunisia/01thysdrus/01museum_pieces/used_photos/el_djem_concordia_rmo.jpg",
     "creator": "Jona Lendering",
-    "license": "CC BY 4.0"
+    "license": "CC BY 4.0",
+    "elevation": true
+  },
+  "334636": {
+    "url": "https://vici.org/vici/2060/",
+    "name": "Timgad",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/theimgad.jpg",
+    "creator": "Yelles",
+    "license": "CC BY-SA 3.0",
+    "elevation": false
+  },
+  "373778": {
+    "url": "https://vici.org/vici/2454/",
+    "name": "Cyrene",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/cyrene_overview.jpg",
+    "creator": "Livius.org",
+    "license": "CC BY-SA 3.0",
+    "elevation": false
+  },
+  "422995": {
+    "url": "https://vici.org/vici/1845/",
+    "name": "Ostia",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/Ostia_antica.jpg",
+    "creator": "Camelia.boban",
+    "license": "CC BY-SA 3.0",
+    "elevation": false
+  },
+  "423025": {
+    "url": "https://vici.org/vici/1692/",
+    "name": "Rome",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/TPPlace1203.jpg",
+    "creator": null,
+    "license": "Public Domain",
+    "elevation": false
+  },
+  "432873": {
+    "url": "https://vici.org/vici/1876/",
+    "name": "Herculaneum",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/Herculaneum-_Laufer.jpg",
+    "creator": "Reinhard Kuknat, Bremen",
+    "license": "Public Domain",
+    "elevation": false
+  },
+  "433032": {
+    "url": "https://vici.org/vici/1878/",
+    "name": "Pompeii",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/Pompeii-Street.jpg",
+    "creator": "Alago",
+    "license": "Public Domain",
+    "elevation": false
+  },
+  "452457": {
+    "url": "https://vici.org/vici/11394/",
+    "name": "Sybaris",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/sybaris_ruins2_jvv.jpg",
+    "creator": "Livius.org",
+    "license": "CC BY-SA 3.0",
+    "elevation": false
+  },
+  "462086": {
+    "url": "https://vici.org/vici/1908/",
+    "name": "Akragas",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/agrigento_t_dioscuri2.jpg",
+    "creator": "Livius.org",
+    "license": "CC BY-SA 3.0",
+    "elevation": false
+  },
+  "530824": {
+    "url": "https://vici.org/vici/10926/",
+    "name": "Bouthroton",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/Butrint.jpg",
+    "creator": "Piotrus",
+    "license": "CC BY-SA 3.0",
+    "elevation": false
+  },
+  "570491": {
+    "url": "https://vici.org/vici/2128/",
+    "name": "Mukênai",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/mycene_lvz09.jpg",
+    "creator": "Livius.org",
+    "license": "CC BY-SA 3.0",
+    "elevation": false
   },
   "599575": {
     "url": "https://vici.org/vici/2347/",
     "name": "Cnidus",
     "image": "https://images.vici.org/cover/w1600xh1600/uploads/dsc02463.jpg",
     "creator": null,
-    "license": "CC BY-SA 3.0"
+    "license": "CC BY-SA 3.0",
+    "elevation": true
+  },
+  "599612": {
+    "url": "https://vici.org/vici/2278/",
+    "name": "Ephesus",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/ephesus36.jpg",
+    "creator": "Traroth",
+    "license": "CC BY-SA 3.0",
+    "elevation": false
+  },
+  "658427": {
+    "url": "https://vici.org/vici/2419/",
+    "name": "Carrhae",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/carr.2011_1_.jpg",
+    "creator": null,
+    "license": "CC BY-SA 3.0",
+    "elevation": false
+  },
+  "668331": {
+    "url": "https://vici.org/vici/2526/",
+    "name": "Palmyrenos",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/Palmyra.jpg",
+    "creator": "Bernard Gagnon",
+    "license": "CC BY-SA 3.0",
+    "elevation": false
+  },
+  "678158": {
+    "url": "https://vici.org/vici/7862/",
+    "name": "Gerasa",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/Jerash_colonnaded_street.jpg",
+    "creator": "Jim Greenhill, U.S. Army",
+    "license": "Public Domain",
+    "elevation": false
+  },
+  "678401": {
+    "url": "https://vici.org/vici/2483/",
+    "name": "Cesaria",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/caesarea_decumanus3.jpg",
+    "creator": "Livius.org",
+    "license": "CC BY-SA 3.0",
+    "elevation": false
+  },
+  "687968": {
+    "url": "https://vici.org/vici/17581/",
+    "name": "Masada",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/masad076.jpg",
+    "creator": "X. Tomasz Jelonek",
+    "license": "CC0 1.0",
+    "elevation": false
+  },
+  "697725": {
+    "url": "https://vici.org/vici/21417/",
+    "name": "Petra (Al-Batrāʾ)",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/petra_045.jpg",
+    "creator": "X. Tomasz Jelonek",
+    "license": "CC0 1.0",
+    "elevation": false
+  },
+  "697737": {
+    "url": "https://vici.org/vici/7708/",
+    "name": "Qasr el-Hallabat",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/qasr_el_hallabat_imperial_edict_5.jpg",
+    "creator": null,
+    "license": "CC BY-SA 3.0",
+    "elevation": false
+  },
+  "727217": {
+    "url": "https://vici.org/vici/11342/",
+    "name": "SAIS",
+    "image": "https://images.vici.org/cover/w1600xh1600/livius/egypt/00sais/used_photos/sais_t_neith_pennu_nam.jpg",
+    "creator": "Jona Lendering, Marco Prins",
+    "license": "CC BY 4.0",
+    "elevation": false
+  },
+  "874621": {
+    "url": "https://vici.org/vici/11285/",
+    "name": "NINEVE",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/nineveh_wall_mv.jpg",
+    "creator": null,
+    "license": "CC BY-SA 3.0",
+    "elevation": false
+  },
+  "893945": {
+    "url": "https://vici.org/vici/10889/",
+    "name": "ASSUR",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/assur_glazed_capricorn_sviii_pergamonmuseum.jpg",
+    "creator": null,
+    "license": "CC BY-SA 3.0",
+    "elevation": false
+  },
+  "893976": {
+    "url": "https://vici.org/vici/10967/",
+    "name": "CTESIPHON",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/ctesiphon_iwan_04_mv.jpg",
+    "creator": null,
+    "license": "CC BY-SA 3.0",
+    "elevation": false
+  },
+  "893990": {
+    "url": "https://vici.org/vici/18095/",
+    "name": "Doura",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/ag_obj_5959_001_pub_print_lg.jpg",
+    "creator": "Yale University Art Gallery",
+    "license": "Public Domain",
+    "elevation": false
+  },
+  "413309734": {
+    "url": "https://vici.org/vici/19984/",
+    "name": "Pol-e Dokhtar",
+    "image": "https://images.vici.org/cover/w1600xh1600/livius/iran/00karkheh/used_photos/bridge2.jpg",
+    "creator": "Jona Lendering, Marco Prins",
+    "license": "CC BY 4.0",
+    "elevation": false
   }
 };

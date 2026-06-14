@@ -409,12 +409,15 @@ const SITES = (() => {
   addAll(typeof SITES_PLEIADES !== 'undefined' ? SITES_PLEIADES : undefined);
   addAll(typeof SITES_VICI     !== 'undefined' ? SITES_VICI     : undefined);
 
-  // Elevation overlay: candidates already in the curated/Pleiades sets (so deduped
-  // out of SITES_VICI) get the same vici hero + "help elevate" treatment.
-  if (typeof VICI_ELEVATION !== 'undefined') {
+  // vici overlay: vici-photo sites already in the curated/Pleiades sets (so deduped
+  // out of SITES_VICI) get the vici hero + button. Candidates (no P18) also get
+  // elevation:true → the "help elevate" banner; documented ones just get the photo.
+  if (typeof VICI_OVERLAY !== 'undefined') {
     for (const s of out) {
-      const v = s.pleiades && VICI_ELEVATION[s.pleiades];
-      if (v && !s.vici) { s.vici = v; s.elevation = true; if (!s.quest) s.quest = 'photo'; }
+      const v = s.pleiades && VICI_OVERLAY[s.pleiades];
+      if (!v || s.vici) continue;
+      s.vici = { url: v.url, name: v.name, image: v.image, creator: v.creator, license: v.license };
+      if (v.elevation) { s.elevation = true; if (!s.quest) s.quest = 'photo'; }
     }
   }
   return out;

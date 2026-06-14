@@ -454,9 +454,10 @@ function showPanel(site) {
   const quest = site.quest ? QUEST[site.quest] : null;
   const color = quest ? quest.color : tc.color;
 
-  // Hero. Elevation sites (vici has a photo, scholarly record doesn't) show that
-  // photo as the hero with a credit/license caption — the "imagery exists in the
-  // wild" pitch, made literal. Everything else keeps the tinted gradient.
+  // Hero. Any site with a vici.org photo shows it as the hero with a credit/
+  // license caption (the "imagery exists in the wild" made literal); elevation
+  // candidates additionally get the "help elevate" banner below. Sites with no
+  // vici photo keep the tinted gradient.
   const hero = document.getElementById('panel-hero');
   const heroIcon = document.getElementById('hero-icon');
   let heroCredit = document.getElementById('hero-credit');
@@ -465,7 +466,7 @@ function showPanel(site) {
     heroCredit.id = 'hero-credit';
     hero.appendChild(heroCredit);
   }
-  if (site.elevation && site.vici && site.vici.image) {
+  if (site.vici && site.vici.image) {
     hero.style.background =
       `linear-gradient(180deg, rgba(17,10,0,0.05) 0%, rgba(17,10,0,0.85) 100%), url("${site.vici.image}") center/cover no-repeat`;
     heroIcon.style.opacity = '0';

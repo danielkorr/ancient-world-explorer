@@ -28,8 +28,10 @@ Three files do everything; understanding how they interact matters more than any
 Interaction model:
 - Era toggle (`setEra`) swaps `ancientLayer`/`modernLayer` and re-brings roads + sites to front. Site coordinates do not change.
 - Layer toggle (`toggleLayer`) adds/removes the group from the map; state lives in the `layerState` object.
-- Marker click → `showPanel(site)` which rewrites the right-hand info panel and pans the map (right-offset on desktop, up-offset on mobile, breakpoint `<=640px`).
+- Marker click → `showPanel(site)` which rewrites the right-hand info panel and pans the map (right-offset on desktop, up-offset on mobile, breakpoint `<=640px`). On the *first* open it snapshots the pre-pan view into `panelReturnView`; `closePanel` flies back to it so dismissing the panel returns you whence you came instead of leaving you on the offset pan.
 - Info panel CSS class `.open` controls visibility; mobile vs desktop layout is pure CSS in `css/style.css`.
+- **Welcome modal** (`#welcome-modal`): the cold-start intro — explains what VIA is and the contribute-to-the-record pitch. `maybeShowWelcome()` (bottom of `app.js`) auto-opens it on the first visit, gated on `localStorage['via.welcomed']` (set by `closeWelcome`); skipped when `?signin=1` is present so it doesn't stack on the auto-opening sign-in modal. Reopen anytime via `openWelcome()` — wired to the `#app-brand` (the "VIA" title) click + keyboard. Styled with the shared `.auth-*` modal classes.
+- **External action buttons** (Google Maps / Satellite / Pleiades, built in `showPanel`): navigate in the **same tab** (not `target=_blank`) so the browser Back gesture — the one universal "go back" on every device — returns to VIA. `onclick="saveReturnState()"` stashes the open site id + home view to `sessionStorage['via.return']`; `restoreReturnState()` (bottom of `app.js`) reads it on the Back-reload and reopens that site's panel at the same view, then self-clears. The ↗ glyph (`.p-btn-ext`) signals the button leaves VIA.
 
 ## Notes for editing
 

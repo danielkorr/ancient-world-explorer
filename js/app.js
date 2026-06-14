@@ -391,6 +391,40 @@ SITES.forEach(site => {
   sitesGroup.addLayer(marker);
 });
 
+// iOS Safari does NOT synthesize a `click` from a tap on a Leaflet divIcon — the
+// ?debug=1 overlay confirmed `touchstart on [DIV]` with no click ever firing, so
+// marker.on('click') (which Leaflet drives off the synthesized click) never runs.
+// Handle the tap ourselves: a delegated touchend on the marker pane, matched back
+// to its marker, opens the panel directly. Touch-only (COARSE_POINTER) so desktop
+// click is untouched; preventDefault suppresses any late synthesized click so we
+// never double-fire.
+if (COARSE_POINTER) {
+  const markerPane = map.getPane('markerPane');
+  let _tStart = null;
+  markerPane.addEventListener('touchstart', e => {
+    const t = e.changedTouches && e.changedTouches[0];
+    _tStart = t ? { x: t.clientX, y: t.clientY } : null;
+  }, { passive: true });
+  markerPane.addEventListener('touchend', e => {
+    const t = e.changedTouches && e.changedTouches[0];
+    // Ignore drags — only a near-stationary touch counts as a tap.
+    if (_tStart && t && (Math.abs(t.clientX - _tStart.x) > 12 || Math.abs(t.clientY - _tStart.y) > 12)) return;
+    const iconEl = e.target.closest && e.target.closest('.leaflet-marker-icon');
+    if (!iconEl) return;
+    let hit = null;
+    sitesGroup.eachLayer(m => { if (m._icon === iconEl) hit = m; });
+    if (!hit) return;
+    e.preventDefault();   // suppress any late synthesized click → no double-open
+    dbg('✓ TAP→panel: ' + hit._site.name);
+    if (activeMarker && activeMarker !== hit) {
+      activeMarker.setIcon(makeIcon(activeMarker._site, false));
+      activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
+    }
+    activeMarker = hit;
+    showPanel(hit._site);
+  }, { passive: false });
+}
+
 // ── INFO PANEL ───────────────────────────────────────────
 
 function showPanel(site) {

@@ -509,21 +509,23 @@ function showPanel(site) {
   const satUrl = `https://www.google.com/maps/@${site.lat},${site.lng},500m/data=!3m1!1e3`;
   const plUrl  = `https://pleiades.stoa.org/places/${site.pleiades}`;
 
-  // External links open in a new tab so VIA stays alive in the original tab —
-  // the subtle ↗ glyph signals you're leaving the app. rel=noopener strips the
-  // new page's access to window.opener (security + perf).
+  // External links navigate in the SAME tab so the browser Back button/gesture
+  // — the one "go back" action that works identically on every device,
+  // including mobile — returns you to VIA. saveReturnState() stashes the open
+  // site + home view first, so the Back reload drops you right where you were
+  // instead of a cold start. The ↗ signals the button leaves VIA.
   document.getElementById('panel-actions').innerHTML = `
-    <a href="${gmUrl}" target="_blank" rel="noopener noreferrer" class="p-btn p-btn-maps">
+    <a href="${gmUrl}" onclick="saveReturnState()" class="p-btn p-btn-maps">
       <span class="p-btn-icon">🗺️</span>
       <div><div class="p-btn-main">Google Maps</div><div class="p-btn-sub">See ${site.name} in the modern world</div></div>
       <span class="p-btn-ext" aria-hidden="true">↗</span>
     </a>
-    <a href="${satUrl}" target="_blank" rel="noopener noreferrer" class="p-btn p-btn-sat">
+    <a href="${satUrl}" onclick="saveReturnState()" class="p-btn p-btn-sat">
       <span class="p-btn-icon">🛰️</span>
       <div><div class="p-btn-main">Satellite View</div><div class="p-btn-sub">Modern aerial — spot the ruins</div></div>
       <span class="p-btn-ext" aria-hidden="true">↗</span>
     </a>
-    <a href="${plUrl}" target="_blank" rel="noopener noreferrer" class="p-btn p-btn-gold">
+    <a href="${plUrl}" onclick="saveReturnState()" class="p-btn p-btn-gold">
       <span class="p-btn-icon">📜</span>
       <div><div class="p-btn-main">Pleiades Gazetteer</div><div class="p-btn-sub">Academic record · sources · cross-references</div></div>
       <span class="p-btn-ext" aria-hidden="true">↗</span>
@@ -564,6 +566,23 @@ function closePanel() {
     map.flyTo(panelReturnView.center, panelReturnView.zoom, { duration: 0.4 });
     panelReturnView = null;
   }
+}
+
+// Called just before an external action link navigates away (same tab). Stash
+// the open site + the "home" view so that when the browser Back gesture reloads
+// VIA, restoreReturnState() can drop you right back where you were. Uses
+// sessionStorage so it's scoped to this tab and self-clears on a fresh visit.
+function saveReturnState() {
+  if (!currentPanelSite) return;
+  const home = panelReturnView || { center: map.getCenter(), zoom: map.getZoom() };
+  try {
+    sessionStorage.setItem('via.return', JSON.stringify({
+      id:   currentPanelSite.id,
+      lat:  home.center.lat,
+      lng:  home.center.lng,
+      zoom: home.zoom
+    }));
+  } catch (e) {}
 }
 
 // Close on map click
@@ -1203,3 +1222,22 @@ if (_brandEl) {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openWelcome(); }
   });
 }
+
+// ── Return from an external link ──
+// If we got here via the browser Back gesture after an action button sent the
+// tab to Google Maps / Pleiades, saveReturnState() left a breadcrumb. Restore
+// the home view and reopen that site's panel so coming back feels seamless —
+// you land exactly where you left, not on a cold map. Self-clears so a normal
+// reload or fresh visit isn't affected.
+(function restoreReturnState() {
+  let raw = null;
+  try { raw = sessionStorage.getItem('via.return'); } catch (e) {}
+  if (!raw) return;
+  try { sessionStorage.removeItem('via.return'); } catch (e) {}
+  let st;
+  try { st = JSON.parse(raw); } catch (e) { return; }
+  const site = SITES.find(s => s.id === st.id);
+  if (!site) return;
+  map.setView([st.lat, st.lng], st.zoom, { animate: false });
+  showPanel(site);  // re-pans to the panel framing and recaptures the home view
+})();

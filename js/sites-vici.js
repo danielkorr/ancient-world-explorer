@@ -497,3 +497,30 @@ const SITES_VICI = [
   {"id":"vici-11470","name":"Zenobia","modern":"","type":"city","lat":35.6893,"lng":39.8216,"period":"Roman period","pleiades":"894185","rome_days":0,"desc":"An ancient place, cited: BAtlas 91 A2 Zenobia","vici":{"url":"https://vici.org/vici/11470/","name":"Zenobia","image":"https://images.vici.org/cover/w1600xh1600/uploads/zenobia_praetorium1.jpg","creator":"Livius.org","license":"CC BY-SA 3.0"}},
   {"id":"vici-2401","name":"Zeugma","modern":"","type":"city","lat":37.0577,"lng":37.8702,"period":"Roman period","pleiades":"658636","rome_days":0,"desc":"An ancient settlement whose site is located in the Gaziantep province of modern Turkey, at the modern village of Belkis (a.k.a. Kavunlu). The majority of the ancient remains were covered by water in the year 2000, due to the construction of the Birecik Dam.","vici":{"url":"https://vici.org/vici/2401/","name":"Zeugma","image":"https://images.vici.org/cover/w1600xh1600/uploads/zeugma02.jpg","creator":"Livius.org","license":"CC BY-SA 3.0"}}
 ];
+
+// Elevation overlay: vici data for candidates already present in VIA's
+// curated/Pleiades sets (so they get the same hero + "help elevate" panel).
+// data.js merges this onto the matching site by pleiades id.
+const VICI_ELEVATION = {
+  "246139": {
+    "url": "https://vici.org/vici/30262/",
+    "name": "Panissars",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/summum_pyrenaeum_1_1_.jpg",
+    "creator": null,
+    "license": "CC BY-SA 3.0"
+  },
+  "324835": {
+    "url": "https://vici.org/vici/2190/",
+    "name": "Thisdro Col.",
+    "image": "https://images.vici.org/cover/w1600xh1600/livius/tunisia/01thysdrus/01museum_pieces/used_photos/el_djem_concordia_rmo.jpg",
+    "creator": "Jona Lendering",
+    "license": "CC BY 4.0"
+  },
+  "599575": {
+    "url": "https://vici.org/vici/2347/",
+    "name": "Cnidus",
+    "image": "https://images.vici.org/cover/w1600xh1600/uploads/dsc02463.jpg",
+    "creator": null,
+    "license": "CC BY-SA 3.0"
+  }
+};

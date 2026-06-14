@@ -408,5 +408,14 @@ const SITES = (() => {
   };
   addAll(typeof SITES_PLEIADES !== 'undefined' ? SITES_PLEIADES : undefined);
   addAll(typeof SITES_VICI     !== 'undefined' ? SITES_VICI     : undefined);
+
+  // Elevation overlay: candidates already in the curated/Pleiades sets (so deduped
+  // out of SITES_VICI) get the same vici hero + "help elevate" treatment.
+  if (typeof VICI_ELEVATION !== 'undefined') {
+    for (const s of out) {
+      const v = s.pleiades && VICI_ELEVATION[s.pleiades];
+      if (v && !s.vici) { s.vici = v; s.elevation = true; if (!s.quest) s.quest = 'photo'; }
+    }
+  }
   return out;
 })();

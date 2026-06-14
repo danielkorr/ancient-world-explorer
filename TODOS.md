@@ -44,6 +44,15 @@ oriented older audience. Build both into the one flow.
   (tourist-dense, photogenic, quest-rich). Never launch an empty game — nobody wants to
   be first into an empty room. You + a few friends contribute the first ~50.
 
+## UX polish (down the road)
+
+- [ ] **Restore map position when the site panel closes.** Clicking a marker pans the map
+  to offset the site away from the panel (right-offset desktop, up-offset mobile, in
+  `showPanel`). Closing the panel leaves you wherever that pan landed, not where you were
+  when you clicked — disorienting. Fix: capture `map.getCenter()`/zoom before the pan,
+  restore it (with `flyTo`/`setView`) on close. Watch the mobile vs. desktop offset
+  difference and don't fight the marker re-select logic.
+
 ## Deferred expansions (v1.5 / v2 — from the CEO review)
 
 - [ ] **E1 — Widen "quest" → "contribution"** (corrections, condition reports, better

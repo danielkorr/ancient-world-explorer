@@ -66,7 +66,38 @@ Treat this as a **first-class, but vetted** feature:
 - Implication: photo submissions go to a `submissions` queue (status: pending → vetted →
   relayed), never directly into an external record. Always attach attribution + license.
 
-## 6. UX guardrails
+## 6. Scholar voices (the two-way bridge)
+The contribution loop (§5) carries user photos *up* toward the scholarly record. **Scholar
+voices** runs the bridge the other way — bringing real expertise *down* to the traveler.
+Most map apps are a one-way data dump; a place where a working archaeologist speaks about
+the exact spot you're standing in is something code can't replicate. It lives in the moat
+DESIGN names: relationships, trust, brand.
+
+**On-ramp (build first): point to scholars' own platforms, with permission.** A curated
+link to a scholar's Substack/Medium/blog/dig report, keyed on a Pleiades site `id` or a
+region. This is a *gift*, not an ask — VIA sends readers (people standing at the site) to
+their page and grows their audience, so permission is an easy yes, and they keep their
+voice, platform, copyright, and any subscription revenue. No hosting, no CMS, no editorial
+pipeline, no IP to manage. Renders in the **partner / non-commercial placement slot**
+already in the placements model (D-05) — `kind: "partner"`, pointed at a person's writing
+instead of a commercial CTA. This is the mission-aligned reason that slot exists.
+
+Surfaces: a "Further reading: Dr. X on Pompeii →" line in the site panel; a rotating
+"This week's voice" feature; a small "Voices" directory of partnered scholars.
+
+**Deepening (later): original hosted notes.** If a scholar *wants* to write something
+original and exclusive for a specific site, that content lives on VIA and becomes part of
+the content moat. Pointing-out is the on-ramp; hosting-original is the graduation — start by
+sending traffic, deepen the ones who want to go further.
+
+**The strategic two-for-one:** the scholar who lends a voice is the same person who can
+*vet* user contributions (§5 needs an academic/NGO reviewer before anything reaches the
+scholarly record). One relationship cultivated now is simultaneously a credibility anchor,
+a guest contributor, and the contribution-vetting partner. These conversations are worth
+starting **before** there's an audience — a real scholar's name is a cold-start asset, not
+something to wait for (see TODOS → cold-start).
+
+## 7. UX guardrails
 - **Mobile parity is non-negotiable** (it was the originating bug — the dead-tap issue is
   now **fixed** via iOS `touchend` delegation in `app.js`). Every control reachable on
   desktop must stay reachable and tappable (≥44px) on a phone. Gate releases on the
@@ -75,7 +106,7 @@ Treat this as a **first-class, but vetted** feature:
   root tile reliability.
 - Don't let monetization erode trust: sparse, contextual, clearly-labeled placements only.
 
-## 7. Non-goals (for now)
+## 8. Non-goals (for now)
 - User payments / subscriptions / premium paywalls (would force real server-side
   entitlement logic — out of scope under the current revenue model).
 - A native mobile app (the responsive web app is the surface).

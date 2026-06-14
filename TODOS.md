@@ -43,6 +43,14 @@ oriented older audience. Build both into the one flow.
 - [ ] **Seed one wedge region to ~80% documented before any launch.** Bay of Naples
   (tourist-dense, photogenic, quest-rich). Never launch an empty game — nobody wants to
   be first into an empty room. You + a few friends contribute the first ~50.
+- [ ] **Start the scholar-voices conversations now (relationship, not feature).** Reach out
+  to the archaeologists/historians you know: "would you let VIA point readers to your
+  Substack/Medium/dig writing, tied to the sites you work on?" It's a gift (you send them
+  an audience standing at the site), so it's an easy yes. Each scholar is a three-for-one:
+  credibility anchor + guest voice + the academic reviewer the contribution loop needs to
+  vet user submissions. A real scholar's name is a cold-start asset — cultivate it before
+  launch, not after. Feature surface is later/cheap (a partner-slot link); the relationship
+  is the thing to start today. See DESIGN.md → §6 Scholar voices.
 
 ## UX polish (down the road)
 

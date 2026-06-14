@@ -509,18 +509,24 @@ function showPanel(site) {
   const satUrl = `https://www.google.com/maps/@${site.lat},${site.lng},500m/data=!3m1!1e3`;
   const plUrl  = `https://pleiades.stoa.org/places/${site.pleiades}`;
 
+  // External links open in a new tab so VIA stays alive in the original tab —
+  // the subtle ↗ glyph signals you're leaving the app. rel=noopener strips the
+  // new page's access to window.opener (security + perf).
   document.getElementById('panel-actions').innerHTML = `
-    <a href="${gmUrl}" target="_blank" class="p-btn p-btn-maps">
+    <a href="${gmUrl}" target="_blank" rel="noopener noreferrer" class="p-btn p-btn-maps">
       <span class="p-btn-icon">🗺️</span>
       <div><div class="p-btn-main">Google Maps</div><div class="p-btn-sub">See ${site.name} in the modern world</div></div>
+      <span class="p-btn-ext" aria-hidden="true">↗</span>
     </a>
-    <a href="${satUrl}" target="_blank" class="p-btn p-btn-sat">
+    <a href="${satUrl}" target="_blank" rel="noopener noreferrer" class="p-btn p-btn-sat">
       <span class="p-btn-icon">🛰️</span>
       <div><div class="p-btn-main">Satellite View</div><div class="p-btn-sub">Modern aerial — spot the ruins</div></div>
+      <span class="p-btn-ext" aria-hidden="true">↗</span>
     </a>
-    <a href="${plUrl}" target="_blank" class="p-btn p-btn-gold">
+    <a href="${plUrl}" target="_blank" rel="noopener noreferrer" class="p-btn p-btn-gold">
       <span class="p-btn-icon">📜</span>
       <div><div class="p-btn-main">Pleiades Gazetteer</div><div class="p-btn-sub">Academic record · sources · cross-references</div></div>
+      <span class="p-btn-ext" aria-hidden="true">↗</span>
     </a>
   `;
 

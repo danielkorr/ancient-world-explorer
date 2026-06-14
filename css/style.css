@@ -1029,6 +1029,18 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 .p-btn-main { font-weight: 500; }
 .p-btn-sub  { font-size: 10px; opacity: 0.55; margin-top: 1px; }
 
+/* Subtle "opens externally" cue — pinned to the right edge, faint until hover
+   so it reads as a quiet signpost, not a second action. */
+.p-btn-ext  {
+  margin-left: auto;
+  flex-shrink: 0;
+  align-self: flex-start;
+  font-size: 13px;
+  opacity: 0.4;
+  transition: opacity 0.2s;
+}
+.p-btn:hover .p-btn-ext { opacity: 0.85; }
+
 /* ── QUEST MARKER ANIMATION ── */
 @keyframes questPulse {
   0%   { transform: scale(1);   opacity: 0.9; }

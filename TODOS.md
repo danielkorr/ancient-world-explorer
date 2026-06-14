@@ -3,6 +3,26 @@
 Tracked work from the 2026-06-13 office-hours + CEO review. Full strategic plan:
 `~/.gstack/projects/danielkorr-ancient-world-explorer/danie-main-design-20260613-003042.md`
 
+## ▶ Next build session — resume here
+
+Schema v2 enrichment is landed (`docs/redesign/SITE-SCHEMA.md` is the contract;
+`scripts/build-enrichment.mjs` → `js/sites-enrichment.json`, 53 clean images). Two
+threads queued, do in this order:
+
+1. **`references[]` rework.** `build-enrichment.mjs` Pass 1 currently extracts ONLY the
+   Wikidata Q-id from the Pleiades place JSON and discards the rest. That same cached JSON
+   already carries the full cross-ref web in `references[]`: vici, topostext, trismegistos,
+   arachne, manto, getty TGN, geonames, the UNESCO WHL list number, and `names[]` →
+   `name_ancient`. Parse `references[]` by domain into the `xref` block + `heritage` +
+   `name_ancient`; shrink the Wikidata pass to its one real job (P18 image → Commons
+   license). Re-run the 74. (Pleiades Linked Data Sidebar = the *inbound* version, a later
+   richer layer; not needed for this.)
+2. **Wire the panel.** `app.js` doesn't load `sites-enrichment.json` yet. Load + merge by
+   `id` at startup; `showPanel` renders media + credit + heritage badge + xref links when
+   present, degrades silently when absent (per SITE-SCHEMA runtime rules). Bump `?v=` token.
+
+Then: the curated-id validation guard (fail the build if any curated `pleiades` 404s).
+
 ## Now — v1 scope (the contribution loop)
 
 The bet: VIA's read-only map has no reason to bring anyone back twice. v1 builds the

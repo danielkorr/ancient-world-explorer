@@ -46,7 +46,7 @@ const SITES_CURATED = [
     desc:"Before Ostia was developed, Puteoli was Rome's primary port for eastern trade — grain from Egypt, spices from Arabia, goods from across the Mediterranean all passed through here. Paul the Apostle landed at Puteoli on his way to Rome. The amphitheater is among the best preserved in Italy." },
 
   { id:"cumae", name:"Cumae", modern:"Cuma, Italy", type:"city",
-    lat:40.8479, lng:14.0545, period:"8th c. BC – Byzantine", pleiades:"432740", rome_days:5,
+    lat:40.8479, lng:14.0545, period:"8th c. BC – Byzantine", pleiades:"432808", rome_days:5,
     quest:"photo",
     desc:"The oldest Greek colony in the western Mediterranean (8th century BC), Cumae was home to the famous Cumaean Sibyl — the prophetess whose cave can still be entered today. Aeneas visited her here, according to Virgil. The cave's long vaulted tunnel cut through the volcanic rock is one of antiquity's most evocative spaces." },
 
@@ -55,7 +55,7 @@ const SITES_CURATED = [
     desc:"Ancient Capua was Rome's second most important city — so wealthy that Hannibal wintered his army here. The gladiatorial school was where Spartacus launched his great slave revolt in 73 BC. The amphitheater, second in size only to the Colosseum, still dominates the modern town." },
 
   { id:"neapolis", name:"Neapolis", modern:"Naples, Italy", type:"city",
-    lat:40.8518, lng:14.2681, period:"8th c. BC – present", pleiades:"432740", rome_days:4,
+    lat:40.8518, lng:14.2681, period:"8th c. BC – present", pleiades:"433014", rome_days:4,
     desc:"Founded by Greek colonists, Neapolis retained its Greek language and culture throughout the Roman period. Augustus spent his last days here; Nero performed on its stage; Virgil was buried on its outskirts. The street grid of the ancient Greek city still underlies central Naples." },
 
   { id:"paestum", name:"Paestum", modern:"Paestum, Italy", type:"city",
@@ -72,7 +72,7 @@ const SITES_CURATED = [
     desc:"One of the great cities of Magna Graecia, Tarentum was famous for its harbor, purple-dyed textiles, and philosophers. Archytas — mathematician, statesman, and friend of Plato — governed here. The city became a key Roman port and naval base in southern Italy." },
 
   { id:"aquileia", name:"Aquileia", modern:"Aquileia, Italy", type:"city",
-    lat:45.7713, lng:13.3672, period:"181 BC – 5th c. AD", pleiades:"140997", rome_days:6,
+    lat:45.7713, lng:13.3672, period:"181 BC – 5th c. AD", pleiades:"187290", rome_days:6,
     desc:"Rome's northeastern gateway, Aquileia grew into one of the largest cities of the western empire. The early Christian basilica preserves the finest 4th-century mosaic floor in existence — over 760 square meters. Attila the Hun destroyed it in 452 AD; refugees founded Venice in the lagoons to the west." },
 
   { id:"mediolanum", name:"Mediolanum", modern:"Milan, Italy", type:"capital",
@@ -154,7 +154,7 @@ const SITES_CURATED = [
     desc:"Established after the Claudian invasion of 43 AD, Londinium quickly became Britain's capital. Boudica burned it to the ground in 60 AD — the charred layer is still found in excavations beneath the City. The Roman wall defines the boundaries of the modern financial district. The London Mithraeum can be visited today." },
 
   { id:"eboracum", name:"Eboracum", modern:"York, UK", type:"fortress",
-    lat:53.9591, lng:-1.0803, period:"AD 71 – present", pleiades:"89089", rome_days:33,
+    lat:53.9591, lng:-1.0803, period:"AD 71 – present", pleiades:"89175", rome_days:33,
     desc:"Founded as a legionary fortress in 71 AD, Eboracum became the effective capital of northern Britain. Emperor Septimius Severus died here in 211 AD. Constantine the Great was proclaimed Emperor at Eboracum in 306 AD. The Multangular Tower survives from the Roman fortification." },
 
   { id:"aquaesulis", name:"Aquae Sulis", modern:"Bath, UK", type:"city",
@@ -171,7 +171,7 @@ const SITES_CURATED = [
     desc:"One of only three permanent legionary fortresses in Roman Britain (alongside Eboracum and Deva), Isca housed the Legio II Augusta for over 200 years. The amphitheater — the best-preserved Roman amphitheater in Britain — the baths, and the barracks are all visible. Tennyson set his Arthurian legends here." },
 
   { id:"housesteads", name:"Vercovicium", modern:"Housesteads, Northumberland, UK", type:"fortress",
-    lat:55.0091, lng:-2.3285, period:"AD 124 – 4th c. AD", pleiades:"89180", rome_days:35,
+    lat:55.0091, lng:-2.3285, period:"AD 124 – 4th c. AD", pleiades:"89311", rome_days:35,
     desc:"The most complete Roman fort in Britain, garrisoning 800 soldiers on the crest of Hadrian's Wall. Troops recruited from Belgium, Frisia, and Spain stood watch against the unconquered north. The barrack blocks, granaries, hospital, and headquarters building are all visible. The view from the Wall is one of the most atmospheric in Roman Britain." },
 
   { id:"luguvallium", name:"Luguvallium", modern:"Carlisle, UK", type:"fortress",
@@ -239,7 +239,7 @@ const SITES_CURATED = [
     desc:"Site of the First Council of Nicaea (325 AD), where Emperor Constantine convened 300 bishops to define Christian orthodoxy and produce the Nicene Creed — one of the most consequential meetings in world history. The beautifully preserved Roman walls and gates, the lakeshore setting, and the ruins of Hagia Sophia (an earlier one than Istanbul's) make Nicaea deeply atmospheric and remarkably undervisited." },
 
   { id:"ephesus", name:"Ephesus", modern:"Selçuk, Turkey", type:"city",
-    lat:37.9364, lng:27.3418, period:"10th c. BC – 15th c. AD", pleiades:"422338", rome_days:24,
+    lat:37.9364, lng:27.3418, period:"10th c. BC – 15th c. AD", pleiades:"599612", rome_days:24,
     desc:"One of the great cities of antiquity and capital of the Roman province of Asia, Ephesus had a population of 250,000. The Temple of Artemis was one of the Seven Wonders. The Library of Celsus, the Terrace Houses with their stunning mosaics, and the 25,000-seat theater make this the best-preserved Roman city in the eastern Mediterranean." },
 
   { id:"pergamon", name:"Pergamon", modern:"Bergama, Turkey", type:"city",
@@ -252,11 +252,11 @@ const SITES_CURATED = [
     desc:"One of the great cities of Roman Asia, Smyrna competed fiercely with Ephesus and Pergamon for the title of 'First City of Asia'. The bishop Polycarp was martyred here in 155 AD. Little of the ancient city survives beneath modern İzmir, but the Agora — recently re-excavated — is exceptional." },
 
   { id:"ancyra", name:"Ancyra", modern:"Ankara, Turkey", type:"capital",
-    lat:39.9334, lng:32.8597, period:"3rd c. BC – present", pleiades:"619003", rome_days:30,
+    lat:39.9334, lng:32.8597, period:"3rd c. BC – present", pleiades:"619103", rome_days:30,
     desc:"Capital of the province of Galatia. The Temple of Augustus preserves the Res Gestae Divi Augusti — Augustus's own account of his reign, the most important Latin inscription in existence, inscribed on the temple walls in both Latin and Greek." },
 
   { id:"tarsus", name:"Tarsus", modern:"Tarsus, Turkey", type:"city",
-    lat:36.9138, lng:34.8892, period:"3rd mill. BC – present", pleiades:"652758", rome_days:33,
+    lat:36.9138, lng:34.8892, period:"3rd mill. BC – present", pleiades:"648789", rome_days:33,
     quest:"photo",
     desc:"Birthplace of Paul the Apostle and one of the most important cities of Cilicia. Mark Antony and Cleopatra first met at Tarsus in 41 BC — the scene Plutarch describes of her arrival on a golden barge, with silver oars and purple sails, to the sound of flutes. The so-called Gate of Cleopatra and a Roman road survive." },
 
@@ -276,7 +276,7 @@ const SITES_CURATED = [
     desc:"A temple dedicated to the pre-Islamic Arabian goddess Al-Lāt within the sanctuary of Palmyra, syncretized with Athena under Roman rule. A magnificent lion sculpture guarding the temple was destroyed by ISIS in 2015. The Pleiades record notes no portrait photograph exists in any scholarly database — this is an open quest." },
 
   { id:"dura_europos", name:"Dura-Europos", modern:"Deir ez-Zor, Syria", type:"fortress",
-    lat:34.7492, lng:40.7278, period:"3rd c. BC – AD 256", pleiades:"668457", rome_days:42,
+    lat:34.7492, lng:40.7278, period:"3rd c. BC – AD 256", pleiades:"893990", rome_days:42,
     quest:"location",
     desc:"A remarkable frontier garrison city on the Euphrates, Dura-Europos was captured and abandoned by the Sasanian Persians in 256 AD and never reoccupied, preserving it intact beneath the desert. The excavated synagogue murals and the earliest known Christian house-church were both found here. Access is extremely difficult due to the Syrian conflict." },
 
@@ -297,7 +297,7 @@ const SITES_CURATED = [
     desc:"The rose-red rock-cut capital of the Nabataean kingdom, controlling the incense and spice routes from Arabia and India. Annexed by Rome in 106 AD as the province of Arabia Petraea. The Siq canyon, the Treasury (Khazneh), the Street of Facades, and hundreds of rock-cut tombs make Petra one of the most spectacular ancient sites on Earth." },
 
   { id:"damascus", name:"Damascus", modern:"Damascus, Syria", type:"city",
-    lat:33.5138, lng:36.3059, period:"3rd mill. BC – present", pleiades:"678686", rome_days:36,
+    lat:33.5138, lng:36.3059, period:"3rd mill. BC – present", pleiades:"678106", rome_days:36,
     desc:"One of the world's oldest continuously inhabited cities. The Via Recta (Straight Street) mentioned in Acts of the Apostles still runs through the old city. Paul the Apostle was converted on the road to Damascus and later escaped the city in a basket lowered over the wall." },
 
   // ── NORTH AFRICA ─────────────────────────────────────────

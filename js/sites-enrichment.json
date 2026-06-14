@@ -1,0 +1,1966 @@
+{
+  "roma": {
+    "xref": {
+      "wikidata": "Q18287233",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/3/30/Roma_Romolo_753aC.png",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Roma_Romolo_753aC.png/500px-Roma_Romolo_753aC.png",
+        "credit": "Cristiano64",
+        "source": "wikimedia_commons",
+        "license": "GFDL",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "ostia": {
+    "xref": {
+      "wikidata": "Q1012797",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "2988"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/6/68/Frigidarium_Terme_del_Foro_Ostia_Antica_2006-09-08.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Frigidarium_Terme_del_Foro_Ostia_Antica_2006-09-08.jpg/500px-Frigidarium_Terme_del_Foro_Ostia_Antica_2006-09-08.jpg",
+        "credit": "Marie-Lan Nguyen (User:Jastrow)",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-2.5",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "tibur": {
+    "xref": {
+      "wikidata": "Q2273010",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "pompeii": {
+    "xref": {
+      "wikidata": "Q43332",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "2788"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Pompeii_%284873744179%29.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Pompeii_%284873744179%29.jpg/500px-Pompeii_%284873744179%29.jpg",
+        "credit": "Glen Scarborough from The Central Coast, Australia",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-2.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "herculaneum": {
+    "xref": {
+      "wikidata": "Q178813",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Antigua_ciudad_de_Herculano%2C_Italia%2C_2023-03-27%2C_DD_141.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Antigua_ciudad_de_Herculano%2C_Italia%2C_2023-03-27%2C_DD_141.jpg/500px-Antigua_ciudad_de_Herculano%2C_Italia%2C_2023-03-27%2C_DD_141.jpg",
+        "credit": "Diego Delso",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-4.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "heritage": {
+      "unesco": true,
+      "unesco_ref": "829-003"
+    },
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "baiae": {
+    "xref": {
+      "wikidata": null,
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": true
+    }
+  },
+  "puteoli": {
+    "xref": {
+      "wikidata": "Q78998849",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "45021"
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "cumae": {
+    "xref": {
+      "wikidata": "Q243456",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "14437"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Cumae_acropolis_seen_from_lower_city_AvL.JPG",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Cumae_acropolis_seen_from_lower_city_AvL.JPG/500px-Cumae_acropolis_seen_from_lower_city_AvL.JPG",
+        "credit": "AlexanderVanLoon",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "capua": {
+    "xref": {
+      "wikidata": "Q3136685",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Capua_Antica_Amphitheatre.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Capua_Antica_Amphitheatre.jpg/500px-Capua_Antica_Amphitheatre.jpg",
+        "credit": "Rico Heil",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "neapolis": {
+    "xref": {
+      "wikidata": "Q15122630",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "paestum": {
+    "xref": {
+      "wikidata": "Q329967",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "14483"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/3/38/View_of_Paestum_with_dji.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/View_of_Paestum_with_dji.jpg/500px-View_of_Paestum_with_dji.jpg",
+        "credit": "PaestumPaestum",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-4.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "heritage": {
+      "unesco": true,
+      "unesco_ref": "842"
+    },
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "brundisium": {
+    "xref": {
+      "wikidata": "Q732732",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "14267"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Egnazia_from_the_sky.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Egnazia_from_the_sky.jpg/500px-Egnazia_from_the_sky.jpg",
+        "credit": "parolediburro",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-2.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "tarentum": {
+    "xref": {
+      "wikidata": "Q3950860",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "59545"
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "aquileia": {
+    "xref": {
+      "wikidata": "Q2859274",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Porto_fluviale_di_Aquileia.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Porto_fluviale_di_Aquileia.jpg/500px-Porto_fluviale_di_Aquileia.jpg",
+        "credit": "Zavijavah",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "mediolanum": {
+    "xref": {
+      "wikidata": "Q583121",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/7/7f/Barrou_%C3%A9glise.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Barrou_%C3%A9glise.jpg/500px-Barrou_%C3%A9glise.jpg",
+        "credit": "Joël Thibault",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-4.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "ravenna": {
+    "xref": {
+      "wikidata": "Q13364",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "3192"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/5/51/Basilica_of_San_Vitale.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Basilica_of_San_Vitale.jpg/500px-Basilica_of_San_Vitale.jpg",
+        "credit": "Commonists",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-4.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "ariminium": {
+    "xref": {
+      "wikidata": "Q3862318",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/6/60/San_Bonaventura_Monterano.JPG",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/San_Bonaventura_Monterano.JPG/500px-San_Bonaventura_Monterano.JPG",
+        "credit": "Livioandronico2013",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "syracusae": {
+    "xref": {
+      "wikidata": "Q13670",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Ortigia_dall%27alto.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Ortigia_dall%27alto.jpg/500px-Ortigia_dall%27alto.jpg",
+        "credit": "Agostino Artnoir Sella",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-2.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "agrigentum": {
+    "xref": {
+      "wikidata": "Q13678",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Agrigento_4m1.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Agrigento_4m1.jpg/500px-Agrigento_4m1.jpg",
+        "credit": "jschoenhofer",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-2.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "lugdunum": {
+    "xref": {
+      "wikidata": "Q665",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/5/54/Roman_theatre_in_Lyon.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Roman_theatre_in_Lyon.jpg/500px-Roman_theatre_in_Lyon.jpg",
+        "credit": "Vincent.bloch (Vincent Bloch)",
+        "source": "wikimedia_commons",
+        "license": "PD",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "arelate": {
+    "xref": {
+      "wikidata": "Q641068",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "3339"
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "nemausus": {
+    "xref": {
+      "wikidata": "Q2914723",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "19905"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/d/de/France-002364_-_Square_House_%2815867600545%29.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/France-002364_-_Square_House_%2815867600545%29.jpg/500px-France-002364_-_Square_House_%2815867600545%29.jpg",
+        "credit": "Dennis G. Jarvis",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-2.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "massilia": {
+    "xref": {
+      "wikidata": "Q1806812",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/2/20/Lattes_-_Mus%C3%A9e_Henri-Prades_-_Vue_du_site_arch%C3%A9ologique_de_Lattara.JPG",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Lattes_-_Mus%C3%A9e_Henri-Prades_-_Vue_du_site_arch%C3%A9ologique_de_Lattara.JPG/500px-Lattes_-_Mus%C3%A9e_Henri-Prades_-_Vue_du_site_arch%C3%A9ologique_de_Lattara.JPG",
+        "credit": "Arnaud Fafournoux",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "narbo": {
+    "xref": {
+      "wikidata": null,
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": true
+    }
+  },
+  "augustodunum": {
+    "xref": {
+      "wikidata": "Q2871714",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "3265"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Autun_theatre_2.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Autun_theatre_2.jpg/500px-Autun_theatre_2.jpg",
+        "credit": "Christophe.Finot",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-1.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "burdigala": {
+    "xref": {
+      "wikidata": null,
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": true
+    }
+  },
+  "caesaraugusta": {
+    "xref": {
+      "wikidata": null,
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": true
+    }
+  },
+  "emerita": {
+    "xref": {
+      "wikidata": "Q1583842",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/8/87/Maqueta_Emerita-Augusta.JPG",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Maqueta_Emerita-Augusta.JPG/500px-Maqueta_Emerita-Augusta.JPG",
+        "credit": "Yuntero",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "hispalis": {
+    "xref": {
+      "wikidata": "Q100422615",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "gades": {
+    "xref": {
+      "wikidata": "Q5890310",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "13580"
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "carthagonova": {
+    "xref": {
+      "wikidata": "Q2727884",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/5/52/Edificio_Atrio_Toscano1.JPG",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Edificio_Atrio_Toscano1.JPG/500px-Edificio_Atrio_Toscano1.JPG",
+        "credit": "Nanosanchez",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "londinium": {
+    "xref": {
+      "wikidata": "Q927198",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/2/24/Londinium_Arch%C3%A4ologische_Karte.png",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Londinium_Arch%C3%A4ologische_Karte.png/500px-Londinium_Arch%C3%A4ologische_Karte.png",
+        "credit": "Fremantleboy 06 July 2007",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-2.5",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "eboracum": {
+    "xref": {
+      "wikidata": "Q958954",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "13682"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/6/69/Constantine_York_Minster.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Constantine_York_Minster.jpg/500px-Constantine_York_Minster.jpg",
+        "credit": "York Minster",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-2.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "aquaesulis": {
+    "xref": {
+      "wikidata": "Q2450247",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/2/28/DevaMinervaPlan%28bq%29.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/DevaMinervaPlan%28bq%29.jpg/500px-DevaMinervaPlan%28bq%29.jpg",
+        "credit": "Łukasz Nurczyński",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-4.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "camulodunum": {
+    "xref": {
+      "wikidata": null,
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": true
+    }
+  },
+  "isca": {
+    "xref": {
+      "wikidata": null,
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": true
+    }
+  },
+  "housesteads": {
+    "xref": {
+      "wikidata": "Q1812832",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "15087"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Housesteads_Fort2.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Housesteads_Fort2.jpg/500px-Housesteads_Fort2.jpg",
+        "credit": "Fryslan0109 at en.wikipedia",
+        "source": "wikimedia_commons",
+        "license": "PD",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "luguvallium": {
+    "xref": {
+      "wikidata": "Q1876046",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "14300"
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "vindobona": {
+    "xref": {
+      "wikidata": "Q871525",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "28821"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/e/ee/Wien.Hofburg10.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Wien.Hofburg10.jpg/500px-Wien.Hofburg10.jpg",
+        "credit": "Georges Jansoone",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-2.5",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "carnuntum": {
+    "xref": {
+      "wikidata": "Q508815",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "16521"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Carnuntum_Petronell.JPG",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Carnuntum_Petronell.JPG/500px-Carnuntum_Petronell.JPG",
+        "credit": "Vladimir Drzik",
+        "source": "wikimedia_commons",
+        "license": "PD",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "aquincum": {
+    "xref": {
+      "wikidata": null,
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": true
+    }
+  },
+  "sirmium": {
+    "xref": {
+      "wikidata": null,
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": true
+    }
+  },
+  "naissus": {
+    "xref": {
+      "wikidata": null,
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": true
+    }
+  },
+  "singidunum": {
+    "xref": {
+      "wikidata": "Q833060",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "19940"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Sirmium%2C_Imperial_Palace.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Sirmium%2C_Imperial_Palace.jpg/500px-Sirmium%2C_Imperial_Palace.jpg",
+        "credit": "sm022",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "athenae": {
+    "xref": {
+      "wikidata": "Q1524",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Akropolis_2015.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Akropolis_2015.jpg/500px-Akropolis_2015.jpg",
+        "credit": "Thomas Wolf, www.foto-tw.de",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "corinthus": {
+    "xref": {
+      "wikidata": "Q1363688",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Tempio_di_Apollo_e_Acrocorinto.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Tempio_di_Apollo_e_Acrocorinto.jpg/500px-Tempio_di_Apollo_e_Acrocorinto.jpg",
+        "credit": "Davide Mauro",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-4.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "delphi": {
+    "xref": {
+      "wikidata": "Q75459",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Delfi_Apollons_tempel.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Delfi_Apollons_tempel.jpg/500px-Delfi_Apollons_tempel.jpg",
+        "credit": "Helen Simonsson",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "thessalonica": {
+    "xref": {
+      "wikidata": "Q17151",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "byzantium": {
+    "xref": {
+      "wikidata": "Q16869",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Byzantine_Constantinople-en.png",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Byzantine_Constantinople-en.png/500px-Byzantine_Constantinople-en.png",
+        "credit": "Cplakidas",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "nicaea": {
+    "xref": {
+      "wikidata": null,
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": true
+    }
+  },
+  "ephesus": {
+    "xref": {
+      "wikidata": "Q64699469",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Ephesus_-_Celsus_Library.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Ephesus_-_Celsus_Library.jpg/500px-Ephesus_-_Celsus_Library.jpg",
+        "credit": "Bernard Gagnon",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "heritage": {
+      "unesco": true,
+      "unesco_ref": "1018rev"
+    },
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "pergamon": {
+    "xref": {
+      "wikidata": "Q18986",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "1688"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Temple_of_Trajan%2C_Pergamon_01.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Temple_of_Trajan%2C_Pergamon_01.jpg/500px-Temple_of_Trajan%2C_Pergamon_01.jpg",
+        "credit": "Bernard Gagnon",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "heritage": {
+      "unesco": true,
+      "unesco_ref": "1457"
+    },
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "smyrna": {
+    "xref": {
+      "wikidata": "Q1379299",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Izmir016.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Izmir016.jpg/500px-Izmir016.jpg",
+        "credit": "Georges Jansoone JoJan",
+        "source": "wikimedia_commons",
+        "license": "PD",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "ancyra": {
+    "xref": {
+      "wikidata": "Q107585355",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/9/9c/MonumentumAncyranum28Nov2004.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/MonumentumAncyranum28Nov2004.jpg/500px-MonumentumAncyranum28Nov2004.jpg",
+        "credit": "No machine-readable author provided. Ori~ assumed (based on copyright claims).",
+        "source": "wikimedia_commons",
+        "license": "PD",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "tarsus": {
+    "xref": {
+      "wikidata": "Q134287",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "2269"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/8/83/Ulucami%2C_Tarsus%2C_Mersin_Province.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Ulucami%2C_Tarsus%2C_Mersin_Province.jpg/500px-Ulucami%2C_Tarsus%2C_Mersin_Province.jpg",
+        "credit": "Nedim Ardoğa",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "antioch": {
+    "xref": {
+      "wikidata": "Q200441",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "205"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/1/19/Antiochia_su_Oronte.PNG",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Antiochia_su_Oronte.PNG/500px-Antiochia_su_Oronte.PNG",
+        "credit": "Cristiano64",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "palmyra": {
+    "xref": {
+      "wikidata": "Q5747",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/3/33/Palmyra_theater02%28js%29.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Palmyra_theater02%28js%29.jpg/500px-Palmyra_theater02%28js%29.jpg",
+        "credit": "Jerzy Strzelecki",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "heritage": {
+      "unesco": true,
+      "unesco_ref": "23"
+    },
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "temple_allat": {
+    "xref": {
+      "wikidata": "Q55634900",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/5/52/Palmira_Tempio_di_Allat_Atena_-_GAR_-_7-01.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Palmira_Tempio_di_Allat_Atena_-_GAR_-_7-01.jpg/500px-Palmira_Tempio_di_Allat_Atena_-_GAR_-_7-01.jpg",
+        "credit": "Gianfranco Gazzetti",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-4.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "dura_europos": {
+    "xref": {
+      "wikidata": "Q464266",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/3/32/DuraEuropos-TempleOfBel.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/DuraEuropos-TempleOfBel.jpg/500px-DuraEuropos-TempleOfBel.jpg",
+        "credit": "Heretiq",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-2.5",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "gerasa": {
+    "xref": {
+      "wikidata": "Q56072866",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/e/eb/General_View_of_Jerash.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/General_View_of_Jerash.jpg/500px-General_View_of_Jerash.jpg",
+        "credit": "JoTB",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "caesarea_m": {
+    "xref": {
+      "wikidata": "Q319242",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/3/3a/%D7%A7%D7%99%D7%A1%D7%A8%D7%99%D7%94_%D7%94%D7%A2%D7%AA%D7%99%D7%A7%D7%94.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/%D7%A7%D7%99%D7%A1%D7%A8%D7%99%D7%94_%D7%94%D7%A2%D7%AA%D7%99%D7%A7%D7%94.jpg/500px-%D7%A7%D7%99%D7%A1%D7%A8%D7%99%D7%94_%D7%94%D7%A2%D7%AA%D7%99%D7%A7%D7%94.jpg",
+        "credit": "Idomeir",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-4.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "ierusalem": {
+    "xref": {
+      "wikidata": "Q1218",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "853"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/8/86/Dome_of_the_Rock_seen_from_the_Mount_of_Olives_%2812395649153%29_%28cropped%29.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Dome_of_the_Rock_seen_from_the_Mount_of_Olives_%2812395649153%29_%28cropped%29.jpg/500px-Dome_of_the_Rock_seen_from_the_Mount_of_Olives_%2812395649153%29_%28cropped%29.jpg",
+        "credit": "askii",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-2.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "petra": {
+    "xref": {
+      "wikidata": "Q5788",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/7/7c/The_Treasury%2C_Petra%2C_Jordan5.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/The_Treasury%2C_Petra%2C_Jordan5.jpg/500px-The_Treasury%2C_Petra%2C_Jordan5.jpg",
+        "credit": "Diego Delso",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "heritage": {
+      "unesco": true,
+      "unesco_ref": "326"
+    },
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "damascus": {
+    "xref": {
+      "wikidata": "Q3766",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Damascus%2C_Syria%2C_Panorama_at_sunset.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Damascus%2C_Syria%2C_Panorama_at_sunset.jpg/500px-Damascus%2C_Syria%2C_Panorama_at_sunset.jpg",
+        "credit": "Vyacheslav Argenberg",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-4.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "alexandria": {
+    "xref": {
+      "wikidata": "Q87",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "100"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/4/48/AlexandriaSkyline.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/AlexandriaSkyline.jpg/500px-AlexandriaSkyline.jpg",
+        "credit": "ASaber91",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-4.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "carthago": {
+    "xref": {
+      "wikidata": "Q6343",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "484"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Tunisie_Carthage_Ruines_08.JPG",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Tunisie_Carthage_Ruines_08.JPG/500px-Tunisie_Carthage_Ruines_08.JPG",
+        "credit": "Calips",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-2.5",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "thugga": {
+    "xref": {
+      "wikidata": "Q32378",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "15770"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/7/79/Dougga%2C_Beja.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Dougga%2C_Beja.jpg/500px-Dougga%2C_Beja.jpg",
+        "credit": "Emna Trabelsi",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "heritage": {
+      "unesco": true,
+      "unesco_ref": "794"
+    },
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "thysdrus": {
+    "xref": {
+      "wikidata": null,
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": true
+    }
+  },
+  "leptismagna": {
+    "xref": {
+      "wikidata": "Q1994812",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": "11840"
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Marcus_Aurelius_Arch_Tripoli_Libya.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Marcus_Aurelius_Arch_Tripoli_Libya.jpg/500px-Marcus_Aurelius_Arch_Tripoli_Libya.jpg",
+        "credit": "Daniel and Kate Pett",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-2.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "sabratha": {
+    "xref": {
+      "wikidata": null,
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": true
+    }
+  },
+  "timgad": {
+    "xref": {
+      "wikidata": "Q459629",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Timgad_Ruins_Panorama.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Timgad_Ruins_Panorama.jpg/500px-Timgad_Ruins_Panorama.jpg",
+        "credit": "Hamza-sia",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-3.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "heritage": {
+      "unesco": true,
+      "unesco_ref": "194"
+    },
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "caesarea_maur": {
+    "xref": {
+      "wikidata": "Q3561",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Argel_3.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Argel_3.jpg/500px-Argel_3.jpg",
+        "credit": "LBM1948",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-4.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "volubilis": {
+    "xref": {
+      "wikidata": "Q391215",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/7/78/Volubilis%2CMorocco.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Volubilis%2CMorocco.jpg/500px-Volubilis%2CMorocco.jpg",
+        "credit": "Marcin Sochacki (Wanted)",
+        "source": "wikimedia_commons",
+        "license": "CC-BY-SA-4.0",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "heritage": {
+      "unesco": true,
+      "unesco_ref": "836"
+    },
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  },
+  "cyrene": {
+    "xref": {
+      "wikidata": "Q44112",
+      "dare": null,
+      "vici": null,
+      "topostext": null,
+      "trismegistos": null
+    },
+    "media": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/1/18/CireneTermeTraiano.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/CireneTermeTraiano.jpg/500px-CireneTermeTraiano.jpg",
+        "credit": "MM",
+        "source": "wikimedia_commons",
+        "license": "PD",
+        "commercial_ok": true
+      }
+    ],
+    "texts": [],
+    "heritage": {
+      "unesco": true,
+      "unesco_ref": "190"
+    },
+    "provenance": {
+      "ingested_from": [
+        "curated",
+        "wikidata",
+        "wikimedia_commons"
+      ],
+      "ingested_at": "2026-06-14T01:44:13.830Z",
+      "unmatched": false
+    }
+  }
+}

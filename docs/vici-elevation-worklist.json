@@ -1,0 +1,359 @@
+{
+  "generated": "2026-06-14T08:43:21.971Z",
+  "source": "vici.org SQL dump (renevoorburg/vici.org, db/vici.sql.gz, Oct-2023 snapshot)",
+  "license_note": "vici image data CC BY-SA 3.0 (attribution + ShareAlike); place metadata CC0. Attribution/creator carried per image where recorded.",
+  "definition": "Elevation candidate = a VIA photo-quest site (no Wikidata P18 image) that has at least one non-hidden, credited photo on vici.org.",
+  "counts": {
+    "global_pleiades_in_vici": 5068,
+    "global_pleiades_with_vici_photo": 526,
+    "via_sites_with_pleiades": 473,
+    "via_sites_matched_to_vici_with_image": 34,
+    "elevation_candidates": 3,
+    "candidate_images": 8,
+    "license_breakdown": {
+      "CC BY 4.0": 4,
+      "CC BY-SA 3.0": 3,
+      "CC0 1.0": 1
+    }
+  },
+  "candidates": [
+    {
+      "pleiades": "324835",
+      "via_name": "Thysdrus",
+      "via_type": "city",
+      "via_quest": "photo",
+      "wikidata_p18": false,
+      "wikidata": null,
+      "vici_id": "2190",
+      "vici_url": "https://vici.org/vici/2190/",
+      "vici_name": "Thisdro Col.",
+      "image_count": 4,
+      "images": [
+        {
+          "img_id": 36297,
+          "path": "/livius/tunisia/01thysdrus/01museum_pieces/used_photos/el_djem_concordia_rmo.jpg",
+          "thumb": "https://images.vici.org/crop/w320xh320/livius/tunisia/01thysdrus/01museum_pieces/used_photos/el_djem_concordia_rmo.jpg",
+          "image": "https://images.vici.org/cover/w1600xh1600/livius/tunisia/01thysdrus/01museum_pieces/used_photos/el_djem_concordia_rmo.jpg",
+          "creator": "Jona Lendering",
+          "attribution": "© Jona Lendering",
+          "own_work": false,
+          "source": null,
+          "title": "El Djem, Statue of Pax or Concord",
+          "license": "CC BY 4.0",
+          "license_url": "http://creativecommons.org/licenses/by/4.0/",
+          "width": 3264,
+          "height": 4928
+        },
+        {
+          "img_id": 36298,
+          "path": "/livius/tunisia/01thysdrus/01museum_pieces/used_photos/el_djem_pertinax_rmo.jpg",
+          "thumb": "https://images.vici.org/crop/w320xh320/livius/tunisia/01thysdrus/01museum_pieces/used_photos/el_djem_pertinax_rmo.jpg",
+          "image": "https://images.vici.org/cover/w1600xh1600/livius/tunisia/01thysdrus/01museum_pieces/used_photos/el_djem_pertinax_rmo.jpg",
+          "creator": "Jona Lendering",
+          "attribution": "© Jona Lendering",
+          "own_work": false,
+          "source": null,
+          "title": "El Djem, Head of emperor Pulpius Helvius Pertinax",
+          "license": "CC BY 4.0",
+          "license_url": "http://creativecommons.org/licenses/by/4.0/",
+          "width": 3264,
+          "height": 4928
+        },
+        {
+          "img_id": 36299,
+          "path": "/livius/tunisia/01thysdrus/01museum_pieces/thysdrus_pertinax_rmo.jpg",
+          "thumb": "https://images.vici.org/crop/w320xh320/livius/tunisia/01thysdrus/01museum_pieces/thysdrus_pertinax_rmo.jpg",
+          "image": "https://images.vici.org/cover/w1600xh1600/livius/tunisia/01thysdrus/01museum_pieces/thysdrus_pertinax_rmo.jpg",
+          "creator": "Jona Lendering",
+          "attribution": "© Jona Lendering",
+          "own_work": false,
+          "source": null,
+          "title": "El Djem, Head of emperor Pulpius Helvius Pertinax",
+          "license": "CC BY 4.0",
+          "license_url": "http://creativecommons.org/licenses/by/4.0/",
+          "width": 2848,
+          "height": 4288
+        },
+        {
+          "img_id": 36296,
+          "path": "/livius/tunisia/01thysdrus/01museum_pieces/el-djem_cup_mndb.jpg",
+          "thumb": "https://images.vici.org/crop/w320xh320/livius/tunisia/01thysdrus/01museum_pieces/el-djem_cup_mndb.jpg",
+          "image": "https://images.vici.org/cover/w1600xh1600/livius/tunisia/01thysdrus/01museum_pieces/el-djem_cup_mndb.jpg",
+          "creator": "Jona Lendering, Marco Prins",
+          "attribution": "© Jona Lendering, Marco Prins",
+          "own_work": false,
+          "source": null,
+          "title": "El Djem, Cup",
+          "license": "CC BY 4.0",
+          "license_url": "http://creativecommons.org/licenses/by/4.0/",
+          "width": 4928,
+          "height": 3264
+        }
+      ]
+    },
+    {
+      "pleiades": "246139",
+      "via_name": "Ad Pyrenaeum/Summus Pyrenaeus",
+      "via_type": "city",
+      "via_quest": "photo",
+      "wikidata_p18": false,
+      "wikidata": null,
+      "vici_id": "30262",
+      "vici_url": "https://vici.org/vici/30262/",
+      "vici_name": "Panissars",
+      "image_count": 3,
+      "images": [
+        {
+          "img_id": 17855,
+          "path": "/uploads/summum_pyrenaeum_1_1_.jpg",
+          "thumb": "https://images.vici.org/crop/w320xh320/uploads/summum_pyrenaeum_1_1_.jpg",
+          "image": "https://images.vici.org/cover/w1600xh1600/uploads/summum_pyrenaeum_1_1_.jpg",
+          "creator": null,
+          "attribution": null,
+          "own_work": true,
+          "source": null,
+          "title": "Trophée de Pompée",
+          "license": "CC BY-SA 3.0",
+          "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+          "width": 1280,
+          "height": 1280
+        },
+        {
+          "img_id": 17856,
+          "path": "/uploads/summum_pyrenaeum_1.jpg",
+          "thumb": "https://images.vici.org/crop/w320xh320/uploads/summum_pyrenaeum_1.jpg",
+          "image": "https://images.vici.org/cover/w1600xh1600/uploads/summum_pyrenaeum_1.jpg",
+          "creator": null,
+          "attribution": null,
+          "own_work": true,
+          "source": null,
+          "title": "Summum Pyrenaeum",
+          "license": "CC BY-SA 3.0",
+          "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+          "width": 1280,
+          "height": 853
+        },
+        {
+          "img_id": 7657,
+          "path": "/uploads/panissars.jpg",
+          "thumb": "https://images.vici.org/crop/w320xh320/uploads/panissars.jpg",
+          "image": "https://images.vici.org/cover/w1600xh1600/uploads/panissars.jpg",
+          "creator": "paula1418",
+          "attribution": null,
+          "own_work": false,
+          "source": "http://www.panoramio.com/photo/84213697?source=wapi&referrer=kh.google.com",
+          "title": "Panissars",
+          "license": "CC0 1.0",
+          "license_url": "http://creativecommons.org/publicdomain/zero/1.0/",
+          "width": 1024,
+          "height": 768
+        }
+      ]
+    },
+    {
+      "pleiades": "599575",
+      "via_name": "Cnidus (Tekir)",
+      "via_type": "city",
+      "via_quest": "photo",
+      "wikidata_p18": false,
+      "wikidata": null,
+      "vici_id": "2347",
+      "vici_url": "https://vici.org/vici/2347/",
+      "vici_name": "Cnidus",
+      "image_count": 1,
+      "images": [
+        {
+          "img_id": 15947,
+          "path": "/uploads/dsc02463.jpg",
+          "thumb": "https://images.vici.org/crop/w320xh320/uploads/dsc02463.jpg",
+          "image": "https://images.vici.org/cover/w1600xh1600/uploads/dsc02463.jpg",
+          "creator": null,
+          "attribution": null,
+          "own_work": true,
+          "source": null,
+          "title": "Stoa, Dyonisos tempel and trading harbour",
+          "license": "CC BY-SA 3.0",
+          "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+          "width": 3648,
+          "height": 2736
+        }
+      ]
+    }
+  ],
+  "matched_with_p18_already": [
+    {
+      "pleiades": "432873",
+      "via_name": "Herculaneum",
+      "vici_url": "https://vici.org/vici/1876/",
+      "image_count": 4
+    },
+    {
+      "pleiades": "433032",
+      "via_name": "Pompeii",
+      "vici_url": "https://vici.org/vici/1878/",
+      "image_count": 3
+    },
+    {
+      "pleiades": "462086",
+      "via_name": "Agrigentum",
+      "vici_url": "https://vici.org/vici/1908/",
+      "image_count": 1
+    },
+    {
+      "pleiades": "207447",
+      "via_name": "Singidunum",
+      "vici_url": "https://vici.org/vici/2022/",
+      "image_count": 101
+    },
+    {
+      "pleiades": "334636",
+      "via_name": "Thamugadi",
+      "vici_url": "https://vici.org/vici/2060/",
+      "image_count": 1
+    },
+    {
+      "pleiades": "530824",
+      "via_name": "Bouthroton",
+      "vici_url": "https://vici.org/vici/10926/",
+      "image_count": 8
+    },
+    {
+      "pleiades": "570491",
+      "via_name": "Mycenae",
+      "vici_url": "https://vici.org/vici/2128/",
+      "image_count": 1
+    },
+    {
+      "pleiades": "658427",
+      "via_name": "Harran/Carrhae",
+      "vici_url": "https://vici.org/vici/2419/",
+      "image_count": 2
+    },
+    {
+      "pleiades": "373778",
+      "via_name": "Cyrene",
+      "vici_url": "https://vici.org/vici/2454/",
+      "image_count": 107
+    },
+    {
+      "pleiades": "678401",
+      "via_name": "Caesarea Maritima",
+      "vici_url": "https://vici.org/vici/2483/",
+      "image_count": 1
+    },
+    {
+      "pleiades": "668331",
+      "via_name": "Palmyra",
+      "vici_url": "https://vici.org/vici/2526/",
+      "image_count": 23
+    },
+    {
+      "pleiades": "314921",
+      "via_name": "Carthago",
+      "vici_url": "https://vici.org/vici/2562/",
+      "image_count": 74
+    },
+    {
+      "pleiades": "314912",
+      "via_name": "Bulla Regia",
+      "vici_url": "https://vici.org/vici/2613/",
+      "image_count": 7
+    },
+    {
+      "pleiades": "697725",
+      "via_name": "Petra",
+      "vici_url": "https://vici.org/vici/21417/",
+      "image_count": 315
+    },
+    {
+      "pleiades": "423025",
+      "via_name": "Roma",
+      "vici_url": "https://vici.org/vici/1692/",
+      "image_count": 6
+    },
+    {
+      "pleiades": "452457",
+      "via_name": "Sybaris/Thurii/Copia",
+      "vici_url": "https://vici.org/vici/11394/",
+      "image_count": 2
+    },
+    {
+      "pleiades": "422995",
+      "via_name": "Ostia",
+      "vici_url": "https://vici.org/vici/1845/",
+      "image_count": 2
+    },
+    {
+      "pleiades": "687968",
+      "via_name": "Masada",
+      "vici_url": "https://vici.org/vici/17581/",
+      "image_count": 6
+    },
+    {
+      "pleiades": "697737",
+      "via_name": "Qasr el-Hallabat",
+      "vici_url": "https://vici.org/vici/7708/",
+      "image_count": 30
+    },
+    {
+      "pleiades": "315223",
+      "via_name": "Thugga",
+      "vici_url": "https://vici.org/vici/7850/",
+      "image_count": 3
+    },
+    {
+      "pleiades": "678158",
+      "via_name": "Gerasa",
+      "vici_url": "https://vici.org/vici/7862/",
+      "image_count": 37
+    },
+    {
+      "pleiades": "246410",
+      "via_name": "La Graufesenque",
+      "vici_url": "https://vici.org/vici/10600/",
+      "image_count": 2
+    },
+    {
+      "pleiades": "893945",
+      "via_name": "Ashur/‘Lamban’?/‘Liba(nai)’?",
+      "vici_url": "https://vici.org/vici/10889/",
+      "image_count": 1
+    },
+    {
+      "pleiades": "893976",
+      "via_name": "Ctesiphon",
+      "vici_url": "https://vici.org/vici/10967/",
+      "image_count": 1
+    },
+    {
+      "pleiades": "874621",
+      "via_name": "Nineveh/Ninos",
+      "vici_url": "https://vici.org/vici/11285/",
+      "image_count": 1
+    },
+    {
+      "pleiades": "727217",
+      "via_name": "Sais",
+      "vici_url": "https://vici.org/vici/11342/",
+      "image_count": 3
+    },
+    {
+      "pleiades": "148107",
+      "via_name": "Massilia",
+      "vici_url": "https://vici.org/vici/16599/",
+      "image_count": 1
+    },
+    {
+      "pleiades": "177659",
+      "via_name": "Villards-d’Heria",
+      "vici_url": "https://vici.org/vici/16836/",
+      "image_count": 1
+    },
+    {
+      "pleiades": "413309734",
+      "via_name": "Pol-e Dokhtar",
+      "vici_url": "https://vici.org/vici/19984/",
+      "image_count": 12
+    }
+  ]
+}

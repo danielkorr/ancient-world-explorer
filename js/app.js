@@ -378,7 +378,6 @@ SITES.forEach(site => {
   });
 
   marker.on('click', function(e) {
-    dbg('✓ MARKER click: ' + this._site.name);
     L.DomEvent.stopPropagation(e);
     if (activeMarker && activeMarker !== this) {
       activeMarker.setIcon(makeIcon(activeMarker._site, false));
@@ -415,7 +414,6 @@ if (COARSE_POINTER) {
     sitesGroup.eachLayer(m => { if (m._icon === iconEl) hit = m; });
     if (!hit) return;
     e.preventDefault();   // suppress any late synthesized click → no double-open
-    dbg('✓ TAP→panel: ' + hit._site.name);
     if (activeMarker && activeMarker !== hit) {
       activeMarker.setIcon(makeIcon(activeMarker._site, false));
       activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
@@ -446,7 +444,6 @@ if (COARSE_POINTER) {
     roadsGroup.eachLayer(l => { if (l.closeTooltip) l.closeTooltip(); });  // one at a time
     let ll; try { ll = map.mouseEventToLatLng(t); } catch (_) {}
     road.openTooltip(ll);
-    dbg('✓ TAP→road shown');
   }, { passive: false });
 }
 
@@ -528,7 +525,6 @@ function showPanel(site) {
   `;
 
   document.getElementById('info-panel').classList.add('open');
-  dbg('showPanel ' + site.name + ' open=' + document.getElementById('info-panel').classList.contains('open'));
   currentPanelSite = site;
   refreshCheckinRow();
   // Offset map pan: right on desktop, up on mobile
@@ -1155,38 +1151,3 @@ function refreshQuestBadge() {
   if (el) el.textContent = String(n);  // real count (289) beats a flat "99+"
 }
 refreshQuestBadge();
-
-// ════════════════════════════════════════════════════════════
-//  TEMP TOUCH DIAGNOSTIC — opt-in with ?debug=1 in the URL.
-//  Paints a live event log so we can see, on a real phone, exactly
-//  where a tap dies. REMOVE once the mobile tap bug is resolved.
-// ════════════════════════════════════════════════════════════
-var DEBUG_TOUCH = false;
-try { DEBUG_TOUCH = new URLSearchParams(location.search).has('debug'); } catch (_) {}
-var _dbgEl = null;
-function dbg(msg) {
-  if (!DEBUG_TOUCH) return;
-  try {
-    if (!_dbgEl) {
-      _dbgEl = document.createElement('div');
-      _dbgEl.style.cssText = 'position:fixed;top:54px;left:6px;right:6px;z-index:99999;'
-        + 'background:rgba(0,0,0,.85);color:#8f8;font:11px/1.35 monospace;padding:7px 9px;'
-        + 'border-radius:6px;max-height:44vh;overflow:auto;pointer-events:none;white-space:pre-wrap;';
-      document.body.appendChild(_dbgEl);
-    }
-    _dbgEl.textContent = msg + '\n' + _dbgEl.textContent;
-    if (_dbgEl.textContent.length > 1400) _dbgEl.textContent = _dbgEl.textContent.slice(0, 1400);
-  } catch (_) {}
-}
-if (DEBUG_TOUCH) {
-  dbg('READY coarse=' + COARSE_POINTER + ' hitpad=' + HIT_PAD
-      + ' maxTouch=' + (navigator.maxTouchPoints || 0)
-      + ' ontouchstart=' + ('ontouchstart' in window));
-  map.on('movestart', function () { dbg('• map PAN/move'); });
-  map.on('click',     function () { dbg('• map CLICK (empty space, missed marker)'); });
-  document.addEventListener('touchstart', function (e) {
-    var t = e.target;
-    var cls = (t && t.getAttribute && t.getAttribute('class')) || (t && t.tagName) || '?';
-    dbg('touchstart on [' + cls + ']');
-  }, { passive: true, capture: true });
-}

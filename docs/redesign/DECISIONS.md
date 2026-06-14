@@ -74,12 +74,30 @@ annotations (Recogito / Linked Places) or via a curating partner.
 **Why.** Scholarly records have provenance/editorial requirements; a raw user firehose would
 be rejected and would damage credibility with exactly the partners we want.
 
-## D-08 🔄 Product identity: mission-first vs. commercial-first
+## D-08 ✅ Product identity: mission-first
 **Context.** NGO/heritage funding and aggressive affiliate monetization pull in different
 directions (tone, partnerships, licensing).
-**Lean.** Mission-first heritage/education tool that sustains via light commercial revenue —
-fits the maintainer's motivation and the open-data ecosystem.
-**Decision.** Pending explicit confirmation. Resolving this sets guardrails for D-05/D-06.
+**Decision** (2026-06-13). **Mission-first** heritage/education tool that sustains via light,
+tasteful commercial revenue — never an ad product wearing a toga.
+**Why.** Fits the maintainer's stated motivation (gamified citizen-contribution to the
+scholarly record) and sits honestly with the open-data ecosystem VIA is built on. Sets the
+guardrail that keeps affiliate revenue contextual and sparse rather than dominant.
+**Implications.** Commercial slots stay sparse, contextual, clearly labeled, and visually
+separate from partner/NGO slots (D-05). License discipline (D-06) is honored as a matter of
+principle, not just legal minimum. When affiliate and mission conflict, mission wins.
+
+---
+
+## D-09 ✅ Site schema v2 is additive, not a rename
+**Context.** Early ARCHITECTURE drafts sketched a v2 site record that renamed runtime fields
+(`lat/lng→coordinates`, `desc→summary`, `modern→modern_location`) and dropped `type`.
+**Decision** (2026-06-13). v2 = **v1 core (field names frozen) + optional enrichment**. See
+`SITE-SCHEMA.md` (authoritative). Records key on the slug `id`; `pleiades` is the external
+join key and is *not* assumed unique on curated data.
+**Why.** The renames force an `app.js` rewrite for zero user benefit and would break a
+working runtime. Additive enrichment lets the scholarly/license data land incrementally
+while the app keeps running. Every `media`/`texts` asset carries `license` + `commercial_ok`
+from ingestion — the no-regrets core of D-06.
 
 ---
 

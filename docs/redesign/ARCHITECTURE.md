@@ -58,7 +58,13 @@ Keep static front end + BaaS. Add two things:
 
 ## 3. Data model
 
-### 3.1 Site (the core record) — keyed on Pleiades ID
+### 3.1 Site (the core record)
+
+> **Authoritative spec: `SITE-SCHEMA.md`.** The sketch below is illustrative and
+> superseded where it differs. Key correction (D-09): v2 is **additive** — it keeps the v1
+> runtime field names (`id`, `lat`, `lng`, `type`, `desc`, `modern`, `period`) and layers
+> enrichment on top. Records key on the slug `id`; `pleiades` is the external join key and
+> is not assumed unique on curated data.
 
 ```jsonc
 {

@@ -1029,17 +1029,19 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 .p-btn-main { font-weight: 500; }
 .p-btn-sub  { font-size: 10px; opacity: 0.55; margin-top: 1px; }
 
-/* Subtle "opens externally" cue — pinned to the right edge, faint until hover
-   so it reads as a quiet signpost, not a second action. */
+/* "Opens externally" cue — pinned top-right. Visible enough to read as a
+   signpost ("this leaves VIA") without competing with the button label. */
 .p-btn-ext  {
   margin-left: auto;
   flex-shrink: 0;
   align-self: flex-start;
-  font-size: 13px;
-  opacity: 0.4;
-  transition: opacity 0.2s;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 0.2s, transform 0.2s;
 }
-.p-btn:hover .p-btn-ext { opacity: 0.85; }
+.p-btn:hover .p-btn-ext { opacity: 1; transform: translate(1px, -1px); }
 
 /* ── QUEST MARKER ANIMATION ── */
 @keyframes questPulse {

@@ -3,7 +3,7 @@
 > Sites where good imagery already exists on [vici.org](https://vici.org) but is **missing from the scholarly record** (no Wikidata P18). These are concrete, sourced candidates to elevate into Wikidata / Wikimedia Commons / Pleiades — the scholar-facing payoff of VIA's photo quests.
 
 - **Source:** vici.org SQL dump (renevoorburg/vici.org, db/vici.sql.gz, Oct-2023 snapshot)
-- **Generated:** 2026-06-14T08:43:21.971Z
+- **Generated:** 2026-06-14T08:57:28.312Z
 - **License:** vici image data CC BY-SA 3.0 (attribution + ShareAlike); place metadata CC0. Attribution/creator carried per image where recorded.
 
 ## Summary

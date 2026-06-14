@@ -391,14 +391,22 @@ const ROADS = [
 ];
 
 // ── MERGED SITES ─────────────────────────────────────────
-// Curated sites first (rich, hand-written), then auto-imported Pleiades
-// sites that don't already exist in the curated set (deduped by pleiades id).
+// Curated first (rich, hand-written), then non-duplicate Pleiades imports, then
+// the vici.org elevation layer (sites-vici.js) — all deduped by pleiades id, so
+// a place already curated or in the Pleiades set is never double-added by vici.
 
-const SITES = (typeof SITES_PLEIADES !== 'undefined')
-  ? [
-      ...SITES_CURATED,
-      ...SITES_PLEIADES.filter(p =>
-        !SITES_CURATED.some(c => c.pleiades === p.pleiades)
-      ),
-    ]
-  : SITES_CURATED;
+const SITES = (() => {
+  const out  = [...SITES_CURATED];
+  const seen = new Set(SITES_CURATED.map(s => s.pleiades).filter(Boolean));
+  const addAll = arr => {
+    if (typeof arr === 'undefined') return;
+    for (const s of arr) {
+      if (s.pleiades && seen.has(s.pleiades)) continue;
+      if (s.pleiades) seen.add(s.pleiades);
+      out.push(s);
+    }
+  };
+  addAll(typeof SITES_PLEIADES !== 'undefined' ? SITES_PLEIADES : undefined);
+  addAll(typeof SITES_VICI     !== 'undefined' ? SITES_VICI     : undefined);
+  return out;
+})();

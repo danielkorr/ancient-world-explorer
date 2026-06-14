@@ -1,5 +1,5 @@
 {
-  "generated": "2026-06-14T08:43:21.971Z",
+  "generated": "2026-06-14T08:57:28.312Z",
   "source": "vici.org SQL dump (renevoorburg/vici.org, db/vici.sql.gz, Oct-2023 snapshot)",
   "license_note": "vici image data CC BY-SA 3.0 (attribution + ShareAlike); place metadata CC0. Attribution/creator carried per image where recorded.",
   "definition": "Elevation candidate = a VIA photo-quest site (no Wikidata P18 image) that has at least one non-hidden, credited photo on vici.org.",

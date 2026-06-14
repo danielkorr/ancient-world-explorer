@@ -25,7 +25,7 @@
 // ═══════════════════════════════════════════════════════════
 
 import { createReadStream } from 'node:fs';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, stat } from 'node:fs/promises';
 import { createGunzip } from 'node:zlib';
 import vm from 'node:vm';
 import path from 'node:path';
@@ -34,9 +34,31 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT      = path.resolve(__dirname, '..');
 const DUMP      = path.join(ROOT, '.cache', 'vici-dump', 'vici.sql.gz');
+const PL_CACHE  = path.join(ROOT, '.cache', 'pleiades-json');
 const PHOTOS    = path.join(ROOT, 'js', 'pleiades-photos.json');
 const OUT_JSON  = path.join(ROOT, 'docs', 'vici-elevation-worklist.json');
 const OUT_MD    = path.join(ROOT, 'docs', 'vici-elevation-worklist.md');
+const OUT_SITES = path.join(ROOT, 'js', 'sites-vici.js');
+
+// --emit-sites also generates js/sites-vici.js (the Phase 1 elevation layer):
+// every vici-photo Pleiades place NOT already in VIA, enriched from Pleiades JSON
+// (name/type/desc) + Wikidata P18 (tier). See docs/v1-spec-elevation-layer.md.
+const EMIT_SITES = process.argv.includes('--emit-sites');
+
+const UA = 'VIA-AncientWorldExplorer/0.1 (https://github.com/danielkorr/ancient-world-explorer; +elevation-layer)';
+const RATE_MS = 1100, WD_BATCH = 50;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const fexists = async p => { try { await stat(p); return true; } catch { return false; } };
+
+// Pleiades placeType slug → VIA type enum (mirrors build-sites.mjs TYPE_MAP).
+const TYPE_MAP = {
+  'settlement':'city','settlement-modern':'city','urban':'city','town':'city','city-gate':'city',
+  'port':'port','harbor':'port','river-mouth':'port','estuary':'port',
+  'fort':'fortress','fortress':'fortress','castellum':'fortress','tower-defensive':'fortress',
+  'wall-city':'fortress','wall-fortification':'fortress','limes':'fortress',
+  'province':'capital','province-roman':'capital',
+};
+const mapType = (placeTypes = []) => { for (const t of placeTypes) if (TYPE_MAP[t]) return TYPE_MAP[t]; return 'city'; };
 
 // Column order per target table (from the dump's CREATE TABLE DDL).
 const COLS = {
@@ -197,6 +219,132 @@ function viciImageUrl(p, transform) {
   return `https://images.vici.org/${transform}/${String(p).replace(/^\/+/, '')}`;
 }
 
+// ── Pleiades + Wikidata enrichment (mirrors detect-pleiades-photos.mjs) ──
+async function fetchPleiadesJson(id) {
+  const cached = path.join(PL_CACHE, `${id}.json`);
+  if (await fexists(cached)) return JSON.parse(await readFile(cached, 'utf8'));
+  const res = await fetch(`https://pleiades.stoa.org/places/${id}/json`, { headers: { 'User-Agent': UA, Accept: 'application/json' } });
+  if (!res.ok) throw new Error(`Pleiades HTTP ${res.status}`);
+  const json = await res.json();
+  await writeFile(cached, JSON.stringify(json));
+  return json;
+}
+function extractWikidataId(rec) {
+  const RE = /wikidata\.org\/(?:wiki|entity)\/(Q\d+)/i;
+  for (const r of (rec.references || []))
+    for (const f of ['accessURI', 'identifier', 'bibliographicURI', 'alternateURI']) {
+      const v = r[f]; if (typeof v === 'string') { const m = v.match(RE); if (m) return m[1]; }
+    }
+  return null;
+}
+async function fetchWikidataP18(qids) {
+  if (!qids.length) return {};
+  const url = new URL('https://www.wikidata.org/w/api.php');
+  url.searchParams.set('action', 'wbgetentities');
+  url.searchParams.set('ids', qids.join('|'));
+  url.searchParams.set('props', 'claims');
+  url.searchParams.set('format', 'json');
+  url.searchParams.set('formatversion', '2');
+  const res = await fetch(url, { headers: { 'User-Agent': UA } });
+  if (!res.ok) throw new Error(`Wikidata HTTP ${res.status}`);
+  const data = await res.json();
+  const out = {};
+  for (const qid of qids) {
+    const ent = data.entities && data.entities[qid];
+    const claims = ent && !ent.missing && ent.claims && ent.claims.P18;
+    out[qid] = (claims && claims.length) ? (claims[0].mainsnak?.datavalue?.value ?? true) : null;
+  }
+  return out;
+}
+function slugify(s) {
+  return String(s).toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60);
+}
+
+// Build js/sites-vici.js from the net-new vici-photo Pleiades places.
+async function emitSites(viciPhotoByPleiades, viaSites, photos) {
+  await mkdir(PL_CACHE, { recursive: true });
+  const newIds = [...viciPhotoByPleiades.keys()].filter(pid => !viaSites.has(pid));
+  console.log(`\n── --emit-sites: ${newIds.length} net-new vici-photo Pleiades places ──`);
+
+  // PASS A: Pleiades JSON per id (name/type/desc + Wikidata Q-id).
+  const meta = new Map();   // pid → {title, type, lat, lng, desc, qid}
+  const qidByPid = {};
+  let i = 0, fetched = 0;
+  for (const pid of newIds) {
+    i++; const t0 = Date.now();
+    try {
+      const onDisk = await fexists(path.join(PL_CACHE, `${pid}.json`));
+      const rec = await fetchPleiadesJson(pid);
+      if (!onDisk) fetched++;
+      const rp = Array.isArray(rec.reprPoint) ? rec.reprPoint : null;
+      meta.set(pid, {
+        title: rec.title || viciPhotoByPleiades.get(pid).viciName || `Pleiades ${pid}`,
+        type: mapType(rec.placeTypes || []),
+        lat: rp ? Number(rp[1].toFixed(4)) : null,
+        lng: rp ? Number(rp[0].toFixed(4)) : null,
+        desc: (rec.description || '').trim().replace(/\s+/g, ' '),
+        qid: extractWikidataId(rec),
+      });
+      qidByPid[pid] = meta.get(pid).qid;
+      if (i <= 5 || i % 50 === 0) console.log(`  [${i}/${newIds.length}] ${pid} → ${rec.title || '(no title)'}`);
+      if (!onDisk && i < newIds.length) { const e = Date.now() - t0; if (e < RATE_MS) await sleep(RATE_MS - e); }
+    } catch (e) {
+      console.warn(`  [${i}/${newIds.length}] ${pid} ERROR ${e.message}`);
+    }
+  }
+  console.log(`✓ Pleiades enriched (${fetched} fetched, rest cached)`);
+
+  // PASS B: Wikidata P18 for the gathered Q-ids.
+  const qids = [...new Set(Object.values(qidByPid).filter(Boolean))];
+  const p18 = {};
+  for (let j = 0; j < qids.length; j += WD_BATCH) {
+    Object.assign(p18, await fetchWikidataP18(qids.slice(j, j + WD_BATCH)));
+    await sleep(400);
+  }
+  console.log(`✓ Wikidata P18 across ${qids.length} Q-ids`);
+
+  // Build records + extend pleiades-photos.json with the new P18 signal.
+  const records = [];
+  for (const pid of newIds) {
+    const m = meta.get(pid); if (!m || m.lat == null) continue;
+    const v = viciPhotoByPleiades.get(pid);
+    const qid = m.qid;
+    const hasP18 = qid ? (p18[qid] != null) : false;
+    photos[pid] = qid
+      ? { has_photo: hasP18, wikidata: qid, image: hasP18 ? p18[qid] : null, reason: hasP18 ? 'has-p18' : 'no-p18' }
+      : { has_photo: false, wikidata: null, image: null, reason: 'no-wikidata' };
+    const rec = {
+      id: `vici-${v.viciId}`,
+      name: m.title, modern: '', type: m.type,
+      lat: m.lat, lng: m.lng, period: 'Roman period',
+      pleiades: pid, rome_days: 0,
+      desc: m.desc || `${m.title} — an ancient place recorded in the Pleiades gazetteer and documented on vici.org.`,
+    };
+    if (!hasP18) { rec.quest = 'photo'; rec.elevation = true; }
+    rec.vici = { url: v.viciUrl, name: v.viciName, image: v.top.image, creator: v.top.creator || null, license: v.top.license || null };
+    records.push(rec);
+  }
+  records.sort((a, b) => a.name.localeCompare(b.name));
+
+  const elev = records.filter(r => r.elevation).length;
+  const body =
+    `// ═══════════════════════════════════════════════════════════\n` +
+    `//  VIA — sites-vici.js — AUTO-GENERATED, do not hand-edit.\n` +
+    `//  The vici.org elevation layer (Phase 1). Pleiades places vici has a\n` +
+    `//  photo of, not already in VIA. quest:"photo"+elevation:true = no Wikidata\n` +
+    `//  P18 (an elevation candidate); otherwise documented coverage. vici image\n` +
+    `//  data is CC BY-SA 3.0 / metadata CC0. Regenerate:\n` +
+    `//    node --max-old-space-size=4096 scripts/build-elevation-worklist.mjs --emit-sites\n` +
+    `//  See docs/v1-spec-elevation-layer.md.\n` +
+    `// ═══════════════════════════════════════════════════════════\n\n` +
+    `const SITES_VICI = [\n${records.map(r => '  ' + JSON.stringify(r)).join(',\n')}\n];\n`;
+  await writeFile(OUT_SITES, body);
+  await writeFile(PHOTOS, JSON.stringify(photos, null, 2));
+  console.log(`✓ wrote ${path.relative(ROOT, OUT_SITES)} — ${records.length} sites (${elev} elevation candidates, ${records.length - elev} documented)`);
+  console.log(`✓ updated ${path.relative(ROOT, PHOTOS)} with ${newIds.length} new P18 results`);
+}
+
 // ── MAIN ──────────────────────────────────────────────────
 async function main() {
   console.log('── parsing vici dump (streaming) ──');
@@ -280,17 +428,24 @@ async function main() {
   // GLOBAL UNIVERSE (not restricted to VIA's catalogue): how many distinct
   // Pleiades places does vici have a photo for at all? This sizes the
   // catalogue-expansion opportunity beyond VIA's current 473 sites.
-  let pleiadesWithVici = 0, pleiadesWithViciPhoto = 0;
-  for (const [, pnts] of pntsByPleiades) {
+  let pleiadesWithVici = 0;
+  const viciPhotoByPleiades = new Map();   // pid → {viciId, viciUrl, viciName, top}
+  for (const [pid, pnts] of pntsByPleiades) {
     pleiadesWithVici++;
-    let hasImg = false;
     for (const pntId of pnts) {
       const pt = points.get(pntId);
       if (!pt || pt.hide || !pt.visible) continue;
-      if (imagesForPnt(pntId).length) { hasImg = true; break; }
+      const imgs = imagesForPnt(pntId);
+      if (imgs.length) {
+        viciPhotoByPleiades.set(pid, {
+          viciId: String(pntId), viciUrl: `https://vici.org/vici/${pntId}/`,
+          viciName: pt.name, top: imgs[0],
+        });
+        break;
+      }
     }
-    if (hasImg) pleiadesWithViciPhoto++;
   }
+  const pleiadesWithViciPhoto = viciPhotoByPleiades.size;
   console.log(`\n── GLOBAL (all vici, not just VIA) ──`);
   console.log(`  distinct Pleiades places vici knows:        ${pleiadesWithVici}`);
   console.log(`  distinct Pleiades places vici has a PHOTO:  ${pleiadesWithViciPhoto}`);
@@ -374,6 +529,8 @@ async function main() {
   console.log(`  licenses:`, licCount);
   console.log(`\n  top 8 candidates:`);
   for (const c of candidates.slice(0, 8)) console.log(`    ${c.pleiades.padEnd(11)} ${(c.via_name||'').slice(0,32).padEnd(33)} ${c.image_count} img  ${c.images[0].license || '?'}`);
+
+  if (EMIT_SITES) await emitSites(viciPhotoByPleiades, viaSites, photos);
 }
 
 main().catch(e => { console.error(e); process.exit(1); });

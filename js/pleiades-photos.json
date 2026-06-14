@@ -107,13 +107,37 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "59668": {
+    "has_photo": true,
+    "wikidata": "Q2005166",
+    "image": "BegramMedallion.jpg",
+    "reason": "has-p18"
+  },
+  "59740": {
+    "has_photo": true,
+    "wikidata": "Q100371614",
+    "image": "Bazira Panorama 2.jpg",
+    "reason": "has-p18"
+  },
   "59858": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
   },
+  "59915": {
+    "has_photo": true,
+    "wikidata": "Q5753",
+    "image": "Sherdor madrasah 3.jpg",
+    "reason": "has-p18"
+  },
   "59925": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "59954": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
@@ -137,7 +161,19 @@
     "image": null,
     "reason": "no-p18"
   },
+  "60083": {
+    "has_photo": true,
+    "wikidata": "Q156093",
+    "image": "Double-Headed Eagle Stupa at Sirkap 08.jpg",
+    "reason": "has-p18"
+  },
   "60421": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "69463": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
@@ -149,13 +185,49 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "69544": {
+    "has_photo": true,
+    "wikidata": "Q22962764",
+    "image": "Fanum d'Oisseau le Petit.jpg",
+    "reason": "has-p18"
+  },
+  "69564": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "79280": {
+    "has_photo": true,
+    "wikidata": "Q61747805",
+    "image": "Roman ruin at Sea Mills nr Bristol. - geograph.org.uk - 936274.jpg",
+    "reason": "has-p18"
+  },
   "79350": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
   },
+  "79383": {
+    "has_photo": true,
+    "wikidata": "Q5089233",
+    "image": "Chedworth Roman Villa 2012 - View from northeast.jpg",
+    "reason": "has-p18"
+  },
   "79388": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "79393": {
+    "has_photo": true,
+    "wikidata": "Q630604",
+    "image": "The Roman Town Wall, Head Street to the Balkerne Gate 3.JPG",
+    "reason": "has-p18"
+  },
+  "79403": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
@@ -191,6 +263,12 @@
     "image": null,
     "reason": "no-p18"
   },
+  "79559": {
+    "has_photo": true,
+    "wikidata": "Q1230592",
+    "image": "Letocetum Title.jpg",
+    "reason": "has-p18"
+  },
   "79565": {
     "has_photo": true,
     "wikidata": "Q820110",
@@ -203,10 +281,22 @@
     "image": "Londinium Archäologische Karte.png",
     "reason": "has-p18"
   },
+  "79590": {
+    "has_photo": true,
+    "wikidata": "Q3285089",
+    "image": "Romeinse ruines (2).jpg",
+    "reason": "has-p18"
+  },
   "79621": {
     "has_photo": true,
     "wikidata": "Q2014250",
     "image": "St.Peter's church, Norton Disney, Lincs. - geograph.org.uk - 57416.jpg",
+    "reason": "has-p18"
+  },
+  "79678": {
+    "has_photo": true,
+    "wikidata": "Q1309657",
+    "image": "Segontium.JPG",
     "reason": "has-p18"
   },
   "79696": {
@@ -220,6 +310,12 @@
     "wikidata": "Q103197761",
     "image": null,
     "reason": "no-p18"
+  },
+  "79735": {
+    "has_photo": true,
+    "wikidata": "Q1407535",
+    "image": "Venta Icenorum North Wall.jpg",
+    "reason": "has-p18"
   },
   "79775": {
     "has_photo": false,
@@ -244,6 +340,12 @@
     "wikidata": null,
     "image": null,
     "reason": "error"
+  },
+  "89152": {
+    "has_photo": true,
+    "wikidata": "Q3819299",
+    "image": "Corstopitum - east and west compounds (3) - geograph.org.uk - 3355778.jpg",
+    "reason": "has-p18"
   },
   "89180": {
     "has_photo": null,
@@ -281,6 +383,72 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "98934": {
+    "has_photo": true,
+    "wikidata": "Q515850",
+    "image": "Peutinger Casaromago.jpg",
+    "reason": "has-p18"
+  },
+  "98951": {
+    "has_photo": true,
+    "wikidata": "Q1880328",
+    "image": "Tempel Elst.JPG",
+    "reason": "has-p18"
+  },
+  "98952": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "98992": {
+    "has_photo": true,
+    "wikidata": "Q1954771",
+    "image": "All the finds from the excavations at Kalkriese, Museum und Park Kalkriese, Germany (9703011758).jpg",
+    "reason": "has-p18"
+  },
+  "99046": {
+    "has_photo": true,
+    "wikidata": "Q2199749",
+    "image": "Begrenzingskaart castellum Traiectum Utrecht Domplein.jpg",
+    "reason": "has-p18"
+  },
+  "99662": {
+    "has_photo": true,
+    "wikidata": "Q769555",
+    "image": "Fossa Corbulonis map.png",
+    "reason": "has-p18"
+  },
+  "108722": {
+    "has_photo": false,
+    "wikidata": "Q103138125",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "108747": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "108771": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "108788": {
+    "has_photo": false,
+    "wikidata": "Q103145980",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "108816": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "108833": {
     "has_photo": true,
     "wikidata": "Q22940705",
@@ -293,11 +461,47 @@
     "image": "Berthouville Mairie.jpg",
     "reason": "has-p18"
   },
+  "108863": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "108879": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "108896": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "108928": {
     "has_photo": false,
     "wikidata": "Q16628911",
     "image": null,
     "reason": "no-p18"
+  },
+  "108979": {
+    "has_photo": true,
+    "wikidata": "Q1735383",
+    "image": "Feldberg-Kastell-Blickachsen-9-2013-921.jpg",
+    "reason": "has-p18"
+  },
+  "108985": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "109004": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
   },
   "109034": {
     "has_photo": false,
@@ -305,11 +509,53 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "109098": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "109141": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "109229": {
+    "has_photo": true,
+    "wikidata": "Q577724",
+    "image": "Oberaden Roemerberg IMGP5494 wp.jpg",
+    "reason": "has-p18"
+  },
   "109247": {
     "has_photo": false,
     "wikidata": "Q22966316",
     "image": null,
     "reason": "no-p18"
+  },
+  "109263": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "109281": {
+    "has_photo": false,
+    "wikidata": "Q3431966",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "109299": {
+    "has_photo": true,
+    "wikidata": "Q208267",
+    "image": "SamberMerbesleChâteau.jpg",
+    "reason": "has-p18"
+  },
+  "109330": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
   },
   "109338": {
     "has_photo": false,
@@ -317,11 +563,89 @@
     "image": null,
     "reason": "no-p18"
   },
+  "109361": {
+    "has_photo": false,
+    "wikidata": "Q1460725",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "109381": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "109386": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "109387": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "109411": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "110239": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "118537": {
+    "has_photo": true,
+    "wikidata": "Q1660247",
+    "image": "Archäologischer Park Reiterkastell Aalen. 03.jpg",
+    "reason": "has-p18"
+  },
+  "118541": {
+    "has_photo": true,
+    "wikidata": "Q1735433",
+    "image": "Kastellmodell im RM Wallsee-Sindelburg.JPG",
+    "reason": "has-p18"
+  },
+  "118580": {
+    "has_photo": true,
+    "wikidata": "Q765823",
+    "image": "Statue-Augustus.jpg",
+    "reason": "has-p18"
+  },
+  "118601": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "118614": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "118673": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "118761": {
+    "has_photo": false,
+    "wikidata": "Q113988261",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "118802": {
+    "has_photo": false,
+    "wikidata": "Q103161387",
+    "image": null,
+    "reason": "no-p18"
   },
   "118857": {
     "has_photo": true,
@@ -329,10 +653,28 @@
     "image": "Blashauskapelle.JPG",
     "reason": "has-p18"
   },
+  "118972": {
+    "has_photo": true,
+    "wikidata": "Q2741490",
+    "image": "Oberranna (Burgus-3).JPG",
+    "reason": "has-p18"
+  },
+  "128375": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "128376": {
     "has_photo": true,
     "wikidata": "Q508815",
     "image": "Carnuntum Petronell.JPG",
+    "reason": "has-p18"
+  },
+  "128385": {
+    "has_photo": true,
+    "wikidata": "Q489810",
+    "image": "Tulln Hauptplatz 01.jpg",
     "reason": "has-p18"
   },
   "128409": {
@@ -359,6 +701,24 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "138296": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "138447": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "138464": {
+    "has_photo": true,
+    "wikidata": "Q3517583",
+    "image": "Puy de dome temple mercure 2.jpg",
+    "reason": "has-p18"
+  },
   "138574": {
     "has_photo": false,
     "wikidata": null,
@@ -371,10 +731,52 @@
     "image": "Vue de Barzan.jpg",
     "reason": "has-p18"
   },
+  "138608": {
+    "has_photo": true,
+    "wikidata": "Q21099822",
+    "image": "Thesee-Maselles-1.jpg",
+    "reason": "has-p18"
+  },
+  "138623": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "138636": {
     "has_photo": true,
     "wikidata": "Q1290232",
     "image": "Plan d'Uxellodunum (Puy d'Issolu) -1.jpg",
+    "reason": "has-p18"
+  },
+  "139684": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "140476": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "140513": {
+    "has_photo": false,
+    "wikidata": "Q22951105",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "140523": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "140548": {
+    "has_photo": true,
+    "wikidata": "Q22920001",
+    "image": "Moncaret Soubassement de la salle a abside.jpg",
     "reason": "has-p18"
   },
   "140997": {
@@ -383,11 +785,29 @@
     "image": null,
     "reason": "error"
   },
+  "147990": {
+    "has_photo": true,
+    "wikidata": "Q1458146",
+    "image": "Ambrussum voies marquées 10-04-2006.jpg",
+    "reason": "has-p18"
+  },
+  "148012": {
+    "has_photo": true,
+    "wikidata": "Q89272148",
+    "image": "Barbegal aqueduct 01.jpg",
+    "reason": "has-p18"
+  },
   "148033": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "148093": {
+    "has_photo": true,
+    "wikidata": "Q674543",
+    "image": "Glanum-triomphal arch-arc de triomphe.jpg",
+    "reason": "has-p18"
   },
   "148107": {
     "has_photo": true,
@@ -401,17 +821,77 @@
     "image": "France-002364 - Square House (15867600545).jpg",
     "reason": "has-p18"
   },
+  "148153": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "148217": {
     "has_photo": false,
     "wikidata": "Q641068",
     "image": null,
     "reason": "no-p18"
   },
+  "148228": {
+    "has_photo": true,
+    "wikidata": "Q3554931",
+    "image": "Vaison-la-Romaine - Atrium.JPG",
+    "reason": "has-p18"
+  },
+  "149492": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "149496": {
+    "has_photo": true,
+    "wikidata": "Q189764",
+    "image": "Pont du Gard BLS.jpg",
+    "reason": "has-p18"
+  },
+  "149499": {
+    "has_photo": true,
+    "wikidata": "Q2103625",
+    "image": "Pont Flavien Saint Chamas.jpg",
+    "reason": "has-p18"
+  },
+  "149500": {
+    "has_photo": true,
+    "wikidata": "Q1780937",
+    "image": "Pont Julien, Bonnieux.jpg",
+    "reason": "has-p18"
+  },
   "157802": {
     "has_photo": true,
     "wikidata": "Q3608794",
     "image": "Albintimilium - Insulae.jpg",
     "reason": "has-p18"
+  },
+  "157940": {
+    "has_photo": true,
+    "wikidata": "Q747588",
+    "image": "La Turbie BW 1.JPG",
+    "reason": "has-p18"
+  },
+  "159308": {
+    "has_photo": true,
+    "wikidata": "Q3397582",
+    "image": "Pont romain du Buès48.JPG",
+    "reason": "has-p18"
+  },
+  "159311": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "167650": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
   },
   "167717": {
     "has_photo": true,
@@ -425,11 +905,83 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "167873": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "167903": {
+    "has_photo": true,
+    "wikidata": "Q1150536",
+    "image": "Mairie de Saint-Romain-de-Jalionas (2).JPG",
+    "reason": "has-p18"
+  },
+  "169128": {
+    "has_photo": true,
+    "wikidata": "Q3397584",
+    "image": "Pont romain de Viviers.jpg",
+    "reason": "has-p18"
+  },
+  "177434": {
+    "has_photo": true,
+    "wikidata": "Q835966",
+    "image": "Vue aérienne vestiges Alésia.jpg",
+    "reason": "has-p18"
+  },
+  "177442": {
+    "has_photo": true,
+    "wikidata": "Q22915830",
+    "image": "Régisseur.JPG",
+    "reason": "has-p18"
+  },
   "177460": {
     "has_photo": true,
     "wikidata": "Q2871714",
     "image": "Autun theatre 2.jpg",
     "reason": "has-p18"
+  },
+  "177473": {
+    "has_photo": true,
+    "wikidata": "Q650053",
+    "image": "Bibracte (Mont Beuvray) 17.jpg",
+    "reason": "has-p18"
+  },
+  "177490": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "177516": {
+    "has_photo": false,
+    "wikidata": "Q131755545",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "177545": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "177557": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "177561": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "177649": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
   },
   "177659": {
     "has_photo": true,
@@ -437,7 +989,55 @@
     "image": "Site-romain-Heria.jpg",
     "reason": "has-p18"
   },
+  "177667": {
+    "has_photo": true,
+    "wikidata": "Q16919292",
+    "image": "Seeb, römischer Gutshof in Winkel bei Bülach 2011-09-17 16-37-56.JPG",
+    "reason": "has-p18"
+  },
+  "187249": {
+    "has_photo": true,
+    "wikidata": "Q1124663",
+    "image": "Luftaufnahme Pfyn.jpg",
+    "reason": "has-p18"
+  },
+  "187265": {
+    "has_photo": true,
+    "wikidata": "Q398648",
+    "image": "Aguntum.jpg",
+    "reason": "has-p18"
+  },
+  "187281": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "187292": {
+    "has_photo": true,
+    "wikidata": "Q1692925",
+    "image": "Arbon-Kastell.jpg",
+    "reason": "has-p18"
+  },
   "187354": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "187379": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "187403": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "187422": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
@@ -449,11 +1049,65 @@
     "image": "Centum prata (Kempraten) - Meienbergstrasse 2012-01-16 14-31-20.JPG",
     "reason": "has-p18"
   },
+  "187440": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "187542": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "187575": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "197140": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "197145": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "197276": {
+    "has_photo": true,
+    "wikidata": "Q28969759",
+    "image": "Castra Ad Fluvium Frigidum 1756.JPG",
+    "reason": "has-p18"
+  },
+  "197283": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "197287": {
+    "has_photo": true,
+    "wikidata": "Q1027637",
+    "image": "Tác, Gorsium - légi felvételen.jpg",
+    "reason": "has-p18"
+  },
+  "197317": {
+    "has_photo": true,
+    "wikidata": "Q4678175",
+    "image": "Arheološko najdišče Hrušica-Ad Pirum(EŠD535).jpg",
+    "reason": "has-p18"
+  },
+  "197408": {
+    "has_photo": true,
+    "wikidata": "Q15736475",
+    "image": "Neviodunum1.JPG",
+    "reason": "has-p18"
   },
   "197427": {
     "has_photo": true,
@@ -461,13 +1115,79 @@
     "image": "HR -Porec2.JPG",
     "reason": "has-p18"
   },
+  "197471": {
+    "has_photo": false,
+    "wikidata": "Q7320766",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "197504": {
+    "has_photo": true,
+    "wikidata": "Q192119",
+    "image": "Sisak Fortress.jpg",
+    "reason": "has-p18"
+  },
+  "197523": {
+    "has_photo": false,
+    "wikidata": "Q11950215",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "206991": {
+    "has_photo": false,
+    "wikidata": "Q499806",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "207077": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "207129": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "207241": {
     "has_photo": false,
     "wikidata": "Q14752597",
     "image": null,
     "reason": "no-p18"
   },
+  "207249": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "207306": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "207362": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "207385": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "207395": {
+    "has_photo": true,
+    "wikidata": "Q904128",
+    "image": "Romuliana, from air.jpg",
+    "reason": "has-p18"
+  },
+  "207443": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
@@ -479,17 +1199,119 @@
     "image": "Sirmium, Imperial Palace.jpg",
     "reason": "has-p18"
   },
+  "207488": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "207495": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "207505": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
   },
+  "207527": {
+    "has_photo": true,
+    "wikidata": "Q2671791",
+    "image": "Sarmizegetusa (Plan).JPG",
+    "reason": "has-p18"
+  },
+  "207549": {
+    "has_photo": true,
+    "wikidata": "Q1231824",
+    "image": "Viminacium kostolac pozarevac3.JPG",
+    "reason": "has-p18"
+  },
+  "216703": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "216713": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "216727": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "216730": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "216741": {
+    "has_photo": true,
+    "wikidata": "Q2900394",
+    "image": "Dacian Fortress Buridava 01.JPG",
+    "reason": "has-p18"
+  },
+  "216775": {
+    "has_photo": true,
+    "wikidata": "Q613565",
+    "image": "Castra Cumidava 001.jpg",
+    "reason": "has-p18"
+  },
+  "216797": {
+    "has_photo": false,
+    "wikidata": "Q5050833",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "216800": {
+    "has_photo": false,
+    "wikidata": "Q3716531",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "216840": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "216856": {
+    "has_photo": true,
+    "wikidata": "Q12723650",
+    "image": "Castrul Roman Jidova 3.jpg",
+    "reason": "has-p18"
+  },
   "216872": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "216895": {
+    "has_photo": true,
+    "wikidata": "Q1987323",
+    "image": "Nicopolis ad Istrum - central part.jpg",
+    "reason": "has-p18"
+  },
+  "216907": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "217025": {
+    "has_photo": true,
+    "wikidata": "Q1309599",
+    "image": "Troesmis3.jpg",
+    "reason": "has-p18"
   },
   "226595": {
     "has_photo": false,
@@ -501,6 +1323,126 @@
     "has_photo": true,
     "wikidata": "Q2075617",
     "image": "Античне місто Ніконій, фото 3.jpg",
+    "reason": "has-p18"
+  },
+  "236335": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "236336": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "236401": {
+    "has_photo": true,
+    "wikidata": "Q9093954",
+    "image": "Valladolid villa Almenara museo 05 ni.jpg",
+    "reason": "has-p18"
+  },
+  "236437": {
+    "has_photo": true,
+    "wikidata": "Q12385033",
+    "image": "2017 Campamento romano da Ciadella. Sobrado. Galiza-5.jpg",
+    "reason": "has-p18"
+  },
+  "236443": {
+    "has_photo": true,
+    "wikidata": "Q66942507",
+    "image": "P1080406 Ruinas Conimbriga (Condeixa-a-Nova).jpg",
+    "reason": "has-p18"
+  },
+  "236493": {
+    "has_photo": true,
+    "wikidata": "Q3189896",
+    "image": "Casa de los Morillos.jpg",
+    "reason": "has-p18"
+  },
+  "236505": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "236536": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "236549": {
+    "has_photo": true,
+    "wikidata": "Q9706879",
+    "image": "Castro Monte Mozinho - Vista xeral 1.jpg",
+    "reason": "has-p18"
+  },
+  "236578": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "236596": {
+    "has_photo": true,
+    "wikidata": "Q5979966",
+    "image": "Duraton Confluenta Los Mercados 04.JPG",
+    "reason": "has-p18"
+  },
+  "236598": {
+    "has_photo": true,
+    "wikidata": "Q6073313",
+    "image": "Petavonium (1).jpg",
+    "reason": "has-p18"
+  },
+  "236624": {
+    "has_photo": true,
+    "wikidata": "Q1115216",
+    "image": "Villa tejada lou.jpg",
+    "reason": "has-p18"
+  },
+  "236646": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "236686": {
+    "has_photo": true,
+    "wikidata": "Q245151",
+    "image": "Torre de Hércules 2023.jpg",
+    "reason": "has-p18"
+  },
+  "236698": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "237828": {
+    "has_photo": true,
+    "wikidata": "Q65275457",
+    "image": "Ponte Navea (7348627342).jpg",
+    "reason": "has-p18"
+  },
+  "237829": {
+    "has_photo": true,
+    "wikidata": "Q2781943",
+    "image": "Bibeyromanbridge.jpg",
+    "reason": "has-p18"
+  },
+  "237850": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "237851": {
+    "has_photo": true,
+    "wikidata": "Q6091642",
+    "image": "Lado nuevo (alejado) - Puente Romano.JPG",
     "reason": "has-p18"
   },
   "246139": {
@@ -515,7 +1457,31 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "246163": {
+    "has_photo": false,
+    "wikidata": "Q15976444",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "246232": {
+    "has_photo": true,
+    "wikidata": "Q796596",
+    "image": "Iruña Veleia 1.JPG",
+    "reason": "has-p18"
+  },
+  "246238": {
+    "has_photo": true,
+    "wikidata": "Q631051",
+    "image": "Arco de Barà.jpg",
+    "reason": "has-p18"
+  },
   "246262": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "246287": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
@@ -533,11 +1499,59 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "246348": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "246349": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "246352": {
+    "has_photo": false,
+    "wikidata": "Q109648820",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "246356": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "246359": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "246365": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "246382": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "246383": {
+    "has_photo": true,
+    "wikidata": "Q77221",
+    "image": "Silo Enserunes (France).jpg",
+    "reason": "has-p18"
+  },
+  "246384": {
+    "has_photo": true,
+    "wikidata": "Q1348600",
+    "image": "Ercávica.jpg",
+    "reason": "has-p18"
   },
   "246410": {
     "has_photo": true,
@@ -545,11 +1559,95 @@
     "image": "LaGraufesenqueGrandFourDePotiers.jpg",
     "reason": "has-p18"
   },
+  "246457": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "246502": {
+    "has_photo": true,
+    "wikidata": "Q6007256",
+    "image": "Mausoleu romà de Miralpeix.jpg",
+    "reason": "has-p18"
+  },
+  "246506": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "246510": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "246523": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "246566": {
     "has_photo": true,
     "wikidata": "Q3540493",
     "image": "Photos-0020.jpg",
     "reason": "has-p18"
+  },
+  "246598": {
+    "has_photo": true,
+    "wikidata": "Q539789",
+    "image": "Sádaba - Mausoleo de los Atilios.jpg",
+    "reason": "has-p18"
+  },
+  "246629": {
+    "has_photo": true,
+    "wikidata": "Q3558911",
+    "image": "Seviac gallo roman villa 12.jpg",
+    "reason": "has-p18"
+  },
+  "246696": {
+    "has_photo": true,
+    "wikidata": "Q1505731",
+    "image": "TarragonaTorreScipioni.jpg",
+    "reason": "has-p18"
+  },
+  "246729": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "246890": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "246893": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "247642": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "247645": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "247659": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
   },
   "249909": {
     "has_photo": false,
@@ -557,11 +1655,59 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "250013": {
+    "has_photo": true,
+    "wikidata": "Q4893109",
+    "image": "Catalonia Mataró Vil·laRomanaDeCanLlauder VistaGeneral.JPG",
+    "reason": "has-p18"
+  },
+  "250016": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "250022": {
+    "has_photo": true,
+    "wikidata": "Q1633319",
+    "image": "20251107 111556 Fabara Mausoleo de Lucio Emilio Lupo.jpg",
+    "reason": "has-p18"
+  },
   "250026": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "255966": {
+    "has_photo": true,
+    "wikidata": "Q7362337",
+    "image": "Templo Romano dedicado a Trajano (Alcántara, Cáceres, España) , vista frontal..JPG",
+    "reason": "has-p18"
+  },
+  "256005": {
+    "has_photo": true,
+    "wikidata": "Q43174653",
+    "image": "Basílica Baelo 001.jpg",
+    "reason": "has-p18"
+  },
+  "256058": {
+    "has_photo": false,
+    "wikidata": "Q110775489",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "256083": {
+    "has_photo": true,
+    "wikidata": "Q2941505",
+    "image": "Murallacastracaeciliaext.jpg",
+    "reason": "has-p18"
+  },
+  "256092": {
+    "has_photo": true,
+    "wikidata": "Q2526003",
+    "image": "Cerro da Vila Roman Ruins Saturday 20 November 2010.JPG",
+    "reason": "has-p18"
   },
   "256155": {
     "has_photo": true,
@@ -587,7 +1733,127 @@
     "image": null,
     "reason": "no-p18"
   },
+  "256231": {
+    "has_photo": true,
+    "wikidata": "Q658893",
+    "image": "Amphitheatre Italica, Spain.jpg",
+    "reason": "has-p18"
+  },
   "256250": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "256299": {
+    "has_photo": true,
+    "wikidata": "Q429318",
+    "image": "Ruínasromanasmilreu.jpg",
+    "reason": "has-p18"
+  },
+  "256318": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "256325": {
+    "has_photo": true,
+    "wikidata": "Q6041035",
+    "image": "Nertobriga muralla.jpg",
+    "reason": "has-p18"
+  },
+  "256333": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "256370": {
+    "has_photo": true,
+    "wikidata": "Q66814946",
+    "image": "Ponte Romana dos Três Concelhos - Sambal - Portugal (20875768138).jpg",
+    "reason": "has-p18"
+  },
+  "256371": {
+    "has_photo": true,
+    "wikidata": "Q66814941",
+    "image": "Roman Bridge, Ponte da Ladeira dos Envendos, Lusitania, Portugal (12717730593).jpg",
+    "reason": "has-p18"
+  },
+  "256422": {
+    "has_photo": true,
+    "wikidata": "Q2802496",
+    "image": "The Roman ruins of São Cucufate, with the principal elevation of the villa Áulica, Portugal (16179026424).jpg",
+    "reason": "has-p18"
+  },
+  "256441": {
+    "has_photo": true,
+    "wikidata": "Q7228143",
+    "image": "PuenteromanoriveraTrebejana.JPG",
+    "reason": "has-p18"
+  },
+  "256451": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "256474": {
+    "has_photo": false,
+    "wikidata": "Q9093962",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "256485": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "256503": {
+    "has_photo": true,
+    "wikidata": "Q3552479",
+    "image": "Relieve de Osuna (M.A.N. Madrid) 02.jpg",
+    "reason": "has-p18"
+  },
+  "256516": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "256517": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "256519": {
+    "has_photo": true,
+    "wikidata": "Q97632504",
+    "image": "Villa romana Río Verde 4.JPG",
+    "reason": "has-p18"
+  },
+  "257459": {
+    "has_photo": true,
+    "wikidata": "Q996197",
+    "image": "Bridge Alcantara.JPG",
+    "reason": "has-p18"
+  },
+  "257460": {
+    "has_photo": true,
+    "wikidata": "Q967119",
+    "image": "Puente de Alconétar, Cáceres Province, Spain. Pic 01.jpg",
+    "reason": "has-p18"
+  },
+  "257484": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "265808": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
@@ -611,10 +1877,64 @@
     "image": "Edificio Atrio Toscano1.JPG",
     "reason": "has-p18"
   },
+  "265899": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "265928": {
     "has_photo": true,
     "wikidata": "Q9088095",
     "image": "Basílica Tolmo Minateda.png",
+    "reason": "has-p18"
+  },
+  "265938": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "265954": {
+    "has_photo": false,
+    "wikidata": "Q103140012",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "265996": {
+    "has_photo": true,
+    "wikidata": "Q6162500",
+    "image": "Villa romana de Bruñel.JPG",
+    "reason": "has-p18"
+  },
+  "266004": {
+    "has_photo": false,
+    "wikidata": "Q103139753",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "266015": {
+    "has_photo": true,
+    "wikidata": "Q6162502",
+    "image": "Triclinium en primer plano (7957839030).jpg",
+    "reason": "has-p18"
+  },
+  "266020": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "266036": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "266043": {
+    "has_photo": true,
+    "wikidata": "Q29001109",
+    "image": "AnfiteatroSisapo2.JPG",
     "reason": "has-p18"
   },
   "266085": {
@@ -623,11 +1943,47 @@
     "image": null,
     "reason": "no-p18"
   },
+  "266092": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "267272": {
+    "has_photo": true,
+    "wikidata": "Q97630143",
+    "image": "Puente de Andújar, Spain (33409052470).jpg",
+    "reason": "has-p18"
+  },
   "267277": {
     "has_photo": false,
     "wikidata": "Q108337284",
     "image": null,
     "reason": "no-p18"
+  },
+  "267281": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "275586": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "275666": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "275696": {
+    "has_photo": true,
+    "wikidata": "Q2314811",
+    "image": "Roman Ruins Zawiya Chellah Rabat Nov25 A7CR 08989.jpg",
+    "reason": "has-p18"
   },
   "275717": {
     "has_photo": false,
@@ -653,6 +2009,12 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "285501": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "295231": {
     "has_photo": false,
     "wikidata": null,
@@ -669,6 +2031,12 @@
     "has_photo": true,
     "wikidata": "Q3561",
     "image": "Argel 3.jpg",
+    "reason": "has-p18"
+  },
+  "295279": {
+    "has_photo": true,
+    "wikidata": "Q5919977",
+    "image": "Forum cherchell.JPG",
     "reason": "has-p18"
   },
   "295286": {
@@ -707,6 +2075,12 @@
     "image": null,
     "reason": "no-p18"
   },
+  "305068": {
+    "has_photo": true,
+    "wikidata": "Q457362",
+    "image": "Roman Ruins of Djemila in Sétif, Algeria.jpg",
+    "reason": "has-p18"
+  },
   "305110": {
     "has_photo": false,
     "wikidata": null,
@@ -730,6 +2104,18 @@
     "wikidata": null,
     "image": null,
     "reason": "error"
+  },
+  "305166": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "305167": {
+    "has_photo": true,
+    "wikidata": "Q1396850",
+    "image": "Castellum Tidditanorum (Tiddis), Numidia, Algeria - 52574068083.jpg",
+    "reason": "has-p18"
   },
   "305181": {
     "has_photo": false,
@@ -761,13 +2147,49 @@
     "image": "Tunisie Carthage Ruines 08.JPG",
     "reason": "has-p18"
   },
+  "315050": {
+    "has_photo": true,
+    "wikidata": "Q538061",
+    "image": "Kerkouane1.JPG",
+    "reason": "has-p18"
+  },
+  "315065": {
+    "has_photo": true,
+    "wikidata": "Q54205",
+    "image": "Madaure17.JPG",
+    "reason": "has-p18"
+  },
+  "315220": {
+    "has_photo": true,
+    "wikidata": "Q1967945",
+    "image": "Thuburbo Majus vue vers Capitole.jpg",
+    "reason": "has-p18"
+  },
   "315223": {
     "has_photo": true,
     "wikidata": "Q32378",
     "image": "Dougga, Beja.jpg",
     "reason": "has-p18"
   },
+  "324665": {
+    "has_photo": true,
+    "wikidata": "Q17561462",
+    "image": "Haidra Tunisie.jpg",
+    "reason": "has-p18"
+  },
+  "324816": {
+    "has_photo": true,
+    "wikidata": "Q1536583",
+    "image": "Sufeitula.png",
+    "reason": "has-p18"
+  },
   "324835": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "334491": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
@@ -779,10 +2201,46 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "334570": {
+    "has_photo": true,
+    "wikidata": "Q1309744",
+    "image": "Lambaesis-etching.png",
+    "reason": "has-p18"
+  },
   "334636": {
     "has_photo": true,
     "wikidata": "Q459629",
     "image": "Timgad Ruins Panorama.jpg",
+    "reason": "has-p18"
+  },
+  "344282": {
+    "has_photo": true,
+    "wikidata": "Q15052130",
+    "image": "Theatre of Sabratha, Libya.jpg",
+    "reason": "has-p18"
+  },
+  "344374": {
+    "has_photo": true,
+    "wikidata": "Q2120559",
+    "image": "Garbia 02.JPG",
+    "reason": "has-p18"
+  },
+  "344375": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "344376": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "344377": {
+    "has_photo": true,
+    "wikidata": "Q1918358",
+    "image": "Gholaia-Bu Njem - erhaltenes Kastelltor, 1819.png",
     "reason": "has-p18"
   },
   "344386": {
@@ -791,11 +2249,23 @@
     "image": "Guellala.jpg",
     "reason": "has-p18"
   },
+  "344414": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "344416": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "344448": {
+    "has_photo": true,
+    "wikidata": "Q191504",
+    "image": "Leptis Magna (29) (8288918733).jpg",
+    "reason": "has-p18"
   },
   "344456": {
     "has_photo": true,
@@ -804,6 +2274,18 @@
     "reason": "has-p18"
   },
   "344518": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "344520": {
+    "has_photo": true,
+    "wikidata": "Q14612528",
+    "image": "Castellum Tisavar (Ksar Rhilane, Ksar Ghilane), Tunisia.jpg",
+    "reason": "has-p18"
+  },
+  "344545": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
@@ -821,17 +2303,71 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "354115": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "354123": {
+    "has_photo": false,
+    "wikidata": "Q105994824",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "363948": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "363951": {
     "has_photo": false,
     "wikidata": "Q104818604",
     "image": null,
     "reason": "no-p18"
   },
+  "373732": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "373736": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "373778": {
     "has_photo": true,
     "wikidata": "Q44112",
     "image": "CireneTermeTraiano.jpg",
     "reason": "has-p18"
+  },
+  "373861": {
+    "has_photo": false,
+    "wikidata": "Q1215696",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "373862": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "373879": {
+    "has_photo": true,
+    "wikidata": "Q45829",
+    "image": "Ptolemais Byzantine Cistern.JPG",
+    "reason": "has-p18"
+  },
+  "373895": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
   },
   "375237": {
     "has_photo": false,
@@ -851,6 +2387,12 @@
     "image": null,
     "reason": "no-p18"
   },
+  "383811": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "393421": {
     "has_photo": false,
     "wikidata": "Q1054689",
@@ -868,6 +2410,12 @@
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "403235": {
+    "has_photo": true,
+    "wikidata": "Q579763",
+    "image": "Vista sull'area archeologica e il museo dell'antica città di Luni.jpg",
+    "reason": "has-p18"
   },
   "403260": {
     "has_photo": true,
@@ -917,6 +2465,18 @@
     "image": null,
     "reason": "no-p18"
   },
+  "413312": {
+    "has_photo": true,
+    "wikidata": "Q683244",
+    "image": "Sentinum.jpg",
+    "reason": "has-p18"
+  },
+  "413316": {
+    "has_photo": true,
+    "wikidata": "Q736618",
+    "image": "Museo archeologico di Rosignano Marittimo, ricostruzione della villa di settefinestre a orbetello.JPG",
+    "reason": "has-p18"
+  },
   "413325": {
     "has_photo": false,
     "wikidata": null,
@@ -953,6 +2513,12 @@
     "image": "Rom flughafen 01.jpg",
     "reason": "has-p18"
   },
+  "422819": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "422824": {
     "has_photo": true,
     "wikidata": "Q335070",
@@ -977,6 +2543,12 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "422932": {
+    "has_photo": true,
+    "wikidata": "Q614510",
+    "image": "Gabii 0937.jpg",
+    "reason": "has-p18"
+  },
   "422941": {
     "has_photo": false,
     "wikidata": "Q3117087",
@@ -984,6 +2556,12 @@
     "reason": "no-p18"
   },
   "422954": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "422964": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
@@ -1007,10 +2585,22 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "423004": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "423013": {
     "has_photo": true,
     "wikidata": "Q243133",
     "image": "2012-09-07 Palestrina panorama.jpg",
+    "reason": "has-p18"
+  },
+  "423019": {
+    "has_photo": true,
+    "wikidata": "Q1235515",
+    "image": "Villa dei Quintili panoramica.jpg",
     "reason": "has-p18"
   },
   "423025": {
@@ -1036,6 +2626,18 @@
     "wikidata": "Q2273010",
     "image": null,
     "reason": "no-p18"
+  },
+  "423108": {
+    "has_photo": true,
+    "wikidata": "Q754314",
+    "image": "2007-09-27 Teatro del Tuscolo 01.jpg",
+    "reason": "has-p18"
+  },
+  "423127": {
+    "has_photo": true,
+    "wikidata": "Q272777",
+    "image": "Villa adriana.jpg",
+    "reason": "has-p18"
   },
   "423130": {
     "has_photo": true,
@@ -1091,6 +2693,12 @@
     "image": null,
     "reason": "no-p18"
   },
+  "432813": {
+    "has_photo": false,
+    "wikidata": "Q133868539",
+    "image": null,
+    "reason": "no-p18"
+  },
   "432873": {
     "has_photo": true,
     "wikidata": "Q178813",
@@ -1121,6 +2729,18 @@
     "image": null,
     "reason": "no-p18"
   },
+  "433073": {
+    "has_photo": true,
+    "wikidata": "Q1807870",
+    "image": "Aerial view of Saepinum (2024).jpg",
+    "reason": "has-p18"
+  },
+  "433204": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "438663": {
     "has_photo": false,
     "wikidata": null,
@@ -1144,6 +2764,18 @@
     "wikidata": "Q732732",
     "image": "Egnazia from the sky.jpg",
     "reason": "has-p18"
+  },
+  "442611": {
+    "has_photo": true,
+    "wikidata": "Q3981620",
+    "image": "Metapontum 2013.JPG",
+    "reason": "has-p18"
+  },
+  "442663": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
   },
   "442727": {
     "has_photo": false,
@@ -1169,6 +2801,12 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "452274": {
+    "has_photo": true,
+    "wikidata": "Q11909496",
+    "image": "Tortora (CS) - Mausoleo del Pergolo - Foto 2.JPG",
+    "reason": "has-p18"
+  },
   "452295": {
     "has_photo": true,
     "wikidata": "Q54597",
@@ -1181,10 +2819,22 @@
     "image": "Sorgente del fiume Mercure a Viggianello.jpg",
     "reason": "has-p18"
   },
+  "452369": {
+    "has_photo": true,
+    "wikidata": "Q3836325",
+    "image": "Locri-strada.jpg",
+    "reason": "has-p18"
+  },
   "452457": {
     "has_photo": true,
     "wikidata": "Q220583",
     "image": "Sibari-scavi-teatro.jpg",
+    "reason": "has-p18"
+  },
+  "452488": {
+    "has_photo": true,
+    "wikidata": "Q272968",
+    "image": "Velia Excavation and Tower.jpg",
     "reason": "has-p18"
   },
   "452489": {
@@ -1205,10 +2855,46 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "462188": {
+    "has_photo": true,
+    "wikidata": "Q4012809",
+    "image": "Villaromanarealmonte.jpg",
+    "reason": "has-p18"
+  },
+  "462204": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "462237": {
+    "has_photo": true,
+    "wikidata": "Q1502156",
+    "image": "General view of the excavations - Heraclea Minoa - Italy 2015.JPG",
+    "reason": "has-p18"
+  },
+  "462283": {
+    "has_photo": false,
+    "wikidata": "Q58878895",
+    "image": null,
+    "reason": "no-p18"
+  },
   "462379": {
     "has_photo": true,
     "wikidata": "Q487929",
     "image": "Milazzo Stadtansicht.jpg",
+    "reason": "has-p18"
+  },
+  "462414": {
+    "has_photo": true,
+    "wikidata": "Q2236915",
+    "image": "Patti roemische Villa.jpg",
+    "reason": "has-p18"
+  },
+  "462435": {
+    "has_photo": true,
+    "wikidata": "Q505617",
+    "image": "Villa Romana del Casale BW 2025-04-28 11-11-12.jpg",
     "reason": "has-p18"
   },
   "462459": {
@@ -1216,6 +2902,18 @@
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "462487": {
+    "has_photo": true,
+    "wikidata": "Q692847",
+    "image": "Segesta, Tempio greco.jpg",
+    "reason": "has-p18"
+  },
+  "462489": {
+    "has_photo": true,
+    "wikidata": "Q952173",
+    "image": "Sicily Selinunte Temple E (Hera).JPG",
+    "reason": "has-p18"
   },
   "462503": {
     "has_photo": true,
@@ -1229,11 +2927,59 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "472035": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "472096": {
+    "has_photo": true,
+    "wikidata": "Q507251",
+    "image": "Mariana et sa cathédrale Santa-Maria-Assunta.jpg",
+    "reason": "has-p18"
+  },
+  "481701": {
+    "has_photo": true,
+    "wikidata": "Q13046345",
+    "image": "Bradashesh, Albania – Ad Quintum Thermae 02.jpg",
+    "reason": "has-p18"
+  },
+  "481728": {
+    "has_photo": true,
+    "wikidata": "Q505703",
+    "image": "Appolonia Albania.jpg",
+    "reason": "has-p18"
+  },
+  "481777": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "481808": {
+    "has_photo": true,
+    "wikidata": "Q252273",
+    "image": "Doclea Roman city Podgorica.jpg",
+    "reason": "has-p18"
+  },
+  "481861": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "481963": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "481987": {
+    "has_photo": true,
+    "wikidata": "Q149203",
+    "image": "Skopje and Skupi.jpg",
+    "reason": "has-p18"
   },
   "491526": {
     "has_photo": false,
@@ -1247,6 +2993,12 @@
     "image": null,
     "reason": "no-p18"
   },
+  "491586": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "491647": {
     "has_photo": false,
     "wikidata": "Q20048542",
@@ -1258,6 +3010,18 @@
     "wikidata": "Q48965819",
     "image": null,
     "reason": "no-p18"
+  },
+  "491678": {
+    "has_photo": true,
+    "wikidata": "Q1141669",
+    "image": "Ancient Olynthos Chalkidiki - Greece - 048.jpg",
+    "reason": "has-p18"
+  },
+  "491687": {
+    "has_photo": true,
+    "wikidata": "Q213679",
+    "image": "Pella House atrium.jpg",
+    "reason": "has-p18"
   },
   "491704": {
     "has_photo": false,
@@ -1277,10 +3041,28 @@
     "image": null,
     "reason": "no-p18"
   },
+  "501347": {
+    "has_photo": true,
+    "wikidata": "Q217414",
+    "image": "Liontari of Amphipolis.jpg",
+    "reason": "has-p18"
+  },
+  "501384": {
+    "has_photo": true,
+    "wikidata": "Q1049806",
+    "image": "Castra rubra PD 2011 046.JPG",
+    "reason": "has-p18"
+  },
   "501434": {
     "has_photo": true,
     "wikidata": "Q6514",
     "image": "Dardanelles landsat.jpg",
+    "reason": "has-p18"
+  },
+  "501482": {
+    "has_photo": true,
+    "wikidata": "Q379652",
+    "image": "Филипи през 2007.jpg",
     "reason": "has-p18"
   },
   "501628": {
@@ -1307,6 +3089,12 @@
     "image": "Bandirma Cyzicus 2874.jpg",
     "reason": "has-p18"
   },
+  "511225": {
+    "has_photo": true,
+    "wikidata": "Q1171924",
+    "image": "Manyas1.JPG",
+    "reason": "has-p18"
+  },
   "511354": {
     "has_photo": false,
     "wikidata": "Q1411652",
@@ -1331,6 +3119,18 @@
     "image": "Butrint, Albania.jpg",
     "reason": "has-p18"
   },
+  "530873": {
+    "has_photo": false,
+    "wikidata": "Q5411450",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "531061": {
+    "has_photo": true,
+    "wikidata": "Q781463",
+    "image": "Thesauròs di Phoinike.jpg",
+    "reason": "has-p18"
+  },
   "531080": {
     "has_photo": false,
     "wikidata": null,
@@ -1353,6 +3153,18 @@
     "has_photo": true,
     "wikidata": "Q75459",
     "image": "Delfi Apollons tempel.jpg",
+    "reason": "has-p18"
+  },
+  "540789": {
+    "has_photo": true,
+    "wikidata": "Q636506",
+    "image": "Γλα, Gla.jpg",
+    "reason": "has-p18"
+  },
+  "540804": {
+    "has_photo": true,
+    "wikidata": "Q4734643",
+    "image": "K01 211 Stadttor Alos.jpg",
     "reason": "has-p18"
   },
   "540880": {
@@ -1385,6 +3197,12 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "541146": {
+    "has_photo": false,
+    "wikidata": "Q57374186",
+    "image": null,
+    "reason": "no-p18"
+  },
   "543727": {
     "has_photo": false,
     "wikidata": "Q107588079",
@@ -1397,11 +3215,35 @@
     "image": "Izmir016.jpg",
     "reason": "has-p18"
   },
+  "550434": {
+    "has_photo": true,
+    "wikidata": "Q1393407",
+    "image": "Troas Therme 2.JPG",
+    "reason": "has-p18"
+  },
+  "550470": {
+    "has_photo": false,
+    "wikidata": "Q64211631",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "550496": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "550584": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "550595": {
+    "has_photo": true,
+    "wikidata": "Q22647",
+    "image": "Troy1.jpg",
+    "reason": "has-p18"
   },
   "550710": {
     "has_photo": false,
@@ -1433,11 +3275,35 @@
     "image": "Temple of Trajan, Pergamon 01.jpg",
     "reason": "has-p18"
   },
+  "550867": {
+    "has_photo": true,
+    "wikidata": "Q232615",
+    "image": "The Bath-Gymnasium complex at Sardis, late 2nd - early 3rd century AD, Sardis, Turkey (17098680002).jpg",
+    "reason": "has-p18"
+  },
   "550890": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "550892": {
+    "has_photo": true,
+    "wikidata": "Q65072495",
+    "image": "Smintheion 2025-08-30 16-18-29.jpg",
+    "reason": "has-p18"
+  },
+  "550893": {
+    "has_photo": true,
+    "wikidata": "Q1379299",
+    "image": "Izmir016.jpg",
+    "reason": "has-p18"
+  },
+  "550913": {
+    "has_photo": true,
+    "wikidata": "Q17586",
+    "image": "Theater teos.JPG",
+    "reason": "has-p18"
   },
   "550927": {
     "has_photo": false,
@@ -1469,6 +3335,12 @@
     "image": null,
     "reason": "no-p18"
   },
+  "570148": {
+    "has_photo": true,
+    "wikidata": "Q464923",
+    "image": "1972 bassai temple.jpg",
+    "reason": "has-p18"
+  },
   "570151": {
     "has_photo": false,
     "wikidata": "Q16537117",
@@ -1492,6 +3364,18 @@
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "570228": {
+    "has_photo": true,
+    "wikidata": "Q233576",
+    "image": "Epidauros-Theater-1.jpg",
+    "reason": "has-p18"
+  },
+  "570288": {
+    "has_photo": true,
+    "wikidata": "Q2070087",
+    "image": "Perchora-6.jpg",
+    "reason": "has-p18"
   },
   "570302": {
     "has_photo": false,
@@ -1517,6 +3401,18 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "570467": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "570479": {
+    "has_photo": true,
+    "wikidata": "Q1022117",
+    "image": "Messeneasklepeion.jpg",
+    "reason": "has-p18"
+  },
   "570482": {
     "has_photo": true,
     "wikidata": "Q107472458",
@@ -1527,6 +3423,18 @@
     "has_photo": true,
     "wikidata": "Q132564",
     "image": "Lions-Gate-Mycenae.jpg",
+    "reason": "has-p18"
+  },
+  "570504": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "570531": {
+    "has_photo": true,
+    "wikidata": "Q38888",
+    "image": "Olympic Flame, the Start of the Olympic Torch Relay (51224124860).jpg",
     "reason": "has-p18"
   },
   "570548": {
@@ -1541,10 +3449,28 @@
     "image": null,
     "reason": "no-p18"
   },
+  "570646": {
+    "has_photo": false,
+    "wikidata": "Q24990480",
+    "image": null,
+    "reason": "no-p18"
+  },
   "570668": {
     "has_photo": true,
     "wikidata": "Q368628",
     "image": "Sikyon ancient theatre.jpg",
+    "reason": "has-p18"
+  },
+  "570685": {
+    "has_photo": true,
+    "wikidata": "Q5690",
+    "image": "Sparta.jpg",
+    "reason": "has-p18"
+  },
+  "570707": {
+    "has_photo": true,
+    "wikidata": "Q645234",
+    "image": "Archaeological site of the Temple of Athena Alea at Tegea (2017, image 1).jpg",
     "reason": "has-p18"
   },
   "570708": {
@@ -1564,6 +3490,12 @@
     "wikidata": "Q16643340",
     "image": null,
     "reason": "no-p18"
+  },
+  "570740": {
+    "has_photo": true,
+    "wikidata": "Q217379",
+    "image": "Passageway of the galleries within the walls of Tiryns.jpg",
+    "reason": "has-p18"
   },
   "573101": {
     "has_photo": false,
@@ -1589,10 +3521,28 @@
     "image": "Sanctuary of the Deme Artemida - panoramio.jpg",
     "reason": "has-p18"
   },
+  "579879": {
+    "has_photo": true,
+    "wikidata": "Q475497",
+    "image": "Ναός Αρτέμιδας στη Βραυρώνα 5241.jpg",
+    "reason": "has-p18"
+  },
   "579885": {
     "has_photo": true,
     "wikidata": "Q1524",
     "image": "Akropolis 2015.jpg",
+    "reason": "has-p18"
+  },
+  "579920": {
+    "has_photo": true,
+    "wikidata": "Q11918833",
+    "image": "Eleusis Moraites.png",
+    "reason": "has-p18"
+  },
+  "579925": {
+    "has_photo": true,
+    "wikidata": "Q16562724",
+    "image": "Αρχαία Ερέτρια.jpg",
     "reason": "has-p18"
   },
   "579955": {
@@ -1600,6 +3550,12 @@
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "580010": {
+    "has_photo": false,
+    "wikidata": "Q985449",
+    "image": null,
+    "reason": "no-p18"
   },
   "580035": {
     "has_photo": false,
@@ -1618,6 +3574,12 @@
     "wikidata": "Q1163616",
     "image": "Lange Mauern.png",
     "reason": "has-p18"
+  },
+  "589704": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
   },
   "589796": {
     "has_photo": true,
@@ -1649,6 +3611,18 @@
     "image": "Paros Andiparos Despotiko Luftbild 01.jpg",
     "reason": "has-p18"
   },
+  "590030": {
+    "has_photo": false,
+    "wikidata": "Q13533316",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "599479": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "599490": {
     "has_photo": false,
     "wikidata": "Q17621054",
@@ -1660,6 +3634,12 @@
     "wikidata": "Q39295403",
     "image": null,
     "reason": "no-p18"
+  },
+  "599556": {
+    "has_photo": true,
+    "wikidata": "Q1911796",
+    "image": "Belevi1.jpg",
+    "reason": "has-p18"
   },
   "599575": {
     "has_photo": false,
@@ -1673,11 +3653,53 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "599578": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "599719": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "599745": {
+    "has_photo": true,
+    "wikidata": "Q1799531",
+    "image": "Лабранда. Терраса.jpg",
+    "reason": "has-p18"
+  },
+  "599778": {
+    "has_photo": true,
+    "wikidata": "Q1432674",
+    "image": "Магнесия на Меандре. Пропилеи.jpg",
+    "reason": "has-p18"
+  },
+  "599799": {
+    "has_photo": true,
+    "wikidata": "Q169460",
+    "image": "The Theater of Miletus.jpg",
+    "reason": "has-p18"
+  },
   "599863": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "599905": {
+    "has_photo": true,
+    "wikidata": "Q142819",
+    "image": "Temple of Athena at Priene.jpg",
+    "reason": "has-p18"
+  },
+  "599973": {
+    "has_photo": true,
+    "wikidata": "Q129296",
+    "image": "Santoríni aerial.jpg",
+    "reason": "has-p18"
   },
   "600227": {
     "has_photo": false,
@@ -1691,11 +3713,29 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "609292": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "609296": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "609305": {
     "has_photo": false,
     "wikidata": "Q557644",
     "image": null,
     "reason": "no-p18"
+  },
+  "609307": {
+    "has_photo": true,
+    "wikidata": "Q579468",
+    "image": "Antiocheia in Psidia.jpg",
+    "reason": "has-p18"
   },
   "612328": {
     "has_photo": false,
@@ -1715,6 +3755,30 @@
     "image": null,
     "reason": "error"
   },
+  "638748": {
+    "has_photo": false,
+    "wikidata": "Q579405",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "638753": {
+    "has_photo": true,
+    "wikidata": "Q618495",
+    "image": "Aphrodisias turkey.jpg",
+    "reason": "has-p18"
+  },
+  "638769": {
+    "has_photo": true,
+    "wikidata": "Q718048",
+    "image": "Arykanda Thermen.jpg",
+    "reason": "has-p18"
+  },
+  "638776": {
+    "has_photo": true,
+    "wikidata": "Q633757",
+    "image": "Aspendos Amphitheatre.jpg",
+    "reason": "has-p18"
+  },
   "638783": {
     "has_photo": false,
     "wikidata": null,
@@ -1727,11 +3791,23 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "638811": {
+    "has_photo": true,
+    "wikidata": "Q1001370",
+    "image": "TR Colossae site asv2020-02 img08.jpg",
+    "reason": "has-p18"
+  },
   "638837": {
     "has_photo": false,
     "wikidata": "Q61076964",
     "image": null,
     "reason": "no-p18"
+  },
+  "638860": {
+    "has_photo": true,
+    "wikidata": "Q7428276",
+    "image": "The Roman theatre, built in the 2nd century AD under Hadrian on the ruins of an earlier theatre, later renovated under Septimius Severus, Hierapolis, Turkey - 17033895960.jpg",
+    "reason": "has-p18"
   },
   "638872": {
     "has_photo": false,
@@ -1763,11 +3839,35 @@
     "image": null,
     "reason": "no-p18"
   },
+  "638961": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "638990": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "639013": {
+    "has_photo": false,
+    "wikidata": "Q6003016",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "639042": {
+    "has_photo": true,
+    "wikidata": "Q233121",
+    "image": "Patara ruins.jpg",
+    "reason": "has-p18"
+  },
+  "639051": {
+    "has_photo": true,
+    "wikidata": "Q595329",
+    "image": "Phaselis axb01.jpg",
+    "reason": "has-p18"
   },
   "639072": {
     "has_photo": false,
@@ -1775,11 +3875,77 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "639087": {
+    "has_photo": true,
+    "wikidata": "Q279191",
+    "image": "Sagalassos Overview.jpg",
+    "reason": "has-p18"
+  },
+  "639105": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "639109": {
+    "has_photo": true,
+    "wikidata": "Q647896",
+    "image": "SillyonAkropolis.jpg",
+    "reason": "has-p18"
+  },
+  "639152": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "639166": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "648548": {
+    "has_photo": true,
+    "wikidata": "Q38545",
+    "image": "Adana1.jpg",
+    "reason": "has-p18"
+  },
   "648555": {
     "has_photo": true,
     "wikidata": "Q4818905",
     "image": "Yümüktepe, Mersin.JPG",
     "reason": "has-p18"
+  },
+  "648557": {
+    "has_photo": true,
+    "wikidata": "Q529237",
+    "image": "Turkey, Anamur - Anemurion 01.jpg",
+    "reason": "has-p18"
+  },
+  "648623": {
+    "has_photo": false,
+    "wikidata": "Q127430129",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "648771": {
+    "has_photo": false,
+    "wikidata": "Q11948139",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "648772": {
+    "has_photo": true,
+    "wikidata": "Q1424724",
+    "image": "The aqueduct of Selinus, Cilicia, Turkey (36599906310).jpg",
+    "reason": "has-p18"
+  },
+  "648791": {
+    "has_photo": false,
+    "wikidata": "Q65053940",
+    "image": null,
+    "reason": "no-p18"
   },
   "650058": {
     "has_photo": false,
@@ -1805,6 +3971,18 @@
     "image": "Antiochia su Oronte.PNG",
     "reason": "has-p18"
   },
+  "658391": {
+    "has_photo": true,
+    "wikidata": "Q704167",
+    "image": "Nemrut Dag area A Commagene carving.jpg",
+    "reason": "has-p18"
+  },
+  "658409": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "658427": {
     "has_photo": true,
     "wikidata": "Q199547",
@@ -1817,10 +3995,28 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "658446": {
+    "has_photo": true,
+    "wikidata": "Q536924",
+    "image": "NebiHuriTheater.jpg",
+    "reason": "has-p18"
+  },
   "658465": {
     "has_photo": true,
     "wikidata": "Q283680",
     "image": "Museum of Anatolian Civilizations091.jpg",
+    "reason": "has-p18"
+  },
+  "658544": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "658636": {
+    "has_photo": true,
+    "wikidata": "Q196987",
+    "image": "Zeugma.jpg",
     "reason": "has-p18"
   },
   "668200": {
@@ -1835,11 +4031,41 @@
     "image": null,
     "reason": "no-p18"
   },
+  "668216": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "668217": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "668295": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "668331": {
     "has_photo": true,
     "wikidata": "Q5747",
     "image": "Palmyra theater02(js).jpg",
     "reason": "has-p18"
+  },
+  "668335": {
+    "has_photo": true,
+    "wikidata": "Q617550",
+    "image": "Apamea 01.jpg",
+    "reason": "has-p18"
+  },
+  "668354": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
   },
   "668457": {
     "has_photo": null,
@@ -1847,16 +4073,52 @@
     "image": null,
     "reason": "error"
   },
+  "678010": {
+    "has_photo": true,
+    "wikidata": "Q126084",
+    "image": "Acre - Akko Tower.jpg",
+    "reason": "has-p18"
+  },
   "678039": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
   },
+  "678060": {
+    "has_photo": true,
+    "wikidata": "Q3820",
+    "image": "Beirutcity.jpg",
+    "reason": "has-p18"
+  },
+  "678068": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "678142": {
+    "has_photo": true,
+    "wikidata": "Q56322109",
+    "image": "Umm Qais 25.JPG",
+    "reason": "has-p18"
+  },
   "678158": {
     "has_photo": true,
     "wikidata": "Q56072866",
     "image": "General View of Jerash.jpg",
+    "reason": "has-p18"
+  },
+  "678160": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "678179": {
+    "has_photo": true,
+    "wikidata": "Q178835",
+    "image": "Temple of Bacchus.jpg",
     "reason": "has-p18"
   },
   "678211": {
@@ -1865,10 +4127,46 @@
     "image": null,
     "reason": "no-p18"
   },
+  "678231": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "678266": {
+    "has_photo": false,
+    "wikidata": "Q1136877",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "678345": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "678387": {
+    "has_photo": true,
+    "wikidata": "Q1132798",
+    "image": "Face in mosaic.JPG",
+    "reason": "has-p18"
+  },
   "678401": {
     "has_photo": true,
     "wikidata": "Q319242",
     "image": "קיסריה העתיקה.jpg",
+    "reason": "has-p18"
+  },
+  "678427": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "678437": {
+    "has_photo": true,
+    "wikidata": "Q3991738",
+    "image": "Columns at Al Mina site, Tyre, Lebanon.jpg",
     "reason": "has-p18"
   },
   "678686": {
@@ -1882,6 +4180,12 @@
     "wikidata": "Q568521",
     "image": "Migdal-Afek-11-ne.jpg",
     "reason": "has-p18"
+  },
+  "687834": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
   },
   "687928": {
     "has_photo": true,
@@ -1907,6 +4211,42 @@
     "image": "Aerial jordan.jpg",
     "reason": "has-p18"
   },
+  "688011": {
+    "has_photo": true,
+    "wikidata": "Q223399",
+    "image": "Kumeran4.jpg",
+    "reason": "has-p18"
+  },
+  "697625": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "697639": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "697643": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "697647": {
+    "has_photo": true,
+    "wikidata": "Q13860025",
+    "image": "Qasr Bshir, eastern wall.jpg",
+    "reason": "has-p18"
+  },
+  "697700": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "697725": {
     "has_photo": true,
     "wikidata": "Q5788",
@@ -1917,6 +4257,30 @@
     "has_photo": true,
     "wikidata": "Q3695599",
     "image": "Qasr Al-Hallbat complex.jpg",
+    "reason": "has-p18"
+  },
+  "707462": {
+    "has_photo": true,
+    "wikidata": "Q2343313",
+    "image": "Amathus.jpg",
+    "reason": "has-p18"
+  },
+  "707531": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "707534": {
+    "has_photo": true,
+    "wikidata": "Q1743884",
+    "image": "ANCIENT KITION, LARNACA, CYPRUS.jpg",
+    "reason": "has-p18"
+  },
+  "707549": {
+    "has_photo": true,
+    "wikidata": "Q1785592",
+    "image": "Episkopi 01-2017 img11 Kourion.jpg",
     "reason": "has-p18"
   },
   "707555": {
@@ -1930,6 +4294,12 @@
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "707596": {
+    "has_photo": true,
+    "wikidata": "Q64433741",
+    "image": "Tombs of the Kings Paphos Cyprus 17.jpg",
+    "reason": "has-p18"
   },
   "716656": {
     "has_photo": false,
@@ -1961,6 +4331,12 @@
     "image": null,
     "reason": "no-p18"
   },
+  "727192": {
+    "has_photo": true,
+    "wikidata": "Q1145715",
+    "image": "Ancient Levant routes.png",
+    "reason": "has-p18"
+  },
   "727217": {
     "has_photo": true,
     "wikidata": "Q381038",
@@ -1972,6 +4348,24 @@
     "wikidata": "Q959073",
     "image": null,
     "reason": "no-p18"
+  },
+  "736963": {
+    "has_photo": true,
+    "wikidata": "Q5715",
+    "image": "Memphis, Ramses II, Ancient Egypt.jpg",
+    "reason": "has-p18"
+  },
+  "746700": {
+    "has_photo": false,
+    "wikidata": "Q407451",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "746712": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
   },
   "766375": {
     "has_photo": false,
@@ -1985,10 +4379,22 @@
     "image": "AinAmurSite.jpg",
     "reason": "has-p18"
   },
+  "786010": {
+    "has_photo": true,
+    "wikidata": "Q935454",
+    "image": "Fragment de bas-relief du temple de Cléopâtre et Césarion, Coptos, I siècle av JC.JPG",
+    "reason": "has-p18"
+  },
   "795875": {
     "has_photo": true,
     "wikidata": "Q1186970",
     "image": "The Temple of Dendur MET DP240337.jpg",
+    "reason": "has-p18"
+  },
+  "814671": {
+    "has_photo": true,
+    "wikidata": "Q27242",
+    "image": "Al Ula old town, Saudi Arabia 2011.jpg",
     "reason": "has-p18"
   },
   "814688": {
@@ -2027,11 +4433,35 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "863785": {
+    "has_photo": true,
+    "wikidata": "Q733610",
+    "image": "Erebuni.jpg",
+    "reason": "has-p18"
+  },
   "863824": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "863907": {
+    "has_photo": true,
+    "wikidata": "Q720134",
+    "image": "Tigranakert3.jpg",
+    "reason": "has-p18"
+  },
+  "874299": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "874361": {
+    "has_photo": true,
+    "wikidata": "Q706215",
+    "image": "ARTAXATA antique Franck Devedjian fecit 2017.jpg",
+    "reason": "has-p18"
   },
   "874362": {
     "has_photo": false,
@@ -2040,6 +4470,18 @@
     "reason": "no-p18"
   },
   "874398": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "874458": {
+    "has_photo": true,
+    "wikidata": "Q253208",
+    "image": "Lammasu.jpg",
+    "reason": "has-p18"
+  },
+  "874475": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
@@ -2057,11 +4499,47 @@
     "image": "Nineveh mashki gate from west.JPG",
     "reason": "has-p18"
   },
+  "874623": {
+    "has_photo": false,
+    "wikidata": "Q14524112",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "874636": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "874637": {
     "has_photo": false,
     "wikidata": "Q1664378",
     "image": null,
     "reason": "no-p18"
+  },
+  "874671": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "874683": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "874684": {
+    "has_photo": true,
+    "wikidata": "Q2211116",
+    "image": "Satala, Roman legionary base, used by XVI Flavia Firma and XV Apollinaris, Cappadocia, Turkey - 52933824022.jpg",
+    "reason": "has-p18"
+  },
+  "874701": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
   },
   "874722": {
     "has_photo": false,
@@ -2081,10 +4559,22 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "874774": {
+    "has_photo": true,
+    "wikidata": "Q720583",
+    "image": "Location of Tigranocerta within the Kingdom Armenia.png",
+    "reason": "has-p18"
+  },
   "893945": {
     "has_photo": true,
     "wikidata": "Q200200",
     "image": "Ashur (Qal'at Sherqat)-115188.jpg",
+    "reason": "has-p18"
+  },
+  "893951": {
+    "has_photo": true,
+    "wikidata": "Q5684",
+    "image": "DSC 0658-Recovered.jpg",
     "reason": "has-p18"
   },
   "893976": {
@@ -2099,16 +4589,112 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "894004": {
+    "has_photo": true,
+    "wikidata": "Q466614",
+    "image": "Hatra ruins.jpg",
+    "reason": "has-p18"
+  },
+  "894019": {
+    "has_photo": true,
+    "wikidata": "Q237614",
+    "image": "Nimrud 081119-F-5855M-033.jpg",
+    "reason": "has-p18"
+  },
   "894058": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
   },
+  "894089": {
+    "has_photo": true,
+    "wikidata": "Q619707",
+    "image": "Hammurabi's Babylonia 1.svg",
+    "reason": "has-p18"
+  },
+  "894178": {
+    "has_photo": false,
+    "wikidata": "Q18358552",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "894185": {
+    "has_photo": true,
+    "wikidata": "Q903630",
+    "image": "Halabiya,N-wall.jpg",
+    "reason": "has-p18"
+  },
+  "902990": {
+    "has_photo": true,
+    "wikidata": "Q42053",
+    "image": "Naghshe jahan 01.jpg",
+    "reason": "has-p18"
+  },
+  "903019": {
+    "has_photo": false,
+    "wikidata": "Q3041097",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "903021": {
+    "has_photo": true,
+    "wikidata": "Q696193",
+    "image": "Rython boz.jpg",
+    "reason": "has-p18"
+  },
+  "903032": {
+    "has_photo": true,
+    "wikidata": "Q426225",
+    "image": "Cuneiform Inscriptions of Darius and Xerxes - Ganjnameh - Outside Hamadan - Western Iran - 01 (7423532748).jpg",
+    "reason": "has-p18"
+  },
+  "903035": {
+    "has_photo": false,
+    "wikidata": "Q774339",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "903047": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "903054": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "903104": {
+    "has_photo": true,
+    "wikidata": "Q636188",
+    "image": "Photos of Rey, Iran.JPG",
+    "reason": "has-p18"
+  },
+  "903126": {
+    "has_photo": true,
+    "wikidata": "Q940045",
+    "image": "تاق‌بستان.jpg",
+    "reason": "has-p18"
+  },
+  "903131": {
+    "has_photo": true,
+    "wikidata": "Q5951381",
+    "image": "Abdoli.jpg",
+    "reason": "has-p18"
+  },
   "912829": {
     "has_photo": true,
     "wikidata": "Q5103844",
     "image": "Choghamish.jpg",
+    "reason": "has-p18"
+  },
+  "912872": {
+    "has_photo": true,
+    "wikidata": "Q1063054",
+    "image": "Hyspaosines.jpg",
     "reason": "has-p18"
   },
   "912880": {
@@ -2121,6 +4707,96 @@
     "has_photo": true,
     "wikidata": "Q244746",
     "image": "Hammurabi's Babylonia 1.svg",
+    "reason": "has-p18"
+  },
+  "912906": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "912910": {
+    "has_photo": true,
+    "wikidata": "Q188395",
+    "image": "Ruins from a temple in Naffur.jpg",
+    "reason": "has-p18"
+  },
+  "912936": {
+    "has_photo": true,
+    "wikidata": "Q180773",
+    "image": "The Apadana, a large hypostyle room of 36 columns in the Palace of Darius, Susa, capital of Elam and of the Achaemenid Empire, Iran (46950284624).jpg",
+    "reason": "has-p18"
+  },
+  "912986": {
+    "has_photo": true,
+    "wikidata": "Q168518",
+    "image": "Uruk Archaeological site at Warka.jpg",
+    "reason": "has-p18"
+  },
+  "922617": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "922623": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "922685": {
+    "has_photo": true,
+    "wikidata": "Q648705",
+    "image": "The Islamic Republic 049 (8498647398).jpg",
+    "reason": "has-p18"
+  },
+  "922693": {
+    "has_photo": true,
+    "wikidata": "Q230025",
+    "image": "Pasargadae, Marv Dasht, near Shiraz - 4-8-2013.jpg",
+    "reason": "has-p18"
+  },
+  "922695": {
+    "has_photo": true,
+    "wikidata": "Q129072",
+    "image": "Gate of All Nations, Persepolis.jpg",
+    "reason": "has-p18"
+  },
+  "922704": {
+    "has_photo": true,
+    "wikidata": "Q558514",
+    "image": "Herbertgreg7 (cropped).jpg",
+    "reason": "has-p18"
+  },
+  "922740": {
+    "has_photo": true,
+    "wikidata": "Q477898",
+    "image": "Anahita Temple of Bishapur (Kazerun) 1.jpg",
+    "reason": "has-p18"
+  },
+  "942286": {
+    "has_photo": false,
+    "wikidata": "Q48816221",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "942329": {
+    "has_photo": true,
+    "wikidata": "Q1484199",
+    "image": "Tapehesar.jpg",
+    "reason": "has-p18"
+  },
+  "961921": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "971693": {
+    "has_photo": true,
+    "wikidata": "Q857845",
+    "image": "AiKhanumCapitals.jpg",
     "reason": "has-p18"
   },
   "975464": {
@@ -2147,11 +4823,23 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "13818291": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "17634131": {
     "has_photo": false,
     "wikidata": "Q2390471",
     "image": null,
     "reason": "no-p18"
+  },
+  "17649950": {
+    "has_photo": true,
+    "wikidata": "Q1408799",
+    "image": "London Mithraeum, Bloomberg’s European headquarters, London (25502116578).jpg",
+    "reason": "has-p18"
   },
   "20202878": {
     "has_photo": false,
@@ -2164,6 +4852,12 @@
     "wikidata": "Q608519",
     "image": null,
     "reason": "no-p18"
+  },
+  "26356565": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
   },
   "30635483": {
     "has_photo": false,
@@ -2212,6 +4906,12 @@
     "wikidata": "Q12874076",
     "image": null,
     "reason": "no-p18"
+  },
+  "102024695": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
   },
   "114689183": {
     "has_photo": false,
@@ -2267,6 +4967,12 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "165409128": {
+    "has_photo": true,
+    "wikidata": "Q744406",
+    "image": "Ephesus Celsus Library Façade.jpg",
+    "reason": "has-p18"
+  },
   "170198552": {
     "has_photo": true,
     "wikidata": "Q1399125",
@@ -2277,6 +4983,12 @@
     "has_photo": true,
     "wikidata": "Q475338",
     "image": "Pier Great Palace Istanbul (1).JPG",
+    "reason": "has-p18"
+  },
+  "192555966": {
+    "has_photo": true,
+    "wikidata": "Q32196324",
+    "image": "Pergamon Museum King Barrakib and scribe from Sam'al aka Zincirli 7979.jpg",
     "reason": "has-p18"
   },
   "199032881": {
@@ -2333,6 +5045,30 @@
     "image": null,
     "reason": "no-wikidata"
   },
+  "283602441": {
+    "has_photo": true,
+    "wikidata": "Q181007",
+    "image": "Lion Gate, Hattusa 13 (cropped).jpg",
+    "reason": "has-p18"
+  },
+  "317318424": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "330962613": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "335533616": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "340262037": {
     "has_photo": false,
     "wikidata": "Q3663169",
@@ -2344,6 +5080,12 @@
     "wikidata": "Q127872528",
     "image": null,
     "reason": "no-p18"
+  },
+  "353133531": {
+    "has_photo": true,
+    "wikidata": "Q677659",
+    "image": "Maison Carree in Nimes (16).jpg",
+    "reason": "has-p18"
   },
   "361164677": {
     "has_photo": true,
@@ -2358,6 +5100,12 @@
     "reason": "no-wikidata"
   },
   "365055946": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "379400932": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
@@ -2417,6 +5165,12 @@
     "image": "Monti - muro della Suburra e casa dei cavalieri di Rodi - retro 1050880-1.JPG",
     "reason": "has-p18"
   },
+  "461581651": {
+    "has_photo": true,
+    "wikidata": "Q45368",
+    "image": "The ruins of the Mausoleum at Halicarnassus.jpg",
+    "reason": "has-p18"
+  },
   "464482219": {
     "has_photo": false,
     "wikidata": null,
@@ -2434,6 +5188,12 @@
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "478681498": {
+    "has_photo": true,
+    "wikidata": "Q529923",
+    "image": "Chamber A, Yazilikaya 01.jpg",
+    "reason": "has-p18"
   },
   "507301472": {
     "has_photo": false,
@@ -2458,6 +5218,12 @@
     "wikidata": "Q47466672",
     "image": null,
     "reason": "no-p18"
+  },
+  "522588456": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
   },
   "524616090": {
     "has_photo": false,
@@ -2565,6 +5331,12 @@
     "has_photo": true,
     "wikidata": "Q102234817",
     "image": "The Antinoeion, Hadrian's Villa (16224047975).jpg",
+    "reason": "has-p18"
+  },
+  "653377582": {
+    "has_photo": true,
+    "wikidata": "Q26082",
+    "image": "Ishtar Gate at Berlin Museum.jpg",
     "reason": "has-p18"
   },
   "660025690": {
@@ -2741,6 +5513,12 @@
     "image": "Forum (Paestum) 01.jpg",
     "reason": "has-p18"
   },
+  "869993028": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "872106931": {
     "has_photo": false,
     "wikidata": null,
@@ -2751,6 +5529,12 @@
     "has_photo": true,
     "wikidata": "Q112208753",
     "image": "Troy forecourt of the Athena temple 7711.jpg",
+    "reason": "has-p18"
+  },
+  "893595278": {
+    "has_photo": true,
+    "wikidata": "Q16156512",
+    "image": "Milecastle 37 - geograph.org.uk - 526779.jpg",
     "reason": "has-p18"
   },
   "900824128": {
@@ -2789,11 +5573,137 @@
     "image": "OlympicRaceTrackOlympia.JPG",
     "reason": "has-p18"
   },
+  "944168237": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
   "952959148": {
     "has_photo": false,
     "wikidata": null,
     "image": null,
     "reason": "no-wikidata"
+  },
+  "963101206": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "963101207": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "963101209": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "967060214": {
+    "has_photo": true,
+    "wikidata": "Q6509268",
+    "image": "Leahill Turret 51B, looking East. Hadrian's Wall.JPG",
+    "reason": "has-p18"
+  },
+  "967060227": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "967060279": {
+    "has_photo": true,
+    "wikidata": "Q12065856",
+    "image": "Signalturm Pike Hill.png",
+    "reason": "has-p18"
+  },
+  "967060289": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "967060300": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "967060301": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "967060302": {
+    "has_photo": true,
+    "wikidata": "Q6851181",
+    "image": "Milecastle 48 (Poltross Burn) (5) - geograph.org.uk - 844551.jpg",
+    "reason": "has-p18"
+  },
+  "967060303": {
+    "has_photo": true,
+    "wikidata": "Q16156627",
+    "image": "Milecastle 49 (Harrow's Scar) (4) - geograph.org.uk - 1359369.jpg",
+    "reason": "has-p18"
+  },
+  "967060304": {
+    "has_photo": false,
+    "wikidata": "Q131707149",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "967060305": {
+    "has_photo": false,
+    "wikidata": "Q131706780",
+    "image": null,
+    "reason": "no-p18"
+  },
+  "967060337": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "967060344": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "967060346": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "967060347": {
+    "has_photo": true,
+    "wikidata": "Q16156595",
+    "image": "(The site of) Milecastle 45 - geograph.org.uk - 578487.jpg",
+    "reason": "has-p18"
+  },
+  "967060363": {
+    "has_photo": true,
+    "wikidata": "Q16156578",
+    "image": "Milecastle 42, Hadrian's Wall - geograph.org.uk - 1067566.jpg",
+    "reason": "has-p18"
+  },
+  "967060395": {
+    "has_photo": true,
+    "wikidata": "Q6851175",
+    "image": "Milecastle 39 (2) - geograph.org.uk - 599789.jpg",
+    "reason": "has-p18"
+  },
+  "967060397": {
+    "has_photo": true,
+    "wikidata": "Q131707818",
+    "image": "Peel Gap Tower.jpg",
+    "reason": "has-p18"
   },
   "969121823": {
     "has_photo": true,
@@ -2811,6 +5721,18 @@
     "has_photo": true,
     "wikidata": "Q2119637",
     "image": "Vatican Necropolis 01.jpg",
+    "reason": "has-p18"
+  },
+  "979282842": {
+    "has_photo": false,
+    "wikidata": null,
+    "image": null,
+    "reason": "no-wikidata"
+  },
+  "991964195": {
+    "has_photo": true,
+    "wikidata": "Q558861",
+    "image": "Sphinx Gate, Alaca Höyük 02.jpg",
     "reason": "has-p18"
   },
   "995667313": {

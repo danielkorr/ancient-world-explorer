@@ -524,7 +524,15 @@ function showPanel(site) {
     </a>
   `;
 
-  document.getElementById('info-panel').classList.add('open');
+  // Remember where the map was the first time the panel opens, so closing it
+  // returns you whence you came instead of stranding you at the last offset
+  // pan. Only capture on the initial open — tapping a second marker while the
+  // panel is still up must not overwrite the original "home" view.
+  const panel = document.getElementById('info-panel');
+  if (!panel.classList.contains('open')) {
+    panelReturnView = { center: map.getCenter(), zoom: map.getZoom() };
+  }
+  panel.classList.add('open');
   currentPanelSite = site;
   refreshCheckinRow();
   // Offset map pan: right on desktop, up on mobile
@@ -543,6 +551,13 @@ function closePanel() {
     activeMarker = null;
   }
   currentPanelSite = null;
+  // Glide back to the view you came from, undoing the offset pan that opening
+  // the panel applied. Without this you're left stranded wherever the last
+  // marker tap dragged the map.
+  if (panelReturnView) {
+    map.flyTo(panelReturnView.center, panelReturnView.zoom, { duration: 0.4 });
+    panelReturnView = null;
+  }
 }
 
 // Close on map click
@@ -625,6 +640,7 @@ document.addEventListener('keydown', e => {
 // UI here doesn't care whether the backend is localStorage or Supabase.
 
 let currentPanelSite = null;
+let panelReturnView  = null;  // {center, zoom} captured when the panel opens
 
 function refreshProfilePill() {
   const user = VIA.auth.currentUser();
@@ -1151,3 +1167,33 @@ function refreshQuestBadge() {
   if (el) el.textContent = String(n);  // real count (289) beats a flat "99+"
 }
 refreshQuestBadge();
+
+// ── Welcome modal ──
+// First-time arrivals land cold; this is the one-screen "what is this." Shown
+// once (gated on localStorage), reopenable any time by tapping the brand.
+function openWelcome() {
+  const el = document.getElementById('welcome-modal');
+  if (el) el.classList.add('open');
+}
+function closeWelcome() {
+  const el = document.getElementById('welcome-modal');
+  if (el) el.classList.remove('open');
+  try { localStorage.setItem('via.welcomed', '1'); } catch (e) {}
+}
+
+// Auto-show on the very first visit. Skip when a magic-link reload is about to
+// auto-open the sign-in modal (?signin=1) so we don't stack two modals at boot.
+(function maybeShowWelcome() {
+  let welcomed = false;
+  try { welcomed = localStorage.getItem('via.welcomed') === '1'; } catch (e) {}
+  const autoSignin = /[?&]signin=1/.test(location.search);
+  if (!welcomed && !autoSignin) openWelcome();
+})();
+
+// Keyboard activation for the brand (role="button").
+const _brandEl = document.getElementById('app-brand');
+if (_brandEl) {
+  _brandEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openWelcome(); }
+  });
+}

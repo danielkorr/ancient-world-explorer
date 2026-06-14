@@ -20,7 +20,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=17">
+  <link rel="stylesheet" href="css/style.css?v=18">
 </head>
 <body>
 
@@ -29,7 +29,7 @@
 
 <!-- Top Bar -->
 <div id="topbar">
-  <div id="app-brand">
+  <div id="app-brand" onclick="openWelcome()" role="button" tabindex="0" title="About VIA">
     <h1 id="app-title">VIA</h1>
     <div id="app-subtitle">Ancient World Explorer</div>
   </div>
@@ -42,6 +42,22 @@
       <span id="profile-pill-glyph">⊙</span>
       <span id="profile-pill-label">Sign in</span>
     </button>
+  </div>
+</div>
+
+<!-- Welcome modal (first-visit intro; reopen via the brand title) -->
+<div id="welcome-modal" onclick="if(event.target===this)closeWelcome()">
+  <div id="welcome-card">
+    <button class="auth-close" onclick="closeWelcome()">✕</button>
+    <div class="welcome-glyph">⊕</div>
+    <h2 class="auth-title">Welcome to VIA</h2>
+    <div class="welcome-tagline">Ancient World Explorer</div>
+    <div id="welcome-body">
+      <p>Two thousand years of Roman roads, cities, and ruins — laid over the world as it stands today. Explore where the empire reached.</p>
+      <p>Then contribute to the historical record. Many of these sites and cities are still missing details in the scholarly gazetteer — help fill the gaps by sharing your photos, location, and comments. Be a part of it.</p>
+      <p class="welcome-kicker">Learn history. Help write it.</p>
+    </div>
+    <button class="auth-primary" onclick="closeWelcome()">Begin Exploring</button>
   </div>
 </div>
 
@@ -212,13 +228,13 @@
 
 <!-- Data + App. ?v= must match the value on css/style.css above — bump both
      together each deploy to force fresh assets past the cache. -->
-<script src="js/config.js?v=17"></script>
-<script src="js/orbis-days.js?v=17"></script>
-<script src="js/sites-pleiades.js?v=17"></script>
-<script src="js/roads-itinere.js?v=17"></script>
-<script src="js/data.js?v=17"></script>
-<script src="js/auth.js?v=17"></script>
-<script src="js/app.js?v=17"></script>
+<script src="js/config.js?v=18"></script>
+<script src="js/orbis-days.js?v=18"></script>
+<script src="js/sites-pleiades.js?v=18"></script>
+<script src="js/roads-itinere.js?v=18"></script>
+<script src="js/data.js?v=18"></script>
+<script src="js/auth.js?v=18"></script>
+<script src="js/app.js?v=18"></script>
 
 </body>
 </html>

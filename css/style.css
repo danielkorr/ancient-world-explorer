@@ -537,6 +537,68 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 }
 
 /* Legend explainer modal — reuses the shared modal look. */
+/* ── WELCOME MODAL (first-visit intro) ── */
+#welcome-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10,5,0,0.82);
+  backdrop-filter: blur(4px);
+}
+#welcome-modal.open { display: flex; }
+#welcome-card {
+  position: relative;
+  width: min(440px, 92vw);
+  background: var(--ink-panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 30px 28px 24px;
+  box-shadow: 0 14px 50px rgba(0,0,0,0.6);
+  max-height: 92vh;
+  overflow-y: auto;
+  text-align: center;
+}
+.welcome-glyph {
+  font-size: 38px;
+  color: var(--gold);
+  margin-bottom: 12px;
+  text-shadow: 0 0 18px rgba(212,168,83,0.4);
+}
+#welcome-card .auth-title { text-align: center; }
+.welcome-tagline {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+#welcome-body {
+  text-align: left;
+  margin-bottom: 22px;
+}
+#welcome-body p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-body);
+  margin: 0 0 12px;
+}
+#welcome-body .welcome-kicker {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--gold);
+  text-align: center;
+  margin: 18px 0 0;
+}
+
+/* Brand is a button that reopens the welcome modal. */
+#app-brand { cursor: pointer; }
+#app-brand:focus-visible { outline: 1px solid var(--gold-dim); outline-offset: 3px; }
+
 #legend-info {
   position: fixed;
   inset: 0;

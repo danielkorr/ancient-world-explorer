@@ -897,14 +897,17 @@ function showSegmentPanel(meta, latlngs) {
     let list = nearestSitesToSegment(latlngs, 30, 5);
     let heading = 'Sites along this stretch';
     if (!list.length) {
-      list = nearestSitesToSegment(latlngs, 120, 2);
+      list = nearestSitesToSegment(latlngs, 250, 2);
       heading = 'Nearest catalogued sites';
     }
+    // The section is ALWAYS shown on a road panel — list rows when there are
+    // any sites in range, else an explicit empty-state. Never silently hidden
+    // (an invisible empty-state reads as a broken feature).
+    const label = document.createElement('div');
+    label.className = 'seg-near-label';
+    label.textContent = heading;
+    nearbyEl.appendChild(label);
     if (list.length) {
-      const label = document.createElement('div');
-      label.className = 'seg-near-label';
-      label.textContent = heading;
-      nearbyEl.appendChild(label);
       for (const { site, km } of list) {
         const row = document.createElement('button');
         row.className = 'seg-near-row';
@@ -923,10 +926,13 @@ function showSegmentPanel(meta, latlngs) {
         row.addEventListener('click', (e) => { e.stopPropagation(); showPanel(site); });
         nearbyEl.appendChild(row);
       }
-      nearbyEl.style.display = '';
     } else {
-      nearbyEl.style.display = 'none';
+      const empty = document.createElement('div');
+      empty.className = 'seg-near-empty';
+      empty.textContent = 'No catalogued sites in this region yet.';
+      nearbyEl.appendChild(empty);
     }
+    nearbyEl.style.display = '';
   }
 
   // Single external action: the Itiner-e atlas (opens a new tab — no per-segment

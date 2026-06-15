@@ -993,6 +993,53 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   margin-bottom: 18px;
 }
 
+/* "Places along this stretch" — roads↔sites bridge on road-segment panels. */
+#segment-nearby { display: none; margin-bottom: 18px; }
+.seg-near-label {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(212,168,83,0.75);
+  margin-bottom: 8px;
+}
+.seg-near-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 8px;
+  margin: 0 0 4px;
+  background: rgba(212,168,83,0.05);
+  border: 1px solid rgba(212,168,83,0.15);
+  border-radius: 7px;
+  color: var(--text-body);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.seg-near-row:hover { background: rgba(212,168,83,0.12); border-color: rgba(212,168,83,0.4); }
+.seg-near-thumb {
+  width: 30px; height: 30px;
+  flex-shrink: 0;
+  border-radius: 5px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+.seg-near-thumb.empty { background: rgba(212,168,83,0.1); }
+.seg-near-name { flex: 1; font-size: 12.5px; color: var(--text-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.seg-near-km {
+  font-size: 11px;
+  color: rgba(212,168,83,0.85);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
 /* ORBIS card */
 #orbis-card {
   background: rgba(212,168,83,0.06);

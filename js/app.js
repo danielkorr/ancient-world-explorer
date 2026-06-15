@@ -597,6 +597,8 @@ function showPanel(site) {
   document.getElementById('quest-progress').style.display = '';
   document.getElementById('checkin-row').style.display    = '';
   document.getElementById('panel-desc').style.whiteSpace  = '';
+  const _segNear = document.getElementById('segment-nearby');
+  if (_segNear) _segNear.style.display = 'none';
 
   // Hero. Any site with a vici.org photo shows it as the hero with a credit/
   // license caption (the "imagery exists in the wild" made literal); elevation
@@ -770,11 +772,49 @@ const CERT_INFO = {
 // the amber roads without relying on a red/green contrast.
 const CERT_COLOR = { c: '#c79a4e', j: '#b89a6a', h: '#9a86b8' };
 
+// ── ROADS ↔ SITES BRIDGE ─────────────────────────────────
+// "Places along this stretch": for a tapped road segment, the nearest sites.
+// Bridges the two layers so the map reads as one world. Distances use a local
+// equirectangular projection (km), good for the short ranges in play.
+
+function _distToSegPlanar(px, py, ax, ay, bx, by) {
+  const dx = bx - ax, dy = by - ay;
+  if (dx === 0 && dy === 0) return Math.hypot(px - ax, py - ay);
+  let t = ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy);
+  t = Math.max(0, Math.min(1, t));
+  return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+}
+
+// Min distance (km) from a point to a polyline of [lat,lng] vertices.
+function kmPointToPolyline(plat, plng, ll) {
+  const k  = Math.cos(plat * Math.PI / 180);     // lng compression at this latitude
+  const px = plng * k, py = plat;
+  let best = Infinity;
+  for (let i = 0; i + 1 < ll.length; i++) {
+    const d = _distToSegPlanar(px, py, ll[i][1] * k, ll[i][0], ll[i + 1][1] * k, ll[i + 1][0]);
+    if (d < best) best = d;
+  }
+  return best * 111.32;                            // degrees → km
+}
+
+function nearestSitesToSegment(ll, maxKm = 10, limit = 5) {
+  if (!ll || ll.length < 2 || typeof SITES === 'undefined') return [];
+  const out = [];
+  for (const s of SITES) {
+    if (typeof s.lat !== 'number' || typeof s.lng !== 'number') continue;
+    const km = kmPointToPolyline(s.lat, s.lng, ll);
+    if (km <= maxKm) out.push({ site: s, km });
+  }
+  out.sort((a, b) => a.km - b.km);
+  return out.slice(0, limit);
+}
+
 // Road-segment panel. Reuses the #info-panel DOM but writes Itiner-e road content
 // and hides the site-only sections (ORBIS, check-in, quest progress, quest banner).
 // No per-segment URI exists in the static dump, so the external link points at the
-// Itiner-e atlas rather than a deep segment link.
-function showSegmentPanel(meta) {
+// Itiner-e atlas rather than a deep segment link. `latlngs` (the segment geometry)
+// drives the "Places along this stretch" bridge.
+function showSegmentPanel(meta, latlngs) {
   const cert = meta && meta.cert;
   const ci   = CERT_INFO[cert] || { label: 'Roman road', blurb: 'A segment of the Itiner-e Roman road network.' };
   const col  = CERT_COLOR[cert] || '#b89a6a';
@@ -846,6 +886,41 @@ function showSegmentPanel(meta) {
   document.getElementById('quest-progress').style.display = 'none';
   document.getElementById('checkin-row').style.display    = 'none';
 
+  // Places along this stretch — the roads↔sites bridge. Each row jumps to that
+  // site's panel. Photo thumb when the site has a vici image.
+  const nearbyEl = document.getElementById('segment-nearby');
+  if (nearbyEl) {
+    nearbyEl.innerHTML = '';
+    const near = nearestSitesToSegment(latlngs);
+    if (near.length) {
+      const label = document.createElement('div');
+      label.className = 'seg-near-label';
+      label.textContent = 'Places along this stretch';
+      nearbyEl.appendChild(label);
+      for (const { site, km } of near) {
+        const row = document.createElement('button');
+        row.className = 'seg-near-row';
+        const photo = site.vici && site.vici.image;
+        const thumb = document.createElement('span');
+        thumb.className = 'seg-near-thumb' + (photo ? '' : ' empty');
+        if (photo) thumb.style.backgroundImage = `url("${photo}")`;
+        else thumb.textContent = (TYPE[site.type] || TYPE.city).icon;
+        const name = document.createElement('span');
+        name.className = 'seg-near-name';
+        name.textContent = site.name;
+        const dist = document.createElement('span');
+        dist.className = 'seg-near-km';
+        dist.textContent = (km < 1 ? '<1' : Math.round(km)) + ' km';
+        row.append(thumb, name, dist);
+        row.addEventListener('click', (e) => { e.stopPropagation(); showPanel(site); });
+        nearbyEl.appendChild(row);
+      }
+      nearbyEl.style.display = '';
+    } else {
+      nearbyEl.style.display = 'none';
+    }
+  }
+
   // Single external action: the Itiner-e atlas (opens a new tab — no per-segment
   // state to restore, unlike the same-tab site links).
   document.getElementById('panel-actions').innerHTML = `
@@ -886,7 +961,7 @@ function saveReturnState() {
 // unlike the layer-level clicks that forced the marker/road touch delegation.
 map.on('click', (e) => {
   const seg = findNearestItinere(e.latlng, e.containerPoint);
-  if (seg) { showSegmentPanel(seg.meta); return; }
+  if (seg) { showSegmentPanel(seg.meta, seg.ll); return; }
   if (document.getElementById('info-panel').classList.contains('open')) closePanel();
 });
 

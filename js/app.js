@@ -887,17 +887,25 @@ function showSegmentPanel(meta, latlngs) {
   document.getElementById('checkin-row').style.display    = 'none';
 
   // Places along this stretch — the roads↔sites bridge. Each row jumps to that
-  // site's panel. Photo thumb when the site has a vici image.
+  // site's panel. Photo thumb when the site has a vici image. The catalogue is
+  // sparse over much of the empire, so when nothing sits within a day-stage
+  // (~30 km) we fall back to the nearest catalogued site(s) — honestly relabelled
+  // by distance — rather than hiding the section and looking broken.
   const nearbyEl = document.getElementById('segment-nearby');
   if (nearbyEl) {
     nearbyEl.innerHTML = '';
-    const near = nearestSitesToSegment(latlngs);
-    if (near.length) {
+    let list = nearestSitesToSegment(latlngs, 30, 5);
+    let heading = 'Sites along this stretch';
+    if (!list.length) {
+      list = nearestSitesToSegment(latlngs, 120, 2);
+      heading = 'Nearest catalogued sites';
+    }
+    if (list.length) {
       const label = document.createElement('div');
       label.className = 'seg-near-label';
-      label.textContent = 'Places along this stretch';
+      label.textContent = heading;
       nearbyEl.appendChild(label);
-      for (const { site, km } of near) {
+      for (const { site, km } of list) {
         const row = document.createElement('button');
         row.className = 'seg-near-row';
         const photo = site.vici && site.vici.image;

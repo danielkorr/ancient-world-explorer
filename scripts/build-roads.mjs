@@ -37,9 +37,33 @@ const REFRESH = process.argv.includes('--refresh');
 const TOL     = Number((process.argv.find(a => a.startsWith('--tol=')) || '').split('=')[1]) || 0.005;
 const MAX     = Number((process.argv.find(a => a.startsWith('--max=')) || '').split('=')[1]) || Infinity;
 
-// Property allowlist — keep these if present, drop everything else. Tiny
-// per-segment footprint matters when there are tens of thousands of rows.
-const KEEP_PROPS = ['id', 'name', 'road_name', 'category', 'type', 'cert', 'certainty', 'status', 'date'];
+// Itiner-e's real field names (shapefile-truncated to 10 chars). We normalize
+// the handful that carry scholarly signal into a compact per-road meta object;
+// everything else is dropped. Footprint matters at ~14.8k rows, so meta objects
+// are deduped into a shared ROADS_ITINERE_META table and each segment carries a
+// small integer index `m` into it (MultiLineString splitting otherwise dupes the
+// same road's metadata across every sibling segment).
+//
+//   Segment_s  → cert : 'c' Certain / 'j' Conjectured / 'h' Hypothetical  (100% filled)
+//   Name       → name : road name
+//   Type       → main : 1 for "Main Road" (omitted for Secondary, the common case)
+//   Citation   → cite : contributor/editor
+//   Bibliograp → bib  : bibliography reference
+//   Itinerary  → itin : ancient-itinerary membership (41% filled)
+const CERT_MAP = { Certain: 'c', Conjectured: 'j', Hypothetical: 'h' };
+
+function normMeta(props) {
+  if (!props) return {};
+  const out = {};
+  const cert = CERT_MAP[props.Segment_s];
+  if (cert) out.cert = cert;
+  if (props.Name) out.name = String(props.Name);
+  if (props.Type === 'Main Road') out.main = 1;
+  if (props.Citation) out.cite = String(props.Citation);
+  if (props.Bibliograp) out.bib = String(props.Bibliograp);
+  if (props.Itinerary) out.itin = String(props.Itinerary);
+  return out;
+}
 
 // ── DOWNLOAD ──────────────────────────────────────────────
 
@@ -122,19 +146,10 @@ function roundCoord(c) {
 
 // ── PROCESS ──────────────────────────────────────────────
 
-function pickProps(props) {
-  if (!props) return {};
-  const out = {};
-  for (const k of KEEP_PROPS) {
-    if (props[k] != null && props[k] !== '') out[k] = props[k];
-  }
-  return out;
-}
-
-function processFeature(feat, stats) {
+function processFeature(feat, stats, internMeta) {
   const g = feat.geometry;
   if (!g) return [];
-  const props = pickProps(feat.properties);
+  const m = internMeta(feat.properties); // shared index, or -1 when no meta
   const lines = g.type === 'LineString'      ? [g.coordinates]
               : g.type === 'MultiLineString' ? g.coordinates
               : null;
@@ -148,7 +163,7 @@ function processFeature(feat, stats) {
     const simplified = dpSimplify(lngLat, TOL).map(roundCoord);
     if (simplified.length < 2) continue;
     stats.outVerts += simplified.length;
-    out.push({ coords: simplified, ...(Object.keys(props).length ? { props } : {}) });
+    out.push(m >= 0 ? { coords: simplified, m } : { coords: simplified });
   }
   return out;
 }
@@ -163,11 +178,24 @@ async function build() {
   }
   console.log(`✓ ${fc.features.length} features in source`);
 
+  // Deduped metadata table: identical normalized meta objects collapse to one
+  // entry, and each segment references it by integer index `m`.
+  const metaList = [];
+  const metaIndex = new Map();
+  function internMeta(props) {
+    const meta = normMeta(props);
+    const key = JSON.stringify(meta);
+    if (key === '{}') return -1;
+    let idx = metaIndex.get(key);
+    if (idx === undefined) { idx = metaList.length; metaList.push(meta); metaIndex.set(key, idx); }
+    return idx;
+  }
+
   const stats = { rawVerts: 0, outVerts: 0, skippedNonLine: 0 };
   const segments = [];
   for (const feat of fc.features) {
     if (segments.length >= MAX) break;
-    for (const seg of processFeature(feat, stats)) {
+    for (const seg of processFeature(feat, stats, internMeta)) {
       segments.push(seg);
       if (segments.length >= MAX) break;
     }
@@ -176,6 +204,7 @@ async function build() {
   console.log(`⊙ simplified: ${stats.rawVerts.toLocaleString()} → ${stats.outVerts.toLocaleString()} vertices (${(100 * stats.outVerts / stats.rawVerts).toFixed(1)}%)`);
   if (stats.skippedNonLine) console.log(`  skipped ${stats.skippedNonLine} non-line features`);
   console.log(`✓ ${segments.length.toLocaleString()} segments retained`);
+  console.log(`✓ ${metaList.length.toLocaleString()} unique road-metadata records`);
 
   // Sample one segment so the reader can sanity-check the schema.
   if (segments.length) {
@@ -193,14 +222,20 @@ async function build() {
 //
 //  Geometry simplified with Douglas-Peucker (tol=${TOL}° ≈ ${Math.round(TOL * 111000)} m)
 //  and rounded to 4 decimals (~11 m precision). Run build-roads.mjs to regenerate.
-//  Each segment: { coords: [[lng, lat], ...], props?: {...} }
+//
+//  Each segment:  { coords: [[lng, lat], ...], m?: <index into ROADS_ITINERE_META> }
+//  Each meta:     { cert?: 'c'|'j'|'h', name?, main?: 1, cite?, bib?, itin? }
+//                 cert = Certain / Conjectured / Hypothetical (Itiner-e Segment_s).
 // ═══════════════════════════════════════════════════════════
 `;
 
   // Compact one-segment-per-line output — much better diff readability than
-  // a single mega-JSON, and gzips just as well.
+  // a single mega-JSON, and gzips just as well. Meta table first so the runtime
+  // can resolve a segment's `m` index immediately.
+  const metaLines = metaList.map(m => '  ' + JSON.stringify(m) + ',');
+  const metaBody  = `const ROADS_ITINERE_META = [\n${metaLines.join('\n')}\n];\n\n`;
   const lines = segments.map(s => '  ' + JSON.stringify(s) + ',');
-  const body  = `const ROADS_ITINERE = [\n${lines.join('\n')}\n];\n`;
+  const body  = metaBody + `const ROADS_ITINERE = [\n${lines.join('\n')}\n];\n`;
 
   await writeFile(OUT_PATH, banner + body, 'utf8');
   const { size } = await stat(OUT_PATH);

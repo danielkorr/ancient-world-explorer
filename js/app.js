@@ -197,24 +197,88 @@ const itinereRenderer = L.canvas({ padding: 0.2 });
 const itinereRoadsGroup = L.layerGroup().addTo(map);
 const roadsGroup        = L.layerGroup().addTo(map);
 
+// Per-certainty styling (Itiner-e Segment_s → meta.cert). The user is red-green
+// colorblind, so the DASH PATTERN is the primary "how sure are we" channel and
+// hue/opacity only reinforce it: solid = Certain, dashed = Conjectured, dotted =
+// Hypothetical. Stays a quiet underlay beneath the curated named roads.
+const ITINERE_CERT_STYLE = {
+  c: { color: '#a9763a', weight: 1.4, opacity: 0.62, dashArray: null  }, // Certain — solid, strongest
+  j: { color: '#8a6a3a', weight: 1.0, opacity: 0.42, dashArray: '4,5' }, // Conjectured — dashed
+  h: { color: '#7d6a52', weight: 1.0, opacity: 0.34, dashArray: '1,5' }, // Hypothetical — dotted
+};
+const ITINERE_DEFAULT_STYLE = { color: '#8a6a3a', weight: 1, opacity: 0.42, dashArray: null };
+
+// Flat index for nearest-segment tap lookup. Canvas-rendered polylines are NOT
+// individual DOM nodes, so neither marker.on('click') nor the closest('path')
+// touch delegation can hit them (see the roads landmine in CLAUDE.md). Instead we
+// keep them non-interactive and resolve a tap → nearest segment ourselves off the
+// map click/tap point. Each entry caches its latlng bbox for a cheap prefilter.
+const itinereSegs = [];
+
 if (typeof ROADS_ITINERE !== 'undefined') {
+  const META = (typeof ROADS_ITINERE_META !== 'undefined') ? ROADS_ITINERE_META : [];
   for (const seg of ROADS_ITINERE) {
+    const meta = seg.m != null ? META[seg.m] : null;
+    const st = (meta && ITINERE_CERT_STYLE[meta.cert]) || ITINERE_DEFAULT_STYLE;
     // coords are [lng, lat] from the build script; Leaflet wants [lat, lng].
     const latlngs = seg.coords.map(c => [c[1], c[0]]);
     L.polyline(latlngs, {
       renderer: itinereRenderer,
-      color: '#8a6a3a',
-      weight: 1,
-      opacity: 0.42,
+      color: st.color,
+      weight: st.weight,
+      opacity: st.opacity,
+      ...(st.dashArray ? { dashArray: st.dashArray } : {}),
       interactive: false,
-      lineCap: 'round',
+      lineCap: 'butt',
       lineJoin: 'round',
     }).addTo(itinereRoadsGroup);
+
+    let minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
+    for (const ll of latlngs) {
+      if (ll[0] < minLat) minLat = ll[0];
+      if (ll[0] > maxLat) maxLat = ll[0];
+      if (ll[1] < minLng) minLng = ll[1];
+      if (ll[1] > maxLng) maxLng = ll[1];
+    }
+    itinereSegs.push({ ll: latlngs, meta, minLat, maxLat, minLng, maxLng });
   }
   // CC BY 4.0 attribution — required by the dataset license.
   map.attributionControl.addAttribution(
     'Roads: <a href="https://itiner-e.org" target="_blank" rel="noopener">Itiner-e</a> (CC BY 4.0)'
   );
+}
+
+// Pixel distance from point p to segment a-b (all L.Point in container space).
+function _distToSegPx(p, a, b) {
+  const dx = b.x - a.x, dy = b.y - a.y;
+  if (dx === 0 && dy === 0) return Math.hypot(p.x - a.x, p.y - a.y);
+  let t = ((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy);
+  t = Math.max(0, Math.min(1, t));
+  return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy));
+}
+
+// Nearest Itiner-e segment to a tap, or null if none within THRESH px. The
+// latlng bbox prefilter is sized from the current zoom (degrees-per-pixel) so it
+// never wrongly excludes a segment that's within THRESH px at low zoom.
+function findNearestItinere(latlng, cp) {
+  if (!map.hasLayer(itinereRoadsGroup)) return null;
+  const THRESH = 14;
+  const c0 = map.containerPointToLatLng(L.point(0, 0));
+  const c1 = map.containerPointToLatLng(L.point(THRESH, THRESH));
+  const margin = Math.max(Math.abs(c1.lat - c0.lat), Math.abs(c1.lng - c0.lng));
+  let best = null, bestD = THRESH;
+  for (const s of itinereSegs) {
+    if (latlng.lat < s.minLat - margin || latlng.lat > s.maxLat + margin ||
+        latlng.lng < s.minLng - margin || latlng.lng > s.maxLng + margin) continue;
+    let prev = map.latLngToContainerPoint(s.ll[0]);
+    for (let i = 1; i < s.ll.length; i++) {
+      const cur = map.latLngToContainerPoint(s.ll[i]);
+      const d = _distToSegPx(cp, prev, cur);
+      if (d < bestD) { bestD = d; best = s; }
+      prev = cur;
+    }
+  }
+  return best;
 }
 
 const ROAD_CASING_COLOR = '#1a0e00';     // deep umber — dark enough vs both sepia and DARE
@@ -454,6 +518,14 @@ function showPanel(site) {
   const quest = site.quest ? QUEST[site.quest] : null;
   const color = quest ? quest.color : tc.color;
 
+  // Re-show anything a prior road-segment panel hid (showSegmentPanel hides the
+  // site-only sections). Resetting to '' reverts to the stylesheet default; the
+  // per-site logic below re-applies real visibility.
+  currentPanelKind = 'site';
+  document.getElementById('quest-progress').style.display = '';
+  document.getElementById('checkin-row').style.display    = '';
+  document.getElementById('panel-desc').style.whiteSpace  = '';
+
   // Hero. Any site with a vici.org photo shows it as the hero with a credit/
   // license caption (the "imagery exists in the wild" made literal); elevation
   // candidates additionally get the "help elevate" banner below. Sites with no
@@ -602,6 +674,7 @@ function closePanel() {
     activeMarker = null;
   }
   currentPanelSite = null;
+  currentPanelKind = null;
   // Glide back to the view you came from, undoing the offset pan that opening
   // the panel applied. Without this you're left stranded wherever the last
   // marker tap dragged the map.
@@ -609,6 +682,92 @@ function closePanel() {
     map.flyTo(panelReturnView.center, panelReturnView.zoom, { duration: 0.4 });
     panelReturnView = null;
   }
+}
+
+// Plain-language read on each Itiner-e certainty class. The blurb doubles as the
+// seed of the Step-2 "verify this stretch" quest framing (conjectured/hypothetical
+// roads are exactly the field-verification opportunities Itiner-e's model exposes).
+const CERT_INFO = {
+  c: { label: 'Certain',      blurb: 'The course of this stretch is securely attested — its line is field-verified or directly documented in the evidence.' },
+  j: { label: 'Conjectured',  blurb: 'The general course is inferred from the evidence but not field-verified. Someone on the ground could help confirm the alignment.' },
+  h: { label: 'Hypothetical', blurb: 'This stretch is hypothesised — a plausible connection with little direct evidence. Prime territory for field research.' },
+};
+// Chip colours are decorative only (the label text carries the meaning, so this
+// stays colorblind-safe); Hypothetical leans neutral-violet to separate it from
+// the amber roads without relying on a red/green contrast.
+const CERT_COLOR = { c: '#c79a4e', j: '#b89a6a', h: '#9a86b8' };
+
+// Road-segment panel. Reuses the #info-panel DOM but writes Itiner-e road content
+// and hides the site-only sections (ORBIS, check-in, quest progress, quest banner).
+// No per-segment URI exists in the static dump, so the external link points at the
+// Itiner-e atlas rather than a deep segment link.
+function showSegmentPanel(meta) {
+  const cert = meta && meta.cert;
+  const ci   = CERT_INFO[cert] || { label: 'Roman road', blurb: 'A segment of the Itiner-e Roman road network.' };
+  const col  = CERT_COLOR[cert] || '#b89a6a';
+
+  currentPanelKind = 'segment';
+  currentPanelSite = null;
+  if (activeMarker) {
+    activeMarker.setIcon(makeIcon(activeMarker._site, false));
+    activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
+    activeMarker = null;
+  }
+
+  // Hero — tinted gradient (clear any vici photo background left by a site panel).
+  const hero = document.getElementById('panel-hero');
+  hero.style.background = `radial-gradient(ellipse at center, ${col}18 0%, #110a00 70%)`;
+  const heroIcon = document.getElementById('hero-icon');
+  heroIcon.style.opacity = '';
+  heroIcon.textContent = '🛣️';
+  const heroCredit = document.getElementById('hero-credit');
+  if (heroCredit) heroCredit.style.display = 'none';
+  document.getElementById('hero-coords').textContent = (meta && meta.name) ? meta.name : 'Roman road';
+  document.getElementById('hero-modern').textContent = (meta && meta.main) ? 'Main road · Itiner-e' : 'Secondary road · Itiner-e';
+
+  // No quest banner yet (Step 2 adds the certainty-quest CTA).
+  document.getElementById('panel-quest-banner').className = '';
+
+  // Certainty badge.
+  const badge = document.getElementById('panel-badge');
+  badge.textContent   = ci.label.toUpperCase();
+  badge.style.cssText = `color:${col};background:${col}18;border:1px solid ${col}40;display:inline-block;font-size:9px;letter-spacing:2px;padding:3px 9px;border-radius:3px;margin-bottom:9px;font-family:'Cinzel',serif;font-weight:600;`;
+
+  document.getElementById('panel-name').textContent        = (meta && meta.name) ? meta.name : 'Roman road segment';
+  document.getElementById('panel-modern-name').textContent = (meta && meta.main) ? 'Main road' : 'Secondary road';
+  document.getElementById('panel-period').innerHTML        = `<span style="font-size:13px">🏛️</span>&nbsp;Roman road network · Itiner-e`;
+
+  let desc = ci.blurb;
+  if (meta) {
+    const extra = [];
+    if (meta.itin) extra.push(`Ancient itinerary: ${meta.itin}`);
+    if (meta.cite) extra.push(`Contributor: ${meta.cite}`);
+    if (meta.bib)  extra.push(`Source: ${meta.bib}`);
+    if (extra.length) desc += '\n\n' + extra.join('\n');
+  }
+  const descEl = document.getElementById('panel-desc');
+  descEl.textContent = desc;
+  descEl.style.whiteSpace = 'pre-line';
+
+  // Hide site-only sections.
+  document.getElementById('orbis-card').classList.remove('visible');
+  document.getElementById('quest-progress').style.display = 'none';
+  document.getElementById('checkin-row').style.display    = 'none';
+
+  // Single external action: the Itiner-e atlas (opens a new tab — no per-segment
+  // state to restore, unlike the same-tab site links).
+  document.getElementById('panel-actions').innerHTML = `
+    <a href="https://itiner-e.org" target="_blank" rel="noopener" class="p-btn p-btn-gold">
+      <span class="p-btn-icon">🗺️</span>
+      <div><div class="p-btn-main">Itiner-e Atlas</div><div class="p-btn-sub">Scholarly Roman road dataset · CC BY 4.0</div></div>
+      <span class="p-btn-ext" aria-hidden="true">↗</span>
+    </a>`;
+
+  const panel = document.getElementById('info-panel');
+  if (!panel.classList.contains('open')) {
+    panelReturnView = { center: map.getCenter(), zoom: map.getZoom() };
+  }
+  panel.classList.add('open');
 }
 
 // Called just before an external action link navigates away (same tab). Stash
@@ -628,8 +787,14 @@ function saveReturnState() {
   } catch (e) {}
 }
 
-// Close on map click
-map.on('click', () => {
+// Map click: an Itiner-e road segment near the tap wins (open its panel);
+// otherwise a click on the empty map closes any open panel. This single handler
+// covers desktop clicks AND mobile taps — map-level click fires reliably on iOS
+// for taps on the canvas/background (it already drove panel-close on mobile),
+// unlike the layer-level clicks that forced the marker/road touch delegation.
+map.on('click', (e) => {
+  const seg = findNearestItinere(e.latlng, e.containerPoint);
+  if (seg) { showSegmentPanel(seg.meta); return; }
   if (document.getElementById('info-panel').classList.contains('open')) closePanel();
 });
 
@@ -708,6 +873,7 @@ document.addEventListener('keydown', e => {
 // UI here doesn't care whether the backend is localStorage or Supabase.
 
 let currentPanelSite = null;
+let currentPanelKind = null;  // 'site' | 'segment' — what the info panel is showing
 let panelReturnView  = null;  // {center, zoom} captured when the panel opens
 
 function refreshProfilePill() {

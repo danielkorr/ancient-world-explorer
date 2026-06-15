@@ -468,8 +468,11 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   box-shadow: 0 0 0 2px rgba(255,255,255,0.55);
 }
 
-/* When a filter is on, fade the tiers that are filtered out. */
-#quest-legend.filtering .legend-row:not(.active) { opacity: 0.3; }
+/* When a filter is on, fade the tiers that are filtered out. The two filters
+   (site tiers vs roads certainty) fade independently — each only dims its own
+   rows so a site filter doesn't grey out the roads rows and vice-versa. */
+#quest-legend.filtering .legend-row[data-tier]:not(.active) { opacity: 0.3; }
+#quest-legend.roads-filtering .legend-row[data-cert]:not(.active) { opacity: 0.3; }
 
 /* Per-tier count, right-aligned into a column. */
 .legend-count {
@@ -661,6 +664,28 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 /* Shape-coded swatches mirror the map markers for red-green color vision. */
 .legend-dot.diamond  { border-radius: 2px; transform: rotate(45deg); }
 .legend-dot.triangle { border-radius: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+
+/* Thin divider between the site-quest tiers and the roads certainty rows. */
+.legend-sep {
+  height: 1px;
+  margin: 3px 0 1px;
+  background: rgba(212,168,83,0.22);
+}
+
+/* Roads certainty swatch — a short line whose DASH PATTERN mirrors the map
+   (solid/dashed/dotted = certain/conjectured/hypothetical). The pattern is the
+   colorblind-safe channel; colour only reinforces it. Width 16px so the dotted
+   case shows several dots. */
+.legend-line {
+  width: 16px; height: 0;
+  border-top: 2px solid #b89a6a;
+  flex-shrink: 0;
+}
+.legend-line.solid  { border-top-style: solid;  border-top-color: #d2a657; }
+.legend-line.dashed { border-top-style: dashed; border-top-color: #b89a6a; }
+.legend-line.dotted { border-top-style: dotted; border-top-width: 2px; border-top-color: #9a86b8; }
+/* Selected certainty: brighten the line to gold (no dot to ring here). */
+.legend-row.active .legend-line { border-top-color: var(--gold); }
 
 /* ── INFO PANEL ── */
 #info-panel {

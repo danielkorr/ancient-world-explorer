@@ -20,7 +20,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=28">
+  <link rel="stylesheet" href="css/style.css?v=29">
 </head>
 <body>
 
@@ -152,6 +152,11 @@
   <div class="legend-row" data-tier="photo" role="button" tabindex="0" onclick="toggleTier('photo')"><div class="legend-dot" style="background:#ff9e2c"></div>Photo Quest</div>
   <div class="legend-row" data-tier="location" role="button" tabindex="0" onclick="toggleTier('location')"><div class="legend-dot diamond" style="background:#2b8cde"></div>Location Quest</div>
   <div class="legend-row" data-tier="text" role="button" tabindex="0" onclick="toggleTier('text')"><div class="legend-dot triangle" style="background:#b15ad6"></div>Text Quest</div>
+  <div class="legend-sep"></div>
+  <div class="legend-hint">Roads · certainty</div>
+  <div class="legend-row" data-cert="c" role="button" tabindex="0" onclick="toggleCert('c')"><div class="legend-line solid"></div>Certain</div>
+  <div class="legend-row" data-cert="j" role="button" tabindex="0" onclick="toggleCert('j')"><div class="legend-line dashed"></div>Conjectured</div>
+  <div class="legend-row" data-cert="h" role="button" tabindex="0" onclick="toggleCert('h')"><div class="legend-line dotted"></div>Hypothetical</div>
 </div>
 
 <!-- Legend term toast (slides up when a tier is selected) -->
@@ -188,7 +193,7 @@
     <div class="quest-banner-body">
       <div class="quest-banner-title" id="quest-banner-title">QUEST</div>
       <div class="quest-banner-text"  id="quest-banner-text"></div>
-      <button class="quest-banner-cta" id="quest-banner-cta" onclick="openQuestModal()">Take this Quest →</button>
+      <button class="quest-banner-cta" id="quest-banner-cta" onclick="onQuestCtaClick()">Take this Quest →</button>
     </div>
   </div>
 
@@ -228,15 +233,15 @@
 
 <!-- Data + App. ?v= must match the value on css/style.css above — bump both
      together each deploy to force fresh assets past the cache. -->
-<script src="js/config.js?v=28"></script>
-<script src="js/orbis-days.js?v=28"></script>
-<script src="js/sites-pleiades.js?v=28"></script>
-<script src="js/sites-vici.js?v=28"></script>
-<script src="js/vici-links.js?v=28"></script>
-<script src="js/roads-itinere.js?v=28"></script>
-<script src="js/data.js?v=28"></script>
-<script src="js/auth.js?v=28"></script>
-<script src="js/app.js?v=28"></script>
+<script src="js/config.js?v=29"></script>
+<script src="js/orbis-days.js?v=29"></script>
+<script src="js/sites-pleiades.js?v=29"></script>
+<script src="js/sites-vici.js?v=29"></script>
+<script src="js/vici-links.js?v=29"></script>
+<script src="js/roads-itinere.js?v=29"></script>
+<script src="js/data.js?v=29"></script>
+<script src="js/auth.js?v=29"></script>
+<script src="js/app.js?v=29"></script>
 
 </body>
 </html>

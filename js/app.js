@@ -222,7 +222,7 @@ if (typeof ROADS_ITINERE !== 'undefined') {
     const st = (meta && ITINERE_CERT_STYLE[meta.cert]) || ITINERE_DEFAULT_STYLE;
     // coords are [lng, lat] from the build script; Leaflet wants [lat, lng].
     const latlngs = seg.coords.map(c => [c[1], c[0]]);
-    L.polyline(latlngs, {
+    const pl = L.polyline(latlngs, {
       renderer: itinereRenderer,
       color: st.color,
       weight: st.weight,
@@ -231,7 +231,8 @@ if (typeof ROADS_ITINERE !== 'undefined') {
       interactive: false,
       lineCap: 'butt',
       lineJoin: 'round',
-    }).addTo(itinereRoadsGroup);
+    });
+    pl.addTo(itinereRoadsGroup);
 
     let minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
     for (const ll of latlngs) {
@@ -240,7 +241,9 @@ if (typeof ROADS_ITINERE !== 'undefined') {
       if (ll[1] < minLng) minLng = ll[1];
       if (ll[1] > maxLng) maxLng = ll[1];
     }
-    itinereSegs.push({ ll: latlngs, meta, minLat, maxLat, minLng, maxLng });
+    // `pl` ref lets the certainty filter show/hide this segment by mutating the
+    // group's contents (mobile-safe), never toggling group membership.
+    itinereSegs.push({ ll: latlngs, meta, pl, minLat, maxLat, minLng, maxLng });
   }
   // CC BY 4.0 attribution — required by the dataset license.
   map.attributionControl.addAttribution(
@@ -279,6 +282,74 @@ function findNearestItinere(latlng, cp) {
     }
   }
   return best;
+}
+
+// ── ROADS CERTAINTY FILTER ───────────────────────────────
+// A roads-only filter parallel to the site quest legend: tap a certainty to show
+// only those segments. Implemented by mutating itinereRoadsGroup's CONTENTS
+// (clearLayers + re-add the matching subset) — never toggling group membership,
+// which is the mobile-safe pattern. Rows are inert while the Roads layer is off.
+const ITINERE_CERTS = ['c', 'j', 'h'];
+const activeCert    = new Set();   // empty = show all certainties
+const certCounts    = itinereSegs.reduce((acc, s) => {
+  const c = s.meta && s.meta.cert;
+  if (c) acc[c] = (acc[c] || 0) + 1;
+  return acc;
+}, {});
+
+function refreshVisibleRoads() {
+  itinereRoadsGroup.clearLayers();
+  const filtering = activeCert.size > 0;
+  for (const s of itinereSegs) {
+    const c = s.meta && s.meta.cert;
+    if (!filtering || (c && activeCert.has(c))) itinereRoadsGroup.addLayer(s.pl);
+  }
+}
+
+function syncRoadsFilterUI() {
+  const legend = document.getElementById('quest-legend');
+  if (!legend) return;
+  legend.classList.toggle('roads-filtering', activeCert.size > 0);
+  legend.querySelectorAll('.legend-row[data-cert]').forEach(row => {
+    row.classList.toggle('active', activeCert.has(row.dataset.cert));
+  });
+}
+
+// Stamp counts onto the roads rows and dim them when the Roads layer is off
+// (filtering hidden roads is meaningless). CSS-only — never mutates the group.
+function decorateRoadsLegend() {
+  document.querySelectorAll('#quest-legend .legend-row[data-cert]').forEach(row => {
+    const n = certCounts[row.dataset.cert] || 0;
+    let badge = row.querySelector('.legend-count');
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'legend-count';
+      row.appendChild(badge);
+    }
+    badge.textContent = n.toLocaleString();
+    row.classList.toggle('disabled', !layerState.roads || n === 0);
+  });
+}
+
+function toggleCert(cert) {
+  if (!certCounts[cert] || !layerState.roads) return;  // inert when roads off
+  const adding = !activeCert.has(cert);
+  if (adding) activeCert.add(cert);
+  else        activeCert.delete(cert);
+  if (adding) showRoadsToast(cert);
+  syncRoadsFilterUI();
+  refreshVisibleRoads();
+}
+
+function showRoadsToast(cert) {
+  const info = CERT_INFO[cert];
+  const el   = document.getElementById('legend-toast');
+  if (!info || !el) return;
+  document.getElementById('legend-toast-title').textContent = `${info.label} roads · ${(certCounts[cert] || 0).toLocaleString()}`;
+  document.getElementById('legend-toast-body').textContent  = info.blurb;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 4800);
 }
 
 const ROAD_CASING_COLOR = '#1a0e00';     // deep umber — dark enough vs both sepia and DARE
@@ -522,6 +593,7 @@ function showPanel(site) {
   // site-only sections). Resetting to '' reverts to the stylesheet default; the
   // per-site logic below re-applies real visibility.
   currentPanelKind = 'site';
+  currentSegmentMeta = null;
   document.getElementById('quest-progress').style.display = '';
   document.getElementById('checkin-row').style.display    = '';
   document.getElementById('panel-desc').style.whiteSpace  = '';
@@ -675,6 +747,7 @@ function closePanel() {
   }
   currentPanelSite = null;
   currentPanelKind = null;
+  currentSegmentMeta = null;
   // Glide back to the view you came from, undoing the offset pan that opening
   // the panel applied. Without this you're left stranded wherever the last
   // marker tap dragged the map.
@@ -708,6 +781,7 @@ function showSegmentPanel(meta) {
 
   currentPanelKind = 'segment';
   currentPanelSite = null;
+  currentSegmentMeta = meta || null;
   if (activeMarker) {
     activeMarker.setIcon(makeIcon(activeMarker._site, false));
     activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
@@ -725,8 +799,26 @@ function showSegmentPanel(meta) {
   document.getElementById('hero-coords').textContent = (meta && meta.name) ? meta.name : 'Roman road';
   document.getElementById('hero-modern').textContent = (meta && meta.main) ? 'Main road · Itiner-e' : 'Secondary road · Itiner-e';
 
-  // No quest banner yet (Step 2 adds the certainty-quest CTA).
-  document.getElementById('panel-quest-banner').className = '';
+  // Road Quest banner — conjectured/hypothetical stretches are field-verification
+  // opportunities (the literal payoff of Itiner-e's certainty model). Certain
+  // roads carry no banner. The CTA shares the stretch (no road contribution
+  // pipeline yet — that's a later phase).
+  const banner = document.getElementById('panel-quest-banner');
+  if (cert === 'j' || cert === 'h') {
+    banner.style.background  = `${col}14`;
+    banner.style.borderColor = `${col}33`;
+    banner.className = 'visible';
+    document.getElementById('quest-banner-icon').textContent  = '🧭';
+    const bt = document.getElementById('quest-banner-title');
+    bt.textContent  = 'Road Quest · Verify this stretch';
+    bt.style.color  = col;
+    document.getElementById('quest-banner-text').textContent = (cert === 'h')
+      ? 'This stretch is hypothetical — a plausible route with little direct evidence. Field research or photographs here genuinely advance the map.'
+      : 'This stretch is conjectured — its course is inferred, not field-verified. Walking or photographing the route helps confirm the alignment.';
+    document.getElementById('quest-banner-cta').textContent  = 'Share this stretch →';
+  } else {
+    banner.className = '';
+  }
 
   // Certainty badge.
   const badge = document.getElementById('panel-badge');
@@ -834,6 +926,10 @@ function toggleLayer(which) {
       if (!g) continue;
       layerState.roads ? map.addLayer(g) : map.removeLayer(g);
     }
+    // Reflect roads on/off into the certainty rows (they grey out when off).
+    // CSS-only — does not mutate the group, so it can't trip the mobile repaint
+    // bug that membership + content changes in one handler would.
+    decorateRoadsLegend();
   } else {
     // Sites & Cities is the MASTER layer switch, conceptually above the quest
     // filter. Operating it clears any active tier filter so the toggle always
@@ -874,6 +970,7 @@ document.addEventListener('keydown', e => {
 
 let currentPanelSite = null;
 let currentPanelKind = null;  // 'site' | 'segment' — what the info panel is showing
+let currentSegmentMeta = null; // the Itiner-e meta backing a 'segment' panel
 let panelReturnView  = null;  // {center, zoom} captured when the panel opens
 
 function refreshProfilePill() {
@@ -1153,6 +1250,39 @@ async function shareQuest() {
   }
 }
 
+// The quest-banner CTA is shared between site panels and road-segment panels;
+// dispatch by which kind is open. (Inline onclick in index.html stays stable.)
+function onQuestCtaClick() {
+  if (currentPanelKind === 'segment') shareRoadSegment();
+  else openQuestModal();
+}
+
+// Share a road stretch with #VIAquest — the road analogue of shareQuest. No
+// modal (and no contribution pipeline yet); this just spreads the quest.
+async function shareRoadSegment() {
+  const m = currentSegmentMeta;
+  if (!m) return;
+  const certLabel = (CERT_INFO[m.cert] || {}).label || 'Roman';
+  const name = m.name || 'a Roman road';
+  const text = `${certLabel} Roman road: ${name}. Help verify this stretch of the ancient road network. https://itiner-e.org #VIAquest`;
+
+  if (navigator.share) {
+    try { await navigator.share({ title: `${name} — VIA road quest`, text, url: 'https://itiner-e.org' }); return; }
+    catch { /* fall through to clipboard */ }
+  }
+  const btn = document.getElementById('quest-banner-cta');
+  try {
+    await navigator.clipboard.writeText(text);
+    if (btn) {
+      const orig = btn.textContent;
+      btn.textContent = '✓ Copied — paste into a tweet';
+      setTimeout(() => { btn.textContent = orig; }, 2400);
+    }
+  } catch {
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+  }
+}
+
 // Marker visibility is governed by two things: zoom-staged disclosure when no
 // filter is active, and an explicit tier filter when the user taps legend rows
 // or "Quests Only". A single Set of active tiers drives BOTH the legend and the
@@ -1380,18 +1510,20 @@ map.on('zoomend', () => {
 // Prime at boot (zoom 5, ancient era): sepia landing + curated sites only.
 updateAncientLayer();
 decorateLegend();
+decorateRoadsLegend();
 syncFilterUI();
+syncRoadsFilterUI();
 refreshVisibleMarkers();
 
-// Keyboard activation for the legend filter rows (they're role="button").
+// Keyboard activation for the legend filter rows (they're role="button"). Site
+// tier rows carry data-tier; roads certainty rows carry data-cert.
 const _legendEl = document.getElementById('quest-legend');
 if (_legendEl) {
   _legendEl.addEventListener('keydown', e => {
-    const tier = e.target && e.target.dataset ? e.target.dataset.tier : null;
-    if (tier && (e.key === 'Enter' || e.key === ' ')) {
-      e.preventDefault();
-      toggleTier(tier);
-    }
+    const ds = e.target && e.target.dataset ? e.target.dataset : null;
+    if (!ds || (e.key !== 'Enter' && e.key !== ' ')) return;
+    if (ds.tier)      { e.preventDefault(); toggleTier(ds.tier); }
+    else if (ds.cert) { e.preventDefault(); toggleCert(ds.cert); }
   });
 }
 

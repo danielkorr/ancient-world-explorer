@@ -932,7 +932,9 @@ function showSegmentPanel(meta, latlngs) {
       empty.textContent = 'No catalogued sites in this region yet.';
       nearbyEl.appendChild(empty);
     }
-    nearbyEl.style.display = '';
+    // Explicit 'block' — NOT '' . The CSS default is `display:none`, so clearing
+    // the inline style (='') would fall back to that and keep the section hidden.
+    nearbyEl.style.display = 'block';
   }
 
   // Single external action: the Itiner-e atlas (opens a new tab — no per-segment

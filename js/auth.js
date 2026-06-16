@@ -75,8 +75,7 @@
           created_at:     new Date().toISOString(),
         };
         const session = { access_token, refresh_token, expires_in, expires_at, token_type: 'bearer', user };
-        const projectRef = cfg.SUPABASE_URL.replace(/^https:\/\//, '').split('.')[0];
-        localStorage.setItem(`sb-${projectRef}-auth-token`, JSON.stringify(session));
+        localStorage.setItem(supabaseSessionKey(), JSON.stringify(session));
         // Strip the hash and reload so VIA_SB constructs with the token
         // already in storage. This avoids any setSession() code path.
         history.replaceState(null, '', window.location.pathname + window.location.search);
@@ -190,22 +189,72 @@
   // returning { payload, key } when a valid, unexpired token is present, else
   // null. Single source of truth for "are we actually signed in?" — used by
   // both boot hydration and the spurious-SIGNED_OUT guard below.
-  function readStoredSession() {
+  function supabaseProjectRef() {
+    const cfg = window.VIA_CONFIG;
+    return cfg.SUPABASE_URL.replace(/^https:\/\//, '').split('.')[0];
+  }
+
+  function supabaseSessionKey() {
+    return `sb-${supabaseProjectRef()}-auth-token`;
+  }
+
+  function decodeJwtPayload(tok) {
+    const b64 = tok.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    const pad = b64 + '='.repeat((4 - b64.length % 4) % 4);
+    return JSON.parse(atob(pad));
+  }
+
+  function readStoredSession(opts = {}) {
     try {
-      const cfg = window.VIA_CONFIG;
-      const projectRef = cfg.SUPABASE_URL.replace(/^https:\/\//, '').split('.')[0];
-      const key = `sb-${projectRef}-auth-token`;
+      const key = supabaseSessionKey();
       const raw = localStorage.getItem(key);
       if (!raw) return null;
       const stored = JSON.parse(raw);
       const tok = stored && stored.access_token;
       if (!tok) return null;
-      const b64 = tok.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-      const pad = b64 + '='.repeat((4 - b64.length % 4) % 4);
-      const payload = JSON.parse(atob(pad));
+      const payload = decodeJwtPayload(tok);
       const nowSec = Math.floor(Date.now() / 1000);
-      if (payload.exp && payload.exp <= nowSec) return null;
-      return { payload, key };
+      if (!opts.allowExpired && payload.exp && payload.exp <= nowSec) return null;
+      return { payload, key, stored };
+    } catch (_) { return null; }
+  }
+
+  async function refreshStoredSession() {
+    try {
+      const cfg = window.VIA_CONFIG;
+      const session = readStoredSession({ allowExpired: true });
+      const refreshToken = session && session.stored && session.stored.refresh_token;
+      if (!cfg || !refreshToken) return null;
+      const res = await fetch(`${cfg.SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
+        method: 'POST',
+        headers: {
+          apikey: cfg.SUPABASE_KEY,
+          Authorization: `Bearer ${cfg.SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refresh_token: refreshToken }),
+      });
+      if (!res.ok) return null;
+      const data = await res.json();
+      if (!data || !data.access_token || !data.refresh_token) return null;
+      const payload = decodeJwtPayload(data.access_token);
+      const refreshed = {
+        access_token: data.access_token,
+        refresh_token: data.refresh_token,
+        expires_in: data.expires_in || Math.max(0, (payload.exp || 0) - Math.floor(Date.now() / 1000)),
+        expires_at: data.expires_at || payload.exp,
+        token_type: data.token_type || 'bearer',
+        user: data.user || {
+          id: payload.sub,
+          email: payload.email,
+          aud: payload.aud,
+          role: payload.role,
+          app_metadata: payload.app_metadata || {},
+          user_metadata: payload.user_metadata || {},
+        },
+      };
+      localStorage.setItem(supabaseSessionKey(), JSON.stringify(refreshed));
+      return readStoredSession();
     } catch (_) { return null; }
   }
 
@@ -261,7 +310,8 @@
       // .from() queries still authenticate because supabase-js reads the
       // Authorization header from the same storage key.
       try {
-        const session = readStoredSession();
+        let session = readStoredSession();
+        if (!session) session = await refreshStoredSession();
         if (session) {
           const { payload } = session;
           // Optimistic _user from the JWT — pill renders immediately.
@@ -278,10 +328,9 @@
           // Token absent or expired — drop any stale key so a later boot is
           // clean. readStoredSession() returns null for expired tokens too.
           try {
-            const cfg = window.VIA_CONFIG;
-            const projectRef = cfg.SUPABASE_URL.replace(/^https:\/\//, '').split('.')[0];
-            const raw = localStorage.getItem(`sb-${projectRef}-auth-token`);
-            if (raw) localStorage.removeItem(`sb-${projectRef}-auth-token`);
+            const key = supabaseSessionKey();
+            const raw = localStorage.getItem(key);
+            if (raw) localStorage.removeItem(key);
           } catch (_) {}
         }
       } catch (_) { /* signed-out fall-through */ }
@@ -310,9 +359,7 @@
       // internally). Clear the stored session by hand, null local state,
       // emit, then reload so the next boot starts cleanly with no token.
       try {
-        const cfg = window.VIA_CONFIG;
-        const projectRef = cfg.SUPABASE_URL.replace(/^https:\/\//, '').split('.')[0];
-        localStorage.removeItem(`sb-${projectRef}-auth-token`);
+        localStorage.removeItem(supabaseSessionKey());
       } catch (_) {}
       this._user = null;
       this._myCheckins = [];
@@ -509,6 +556,10 @@
 
   function enterGuestMode() {
     try { localStorage.setItem('via.guest', '1'); } catch {}
+    if (!LocalBackend.currentUser()) {
+      LocalBackend.signIn('Guest Traveler');
+    }
+    if (backend === LocalBackend) emit();
     // Force a reload so pickBackend() re-runs against LocalBackend.
     const url = new URL(window.location.href);
     url.searchParams.delete('signin');

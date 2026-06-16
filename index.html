@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="description" content="VIA — Explore the ancient Roman world overlaid on the modern map. Discover 2,000-year-old roads, cities, and unsolved historical quests.">
   <meta name="theme-color" content="#110a00">
+  <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="8" fill="%23110a00"/><text x="32" y="43" text-anchor="middle" font-family="serif" font-size="34" font-weight="700" fill="%23d4a853">V</text></svg>'>
   <title>VIA — Ancient World Explorer</title>
 
   <!-- Fonts -->
@@ -20,7 +21,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=35">
+  <link rel="stylesheet" href="css/style.css?v=48">
 </head>
 <body>
 
@@ -55,6 +56,14 @@
     <div id="welcome-body">
       <p>Two thousand years of Roman roads, cities, and ruins — laid over the world as it stands today. Explore where the empire reached.</p>
       <p>Then contribute to the historical record. Many of these sites and cities are still missing details in the scholarly gazetteer — help fill the gaps by sharing your photos, location, and comments. Be a part of it.</p>
+      <div class="welcome-quest-preview">
+        <div class="welcome-quest-title">Quests are open gaps</div>
+        <div class="welcome-quest-grid">
+          <span>Zoom in</span>
+          <span>Pick a marker</span>
+          <span>Follow the steps</span>
+        </div>
+      </div>
       <p class="welcome-kicker">Learn history. Help write it.</p>
     </div>
     <button class="auth-primary" onclick="closeWelcome()">Begin Exploring</button>
@@ -134,9 +143,22 @@
   <button class="ctrl-btn active" id="btn-sites" onclick="toggleLayer('sites')">
     <span class="ctrl-icon" aria-hidden="true">🏛️</span><div class="swatch-dot"></div><span class="ctrl-label">Sites &amp; Cities</span>
   </button>
-  <button class="ctrl-btn" id="btn-quests" onclick="toggleQuestsOnly()">
-    <span class="ctrl-icon" aria-hidden="true">⭐</span><div class="swatch-dot swatch-quest"></div><span class="ctrl-label">Quests Only</span> <span id="quest-count-badge"></span>
-  </button>
+  <div class="detail-control" id="detail-control" aria-label="Map detail">
+    <div class="detail-head">
+      <span class="detail-title">Detail</span>
+      <span id="detail-readout">Curated · 0 quests</span>
+    </div>
+    <input id="detail-slider" type="range" min="0" max="2" step="1" value="0" aria-label="Map detail">
+  </div>
+</div>
+
+<!-- Mobile first-run guide: one lightweight cue after the welcome modal. -->
+<div id="mobile-guide" class="hidden" role="status" aria-live="polite">
+  <div>
+    <div id="mobile-guide-title">Start with the map</div>
+    <div id="mobile-guide-body">Tap a colored site or road line for the story. Drag Detail to reveal more quests as the map gets more detailed.</div>
+  </div>
+  <button id="mobile-guide-close" onclick="dismissMobileGuide(true)" aria-label="Dismiss guide">×</button>
 </div>
 
 <!-- DARE fallback banner (shown only when ancient tiles fail) -->
@@ -211,6 +233,13 @@
     <div class="p-rule"></div>
     <div id="panel-period"></div>
     <div id="panel-desc"></div>
+    <div id="segment-evidence"></div>
+
+    <!-- Check-in row -->
+    <div id="checkin-row">
+      <div id="checkin-stats"></div>
+      <button id="checkin-btn" onclick="onCheckInClick()"></button>
+    </div>
 
     <!-- Places along this stretch (road-segment panels only) -->
     <div id="segment-nearby"></div>
@@ -232,26 +261,20 @@
       <div id="qp-label">Your quest progress <span id="qp-count">0 / 0</span></div>
       <div id="qp-track"><div id="qp-fill"></div></div>
     </div>
-
-    <!-- Check-in row -->
-    <div id="checkin-row">
-      <div id="checkin-stats"></div>
-      <button id="checkin-btn" onclick="onCheckInClick()"></button>
-    </div>
   </div>
 </div>
 
 <!-- Data + App. ?v= must match the value on css/style.css above — bump both
      together each deploy to force fresh assets past the cache. -->
-<script src="js/config.js?v=35"></script>
-<script src="js/orbis-days.js?v=35"></script>
-<script src="js/sites-pleiades.js?v=35"></script>
-<script src="js/sites-vici.js?v=35"></script>
-<script src="js/vici-links.js?v=35"></script>
-<script src="js/roads-itinere.js?v=35"></script>
-<script src="js/data.js?v=35"></script>
-<script src="js/auth.js?v=35"></script>
-<script src="js/app.js?v=35"></script>
+<script src="js/config.js?v=48"></script>
+<script src="js/orbis-days.js?v=48"></script>
+<script src="js/sites-pleiades.js?v=48"></script>
+<script src="js/sites-vici.js?v=48"></script>
+<script src="js/vici-links.js?v=48"></script>
+<script src="js/roads-itinere.js?v=48"></script>
+<script src="js/data.js?v=48"></script>
+<script src="js/auth.js?v=48"></script>
+<script src="js/app.js?v=48"></script>
 
 </body>
 </html>

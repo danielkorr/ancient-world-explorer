@@ -594,6 +594,8 @@ if (COARSE_POINTER) {
 // ── INFO PANEL ───────────────────────────────────────────
 
 function showPanel(site) {
+  hideLegendToast();
+
   const tc    = TYPE[site.type] || TYPE.city;
   const quest = site.quest ? QUEST[site.quest] : null;
   const color = quest ? quest.color : tc.color;
@@ -606,6 +608,7 @@ function showPanel(site) {
   document.getElementById('quest-progress').style.display = '';
   document.getElementById('checkin-row').style.display    = '';
   document.getElementById('panel-desc').style.whiteSpace  = '';
+  document.getElementById('segment-evidence').style.display = 'none';
   const _segNear = document.getElementById('segment-nearby');
   if (_segNear) _segNear.style.display = 'none';
 
@@ -735,22 +738,26 @@ function showPanel(site) {
   // pan. Only capture on the initial open — tapping a second marker while the
   // panel is still up must not overwrite the original "home" view.
   const panel = document.getElementById('info-panel');
+  panel.classList.remove('segment-panel');
   if (!panel.classList.contains('open')) {
     panelReturnView = { center: map.getCenter(), zoom: map.getZoom() };
   }
   panel.classList.add('open');
+  dismissMobileGuide(true);
   currentPanelSite = site;
   refreshCheckinRow();
   // Offset map pan: right on desktop, up on mobile
   const isMobile = window.innerWidth <= 640;
   map.panTo(
-    isMobile ? [site.lat + 0.8, site.lng] : [site.lat, site.lng - 2],
+    isMobile ? [site.lat + 1.2, site.lng] : [site.lat, site.lng - 2],
     { animate:true, duration:0.4 }
   );
 }
 
 function closePanel() {
-  document.getElementById('info-panel').classList.remove('open');
+  const panel = document.getElementById('info-panel');
+  panel.classList.remove('open');
+  panel.classList.remove('segment-panel');
   if (activeMarker) {
     activeMarker.setIcon(makeIcon(activeMarker._site, false));
     activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
@@ -824,6 +831,8 @@ function nearestSitesToSegment(ll, maxKm = 10, limit = 5) {
 // Itiner-e atlas rather than a deep segment link. `latlngs` (the segment geometry)
 // drives the "Places along this stretch" bridge.
 function showSegmentPanel(meta, latlngs) {
+  hideLegendToast();
+
   const cert = meta && meta.cert;
   const ci   = CERT_INFO[cert] || { label: 'Roman road', blurb: 'A segment of the Itiner-e Roman road network.' };
   const col  = CERT_COLOR[cert] || '#b89a6a';
@@ -886,8 +895,8 @@ function showSegmentPanel(meta, latlngs) {
     bt.textContent  = 'Road Quest · Verify this stretch';
     bt.style.color  = col;
     document.getElementById('quest-banner-text').textContent = (cert === 'h')
-      ? 'This stretch is hypothetical — a plausible route with little direct evidence. Field research or photographs here genuinely advance the map.'
-      : 'This stretch is conjectured — its course is inferred, not field-verified. Walking or photographing the route helps confirm the alignment.';
+      ? 'Hypothetical route, little direct evidence. Field photos or notes here can improve the map.'
+      : 'Inferred route, not field-verified. Walking or photographing it can confirm the alignment.';
     document.getElementById('quest-banner-cta').textContent  = 'Share this stretch →';
   } else {
     banner.className = '';
@@ -903,16 +912,23 @@ function showSegmentPanel(meta, latlngs) {
   document.getElementById('panel-period').innerHTML        = `<span style="font-size:13px">🏛️</span>&nbsp;Roman road network · Itiner-e`;
 
   let desc = ci.blurb;
+  const evidence = [];
   if (meta) {
-    const extra = [];
-    if (meta.itin) extra.push(`Ancient itinerary: ${meta.itin}`);
-    if (meta.cite) extra.push(`Contributor: ${meta.cite}`);
-    if (meta.bib)  extra.push(`Source: ${meta.bib}`);
-    if (extra.length) desc += '\n\n' + extra.join('\n');
+    if (meta.itin) evidence.push(['Ancient itinerary', meta.itin]);
+    if (meta.cite) evidence.push(['Contributor', meta.cite]);
+    if (meta.bib)  evidence.push(['Source', meta.bib]);
   }
   const descEl = document.getElementById('panel-desc');
   descEl.textContent = desc;
-  descEl.style.whiteSpace = 'pre-line';
+  descEl.style.whiteSpace = '';
+
+  const evidenceEl = document.getElementById('segment-evidence');
+  if (evidenceEl) {
+    evidenceEl.innerHTML = evidence.map(([label, value]) =>
+      `<div class="seg-evidence-row"><span>${label}</span><strong>${value}</strong></div>`
+    ).join('');
+    evidenceEl.style.display = evidence.length ? 'block' : 'none';
+  }
 
   // Hide site-only sections.
   document.getElementById('orbis-card').classList.remove('visible');
@@ -980,10 +996,12 @@ function showSegmentPanel(meta, latlngs) {
     </a>`;
 
   const panel = document.getElementById('info-panel');
+  panel.classList.add('segment-panel');
   if (!panel.classList.contains('open')) {
     panelReturnView = { center: map.getCenter(), zoom: map.getZoom() };
   }
   panel.classList.add('open');
+  dismissMobileGuide(true);
 }
 
 // Called just before an external action link navigates away (same tab). Stash
@@ -1040,6 +1058,7 @@ function setEra(era) {
 const layerState = { roads:true, sites:true };
 
 function toggleLayer(which) {
+  dismissMobileGuide(true);
   layerState[which] = !layerState[which];
   const btn = document.getElementById('btn-' + which);
   btn.classList.toggle('active', layerState[which]);
@@ -1065,8 +1084,8 @@ function toggleLayer(which) {
     syncFilterUI();   // un-light the Quests button + legend rows to match
     // The group stays on the map PERMANENTLY; we only change its contents.
     // Re-adding a layer group then mutating it in the same tap handler does not
-    // repaint on mobile Safari (the "Quests Only shows nothing from an empty map"
-    // bug). Never removing the group sidesteps it: refreshVisibleMarkers shows
+    // repaint on mobile Safari (the "filter changes show nothing from an empty
+    // map" bug). Never removing the group sidesteps it: refreshVisibleMarkers shows
     // nothing when sites is off.
     refreshVisibleMarkers();
   }
@@ -1408,10 +1427,9 @@ async function shareRoadSegment() {
 }
 
 // Marker visibility is governed by two things: zoom-staged disclosure when no
-// filter is active, and an explicit tier filter when the user taps legend rows
-// or "Quests Only". A single Set of active tiers drives BOTH the legend and the
-// Quests Only button, so the two controls can never disagree — tapping the
-// three quest tiers and tapping "Quests Only" land on the same state.
+// filter is active, and an explicit tier filter when the user taps legend rows.
+// A single Set of active tiers drives the legend, so the filter state stays
+// consistent even as the map detail slider changes the visible zoom stage.
 const allMarkers = [];
 sitesGroup.eachLayer(m => allMarkers.push(m));
 
@@ -1429,13 +1447,14 @@ const tierCounts = SITES.reduce((acc, s) => {
 }, {});
 
 // Quest-progress denominator + the set of quest Pleiades ids a check-in can
-// count against. Total matches the 289 shown on the Quests Only badge.
+// count against. The denominator is used for the profile progress meter and the
+// detail slider readout.
 const questSites     = SITES.filter(s => !!s.quest);
 const TOTAL_QUESTS   = questSites.length;
 const QUEST_PLEIADES = new Set(questSites.map(s => s.pleiades).filter(Boolean));
 
-// Quest tiers that actually have sites — "Quests Only" selects exactly these
-// (so the empty Text tier doesn't get spuriously toggled on).
+// Quest tiers that actually have sites. The legend uses these to hide empty
+// rows like Text Quest until data exists.
 const presentQuestTiers = QUEST_TIERS.filter(t => tierCounts[t]);
 
 // Plain-language explanation of each tier, surfaced by the legend toast (on
@@ -1491,9 +1510,7 @@ function refreshVisibleMarkers() {
   }
 }
 
-// Reflect the active tier set onto both controls: highlight selected legend
-// rows (and dim the rest), and light up Quests Only only when the selection is
-// exactly the three quest tiers.
+// Reflect the active tier set onto the legend rows (and dim the rest).
 function syncFilterUI() {
   const legend = document.getElementById('quest-legend');
   if (legend) {
@@ -1502,12 +1519,48 @@ function syncFilterUI() {
       row.classList.toggle('active', activeTiers.has(row.dataset.tier));
     });
   }
-  const qBtn = document.getElementById('btn-quests');
-  if (qBtn) {
-    const questsExactly = activeTiers.size === presentQuestTiers.length &&
-                          presentQuestTiers.every(t => activeTiers.has(t));
-    qBtn.classList.toggle('active', questsExactly);
-  }
+}
+
+const DETAIL_ZOOMS = [5, 6, 7];
+const DETAIL_LABELS = ['Curated', 'Quest detail', 'Full detail'];
+
+function detailLevelForZoom(z) {
+  if (z >= 7) return 2;
+  if (z >= 6) return 1;
+  return 0;
+}
+
+function detailStatsForLevel(level) {
+  const idx = Math.max(0, Math.min(DETAIL_ZOOMS.length - 1, level));
+  const z = DETAIL_ZOOMS[idx];
+  const questCount = SITES.filter(s => !!s.quest && siteVisibleAtZoom(s, z)).length;
+  const siteCount = SITES.filter(s => siteVisibleAtZoom(s, z)).length;
+  return { level: idx, zoom: z, label: DETAIL_LABELS[idx], questCount, siteCount };
+}
+
+function syncDetailUI() {
+  const slider = document.getElementById('detail-slider');
+  const readout = document.getElementById('detail-readout');
+  if (!slider || !readout) return;
+  const stats = detailStatsForLevel(detailLevelForZoom(map.getZoom()));
+  if (document.activeElement !== slider) slider.value = String(stats.level);
+  slider.setAttribute('aria-valuenow', String(stats.level));
+  slider.setAttribute('aria-valuetext', `${stats.label}, ${stats.questCount.toLocaleString()} quests visible`);
+  readout.textContent = `${stats.label} · ${stats.questCount.toLocaleString()} quests`;
+}
+
+function setDetailLevel(level) {
+  const stats = detailStatsForLevel(level);
+  map.setZoom(stats.zoom, { animate: true });
+}
+
+function bindDetailSlider() {
+  const slider = document.getElementById('detail-slider');
+  if (!slider || slider.dataset.bound === '1') return;
+  slider.dataset.bound = '1';
+  slider.addEventListener('input', e => {
+    setDetailLevel(Number(e.target.value));
+  });
 }
 
 // Tap a legend tier to toggle it in/out of the filter. Empty tiers are inert.
@@ -1526,6 +1579,13 @@ function toggleTier(tier) {
 // A toast on tap (in-the-moment context) + a "?" modal (the full key, anytime).
 
 let _toastTimer = null;
+
+function hideLegendToast() {
+  const el = document.getElementById('legend-toast');
+  if (el) el.classList.remove('show');
+  clearTimeout(_toastTimer);
+}
+
 function showLegendToast(tier) {
   const info = TIER_INFO[tier];
   const el   = document.getElementById('legend-toast');
@@ -1537,23 +1597,12 @@ function showLegendToast(tier) {
   _toastTimer = setTimeout(() => el.classList.remove('show'), 4800);
 }
 
-function showQuestsToast() {
-  const el = document.getElementById('legend-toast');
-  if (!el) return;
-  const n = presentQuestTiers.reduce((s, t) => s + tierCounts[t], 0);
-  document.getElementById('legend-toast-title').textContent = `All quests · ${n}`;
-  document.getElementById('legend-toast-body').textContent  =
-    'Places missing a photo or a verified location in the scholarly record. Tap any marker to help.';
-  el.classList.add('show');
-  clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => el.classList.remove('show'), 4800);
-}
-
 // Build + open the "?" explainer. Lists only tiers that have sites, with the
 // matching shape swatch so the colorblind shape key is reinforced here too.
 // Mobile: collapse/expand the quest legend behind the FAB (desktop ignores
 // this — the legend is always shown there). Tap-away closes it.
 function toggleLegend() {
+  dismissMobileGuide(true);
   const lg = document.getElementById('quest-legend');
   if (!lg) return;
   const open = lg.classList.toggle('mobile-open');
@@ -1612,22 +1661,6 @@ function decorateLegend() {
   });
 }
 
-// "Quests Only" is a shortcut for "select all three quest tiers". Tapping it
-// again from that exact state clears back to the full zoom-staged map. Open to
-// everyone — previewing quests is the hook; the sign-in wall is at check-in.
-function toggleQuestsOnly() {
-  const questsExactly = activeTiers.size === presentQuestTiers.length &&
-                        presentQuestTiers.every(t => activeTiers.has(t));
-  activeTiers.clear();
-  if (!questsExactly) {
-    presentQuestTiers.forEach(t => activeTiers.add(t));
-    ensureSitesLayerOn();
-    showQuestsToast();
-  }
-  syncFilterUI();
-  refreshVisibleMarkers();
-}
-
 // DARE only becomes legible around z7; at the z5 landing its shrunk atlas
 // plate is pure label noise, while the sepia terrain fallback underneath is
 // clean and beautiful. Fade DARE in as you zoom so the ancient world resolves
@@ -1648,6 +1681,7 @@ map.on('zoomend', () => {
   // Zoom only changes the visible set under the disclosure rule; an explicit
   // tier filter already shows all matches, so there's nothing to recompute.
   if (activeTiers.size === 0) refreshVisibleMarkers();
+  syncDetailUI();
 });
 
 // Prime at boot (zoom 5, ancient era): sepia landing + curated sites only.
@@ -1657,6 +1691,8 @@ decorateRoadsLegend();
 syncFilterUI();
 syncRoadsFilterUI();
 refreshVisibleMarkers();
+bindDetailSlider();
+syncDetailUI();
 
 // Keyboard activation for the legend filter rows (they're role="button"). Site
 // tier rows carry data-tier; roads certainty rows carry data-cert.
@@ -1670,13 +1706,6 @@ if (_legendEl) {
   });
 }
 
-function refreshQuestBadge() {
-  const n  = SITES.filter(s => !!s.quest).length;
-  const el = document.getElementById('quest-count-badge');
-  if (el) el.textContent = String(n);  // real count (289) beats a flat "99+"
-}
-refreshQuestBadge();
-
 // ── Welcome modal ──
 // First-time arrivals land cold; this is the one-screen "what is this." Shown
 // once (gated on localStorage), reopenable any time by tapping the brand.
@@ -1688,6 +1717,28 @@ function closeWelcome() {
   const el = document.getElementById('welcome-modal');
   if (el) el.classList.remove('open');
   try { localStorage.setItem('via.welcomed', '1'); } catch (e) {}
+  showMobileGuide();
+}
+
+function mobileGuideDismissed() {
+  try { return localStorage.getItem('via.mobileGuideDismissed') === '1'; }
+  catch (e) { return true; }
+}
+
+function showMobileGuide() {
+  const el = document.getElementById('mobile-guide');
+  if (!el || window.innerWidth > 640 || mobileGuideDismissed()) return;
+  if (document.getElementById('welcome-modal')?.classList.contains('open')) return;
+  if (document.getElementById('info-panel')?.classList.contains('open')) return;
+  el.classList.remove('hidden');
+}
+
+function dismissMobileGuide(persist) {
+  const el = document.getElementById('mobile-guide');
+  if (el) el.classList.add('hidden');
+  if (persist) {
+    try { localStorage.setItem('via.mobileGuideDismissed', '1'); } catch (e) {}
+  }
 }
 
 // Auto-show on the very first visit. Skip when a magic-link reload is about to
@@ -1697,6 +1748,7 @@ function closeWelcome() {
   try { welcomed = localStorage.getItem('via.welcomed') === '1'; } catch (e) {}
   const autoSignin = /[?&]signin=1/.test(location.search);
   if (!welcomed && !autoSignin) openWelcome();
+  else showMobileGuide();
 })();
 
 // Keyboard activation for the brand (role="button").

@@ -419,8 +419,77 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 /* Mobile-only affordances — hidden on desktop, switched on in the ≤640px query.
    The icon glyphs replace the swatch+label on the compact chips; the FAB collapses
    the legend. */
+.detail-control {
+  background: rgba(8,4,0,0.96);
+  border: 1px solid rgba(212,168,83,0.32);
+  color: rgba(240,230,211,0.92);
+  padding: 8px 11px 9px;
+  border-radius: 7px;
+  font-family: 'Cinzel', serif;
+  width: 162px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.detail-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.detail-title { color: var(--gold); }
+#detail-readout {
+  color: var(--text-body);
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.2px;
+  text-transform: none;
+  white-space: nowrap;
+}
+#detail-slider {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  height: 22px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+#detail-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(212,168,83,0.28), rgba(212,168,83,0.9));
+}
+#detail-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 1px solid #1a0e00;
+  box-shadow: 0 0 0 3px rgba(212,168,83,0.16);
+}
+#detail-slider::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(212,168,83,0.28), rgba(212,168,83,0.9));
+}
+#detail-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 1px solid #1a0e00;
+  box-shadow: 0 0 0 3px rgba(212,168,83,0.16);
+}
+#detail-slider:focus-visible { outline: none; }
 .ctrl-icon { display: none; }
 #legend-fab { display: none; }
+#mobile-guide { display: none; }
 
 /* ── QUEST LEGEND ── */
 #quest-legend {
@@ -595,6 +664,41 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   color: var(--text-body);
   margin: 0 0 12px;
 }
+.welcome-quest-preview {
+  margin: 16px 0 14px;
+  padding: 12px 13px;
+  border: 1px solid rgba(255,158,44,0.32);
+  background: rgba(255,158,44,0.075);
+  border-radius: 7px;
+}
+.welcome-quest-title {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1.7px;
+  text-transform: uppercase;
+  color: var(--quest-photo);
+  margin-bottom: 9px;
+  text-align: center;
+}
+.welcome-quest-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+.welcome-quest-grid span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 6px;
+  border: 1px solid rgba(212,168,83,0.18);
+  border-radius: 5px;
+  color: rgba(240,230,211,0.9);
+  background: rgba(8,4,0,0.24);
+  font-size: 11px;
+  line-height: 1.25;
+  text-align: center;
+}
 #welcome-body .welcome-kicker {
   font-family: 'Cinzel', serif;
   font-size: 13px;
@@ -767,6 +871,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   line-height: 1.5;
   position: relative;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 /* Subtle pulse on the banner background so it doesn't fade into the panel. */
@@ -898,29 +1003,6 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   font-size: 12px;
 }
 
-/* ── QUESTS-ONLY filter swatch + badge ── */
-.swatch-quest {
-  background: var(--quest-photo);
-  box-shadow: 0 0 8px rgba(224,122,58,0.7);
-}
-#quest-count-badge {
-  display: inline-block;
-  min-width: 16px;
-  margin-left: 4px;
-  padding: 0 5px;
-  background: var(--quest-photo);
-  color: var(--ink);
-  border-radius: 8px;
-  font-size: 9px;
-  font-weight: 700;
-  font-family: 'Inter', sans-serif;
-  text-align: center;
-}
-#bottom-controls .ctrl-btn#btn-quests.active {
-  border-color: var(--quest-photo);
-  color: var(--quest-photo);
-}
-
 #panel-close {
   position: absolute;
   top: 11px; right: 11px;
@@ -1001,6 +1083,27 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 
 /* "Places along this stretch" — roads↔sites bridge on road-segment panels. */
 #segment-nearby { display: none; margin-bottom: 18px; }
+.seg-evidence-row {
+  display: grid;
+  grid-template-columns: 108px minmax(0, 1fr);
+  gap: 10px;
+  padding: 7px 0;
+  border-top: 1px solid rgba(212,168,83,0.1);
+  font-size: 11.5px;
+  line-height: 1.35;
+}
+.seg-evidence-row:first-child { border-top: none; padding-top: 0; }
+.seg-evidence-row span {
+  font-family: 'Cinzel', serif;
+  color: rgba(212,168,83,0.68);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 9px;
+}
+.seg-evidence-row strong {
+  color: var(--text-body);
+  font-weight: 400;
+}
 .seg-near-label {
   font-family: 'Cinzel', serif;
   font-size: 10px;
@@ -1205,11 +1308,29 @@ path.leaflet-interactive { outline: none !important; }
   #app-subtitle   { display: none; }
   #topbar-right   { gap: 6px; }
 
-  .era-btn { padding: 7px 11px; font-size: 9px; letter-spacing: 1.5px; }
+  #era-toggle {
+    height: 44px;
+    min-height: 44px;
+    padding: 4px;
+  }
+  .era-btn {
+    height: 44px;
+    min-height: 44px;
+    padding: 0 11px;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+  }
 
   /* Collapse the profile pill to icon-only on mobile — keeps the affordance
      present without crowding the era toggle. */
-  #profile-pill        { padding: 5px; gap: 0; }
+  #profile-pill        {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    justify-content: center;
+    gap: 0;
+  }
+  #profile-pill-glyph  { width: 24px; height: 24px; }
   #profile-pill-label  { display: none; }
 
   /* Layer toggles → a compact horizontal row of icon chips. The stacked,
@@ -1234,19 +1355,19 @@ path.leaflet-interactive { outline: none !important; }
   .ctrl-btn .swatch-dot,
   .ctrl-label { display: none; }
   .ctrl-icon { display: block; font-size: 19px; line-height: 1; }
-  /* Quest-count badge → small corner pill on the ⭐ chip. */
-  #quest-count-badge {
-    position: absolute;
-    top: -5px; right: -5px;
-    min-width: 16px;
-    padding: 1px 4px;
+  .detail-control {
+    width: 170px;
+    padding: 7px 10px 8px;
+    border-radius: 11px;
+  }
+  .detail-head {
+    font-size: 8px;
+    letter-spacing: 1.2px;
+  }
+  #detail-readout {
     font-size: 9px;
-    line-height: 14px;
-    text-align: center;
-    border-radius: 8px;
-    background: var(--gold);
-    color: #1a0e00;
-    font-family: 'Cinzel', serif;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   /* Legend collapses behind the FAB. Hidden until the chip toggles it open,
@@ -1273,6 +1394,53 @@ path.leaflet-interactive { outline: none !important; }
   }
   #legend-fab[aria-expanded="true"] { background: var(--gold); color: #1a0e00; }
   #legend-fab svg { display: block; }
+
+  #mobile-guide {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: 76px;
+    z-index: 902;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 12px 12px 14px;
+    background: rgba(8,4,0,0.94);
+    border: 1px solid rgba(212,168,83,0.5);
+    border-radius: 9px;
+    box-shadow: 0 12px 34px rgba(0,0,0,0.45);
+    transition: opacity 0.22s, transform 0.22s;
+  }
+  #mobile-guide.hidden {
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+  }
+  #mobile-guide-title {
+    font-family: 'Cinzel', serif;
+    color: var(--gold);
+    font-size: 11px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  #mobile-guide-body {
+    color: rgba(240,230,211,0.9);
+    font-size: 12.5px;
+    line-height: 1.42;
+  }
+  #mobile-guide-close {
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    border: 1px solid rgba(212,168,83,0.22);
+    border-radius: 50%;
+    background: rgba(212,168,83,0.07);
+    color: rgba(212,168,83,0.75);
+    font-size: 17px;
+    line-height: 1;
+    cursor: pointer;
+  }
 
   #quest-legend {
     display: none;
@@ -1302,7 +1470,7 @@ path.leaflet-interactive { outline: none !important; }
     right: 0;
     left: 0;
     width: 100%;
-    height: 90dvh;
+    height: 84dvh;
     border-left: none;
     border-top: 1px solid var(--border);
     border-radius: 16px 16px 0 0;
@@ -1312,10 +1480,88 @@ path.leaflet-interactive { outline: none !important; }
 
   #info-panel.open { transform: translateY(0); right: 0; }
 
-  #panel-hero { height: 120px; }
-  #hero-icon  { font-size: 26px; }
+  #panel-hero { height: 82px; }
+  #hero-inner { padding: 0 58px 0 22px; text-align: left; width: 100%; }
+  #hero-icon  { display: none; }
+  #hero-coords { font-size: 9px; letter-spacing: 1.6px; color: rgba(212,168,83,0.62); }
+  #hero-modern { font-size: 11px; color: rgba(240,230,211,0.55); }
+  #hero-credit {
+    left: 14px;
+    right: 54px;
+    bottom: 7px;
+    font-size: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-  #panel-name { font-size: 22px; }
+  #panel-quest-banner {
+    gap: 10px;
+    padding: 10px 14px 12px;
+    line-height: 1.35;
+    align-items: flex-start;
+  }
+  .quest-banner-icon { font-size: 20px; }
+  .quest-banner-title { font-size: 9px; letter-spacing: 1.9px; }
+  .quest-banner-text {
+    font-size: 11.5px;
+    margin-bottom: 7px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    max-height: 32px;
+    overflow: hidden;
+  }
+  .quest-banner-cta {
+    padding: 6px 10px;
+    font-size: 9px;
+    letter-spacing: 1.4px;
+  }
+
+  #panel-body { padding: 16px 20px 34px; }
+  .p-badge { margin-bottom: 7px; }
+  #panel-name { font-size: 24px; margin-bottom: 4px; }
+  #panel-modern-name { margin-bottom: 12px; }
+  .p-rule { margin: 12px 0; }
+  #panel-period { margin-bottom: 11px; }
+  #panel-desc {
+    line-height: 1.55;
+    margin-bottom: 14px;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  #checkin-row {
+    margin: 0 0 14px;
+    padding: 12px;
+    border: 1px solid rgba(212,168,83,0.18);
+    border-radius: 8px;
+    background: rgba(212,168,83,0.045);
+  }
+  #checkin-stats { line-height: 1.35; }
+  #checkin-btn { padding: 11px; }
+
+  #info-panel.segment-panel #panel-hero { height: 66px; }
+  #info-panel.segment-panel #panel-name { font-size: 23px; }
+  #info-panel.segment-panel #panel-modern-name { margin-bottom: 10px; }
+  #info-panel.segment-panel #panel-period { margin-bottom: 9px; }
+  #info-panel.segment-panel #panel-desc {
+    -webkit-line-clamp: 3;
+    margin-bottom: 12px;
+  }
+  #info-panel.segment-panel #segment-evidence {
+    margin-bottom: 14px;
+    padding: 10px 12px;
+    border: 1px solid rgba(212,168,83,0.16);
+    border-radius: 8px;
+    background: rgba(212,168,83,0.04);
+  }
+  #info-panel.segment-panel .seg-evidence-row {
+    grid-template-columns: 1fr;
+    gap: 3px;
+    padding: 7px 0;
+  }
 
   /* Drag handle for bottom sheet */
   #info-panel::before {

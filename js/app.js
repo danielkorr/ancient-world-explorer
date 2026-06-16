@@ -579,6 +579,15 @@ if (COARSE_POINTER) {
     roadsGroup.eachLayer(l => { if (l.closeTooltip) l.closeTooltip(); });  // one at a time
     let ll; try { ll = map.mouseEventToLatLng(t); } catch (_) {}
     road.openTooltip(ll);
+    // Parity with desktop: a road tap must ALSO open the segment sidebar. On
+    // desktop the map-level 'click' drives showSegmentPanel, but the
+    // preventDefault above suppresses the synthesized click on iOS — so the
+    // panel never opened on mobile (curated-road taps only). Resolve the
+    // nearest Itiner-e segment ourselves and open it here.
+    if (ll) {
+      const seg = findNearestItinere(ll, map.latLngToContainerPoint(ll));
+      if (seg) showSegmentPanel(seg.meta, seg.ll);
+    }
   }, { passive: false });
 }
 

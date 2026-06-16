@@ -28,8 +28,12 @@ clients; we curate via the Supabase dashboard.
 **Realtime:** `checkins` is added to the `supabase_realtime` publication so the
 client can subscribe to live "X just checked in at Y" events.
 
-**PostGIS:** enabled at the bottom of `0001_init.sql`. Not used yet; Stage 2's
-"near me" will use `ST_DWithin(ST_MakePoint(lng,lat), <user>, 5000)`.
+**PostGIS:** intentionally NOT enabled (see the EXTENSIONS note in
+`0001_init.sql`). It creates `public.spatial_ref_sys`, which trips the Supabase
+security advisor's `rls_disabled_in_public` check, and the "near me" feature
+isn't built yet. When Stage 2's "near me" lands, enable it in the `extensions`
+schema (`create extension postgis with schema extensions;`) and call
+`extensions.ST_DWithin(ST_MakePoint(lng,lat), <user>, 5000)`.
 
 ## One-time setup
 

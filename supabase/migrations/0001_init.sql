@@ -14,7 +14,17 @@
 -- ── EXTENSIONS ───────────────────────────────────────────
 
 create extension if not exists "pgcrypto";    -- gen_random_uuid
-create extension if not exists "postgis";     -- ST_DWithin for "near me"
+
+-- PostGIS is intentionally NOT enabled here. It was originally added for a
+-- future "near me" feature (ST_DWithin), but enabling it creates the
+-- public.spatial_ref_sys reference table, which the Supabase security advisor
+-- flags as rls_disabled_in_public (you can't enable RLS on it — the extension
+-- owns it). It holds no user data, but the warning is noise and the feature is
+-- not built yet. When "near me" lands, enable PostGIS OUTSIDE the public schema
+-- so it never trips the advisor:
+--     create extension if not exists postgis with schema extensions;
+-- and reference functions as extensions.ST_DWithin(...). To clear the warning on
+-- an already-provisioned project: `drop extension if exists postgis;`
 
 -- ── PROFILES ─────────────────────────────────────────────
 -- Public profile keyed to the Supabase auth user. The auth.users table is

@@ -837,14 +837,38 @@ function showSegmentPanel(meta, latlngs) {
     activeMarker = null;
   }
 
-  // Hero — tinted gradient (clear any vici photo background left by a site panel).
+  // Hero. Roads have no imagery of their own, but a site along the stretch often
+  // does — borrow the nearest such vici photo so the road panel is as rich as a
+  // site panel. Honestly captioned ("<site> · © creator …") so it never reads as
+  // a photo OF the road. Falls back to the tinted gradient + 🛣️ when no nearby
+  // site has a photo.
   const hero = document.getElementById('panel-hero');
-  hero.style.background = `radial-gradient(ellipse at center, ${col}18 0%, #110a00 70%)`;
   const heroIcon = document.getElementById('hero-icon');
-  heroIcon.style.opacity = '';
   heroIcon.textContent = '🛣️';
-  const heroCredit = document.getElementById('hero-credit');
-  if (heroCredit) heroCredit.style.display = 'none';
+  let heroCredit = document.getElementById('hero-credit');
+  if (!heroCredit) {
+    heroCredit = document.createElement('div');
+    heroCredit.id = 'hero-credit';
+    hero.appendChild(heroCredit);
+  }
+  let heroPhoto = null;
+  if (latlngs) {
+    const cands = nearestSitesToSegment(latlngs, 80, 12);
+    heroPhoto = cands.find(x => x.site && x.site.vici && x.site.vici.image) || null;
+  }
+  if (heroPhoto) {
+    const v = heroPhoto.site.vici;
+    hero.style.background =
+      `linear-gradient(180deg, rgba(17,10,0,0.05) 0%, rgba(17,10,0,0.88) 100%), url("${v.image}") center/cover no-repeat`;
+    heroIcon.style.opacity = '0';
+    const by = v.creator ? `© ${v.creator}` : 'vici.org';
+    heroCredit.textContent = `${heroPhoto.site.name} · ${by}${v.license ? ' · ' + v.license : ''} · via vici.org`;
+    heroCredit.style.display = '';
+  } else {
+    hero.style.background = `radial-gradient(ellipse at center, ${col}18 0%, #110a00 70%)`;
+    heroIcon.style.opacity = '';
+    heroCredit.style.display = 'none';
+  }
   document.getElementById('hero-coords').textContent = (meta && meta.name) ? meta.name : 'Roman road';
   document.getElementById('hero-modern').textContent = (meta && meta.main) ? 'Main road · Itiner-e' : 'Secondary road · Itiner-e';
 
@@ -1527,6 +1551,25 @@ function showQuestsToast() {
 
 // Build + open the "?" explainer. Lists only tiers that have sites, with the
 // matching shape swatch so the colorblind shape key is reinforced here too.
+// Mobile: collapse/expand the quest legend behind the FAB (desktop ignores
+// this — the legend is always shown there). Tap-away closes it.
+function toggleLegend() {
+  const lg = document.getElementById('quest-legend');
+  if (!lg) return;
+  const open = lg.classList.toggle('mobile-open');
+  const fab = document.getElementById('legend-fab');
+  if (fab) fab.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+document.addEventListener('click', (e) => {
+  const lg = document.getElementById('quest-legend');
+  if (!lg || !lg.classList.contains('mobile-open')) return;
+  // Stay open when tapping inside the legend (filtering) or the FAB itself.
+  if (lg.contains(e.target) || (e.target.closest && e.target.closest('#legend-fab'))) return;
+  lg.classList.remove('mobile-open');
+  const fab = document.getElementById('legend-fab');
+  if (fab) fab.setAttribute('aria-expanded', 'false');
+}, true);
+
 function openLegendInfo() {
   const list = document.getElementById('legend-info-list');
   if (!list) return;

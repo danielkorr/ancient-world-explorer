@@ -20,7 +20,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=34">
+  <link rel="stylesheet" href="css/style.css?v=35">
 </head>
 <body>
 
@@ -129,13 +129,13 @@
 <!-- Bottom Controls -->
 <div id="bottom-controls">
   <button class="ctrl-btn active" id="btn-roads" onclick="toggleLayer('roads')">
-    <div class="swatch-line"></div>Roman Roads
+    <span class="ctrl-icon" aria-hidden="true">🛣️</span><div class="swatch-line"></div><span class="ctrl-label">Roman Roads</span>
   </button>
   <button class="ctrl-btn active" id="btn-sites" onclick="toggleLayer('sites')">
-    <div class="swatch-dot"></div>Sites &amp; Cities
+    <span class="ctrl-icon" aria-hidden="true">🏛️</span><div class="swatch-dot"></div><span class="ctrl-label">Sites &amp; Cities</span>
   </button>
   <button class="ctrl-btn" id="btn-quests" onclick="toggleQuestsOnly()">
-    <div class="swatch-dot swatch-quest"></div>Quests Only <span id="quest-count-badge"></span>
+    <span class="ctrl-icon" aria-hidden="true">⭐</span><div class="swatch-dot swatch-quest"></div><span class="ctrl-label">Quests Only</span> <span id="quest-count-badge"></span>
   </button>
 </div>
 
@@ -158,6 +158,13 @@
   <div class="legend-row" data-cert="j" role="button" tabindex="0" onclick="toggleCert('j')"><div class="legend-line dashed"></div>Conjectured</div>
   <div class="legend-row" data-cert="h" role="button" tabindex="0" onclick="toggleCert('h')"><div class="legend-line dotted"></div>Hypothetical</div>
 </div>
+
+<!-- Mobile-only: collapses the legend behind a chip so it stops eating the map.
+     Hidden on desktop (where the legend is always open). -->
+<button id="legend-fab" onclick="toggleLegend()" aria-label="Legend &amp; filters" aria-expanded="false">
+  <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M3 5h18l-7 8.2V21l-4-2.2v-5.6z" fill="currentColor"/></svg>
+  <span class="legend-fab-label">Key</span>
+</button>
 
 <!-- Legend term toast (slides up when a tier is selected) -->
 <div id="legend-toast" aria-live="polite">
@@ -236,15 +243,15 @@
 
 <!-- Data + App. ?v= must match the value on css/style.css above — bump both
      together each deploy to force fresh assets past the cache. -->
-<script src="js/config.js?v=34"></script>
-<script src="js/orbis-days.js?v=34"></script>
-<script src="js/sites-pleiades.js?v=34"></script>
-<script src="js/sites-vici.js?v=34"></script>
-<script src="js/vici-links.js?v=34"></script>
-<script src="js/roads-itinere.js?v=34"></script>
-<script src="js/data.js?v=34"></script>
-<script src="js/auth.js?v=34"></script>
-<script src="js/app.js?v=34"></script>
+<script src="js/config.js?v=35"></script>
+<script src="js/orbis-days.js?v=35"></script>
+<script src="js/sites-pleiades.js?v=35"></script>
+<script src="js/sites-vici.js?v=35"></script>
+<script src="js/vici-links.js?v=35"></script>
+<script src="js/roads-itinere.js?v=35"></script>
+<script src="js/data.js?v=35"></script>
+<script src="js/auth.js?v=35"></script>
+<script src="js/app.js?v=35"></script>
 
 </body>
 </html>

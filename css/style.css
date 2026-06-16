@@ -416,6 +416,12 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   flex-shrink: 0;
 }
 
+/* Mobile-only affordances — hidden on desktop, switched on in the ≤640px query.
+   The icon glyphs replace the swatch+label on the compact chips; the FAB collapses
+   the legend. */
+.ctrl-icon { display: none; }
+#legend-fab { display: none; }
+
 /* ── QUEST LEGEND ── */
 #quest-legend {
   position: fixed;
@@ -1206,20 +1212,80 @@ path.leaflet-interactive { outline: none !important; }
   #profile-pill        { padding: 5px; gap: 0; }
   #profile-pill-label  { display: none; }
 
-  #bottom-controls { bottom: 20px; left: 12px; gap: 7px; }
-  .ctrl-btn { padding: 9px 13px; font-size: 11px; }
-
-  /* Legend stays visible on mobile (it's the key to the quest colors, which
-     matter most to travelers in the field). Kept readable — high contrast,
-     not shrunk into illegibility. */
-  #quest-legend {
-    bottom: 20px;
-    right: 12px;
-    padding: 10px 12px;
-    gap: 6px;
+  /* Layer toggles → a compact horizontal row of icon chips. The stacked,
+     full-width labeled buttons ate the bottom-left; on a phone the glyph alone
+     (🛣️/🏛️/⭐) carries the meaning and the gold border shows on/off state.
+     Shape-distinct glyphs, NOT swatch color — the user is red-green colorblind. */
+  #bottom-controls {
+    flex-direction: row;
+    bottom: 18px;
+    left: 12px;
+    gap: 8px;
   }
+  .ctrl-btn {
+    position: relative;
+    padding: 0;
+    width: 46px;
+    height: 46px;
+    justify-content: center;
+    border-radius: 11px;
+  }
+  .ctrl-btn .swatch-line,
+  .ctrl-btn .swatch-dot,
+  .ctrl-label { display: none; }
+  .ctrl-icon { display: block; font-size: 19px; line-height: 1; }
+  /* Quest-count badge → small corner pill on the ⭐ chip. */
+  #quest-count-badge {
+    position: absolute;
+    top: -5px; right: -5px;
+    min-width: 16px;
+    padding: 1px 4px;
+    font-size: 9px;
+    line-height: 14px;
+    text-align: center;
+    border-radius: 8px;
+    background: var(--gold);
+    color: #1a0e00;
+    font-family: 'Cinzel', serif;
+  }
+
+  /* Legend collapses behind the FAB. Hidden until the chip toggles it open,
+     then it floats above the FAB as a scrollable sheet. */
+  #legend-fab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    position: fixed;
+    bottom: 18px;
+    right: 12px;
+    z-index: 901;
+    height: 46px;
+    padding: 0 15px;
+    background: rgba(8,4,0,0.96);
+    border: 1px solid var(--gold);
+    border-radius: 11px;
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  #legend-fab[aria-expanded="true"] { background: var(--gold); color: #1a0e00; }
+  #legend-fab svg { display: block; }
+
+  #quest-legend {
+    display: none;
+    bottom: 74px;
+    right: 12px;
+    padding: 11px 13px;
+    gap: 6px;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  #quest-legend.mobile-open { display: flex; }
   .legend-hint { font-size: 8px; }
-  .legend-row { font-size: 10px; letter-spacing: 0.5px; }
+  .legend-row { font-size: 11px; letter-spacing: 0.5px; padding: 2px 0; }
   .legend-dot { width: 9px; height: 9px; }
   .legend-count { font-size: 9px; padding-left: 10px; }
 

@@ -175,7 +175,13 @@ function raiseOverlays() {
     map.removeLayer(itinereRoadsGroup); map.addLayer(itinereRoadsGroup);
   }
   if (map.hasLayer(roadsGroup)) { map.removeLayer(roadsGroup); map.addLayer(roadsGroup); }
-  if (map.hasLayer(sitesGroup)) { map.removeLayer(sitesGroup); map.addLayer(sitesGroup); }
+  // Sites now live in per-tier cluster groups (siteClusters); raise each so they
+  // stay above any tile layer just slid underneath on an era swap.
+  if (typeof siteClusters !== 'undefined') {
+    for (const k of TIER_KINDS) {
+      if (map.hasLayer(siteClusters[k])) { map.removeLayer(siteClusters[k]); map.addLayer(siteClusters[k]); }
+    }
+  }
 }
 
 // ── ROADS ────────────────────────────────────────────────
@@ -482,7 +488,44 @@ function makeIcon(site, hovered) {
   });
 }
 
-const sitesGroup   = L.layerGroup().addTo(map);
+// Site markers live in per-tier MARKER CLUSTER groups so dense regions collapse
+// into a numbered bubble instead of an un-tappable pile (the mobile clumping
+// problem). One group PER TIER (documented / photo / location / text) so counts
+// never mix: a "12" photo-quest bubble is a contribute prompt, a "30" sites
+// bubble is a browse prompt. Groups stay permanently on the map; we only mutate
+// their contents (the mobile-safe pattern) — disclosure + KEY filter add/remove
+// markers from these groups, never toggle group membership.
+const TIER_KINDS    = ['documented', 'photo', 'location', 'text'];
+const CLUSTER_COLOR = {
+  documented: '#b89a6a',
+  photo:      QUEST.photo.color,
+  location:   QUEST.location.color,
+  text:       QUEST.text.color,
+};
+function clusterOpts(kind) {
+  return {
+    maxClusterRadius: 56,             // px; aggressive enough to clear small screens
+    spiderfyOnMaxZoom: true,          // fan out the last few coincident sites
+    showCoverageOnHover: false,       // no hover on touch; avoids stray polygons
+    zoomToBoundsOnClick: true,        // desktop: tap a cluster -> zoom to members
+    chunkedLoading: true,             // don't stall the main thread on the dense set
+    spiderfyDistanceMultiplier: 1.6,  // wider fan for fat-finger taps
+    iconCreateFunction: cluster => L.divIcon({
+      html: `<div class="via-cluster via-cluster--${kind}">${cluster.getChildCount()}</div>`,
+      className: 'via-cluster-wrap',
+      iconSize: L.point(44, 44),      // 44px floor = mobile touch target
+    }),
+  };
+}
+const siteClusters = {};
+TIER_KINDS.forEach(k => { siteClusters[k] = L.markerClusterGroup(clusterOpts(k)); map.addLayer(siteClusters[k]); });
+
+// Master marker lists. allMarkers = every marker (icon-refresh, touch lookup);
+// markersByTier = the source-of-truth per category so filters are pure
+// add/remove into the clusters, never a rebuild-from-scratch.
+const markersByTier = { documented: [], photo: [], location: [], text: [] };
+const allMarkers    = [];
+
 let   activeMarker = null;
 
 // Curated sites are the ~95 hand-written entries in SITES_CURATED. The global
@@ -522,7 +565,9 @@ SITES.forEach(site => {
     showPanel(this._site);
   });
 
-  sitesGroup.addLayer(marker);
+  const tier = site.quest || 'documented';
+  (markersByTier[tier] || markersByTier.documented).push(marker);
+  allMarkers.push(marker);
 });
 
 // iOS Safari does NOT synthesize a `click` from a tap on a Leaflet divIcon — the
@@ -545,8 +590,19 @@ if (COARSE_POINTER) {
     if (_tStart && t && (Math.abs(t.clientX - _tStart.x) > 12 || Math.abs(t.clientY - _tStart.y) > 12)) return;
     const iconEl = e.target.closest && e.target.closest('.leaflet-marker-icon');
     if (!iconEl) return;
+    // A cluster bubble: drill in toward it. markercluster's zoomToBoundsOnClick
+    // relies on a click iOS never synthesizes, so we zoom ourselves — repeated
+    // taps split the cluster and eventually spiderfy the last coincident sites.
+    if (iconEl.querySelector && iconEl.querySelector('.via-cluster')) {
+      e.preventDefault();
+      let ll; try { ll = map.mouseEventToLatLng(t); } catch (_) {}
+      if (ll) map.setView(ll, Math.min(map.getZoom() + 2, map.getMaxZoom()), { animate: true });
+      return;
+    }
+    // An individual marker (rendered un-clustered): open its panel. Markers live
+    // in cluster groups now, so match against the master list, not a single group.
     let hit = null;
-    sitesGroup.eachLayer(m => { if (m._icon === iconEl) hit = m; });
+    for (const m of allMarkers) { if (m._icon === iconEl) { hit = m; break; } }
     if (!hit) return;
     e.preventDefault();   // suppress any late synthesized click → no double-open
     if (activeMarker && activeMarker !== hit) {
@@ -1311,7 +1367,7 @@ function onCheckInClick() {
 // Refresh marker icons after sign-in / check-in changes so the visited
 // badge appears/disappears live.
 function refreshAllMarkers() {
-  sitesGroup.eachLayer(m => m.setIcon(makeIcon(m._site, m === activeMarker)));
+  allMarkers.forEach(m => m.setIcon(makeIcon(m._site, m === activeMarker)));
 }
 
 let _lastAuthUserId = null;
@@ -1430,8 +1486,7 @@ async function shareRoadSegment() {
 // filter is active, and an explicit tier filter when the user taps legend rows.
 // A single Set of active tiers drives the legend, so the filter state stays
 // consistent even as the map detail slider changes the visible zoom stage.
-const allMarkers = [];
-sitesGroup.eachLayer(m => allMarkers.push(m));
+// (allMarkers + markersByTier are populated in the marker build loop above.)
 
 const QUEST_TIERS  = ['photo', 'location', 'text'];
 const activeTiers  = new Set();              // empty = no filter (zoom disclosure)
@@ -1483,31 +1538,35 @@ const TIER_INFO = {
   },
 };
 
-// Zoom-staged reveal. The landing (z<=5) shows only the ~95 curated sites +
-// nothing else — clean, legible, an empire of great cities rather than 473
-// dots of orange measles. z6 adds the quests (the actionable game layer).
-// z>=7, where DARE itself becomes readable, reveals the full Pleiades set.
-function siteVisibleAtZoom(site, z) {
-  if (z >= 7) return true;
-  if (z >= 6) return CURATED_SET.has(site) || !!site.quest;
+// Content disclosure is now driven by the DETAIL slider, not zoom — clustering
+// carries the density load, so we no longer thin markers by zoom. Three levels:
+//   0 Curated      — the ~95 hand-written cities (clean landing, the default).
+//   1 Quest detail — curated + every quest (the actionable game layer).
+//   2 Full detail  — the entire Pleiades set.
+// Markers always cluster, so even level 2 reads as a handful of bubbles, not
+// 473 dots of orange measles.
+let detailLevel = 0;
+
+function siteVisibleAtLevel(site, level) {
+  if (level >= 2) return true;
+  if (level >= 1) return CURATED_SET.has(site) || !!site.quest;
   return CURATED_SET.has(site);
 }
 
 function refreshVisibleMarkers() {
-  sitesGroup.clearLayers();
-  if (!layerState.sites) return;   // sites hidden: the group stays on the map but empty
-  const z = map.getZoom();
+  TIER_KINDS.forEach(k => siteClusters[k].clearLayers());
+  if (!layerState.sites) return;   // sites hidden: groups stay on the map but empty
   const filtering = activeTiers.size > 0;
-  for (const m of allMarkers) {
-    // An explicit tier filter shows every matching site regardless of zoom —
-    // tapping a tier is an intent to see all of them. With no filter, fall
-    // back to the zoom-staged reveal.
-    if (filtering) {
-      if (activeTiers.has(siteTier(m._site))) sitesGroup.addLayer(m);
-    } else if (siteVisibleAtZoom(m._site, z)) {
-      sitesGroup.addLayer(m);
-    }
-  }
+  TIER_KINDS.forEach(tier => {
+    // An explicit tier filter shows EVERY site of that tier (intent to see all);
+    // other tiers are dropped. With no filter, the detail level governs which
+    // sites populate the clusters. Bulk addLayers keeps chunkedLoading happy.
+    if (filtering && !activeTiers.has(tier)) return;
+    const subset = filtering
+      ? markersByTier[tier]
+      : markersByTier[tier].filter(m => siteVisibleAtLevel(m._site, detailLevel));
+    if (subset.length) siteClusters[tier].addLayers(subset);
+  });
 }
 
 // Reflect the active tier set onto the legend rows (and dim the rest).
@@ -1521,37 +1580,33 @@ function syncFilterUI() {
   }
 }
 
-const DETAIL_ZOOMS = [5, 6, 7];
 const DETAIL_LABELS = ['Curated', 'Quest detail', 'Full detail'];
 
-function detailLevelForZoom(z) {
-  if (z >= 7) return 2;
-  if (z >= 6) return 1;
-  return 0;
-}
-
 function detailStatsForLevel(level) {
-  const idx = Math.max(0, Math.min(DETAIL_ZOOMS.length - 1, level));
-  const z = DETAIL_ZOOMS[idx];
-  const questCount = SITES.filter(s => !!s.quest && siteVisibleAtZoom(s, z)).length;
-  const siteCount = SITES.filter(s => siteVisibleAtZoom(s, z)).length;
-  return { level: idx, zoom: z, label: DETAIL_LABELS[idx], questCount, siteCount };
+  const idx = Math.max(0, Math.min(DETAIL_LABELS.length - 1, level));
+  const questCount = SITES.filter(s => !!s.quest && siteVisibleAtLevel(s, idx)).length;
+  const siteCount  = SITES.filter(s => siteVisibleAtLevel(s, idx)).length;
+  return { level: idx, label: DETAIL_LABELS[idx], questCount, siteCount };
 }
 
 function syncDetailUI() {
   const slider = document.getElementById('detail-slider');
   const readout = document.getElementById('detail-readout');
   if (!slider || !readout) return;
-  const stats = detailStatsForLevel(detailLevelForZoom(map.getZoom()));
+  const stats = detailStatsForLevel(detailLevel);
   if (document.activeElement !== slider) slider.value = String(stats.level);
   slider.setAttribute('aria-valuenow', String(stats.level));
   slider.setAttribute('aria-valuetext', `${stats.label}, ${stats.questCount.toLocaleString()} quests visible`);
   readout.textContent = `${stats.label} · ${stats.questCount.toLocaleString()} quests`;
 }
 
+// The slider sets WHAT is shown (curated / +quests / all), not the zoom.
+// Clustering handles density, so this is a pure content filter into the groups.
 function setDetailLevel(level) {
-  const stats = detailStatsForLevel(level);
-  map.setZoom(stats.zoom, { animate: true });
+  detailLevel = Math.max(0, Math.min(DETAIL_LABELS.length - 1, level));
+  if (detailLevel > 0) ensureSitesLayerOn();   // revealing more turns sites on
+  refreshVisibleMarkers();
+  syncDetailUI();
 }
 
 function bindDetailSlider() {
@@ -1678,10 +1733,9 @@ function updateAncientLayer() {
 
 map.on('zoomend', () => {
   updateAncientLayer();
-  // Zoom only changes the visible set under the disclosure rule; an explicit
-  // tier filter already shows all matches, so there's nothing to recompute.
-  if (activeTiers.size === 0) refreshVisibleMarkers();
-  syncDetailUI();
+  // Marker visibility is now governed by the DETAIL slider, not zoom, and
+  // markercluster re-clusters on zoom by itself — so there's nothing to
+  // recompute here beyond the ancient-tile opacity.
 });
 
 // Prime at boot (zoom 5, ancient era): sepia landing + curated sites only.

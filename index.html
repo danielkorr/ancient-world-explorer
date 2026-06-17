@@ -16,12 +16,18 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+  <!-- Leaflet.markercluster (pinned). CDN to match how Leaflet itself loads
+       here; must come AFTER leaflet.js and before app.js (it's at body end). -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
   <!-- Supabase client (loaded as global; we wire it in js/auth.js) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4"></script>
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=48">
+  <link rel="stylesheet" href="css/style.css?v=49">
 </head>
 <body>
 
@@ -266,15 +272,15 @@
 
 <!-- Data + App. ?v= must match the value on css/style.css above — bump both
      together each deploy to force fresh assets past the cache. -->
-<script src="js/config.js?v=48"></script>
-<script src="js/orbis-days.js?v=48"></script>
-<script src="js/sites-pleiades.js?v=48"></script>
-<script src="js/sites-vici.js?v=48"></script>
-<script src="js/vici-links.js?v=48"></script>
-<script src="js/roads-itinere.js?v=48"></script>
-<script src="js/data.js?v=48"></script>
-<script src="js/auth.js?v=48"></script>
-<script src="js/app.js?v=48"></script>
+<script src="js/config.js?v=49"></script>
+<script src="js/orbis-days.js?v=49"></script>
+<script src="js/sites-pleiades.js?v=49"></script>
+<script src="js/sites-vici.js?v=49"></script>
+<script src="js/vici-links.js?v=49"></script>
+<script src="js/roads-itinere.js?v=49"></script>
+<script src="js/data.js?v=49"></script>
+<script src="js/auth.js?v=49"></script>
+<script src="js/app.js?v=49"></script>
 
 </body>
 </html>

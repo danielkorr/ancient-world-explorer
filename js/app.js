@@ -704,6 +704,10 @@ if (COARSE_POINTER) {
 
 // ── INFO PANEL ───────────────────────────────────────────
 
+// One-line "what is VIA" pitch appended to the quest emails — most recipients
+// have never heard of VIA, so the email doubles as a recruit. Kept to a sentence.
+const VIA_BLURB = "What's VIA? It overlays the ancient Roman world on today's map and turns the gaps in the scholarly record — places missing a photo or a verified location — into quests anyone can help close.";
+
 // vici hero photos are stored at cover/w1600xh1600 — a 1600px image for a hero
 // strip ~360px wide, which is why the photo crawled in. Rewrite the transform to
 // a right-sized image, and blur up: paint a tiny placeholder instantly (decodes
@@ -852,8 +856,8 @@ function showPanel(site) {
     const eLabel = quest.label.replace(' · Open', '');
     const eWhere = site.modern ? `${site.name} (${site.modern})` : site.name;
     const eUrl   = `https://danielkorr.github.io/ancient-world-explorer/?site=${site.pleiades}`;
-    const eSubj  = `VIA quest: ${site.name}`;
-    const eBody  = `${eLabel}: ${eWhere}.\n\n${quest.text} Be the traveler who closes the gap.\n\nExplore it on VIA:\n${eUrl}\n\n#VIAquest`;
+    const eSubj  = `A VIA quest: help document ${site.name} (${eLabel})`;
+    const eBody  = `${eLabel}: ${eWhere}.\n\n${quest.text} Be the traveler who closes the gap.\n\nExplore it on VIA:\n${eUrl}\n\n${VIA_BLURB}\n\n#VIAquest`;
     emailBtn = `
     <a href="${questMailto(eSubj, eBody)}" class="p-btn p-btn-email">
       <span class="p-btn-icon">✉️</span>
@@ -1166,8 +1170,8 @@ function showSegmentPanel(meta, latlngs) {
   if (cert === 'j' || cert === 'h') {
     const eName = (meta && meta.name) ? meta.name : 'a Roman road';
     const eUrl  = 'https://danielkorr.github.io/ancient-world-explorer/';
-    const eSubj = `VIA road quest: ${eName}`;
-    const eBody = `${ci.label} Roman road: ${eName}.\n\nThis stretch of the ancient road network isn't field-verified. Walking or photographing it can help confirm the alignment.\n\nExplore it on VIA:\n${eUrl}\n\n#VIAquest`;
+    const eSubj = `A VIA quest: help verify the Roman road ${eName} (${ci.label.toLowerCase()})`;
+    const eBody = `${ci.label} Roman road: ${eName}.\n\nThis stretch of the ancient road network isn't field-verified. Walking or photographing it can help confirm the alignment.\n\nExplore it on VIA:\n${eUrl}\n\n${VIA_BLURB}\n\n#VIAquest`;
     emailBtn = `
     <a href="${questMailto(eSubj, eBody)}" class="p-btn p-btn-email">
       <span class="p-btn-icon">✉️</span>

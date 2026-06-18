@@ -1775,6 +1775,18 @@ function updateAncientLayer() {
   ancientLayer.setOpacity(ancientOpacityForZoom(map.getZoom()));
 }
 
+// Visible build stamp in the attribution line (bottom-right). Derived from
+// app.js's own ?v= token so it always matches the deployed asset version —
+// glance at it to know whether a browser is serving fresh code or a stale
+// cache. GitHub Pages won't let us send cache-control headers, so an on-screen
+// version is the most reliable "am I current?" check there is.
+const BUILD = (document.querySelector('script[src*="app.js"]')
+  ?.getAttribute('src')?.match(/v=(\d+)/) || [])[1] || '?';
+map.attributionControl.setPrefix(
+  'VIA ' + (BUILD !== '?' ? 'v' + BUILD : 'dev') +
+  ' · <a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>'
+);
+
 map.on('zoomend', () => {
   updateAncientLayer();
   // Marker visibility is now governed by the DETAIL slider, not zoom, and

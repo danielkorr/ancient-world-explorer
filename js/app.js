@@ -183,6 +183,12 @@ const satelliteLayer = L.tileLayer(
   }
 );
 
+// Expose the map handle for automated QA / browser tooling (and ad-hoc console
+// debugging). Harmless in production — read-only convenience, no behavior hangs
+// off it. window.VIA is the existing app namespace (see auth.js).
+window.VIA = window.VIA || {};
+window.VIA.map = map;
+
 let currentEra = 'ancient';
 
 // L.LayerGroup has no bringToFront. Re-add each group in stacking order

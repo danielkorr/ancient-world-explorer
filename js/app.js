@@ -166,18 +166,23 @@ const map = L.map('map', {
   maxZoom: 19,                 // satellite is sharp to z19 — allow the deep reveal
 });
 
-// Satellite imagery, revealed at deep zoom. Lives in its OWN pane beneath the
-// tile pane, so it always sits under the atlas/street maps; those fade out as
-// you zoom in (see updateBasemaps) and dissolve the map into real aerial
-// ground — the "spot the ruins" payoff. Roads + site markers stay on top
-// throughout for context. Esri World Imagery: free, no key, sharp to z19.
+// Satellite imagery, revealed at deep zoom. Lives in its OWN pane ABOVE the
+// tile pane (z200) but BELOW the overlay/marker panes (z400+), so it covers the
+// atlas/street maps but never the roads or site markers. It fades IN as you
+// zoom (see updateBasemaps), dissolving the map into real aerial ground — the
+// "spot the ruins" payoff. Critically, the street basemap stays at full opacity
+// underneath as a safety floor: if an Esri tile is missing/slow, you still see a
+// real map, never a blank void. Esri World Imagery: free, no key.
+// maxNativeZoom 18 (not 19) so the deepest step upscales from z18 tiles instead
+// of requesting z19 tiles Esri lacks in some areas (its opaque "Map data not yet
+// available" placeholder was the blank-ish deep zoom over rural sites).
 map.createPane('satellite');
-map.getPane('satellite').style.zIndex = 150;   // below the default tilePane (200)
+map.getPane('satellite').style.zIndex = 350;   // above tilePane (200), below overlayPane (400)
 const satelliteLayer = L.tileLayer(
   'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
   {
     pane: 'satellite',
-    maxNativeZoom: 19,
+    maxNativeZoom: 18,
     maxZoom: 19,
     attribution: 'Imagery © <a href="https://www.esri.com" target="_blank" rel="noopener">Esri</a>, Maxar, Earthstar Geographics',
   }
@@ -1786,36 +1791,44 @@ function decorateLegend() {
 // in, fade them out and let the satellite pane beneath show through — a fuzzy
 // deep zoom becomes sharp aerial ground. Roads + site markers stay on top.
 
-// DARE: sharp through z11, blurry past it. Reveal in low, fade fully out by z13
-// so its upscaled mush never lingers over the sharper layers underneath.
+// DARE: sharp through z11, blurry past it. Reveal in low, fade fully out by z12
+// once the satellite starts taking over on top so its upscaled mush never shows.
 function ancientOpacityForZoom(z) {
   if (z <= 5)  return 0;          // landing: clean terrain, atlas plate is noise
   if (z < 7)   return 0.5;        // resolving in
   if (z <= 11) return 1;          // full Roman atlas — DARE is sharp through z11
-  if (z >= 13) return 0;          // gone: hand off to base map / satellite
-  return 0.5;                     // z12: last readable (2x) atlas step
+  return 0;                       // z12+: satellite fades in on top, drop the mush
 }
 
-// Street basemaps (sepia fallback in ancient, Voyager in modern). Hold full to
-// z13, then dissolve to the satellite by z16.
-function baseOpacityForZoom(z) {
-  if (z <= 13) return 1;
-  if (z >= 16) return 0;
-  return (16 - z) / 3;            // z14→.67, z15→.33
+// Satellite reveal. Fades IN on its own pane (above the basemaps) as you zoom:
+// nothing at atlas/street zoom, blending in through the teens, pure aerial by
+// z14. The street basemap below stays full — so this is a clean dissolve TO
+// imagery, never a fade to nothing.
+function satOpacityForZoom(z) {
+  if (z <= 10) return 0;          // atlas / street era — no aerial yet
+  if (z >= 14) return 1;          // pure aerial ground
+  return (z - 10) / 4;            // z11→.25, z12→.5, z13→.75
 }
 
 function updateBasemaps() {
   const z = map.getZoom();
   // Satellite tiles are heavy — only mount the layer once it's about to be
-  // revealed (z12+), and drop it when zoomed back out.
-  if (z >= 12) { if (!map.hasLayer(satelliteLayer)) map.addLayer(satelliteLayer); }
-  else         { if (map.hasLayer(satelliteLayer))  map.removeLayer(satelliteLayer); }
+  // revealed (z11+), and drop it when zoomed back out.
+  const sat = satOpacityForZoom(z);
+  if (sat > 0) {
+    if (!map.hasLayer(satelliteLayer)) map.addLayer(satelliteLayer);
+    satelliteLayer.setOpacity(sat);
+  } else {
+    if (map.hasLayer(satelliteLayer)) map.removeLayer(satelliteLayer);
+  }
 
+  // Street basemap is the always-on floor (opacity 1). The ancient atlas rides
+  // above it and fades out by z12; the satellite covers both as it ramps in.
   if (currentEra === 'ancient') {
     ancientLayer.setOpacity(ancientOpacityForZoom(z));
-    ancientFallbackLayer.setOpacity(baseOpacityForZoom(z));
+    ancientFallbackLayer.setOpacity(1);
   } else {
-    modernLayer.setOpacity(baseOpacityForZoom(z));
+    modernLayer.setOpacity(1);
   }
 }
 

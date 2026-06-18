@@ -1530,23 +1530,33 @@ function closeQuestModal() {
 
 async function shareQuest() {
   if (!currentPanelSite) return;
-  const q    = QUEST[currentPanelSite.quest] || QUEST.photo;
-  const site = currentPanelSite;
-  const url  = `https://pleiades.stoa.org/places/${site.pleiades}`;
-  const text = `${q.label.replace(' · Open','')}: ${site.name} (${site.modern || 'ancient world'}). ${q.text} ${url} #VIAquest`;
+  const site  = currentPanelSite;
+  const q     = QUEST[site.quest] || QUEST.photo;
+  const label = q.label.replace(' · Open', '');
+  const where = site.modern ? `${site.name} (${site.modern})` : site.name;
+  // Share a VIA deep-link, NOT the raw Pleiades page: it opens the actual place
+  // in VIA (Pleiades is one tap away in the panel) and unfurls with the OG card.
+  const url   = `https://danielkorr.github.io/ancient-world-explorer/?site=${site.pleiades}`;
+  // The URL is deliberately NOT embedded in `text`. navigator.share passes `url`
+  // separately, and email/social render both — that's why the old link appeared
+  // twice. Keep the prose clean; the link rides in the url field.
+  const text  = `${label} · ${where}. ${q.text} Be the traveler who closes the gap. #VIAquest`;
 
   if (navigator.share) {
     try { await navigator.share({ title: `${site.name} — VIA quest`, text, url }); return; }
     catch { /* fall through to clipboard */ }
   }
+  // Clipboard / tweet fallback has no separate url field, so the link goes in
+  // the text here (once), on its own line.
+  const full = `${text}\n${url}`;
   try {
-    await navigator.clipboard.writeText(text);
+    await navigator.clipboard.writeText(full);
     const btn = document.getElementById('quest-share-btn');
     const orig = btn.textContent;
-    btn.textContent = '✓ Copied — paste into a tweet';
+    btn.textContent = '✓ Copied — paste anywhere';
     setTimeout(() => { btn.textContent = orig; }, 2400);
   } catch {
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(full)}`, '_blank');
   }
 }
 
@@ -1564,22 +1574,25 @@ async function shareRoadSegment() {
   if (!m) return;
   const certLabel = (CERT_INFO[m.cert] || {}).label || 'Roman';
   const name = m.name || 'a Roman road';
-  const text = `${certLabel} Roman road: ${name}. Help verify this stretch of the ancient road network. https://itiner-e.org #VIAquest`;
+  const url  = 'https://itiner-e.org';
+  // URL kept out of `text` (passed separately) so it isn't shown twice.
+  const text = `${certLabel} Roman road: ${name}. Help verify this stretch of the ancient road network. #VIAquest`;
 
   if (navigator.share) {
-    try { await navigator.share({ title: `${name} — VIA road quest`, text, url: 'https://itiner-e.org' }); return; }
+    try { await navigator.share({ title: `${name} — VIA road quest`, text, url }); return; }
     catch { /* fall through to clipboard */ }
   }
   const btn = document.getElementById('quest-banner-cta');
+  const full = `${text}\n${url}`;
   try {
-    await navigator.clipboard.writeText(text);
+    await navigator.clipboard.writeText(full);
     if (btn) {
       const orig = btn.textContent;
       btn.textContent = '✓ Copied — paste into a tweet';
       setTimeout(() => { btn.textContent = orig; }, 2400);
     }
   } catch {
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(full)}`, '_blank');
   }
 }
 
@@ -1984,4 +1997,26 @@ if (_brandEl) {
   if (!site) return;
   map.setView([st.lat, st.lng], st.zoom, { animate: false });
   showPanel(site);  // re-pans to the panel framing and recaptures the home view
+})();
+
+// ── Deep-link: ?site=<pleiades id> ──
+// The share links point here so a shared VIA URL opens the actual place (panel
+// + map framing), not a cold map. Runs last so it takes precedence: dismiss the
+// generic welcome and frame the site.
+(function openSharedSite() {
+  let id = null;
+  try { id = new URL(location.href).searchParams.get('site'); } catch (e) {}
+  if (!id) return;
+  const site = SITES.find(s => String(s.pleiades) === String(id));
+  if (!site) return;
+  const wm = document.getElementById('welcome-modal');
+  if (wm) wm.classList.remove('open');           // don't stack over the shared site
+  dismissMobileGuide(false);
+  map.setView([site.lat, site.lng], Math.max(map.getZoom(), 9), { animate: false });
+  showPanel(site);
+  try {
+    const u = new URL(location.href);
+    u.searchParams.delete('site');
+    history.replaceState(null, '', u.toString());
+  } catch (e) {}
 })();

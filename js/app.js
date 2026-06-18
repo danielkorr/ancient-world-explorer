@@ -194,6 +194,14 @@ const satelliteLayer = L.tileLayer(
 window.VIA = window.VIA || {};
 window.VIA.map = map;
 
+// QA / test mode (?qa=1). A deterministic fixture state for headless Playwright
+// journeys: it SKIPS the ~14,800-segment Itiner-e canvas build (the layer that
+// melts headless Chromium and made open-ended visual testing unreliable) and
+// suppresses the welcome modal + mobile guide so the UI boots into a known,
+// stable state. A drive+assert API is attached to window.VIA at the end of this
+// file. Harmless in production — gated behind the explicit ?qa=1 flag.
+const QA = /[?&]qa=1/.test(location.search);
+
 let currentEra = 'ancient';
 
 // L.LayerGroup has no bringToFront. Re-add each group in stacking order
@@ -250,7 +258,7 @@ const ITINERE_DEFAULT_STYLE = { color: '#8a6a3a', weight: 1, opacity: 0.42, dash
 // map click/tap point. Each entry caches its latlng bbox for a cheap prefilter.
 const itinereSegs = [];
 
-if (typeof ROADS_ITINERE !== 'undefined') {
+if (!QA && typeof ROADS_ITINERE !== 'undefined') {
   const META = (typeof ROADS_ITINERE_META !== 'undefined') ? ROADS_ITINERE_META : [];
   for (const seg of ROADS_ITINERE) {
     const meta = seg.m != null ? META[seg.m] : null;
@@ -855,7 +863,7 @@ function showPanel(site) {
   if (quest) {
     const pay = siteQuestEmailPayload(site);
     emailBtn = `
-    <a href="${questMailto(pay.subject, pay.body)}" class="p-btn p-btn-email">
+    <a href="${questMailto(pay.subject, pay.body)}" class="p-btn p-btn-email" data-testid="panel-email">
       <span class="p-btn-icon">✉️</span>
       <div><div class="p-btn-main">Email this quest</div><div class="p-btn-sub">Opens your mail app — subject &amp; message ready</div></div>
     </a>`;
@@ -1169,7 +1177,7 @@ function showSegmentPanel(meta, latlngs) {
     const eSubj = `A VIA quest: help verify the Roman road ${eName} (${ci.label.toLowerCase()})`;
     const eBody = `${ci.label} Roman road: ${eName}.\n\nThis stretch of the ancient road network isn't field-verified. Walking or photographing it can help confirm the alignment.\n\nExplore it on VIA:\n${eUrl}\n\n${VIA_BLURB}\n\n#VIAquest`;
     emailBtn = `
-    <a href="${questMailto(eSubj, eBody)}" class="p-btn p-btn-email">
+    <a href="${questMailto(eSubj, eBody)}" class="p-btn p-btn-email" data-testid="panel-email">
       <span class="p-btn-icon">✉️</span>
       <div><div class="p-btn-main">Email this quest</div><div class="p-btn-sub">Opens your mail app — subject &amp; message ready</div></div>
     </a>`;
@@ -2036,6 +2044,7 @@ function dismissMobileGuide(persist) {
 // Auto-show on the very first visit. Skip when a magic-link reload is about to
 // auto-open the sign-in modal (?signin=1) so we don't stack two modals at boot.
 (function maybeShowWelcome() {
+  if (QA) return;                       // deterministic test boot: no modals/guide
   let welcomed = false;
   try { welcomed = localStorage.getItem('via.welcomed') === '1'; } catch (e) {}
   const autoSignin = /[?&]signin=1/.test(location.search);
@@ -2091,3 +2100,41 @@ if (_brandEl) {
     history.replaceState(null, '', u.toString());
   } catch (e) {}
 })();
+
+// ── QA drive + assert API (?qa=1) ──
+// A small, stable surface for deterministic Playwright journeys: drive the app
+// by intent (openSite/setEra/…) and read a flat state snapshot to assert against,
+// instead of hunting canvas pixels or synthesising marker taps. Always attached
+// (read-only/no side effects until called) but the journeys only rely on it in
+// ?qa=1 mode, where the heavy road layer is skipped for headless stability.
+window.VIA.qa = QA;
+window.VIA.ready = true;                       // journeys wait on this flag
+window.VIA.build = BUILD;
+window.VIA.openSite = function (key) {
+  const s = SITES.find(x => x.id === key || String(x.pleiades) === String(key));
+  if (!s) return false;
+  if (typeof activeMarker !== 'undefined') activeMarker = null;
+  showPanel(s);
+  return true;
+};
+window.VIA.firstQuestSite = function (tier) {
+  const s = SITES.find(x => x.quest && (!tier || x.quest === tier));
+  return s ? { id: s.id, name: s.name, pleiades: s.pleiades, quest: s.quest } : null;
+};
+window.VIA.closePanel  = function () { closePanel(); };
+window.VIA.setEra      = function (e) { setEra(e); };
+window.VIA.getState    = function () {
+  const panel = document.getElementById('info-panel');
+  return {
+    build: BUILD,
+    era: currentEra,
+    zoom: map.getZoom(),
+    panelOpen: !!(panel && panel.classList.contains('open')),
+    panelKind: currentPanelKind,
+    panelSite: currentPanelSite ? currentPanelSite.id : null,
+    panelName: (document.getElementById('panel-name') || {}).textContent || null,
+    questBannerVisible: document.getElementById('panel-quest-banner').classList.contains('visible'),
+    detailLevel,
+    siteCount: SITES.length,
+  };
+};

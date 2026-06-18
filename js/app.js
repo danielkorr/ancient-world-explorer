@@ -589,12 +589,25 @@ SITES.forEach(site => {
 
   marker.on('click', function(e) {
     L.DomEvent.stopPropagation(e);
-    if (activeMarker && activeMarker !== this) {
+    // Re-clicking the already-selected marker must NOT re-run showPanel's 0.4s
+    // pan animation — that churn was eating the next click and blocking the
+    // double-click-to-zoom. Panel's already showing this site; do nothing.
+    if (activeMarker === this) return;
+    if (activeMarker) {
       activeMarker.setIcon(makeIcon(activeMarker._site, false));
       activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
     }
     activeMarker = this;
     showPanel(this._site);
+  });
+
+  // Double-click a pin to zoom in one level, like double-clicking the map — but
+  // a marker normally swallows the dblclick so the map's zoom never fired over a
+  // pin (you had to land just off it). Handle it here and keep the pin in the
+  // visible area beside the panel.
+  marker.on('dblclick', function(e) {
+    L.DomEvent.stop(e);
+    panToWithPanelOffset(this.getLatLng(), Math.min(map.getZoom() + 1, map.getMaxZoom()));
   });
 
   const tier = site.quest || 'documented';
@@ -876,12 +889,14 @@ function showPanel(site) {
   panToWithPanelOffset([site.lat, site.lng]);
 }
 
-// Shared by site + segment panels. offsetFrac lets a caller bias the marker
-// slightly off the visible-area centre if needed (default dead-centre).
-function panToWithPanelOffset(latlng) {
+// Centre a latlng in the part of the map the panel doesn't cover (left of it on
+// desktop, above it on mobile), via a pixel offset so it's zoom/latitude-proof.
+// Pass `zoom` to also change zoom (setView); omit it to just pan at the current
+// zoom. The pixel offset is computed AT the target zoom so it lands right.
+function panToWithPanelOffset(latlng, zoom) {
   const panelEl = document.getElementById('info-panel');
   const isMobile = window.innerWidth <= 640;
-  const z  = map.getZoom();
+  const z  = (zoom != null) ? zoom : map.getZoom();
   const pt = map.project(latlng, z);
   let center;
   if (isMobile) {
@@ -893,7 +908,8 @@ function panToWithPanelOffset(latlng) {
     const off = (panelEl.offsetWidth || 360) / 2;
     center = map.unproject(pt.add(L.point(off, 0)), z);
   }
-  map.panTo(center, { animate: true, duration: 0.4 });
+  if (zoom != null) map.setView(center, z, { animate: true });
+  else              map.panTo(center, { animate: true, duration: 0.4 });
 }
 
 function closePanel() {

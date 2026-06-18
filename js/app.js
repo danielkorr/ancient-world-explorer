@@ -1782,9 +1782,13 @@ function updateAncientLayer() {
 // version is the most reliable "am I current?" check there is.
 const BUILD = (document.querySelector('script[src*="app.js"]')
   ?.getAttribute('src')?.match(/v=(\d+)/) || [])[1] || '?';
+// The version is wrapped in a bold span whose inline `!important` styles beat
+// the faint 9px attribution defaults in style.css, so "VIA v52" is actually
+// readable in the corner while the licence credits stay subtle.
 map.attributionControl.setPrefix(
-  'VIA ' + (BUILD !== '?' ? 'v' + BUILD : 'dev') +
-  ' · <a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>'
+  '<b style="color:rgba(240,230,211,0.92)!important;font-size:11px!important;letter-spacing:.4px">VIA '
+  + (BUILD !== '?' ? 'v' + BUILD : 'dev') + '</b>'
+  + ' · <a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>'
 );
 
 map.on('zoomend', () => {

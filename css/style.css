@@ -112,7 +112,7 @@ body {
   font-weight: 600;
   transition: all 0.3s;
   background: transparent;
-  color: var(--gold-dim);
+  color: rgba(212,168,83,0.82);
 }
 
 .era-btn.active {
@@ -195,15 +195,19 @@ body {
 .auth-close {
   position: absolute;
   top: 10px; right: 10px;
-  width: 28px; height: 28px;
-  background: transparent;
-  border: none;
-  color: var(--gold-dim);
+  width: 32px; height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(212,168,83,0.1);
+  border: 1px solid rgba(212,168,83,0.3);
+  color: var(--gold);
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
+  line-height: 1;
   border-radius: 50%;
 }
-.auth-close:hover { color: var(--gold); background: rgba(212,168,83,0.1); }
+.auth-close:hover { color: var(--ink); background: var(--gold); border-color: var(--gold); }
 
 .auth-title {
   font-family: 'Cinzel', serif;
@@ -267,13 +271,16 @@ body {
 .auth-secondary:hover { color: var(--gold); border-color: var(--gold-dim); }
 .auth-tertiary {
   background: transparent;
-  color: var(--text-muted);
-  font-size: 10px;
+  color: var(--text-body);
+  font-size: 12px;
   letter-spacing: 2px;
-  padding: 9px;
+  padding: 11px;
   margin-top: 4px;
+  text-decoration: underline;
+  text-decoration-color: rgba(212,168,83,0.4);
+  text-underline-offset: 3px;
 }
-.auth-tertiary:hover { color: var(--gold-dim); }
+.auth-tertiary:hover { color: var(--gold); }
 
 .auth-state                          { display: none; }
 .auth-state + .auth-state            { margin-top: 0; }
@@ -1006,13 +1013,13 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 #panel-close {
   position: absolute;
   top: 11px; right: 11px;
-  background: rgba(212,168,83,0.07);
-  border: 1px solid rgba(212,168,83,0.2);
-  color: rgba(212,168,83,0.6);
+  background: rgba(212,168,83,0.14);
+  border: 1px solid rgba(212,168,83,0.4);
+  color: var(--gold);
   width: 30px; height: 30px;
   border-radius: 50%;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1598,6 +1605,20 @@ path.leaflet-interactive { outline: none !important; }
     gap: 3px;
     padding: 7px 0;
   }
+
+  /* Close / dismiss buttons need real tap targets + a clear glyph on a phone.
+     The faint dim ✕ was hard to find at the bottom of a bright modal. */
+  .auth-close {
+    top: 12px; right: 12px;
+    width: 40px; height: 40px;
+    font-size: 19px;
+  }
+  #panel-close {
+    top: 14px; right: 14px;
+    width: 40px; height: 40px;
+    font-size: 18px;
+  }
+  .auth-tertiary { font-size: 13px; padding: 13px; }
 
   /* Drag handle for bottom sheet */
   #info-panel::before {

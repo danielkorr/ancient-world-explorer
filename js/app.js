@@ -518,7 +518,7 @@ function makeIcon(site, hovered) {
     className: '',
     html: `<div style="width:${hit}px;height:${hit}px;display:flex;align-items:center;justify-content:center;cursor:pointer;touch-action:manipulation;">
              <div style="position:relative;width:${sz}px;height:${sz}px;">
-               <div style="${dotStyle}"></div>
+               <div data-testid="site-marker" style="${dotStyle}"></div>
                ${ring}
                ${visitedBadge}
              </div>
@@ -551,7 +551,7 @@ function clusterOpts(kind) {
     chunkedLoading: true,             // don't stall the main thread on the dense set
     spiderfyDistanceMultiplier: 1.6,  // wider fan for fat-finger taps
     iconCreateFunction: cluster => L.divIcon({
-      html: `<div class="via-cluster via-cluster--${kind}">${cluster.getChildCount()}</div>`,
+      html: `<div class="via-cluster via-cluster--${kind}" data-testid="site-marker">${cluster.getChildCount()}</div>`,
       className: 'via-cluster-wrap',
       iconSize: L.point(44, 44),      // 44px floor = mobile touch target
     }),
@@ -2123,8 +2123,17 @@ window.VIA.firstQuestSite = function (tier) {
 };
 window.VIA.closePanel  = function () { closePanel(); };
 window.VIA.setEra      = function (e) { setEra(e); };
+window.VIA.setDetail   = function (n) { setDetailLevel(n); };       // 0 curated · 1 +quests · 2 all
+window.VIA.toggleTier  = function (t) { toggleTier(t); };           // legend tier filter
+window.VIA.openLegend  = function () { openLegendInfo(); };
 window.VIA.getState    = function () {
   const panel = document.getElementById('info-panel');
+  // Markers currently mounted across the cluster groups (clustering-agnostic:
+  // markercluster.getLayers() returns members whether or not they're clustered).
+  let visibleSiteCount = 0;
+  if (typeof siteClusters !== 'undefined') {
+    for (const k of TIER_KINDS) if (siteClusters[k]) visibleSiteCount += siteClusters[k].getLayers().length;
+  }
   return {
     build: BUILD,
     era: currentEra,
@@ -2135,6 +2144,8 @@ window.VIA.getState    = function () {
     panelName: (document.getElementById('panel-name') || {}).textContent || null,
     questBannerVisible: document.getElementById('panel-quest-banner').classList.contains('visible'),
     detailLevel,
+    activeTiers: (typeof activeTiers !== 'undefined') ? Array.from(activeTiers) : [],
+    visibleSiteCount,
     siteCount: SITES.length,
   };
 };

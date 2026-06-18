@@ -46,23 +46,23 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=66">
+  <link rel="stylesheet" href="css/style.css?v=67">
 </head>
 <body>
 
 <!-- Map -->
-<div id="map"></div>
+<div id="map" data-testid="map-container"></div>
 
 <!-- Top Bar -->
-<div id="topbar">
+<div id="topbar" data-testid="main-nav">
   <div id="app-brand" onclick="openWelcome()" role="button" tabindex="0" title="About VIA">
     <h1 id="app-title">VIA</h1>
     <div id="app-subtitle">Ancient World Explorer</div>
   </div>
   <div id="topbar-right">
-    <div id="era-toggle">
-      <button class="era-btn active" id="btn-ancient" onclick="setEra('ancient')">ANCIENT</button>
-      <button class="era-btn"        id="btn-modern"  onclick="setEra('modern')">MODERN</button>
+    <div id="era-toggle" data-testid="era-toggle">
+      <button class="era-btn active" id="btn-ancient" data-testid="ancient-era-button" onclick="setEra('ancient')">ANCIENT</button>
+      <button class="era-btn"        id="btn-modern" data-testid="modern-era-button" onclick="setEra('modern')">MODERN</button>
     </div>
     <button id="profile-pill" onclick="openAuthModal()" title="Sign in">
       <span id="profile-pill-glyph">⊙</span>
@@ -155,26 +155,26 @@
       <li><strong>Photograph it.</strong> Daylight, full structure in frame, GPS metadata on if your camera supports it.</li>
       <li><strong>Submit it.</strong> Share the photo on social with <code>#VIAquest</code> and tag the site. We'll relay confirmed submissions back to Pleiades' scholarly record.</li>
     </ol>
-    <button class="auth-primary" id="quest-share-btn" onclick="shareQuest()">Share This Quest</button>
-    <button class="auth-secondary" id="quest-email-btn" onclick="emailCurrentQuest()">✉ Email this quest</button>
+    <button class="auth-primary" id="quest-share-btn" data-testid="share-site-button" onclick="shareQuest()">Share This Quest</button>
+    <button class="auth-secondary" id="quest-email-btn" data-testid="email-site-button" onclick="emailCurrentQuest()">✉ Email this quest</button>
     <button class="auth-secondary" onclick="closeQuestModal()">Close</button>
   </div>
 </div>
 
 <!-- Bottom Controls -->
-<div id="bottom-controls">
-  <button class="ctrl-btn active" id="btn-roads" onclick="toggleLayer('roads')">
+<div id="bottom-controls" data-testid="layer-controls">
+  <button class="ctrl-btn active" id="btn-roads" data-testid="roads-filter-button" onclick="toggleLayer('roads')">
     <span class="ctrl-icon" aria-hidden="true">🛣️</span><div class="swatch-line"></div><span class="ctrl-label">Roman Roads</span>
   </button>
-  <button class="ctrl-btn active" id="btn-sites" onclick="toggleLayer('sites')">
+  <button class="ctrl-btn active" id="btn-sites" data-testid="sites-filter-button" onclick="toggleLayer('sites')">
     <span class="ctrl-icon" aria-hidden="true">🏛️</span><div class="swatch-dot"></div><span class="ctrl-label">Sites &amp; Cities</span>
   </button>
-  <div class="detail-control" id="detail-control" aria-label="Map detail">
+  <div class="detail-control" id="detail-control" data-testid="detail-filter-control" aria-label="Map detail">
     <div class="detail-head">
       <span class="detail-title">Detail</span>
       <span id="detail-readout">Curated · 0 quests</span>
     </div>
-    <input id="detail-slider" type="range" min="0" max="2" step="1" value="0" aria-label="Map detail">
+    <input id="detail-slider" data-testid="detail-filter-slider" type="range" min="0" max="2" step="1" value="0" aria-label="Map detail">
   </div>
 </div>
 
@@ -194,22 +194,22 @@
 </div>
 
 <!-- Quest Legend — each row is a tap-to-filter toggle -->
-<div id="quest-legend">
+<div id="quest-legend" data-testid="filter-panel">
   <div class="legend-hint">Tap to filter<button id="legend-info-btn" onclick="openLegendInfo()" aria-label="What do these terms mean?" title="What do these mean?">?</button></div>
-  <div class="legend-row" data-tier="documented" role="button" tabindex="0" onclick="toggleTier('documented')"><div class="legend-dot" style="background:#b89a6a"></div>Documented</div>
-  <div class="legend-row" data-tier="photo" role="button" tabindex="0" onclick="toggleTier('photo')"><div class="legend-dot" style="background:#ff9e2c"></div>Photo Quest</div>
-  <div class="legend-row" data-tier="location" role="button" tabindex="0" onclick="toggleTier('location')"><div class="legend-dot diamond" style="background:#2b8cde"></div>Location Quest</div>
-  <div class="legend-row" data-tier="text" role="button" tabindex="0" onclick="toggleTier('text')"><div class="legend-dot triangle" style="background:#b15ad6"></div>Text Quest</div>
+  <div class="legend-row" data-testid="site-tier-filter" data-tier="documented" role="button" tabindex="0" onclick="toggleTier('documented')"><div class="legend-dot" style="background:#b89a6a"></div>Documented</div>
+  <div class="legend-row" data-testid="site-tier-filter" data-tier="photo" role="button" tabindex="0" onclick="toggleTier('photo')"><div class="legend-dot" style="background:#ff9e2c"></div>Photo Quest</div>
+  <div class="legend-row" data-testid="site-tier-filter" data-tier="location" role="button" tabindex="0" onclick="toggleTier('location')"><div class="legend-dot diamond" style="background:#2b8cde"></div>Location Quest</div>
+  <div class="legend-row" data-testid="site-tier-filter" data-tier="text" role="button" tabindex="0" onclick="toggleTier('text')"><div class="legend-dot triangle" style="background:#b15ad6"></div>Text Quest</div>
   <div class="legend-sep"></div>
   <div class="legend-hint">Roads · certainty</div>
-  <div class="legend-row" data-cert="c" role="button" tabindex="0" onclick="toggleCert('c')"><div class="legend-line solid"></div>Certain</div>
-  <div class="legend-row" data-cert="j" role="button" tabindex="0" onclick="toggleCert('j')"><div class="legend-line dashed"></div>Conjectured</div>
-  <div class="legend-row" data-cert="h" role="button" tabindex="0" onclick="toggleCert('h')"><div class="legend-line dotted"></div>Hypothetical</div>
+  <div class="legend-row" data-testid="road-certainty-filter" data-cert="c" role="button" tabindex="0" onclick="toggleCert('c')"><div class="legend-line solid"></div>Certain</div>
+  <div class="legend-row" data-testid="road-certainty-filter" data-cert="j" role="button" tabindex="0" onclick="toggleCert('j')"><div class="legend-line dashed"></div>Conjectured</div>
+  <div class="legend-row" data-testid="road-certainty-filter" data-cert="h" role="button" tabindex="0" onclick="toggleCert('h')"><div class="legend-line dotted"></div>Hypothetical</div>
 </div>
 
 <!-- Mobile-only: collapses the legend behind a chip so it stops eating the map.
      Hidden on desktop (where the legend is always open). -->
-<button id="legend-fab" onclick="toggleLegend()" aria-label="Legend &amp; filters" aria-expanded="false">
+<button id="legend-fab" data-testid="mobile-menu-button" onclick="toggleLegend()" aria-label="Legend &amp; filters" aria-expanded="false">
   <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M3 5h18l-7 8.2V21l-4-2.2v-5.6z" fill="currentColor"/></svg>
   <span class="legend-fab-label">Key</span>
 </button>
@@ -232,14 +232,14 @@
 </div>
 
 <!-- Info Panel -->
-<div id="info-panel">
+<div id="info-panel" data-testid="selected-site-panel">
   <div id="panel-hero">
     <div id="hero-inner">
       <div id="hero-icon">⊕</div>
       <div id="hero-coords">SELECT A SITE</div>
       <div id="hero-modern">tap any marker on the map</div>
     </div>
-    <button id="panel-close" onclick="closePanel()">✕</button>
+    <button id="panel-close" data-testid="close-selected-site-button" onclick="closePanel()">✕</button>
   </div>
 
   <!-- Quest banner (hidden until quest site selected) -->
@@ -252,9 +252,9 @@
     </div>
   </div>
 
-  <div id="panel-body">
+  <div id="panel-body" data-testid="selected-site-details">
     <div id="panel-badge"></div>
-    <h2 id="panel-name">—</h2>
+    <h2 id="panel-name" data-testid="selected-site-title">—</h2>
     <div id="panel-modern-name"></div>
     <div class="p-rule"></div>
     <div id="panel-period"></div>
@@ -280,7 +280,7 @@
       <div id="orbis-detail"></div>
     </div>
 
-    <div class="p-actions" id="panel-actions"></div>
+    <div class="p-actions" id="panel-actions" data-testid="selected-site-related-links"></div>
 
     <!-- Quest progress meter (shown when signed in) -->
     <div id="quest-progress">
@@ -292,11 +292,11 @@
 
 <!-- Data + App. ?v= must match the value on css/style.css above — bump both
      together each deploy to force fresh assets past the cache. -->
-<script src="js/config.js?v=66"></script>
-<script src="js/orbis-days.js?v=66"></script>
-<script src="js/sites-pleiades.js?v=66"></script>
-<script src="js/sites-vici.js?v=66"></script>
-<script src="js/vici-links.js?v=66"></script>
+<script src="js/config.js?v=67"></script>
+<script src="js/orbis-days.js?v=67"></script>
+<script src="js/sites-pleiades.js?v=67"></script>
+<script src="js/sites-vici.js?v=67"></script>
+<script src="js/vici-links.js?v=67"></script>
 <!-- The Itiner-e road dataset is ~2.7MB; parsing it intermittently crashes
      headless Chromium, breaking deterministic tests. Skip it entirely in ?qa=1
      (app.js guards on `typeof ROADS_ITINERE`). document.write here runs during
@@ -304,12 +304,12 @@
      normal (non-QA) path — ordering is preserved. -->
 <script>
   if (!/[?&]qa=1/.test(location.search)) {
-    document.write('<scr' + 'ipt src="js/roads-itinere.js?v=66"><\/scr' + 'ipt>');
+    document.write('<scr' + 'ipt src="js/roads-itinere.js?v=67"><\/scr' + 'ipt>');
   }
 </script>
-<script src="js/data.js?v=66"></script>
-<script src="js/auth.js?v=66"></script>
-<script src="js/app.js?v=66"></script>
+<script src="js/data.js?v=67"></script>
+<script src="js/auth.js?v=67"></script>
+<script src="js/app.js?v=67"></script>
 
 </body>
 </html>

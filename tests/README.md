@@ -6,6 +6,15 @@ fixed, light fixture state, then assert on a flat state snapshot + stable select
 
 ## Run
 
+PowerShell (Windows):
+
+```powershell
+.\tests\run-journeys.ps1
+# .\tests\run-journeys.ps1 -Browse C:\path\to\browse.exe -Port 8064
+```
+
+POSIX shell:
+
 ```bash
 bash tests/run-journeys.sh
 # BROWSE=/path/to/browse PORT=8064 bash tests/run-journeys.sh

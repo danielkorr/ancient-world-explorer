@@ -386,15 +386,18 @@ ROADS.forEach(road => {
   // and the name tooltip used to be hover-only (no hover exists on touch — that's
   // why road names vanished on mobile). This wide transparent stroke makes the road
   // tappable, and `click` opens the name on a phone while hover still works on desktop.
-  L.polyline(latlngs, {
+  const hit = L.polyline(latlngs, {
     color: '#000', weight: 22, opacity: 0, lineCap: 'round', lineJoin: 'round',
   })
    .bindTooltip(
      `<b style="color:#d4a853">${road.name}</b><br>${road.desc}<br><span style="opacity:.55">Est. ${road.built}</span>`,
      { className:'road-tip', sticky:true }
    )
-   .on('click', function (e) { this.openTooltip(e.latlng); })
-   .addTo(roadsGroup);
+   .on('click', function (e) { this.openTooltip(e.latlng); });
+  // Stash the curated road so a tap can open its panel directly, without
+  // depending on an Itiner-e segment happening to sit under the finger.
+  hit._curatedRoad = road;
+  hit.addTo(roadsGroup);
 });
 
 // ── SITE MARKERS ─────────────────────────────────────────
@@ -642,12 +645,43 @@ if (COARSE_POINTER) {
     // nearest Itiner-e segment ourselves and open it here.
     if (ll) {
       const seg = findNearestItinere(ll, map.latLngToContainerPoint(ll));
-      if (seg) showSegmentPanel(seg.meta, seg.ll);
+      if (seg) {
+        showSegmentPanel(seg.meta, seg.ll);
+      } else if (road._curatedRoad) {
+        // No Itiner-e segment under the tap — open a panel from the curated
+        // road's own rich copy so the named roads (Via Appia etc.) always work.
+        const r = road._curatedRoad;
+        // [lat,lng] arrays — the shape nearestSitesToSegment/kmPointToPolyline
+        // index by [0]/[1] (NOT Leaflet LatLng objects from getLatLngs()).
+        const rll = r.coords.map(c => [c[1], c[0]]);
+        showSegmentPanel({ name: r.name, main: 1, desc: r.desc }, rll);
+      }
     }
   }, { passive: false });
 }
 
 // ── INFO PANEL ───────────────────────────────────────────
+
+// vici hero photos are stored at cover/w1600xh1600 — a 1600px image for a hero
+// strip ~360px wide, which is why the photo crawled in. Rewrite the transform to
+// a right-sized image, and blur up: paint a tiny placeholder instantly (decodes
+// in ~1 frame), then swap to the sharp one once it loads. `grad` is the gradient
+// overlay, kept on top through the swap. No-ops gracefully if the URL has no
+// cover/wNxhN transform to rewrite.
+function viciSized(url, w) {
+  return url.replace(/\/cover\/w\d+xh\d+\//, `/cover/w${w}xh${w}/`);
+}
+function setHeroPhoto(hero, heroIcon, url, grad) {
+  const thumb = viciSized(url, 48);
+  const full  = viciSized(url, 800);
+  hero.style.background  = `${grad}, url("${thumb}") center/cover no-repeat`;
+  heroIcon.style.opacity = '0';
+  const img = new Image();
+  img.onload = () => {
+    hero.style.background = `${grad}, url("${full}") center/cover no-repeat`;
+  };
+  img.src = full;
+}
 
 function showPanel(site) {
   hideLegendToast();
@@ -681,9 +715,8 @@ function showPanel(site) {
     hero.appendChild(heroCredit);
   }
   if (site.vici && site.vici.image) {
-    hero.style.background =
-      `linear-gradient(180deg, rgba(17,10,0,0.05) 0%, rgba(17,10,0,0.85) 100%), url("${site.vici.image}") center/cover no-repeat`;
-    heroIcon.style.opacity = '0';
+    setHeroPhoto(hero, heroIcon, site.vici.image,
+      'linear-gradient(180deg, rgba(17,10,0,0.05) 0%, rgba(17,10,0,0.85) 100%)');
     const by = site.vici.creator ? `© ${site.vici.creator}` : 'vici.org';
     heroCredit.textContent = `${by}${site.vici.license ? ' · ' + site.vici.license : ''} · via vici.org`;
     heroCredit.style.display = '';
@@ -749,7 +782,10 @@ function showPanel(site) {
 
   // Action buttons
   const gmUrl  = `https://maps.google.com/?q=${site.lat},${site.lng}`;
-  const satUrl = `https://www.google.com/maps/@${site.lat},${site.lng},500m/data=!3m1!1e3`;
+  // Satellite: pin the exact place AND force the aerial layer (data=!3m1!1e3).
+  // The old @-centred URL dropped no pin, so it looked like a slightly-zoomed
+  // Google Maps rather than a clearly different aerial view of the same spot.
+  const satUrl = `https://www.google.com/maps/place/${site.lat},${site.lng}/@${site.lat},${site.lng},1000m/data=!3m1!1e3`;
   const plUrl  = `https://pleiades.stoa.org/places/${site.pleiades}`;
 
   // vici.org — René Voorburg's crowdsourced atlas. The link comes from the
@@ -774,12 +810,12 @@ function showPanel(site) {
   document.getElementById('panel-actions').innerHTML = `
     <a href="${gmUrl}" onclick="saveReturnState()" class="p-btn p-btn-maps">
       <span class="p-btn-icon">🗺️</span>
-      <div><div class="p-btn-main">Google Maps</div><div class="p-btn-sub">See ${site.name} in the modern world</div></div>
+      <div><div class="p-btn-main">Google Maps</div><div class="p-btn-sub">Modern streets, places &amp; directions</div></div>
       <span class="p-btn-ext" aria-hidden="true">↗</span>
     </a>
     <a href="${satUrl}" onclick="saveReturnState()" class="p-btn p-btn-sat">
       <span class="p-btn-icon">🛰️</span>
-      <div><div class="p-btn-main">Satellite View</div><div class="p-btn-sub">Modern aerial — spot the ruins</div></div>
+      <div><div class="p-btn-main">Satellite View</div><div class="p-btn-sub">Aerial photo — spot the ruins from above</div></div>
       <span class="p-btn-ext" aria-hidden="true">↗</span>
     </a>
     <a href="${plUrl}" onclick="saveReturnState()" class="p-btn p-btn-gold">
@@ -923,9 +959,8 @@ function showSegmentPanel(meta, latlngs) {
   }
   if (heroPhoto) {
     const v = heroPhoto.site.vici;
-    hero.style.background =
-      `linear-gradient(180deg, rgba(17,10,0,0.05) 0%, rgba(17,10,0,0.88) 100%), url("${v.image}") center/cover no-repeat`;
-    heroIcon.style.opacity = '0';
+    setHeroPhoto(hero, heroIcon, v.image,
+      'linear-gradient(180deg, rgba(17,10,0,0.05) 0%, rgba(17,10,0,0.88) 100%)');
     const by = v.creator ? `© ${v.creator}` : 'vici.org';
     heroCredit.textContent = `${heroPhoto.site.name} · ${by}${v.license ? ' · ' + v.license : ''} · via vici.org`;
     heroCredit.style.display = '';
@@ -967,7 +1002,7 @@ function showSegmentPanel(meta, latlngs) {
   document.getElementById('panel-modern-name').textContent = (meta && meta.main) ? 'Main road' : 'Secondary road';
   document.getElementById('panel-period').innerHTML        = `<span style="font-size:13px">🏛️</span>&nbsp;Roman road network · Itiner-e`;
 
-  let desc = ci.blurb;
+  let desc = (meta && meta.desc) ? meta.desc : ci.blurb;
   const evidence = [];
   if (meta) {
     if (meta.itin) evidence.push(['Ancient itinerary', meta.itin]);

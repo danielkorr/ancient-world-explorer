@@ -849,17 +849,13 @@ function showPanel(site) {
     </a>` : '';
 
   // "Email this quest" — only on quest sites. A mailto: link (NOT the OS share
-  // sheet) so it opens the default mail app with a real Subject and a formatted
-  // body prefilled. No image (mailto is plain text), but a proper email.
+  // sheet) so it opens the default mail app with a real Subject + body prefilled.
+  // Same payload as the quest-modal email button (one helper, can't drift).
   let emailBtn = '';
   if (quest) {
-    const eLabel = quest.label.replace(' · Open', '');
-    const eWhere = site.modern ? `${site.name} (${site.modern})` : site.name;
-    const eUrl   = `https://danielkorr.github.io/ancient-world-explorer/?site=${site.pleiades}`;
-    const eSubj  = `A VIA quest: help document ${site.name} (${eLabel})`;
-    const eBody  = `${eLabel}: ${eWhere}.\n\n${quest.text} Be the traveler who closes the gap.\n\nExplore it on VIA:\n${eUrl}\n\n${VIA_BLURB}\n\n#VIAquest`;
+    const pay = siteQuestEmailPayload(site);
     emailBtn = `
-    <a href="${questMailto(eSubj, eBody)}" class="p-btn p-btn-email">
+    <a href="${questMailto(pay.subject, pay.body)}" class="p-btn p-btn-email">
       <span class="p-btn-icon">✉️</span>
       <div><div class="p-btn-main">Email this quest</div><div class="p-btn-sub">Opens your mail app — subject &amp; message ready</div></div>
     </a>`;
@@ -1564,10 +1560,33 @@ function closeQuestModal() {
 }
 
 // Build a mailto: href with a prefilled subject + plain-text body. Used by the
-// "Email this quest" panel button — opens the OS default mail app with a real
-// Subject line (the OS share sheet can't set one). Plain text only: no image.
+// "Email this quest" buttons — opens the OS default mail app with a real Subject
+// line (the OS share sheet can't set one). Plain text only: no image.
 function questMailto(subject, body) {
   return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+// Subject + body for emailing a SITE quest. Single source of truth shared by the
+// panel button and the quest-modal button so they can't drift. Dedupe-safe: the
+// photo-quest text already ends with the "closes the gap" CTA, so only append it
+// for the other tiers.
+function siteQuestEmailPayload(site) {
+  const q     = QUEST[site.quest] || QUEST.photo;
+  const label = q.label.replace(' · Open', '');
+  const where = site.modern ? `${site.name} (${site.modern})` : site.name;
+  const url   = `https://danielkorr.github.io/ancient-world-explorer/?site=${site.pleiades}`;
+  const cta   = /closes the gap/i.test(q.text) ? '' : ' Be the traveler who closes the gap.';
+  return {
+    subject: `A VIA quest: help document ${site.name} (${label})`,
+    body: `${label}: ${where}.\n\n${q.text}${cta}\n\nExplore it on VIA:\n${url}\n\n${VIA_BLURB}\n\n#VIAquest`,
+  };
+}
+
+// Quest-modal "Email this quest" button → opens the mail app for the open site.
+function emailCurrentQuest() {
+  if (!currentPanelSite) return;
+  const pay = siteQuestEmailPayload(currentPanelSite);
+  window.location.href = questMailto(pay.subject, pay.body);
 }
 
 async function shareQuest() {
@@ -1585,8 +1604,10 @@ async function shareQuest() {
   // sets a subject), so a self-contained message is the only way every target
   // shows the full thing with exactly one link. Social surfaces still unfurl the
   // VIA card from the URL inside the text.
+  // Dedupe-safe: photo-quest text already ends with the CTA — don't repeat it.
+  const cta = /closes the gap/i.test(q.text) ? '' : ' Be the traveler who closes the gap.';
   const message =
-    `${label}: ${where}.\n${q.text} Be the traveler who closes the gap.\n${url}\n#VIAquest`;
+    `${label}: ${where}.\n${q.text}${cta}\n${url}\n#VIAquest`;
 
   if (navigator.share) {
     try { await navigator.share({ title: `${site.name} — VIA quest`, text: message }); return; }

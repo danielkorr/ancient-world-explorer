@@ -1755,10 +1755,19 @@ function decorateLegend() {
 // plate is pure label noise, while the sepia terrain fallback underneath is
 // clean and beautiful. Fade DARE in as you zoom so the ancient world resolves
 // the deeper you go — turning zoom into a reveal.
+//
+// DARE also only ships real tiles to z11, so past ~z12 it's an upscaled blur
+// sitting ON TOP of the sharp sepia basemap — zoom in far enough on a quest
+// and the background turns to mush with no street/label detail. So fade DARE
+// back OUT from z13→z16, revealing the detailed sepia map (sharp to z18)
+// underneath. The Roman context doesn't vanish: roads + site markers still
+// render on top, and zooming back out restores the atlas.
 function ancientOpacityForZoom(z) {
-  if (z <= 5) return 0;
-  if (z >= 7) return 1;
-  return 0.5;
+  if (z <= 5)  return 0;          // landing: clean sepia terrain
+  if (z < 7)   return 0.5;        // resolving in
+  if (z <= 12) return 1;          // full Roman atlas — DARE is sharp through z12
+  if (z >= 16) return 0;          // deep zoom: hide the blur, show sharp sepia
+  return (16 - z) / 4;            // ease out: z13→.75, z14→.5, z15→.25
 }
 
 function updateAncientLayer() {

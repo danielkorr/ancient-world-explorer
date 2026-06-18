@@ -163,7 +163,25 @@ const map = L.map('map', {
   easeLinearity: 0.2,
   wheelPxPerZoomLevel: 140,    // ~2.3x more scroll per zoom step (default 60)
   wheelDebounceTime: 60,       // default 40
+  maxZoom: 19,                 // satellite is sharp to z19 — allow the deep reveal
 });
+
+// Satellite imagery, revealed at deep zoom. Lives in its OWN pane beneath the
+// tile pane, so it always sits under the atlas/street maps; those fade out as
+// you zoom in (see updateBasemaps) and dissolve the map into real aerial
+// ground — the "spot the ruins" payoff. Roads + site markers stay on top
+// throughout for context. Esri World Imagery: free, no key, sharp to z19.
+map.createPane('satellite');
+map.getPane('satellite').style.zIndex = 150;   // below the default tilePane (200)
+const satelliteLayer = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  {
+    pane: 'satellite',
+    maxNativeZoom: 19,
+    maxZoom: 19,
+    attribution: 'Imagery © <a href="https://www.esri.com" target="_blank" rel="noopener">Esri</a>, Maxar, Earthstar Geographics',
+  }
+);
 
 let currentEra = 'ancient';
 
@@ -1135,12 +1153,12 @@ function setEra(era) {
     if (map.hasLayer(modernLayer)) map.removeLayer(modernLayer);
     if (!map.hasLayer(ancientFallbackLayer)) map.addLayer(ancientFallbackLayer);
     if (!map.hasLayer(ancientLayer))         map.addLayer(ancientLayer);
-    updateAncientLayer();  // re-apply zoom-staged opacity for current zoom
   } else {
     if (map.hasLayer(ancientLayer))         map.removeLayer(ancientLayer);
     if (map.hasLayer(ancientFallbackLayer)) map.removeLayer(ancientFallbackLayer);
     if (!map.hasLayer(modernLayer))         map.addLayer(modernLayer);
   }
+  updateBasemaps();  // re-apply zoom-staged opacity + satellite reveal for the new era
   raiseOverlays();
 }
 
@@ -1756,23 +1774,43 @@ function decorateLegend() {
 // clean and beautiful. Fade DARE in as you zoom so the ancient world resolves
 // the deeper you go — turning zoom into a reveal.
 //
-// DARE also only ships real tiles to z11, so past ~z12 it's an upscaled blur
-// sitting ON TOP of the sharp sepia basemap — zoom in far enough on a quest
-// and the background turns to mush with no street/label detail. So fade DARE
-// back OUT from z13→z16, revealing the detailed sepia map (sharp to z18)
-// underneath. The Roman context doesn't vanish: roads + site markers still
-// render on top, and zooming back out restores the atlas.
+// Deep-zoom reveal. The atlas/street layers carry normal zoom, but they run out
+// of real detail: DARE has tiles only to z11 (an upscaled blur beyond), and the
+// CARTO basemaps are minimal street maps with almost no terrain. So as you zoom
+// in, fade them out and let the satellite pane beneath show through — a fuzzy
+// deep zoom becomes sharp aerial ground. Roads + site markers stay on top.
+
+// DARE: sharp through z11, blurry past it. Reveal in low, fade fully out by z13
+// so its upscaled mush never lingers over the sharper layers underneath.
 function ancientOpacityForZoom(z) {
-  if (z <= 5)  return 0;          // landing: clean sepia terrain
+  if (z <= 5)  return 0;          // landing: clean terrain, atlas plate is noise
   if (z < 7)   return 0.5;        // resolving in
-  if (z <= 12) return 1;          // full Roman atlas — DARE is sharp through z12
-  if (z >= 16) return 0;          // deep zoom: hide the blur, show sharp sepia
-  return (16 - z) / 4;            // ease out: z13→.75, z14→.5, z15→.25
+  if (z <= 11) return 1;          // full Roman atlas — DARE is sharp through z11
+  if (z >= 13) return 0;          // gone: hand off to base map / satellite
+  return 0.5;                     // z12: last readable (2x) atlas step
 }
 
-function updateAncientLayer() {
-  if (currentEra !== 'ancient') return;
-  ancientLayer.setOpacity(ancientOpacityForZoom(map.getZoom()));
+// Street basemaps (sepia fallback in ancient, Voyager in modern). Hold full to
+// z13, then dissolve to the satellite by z16.
+function baseOpacityForZoom(z) {
+  if (z <= 13) return 1;
+  if (z >= 16) return 0;
+  return (16 - z) / 3;            // z14→.67, z15→.33
+}
+
+function updateBasemaps() {
+  const z = map.getZoom();
+  // Satellite tiles are heavy — only mount the layer once it's about to be
+  // revealed (z12+), and drop it when zoomed back out.
+  if (z >= 12) { if (!map.hasLayer(satelliteLayer)) map.addLayer(satelliteLayer); }
+  else         { if (map.hasLayer(satelliteLayer))  map.removeLayer(satelliteLayer); }
+
+  if (currentEra === 'ancient') {
+    ancientLayer.setOpacity(ancientOpacityForZoom(z));
+    ancientFallbackLayer.setOpacity(baseOpacityForZoom(z));
+  } else {
+    modernLayer.setOpacity(baseOpacityForZoom(z));
+  }
 }
 
 // Visible build stamp in the attribution line (bottom-right). Derived from
@@ -1792,14 +1830,14 @@ map.attributionControl.setPrefix(
 );
 
 map.on('zoomend', () => {
-  updateAncientLayer();
-  // Marker visibility is now governed by the DETAIL slider, not zoom, and
-  // markercluster re-clusters on zoom by itself — so there's nothing to
-  // recompute here beyond the ancient-tile opacity.
+  updateBasemaps();
+  // Marker visibility is governed by the DETAIL slider, not zoom, and
+  // markercluster re-clusters by itself — so there's nothing to recompute
+  // here beyond the zoom-staged basemap opacity + satellite reveal.
 });
 
 // Prime at boot (zoom 5, ancient era): sepia landing + curated sites only.
-updateAncientLayer();
+updateBasemaps();
 decorateLegend();
 decorateRoadsLegend();
 syncFilterUI();

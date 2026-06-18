@@ -867,12 +867,33 @@ function showPanel(site) {
   dismissMobileGuide(true);
   currentPanelSite = site;
   refreshCheckinRow();
-  // Offset map pan: right on desktop, up on mobile
+  // Offset the pan so the marker lands in the part of the map the panel doesn't
+  // cover (left of it on desktop, above it on mobile). This MUST be a pixel
+  // offset, not a lat/lng one: a fixed degree shift (the old `lng - 2`) is ~170km
+  // here and scales wrong with zoom/latitude — at a deep zoom it flung the marker
+  // clean off-screen (clicking Pompeii centered the map on the Pontine Islands).
+  // Project the marker to screen pixels, shift by half the panel's size, unproject.
+  panToWithPanelOffset([site.lat, site.lng]);
+}
+
+// Shared by site + segment panels. offsetFrac lets a caller bias the marker
+// slightly off the visible-area centre if needed (default dead-centre).
+function panToWithPanelOffset(latlng) {
+  const panelEl = document.getElementById('info-panel');
   const isMobile = window.innerWidth <= 640;
-  map.panTo(
-    isMobile ? [site.lat + 1.2, site.lng] : [site.lat, site.lng - 2],
-    { animate:true, duration:0.4 }
-  );
+  const z  = map.getZoom();
+  const pt = map.project(latlng, z);
+  let center;
+  if (isMobile) {
+    // Bottom sheet covers the lower part — push the marker up into the top strip.
+    const off = (panelEl.offsetHeight || window.innerHeight * 0.84) / 2;
+    center = map.unproject(pt.add(L.point(0, off)), z);
+  } else {
+    // Side panel covers the right — push the marker into the left area.
+    const off = (panelEl.offsetWidth || 360) / 2;
+    center = map.unproject(pt.add(L.point(off, 0)), z);
+  }
+  map.panTo(center, { animate: true, duration: 0.4 });
 }
 
 function closePanel() {

@@ -1398,8 +1398,15 @@ path.leaflet-interactive { outline: none !important; }
   .ctrl-btn .swatch-dot,
   .ctrl-label { display: none; }
   .ctrl-icon { display: block; font-size: 19px; line-height: 1; }
+  /* Detail slider gets its own row, lifted above the chip row and pinned to the
+     left. Previously it sat in the same bottom row and its right end ran under
+     the Key FAB (bottom-right) — the FAB ate taps on half the slider and the
+     two crowded each other. Now they never share screen space. */
   .detail-control {
-    width: 170px;
+    position: absolute;
+    bottom: 56px;
+    left: 0;
+    width: 190px;
     padding: 7px 10px 8px;
     border-radius: 11px;
   }

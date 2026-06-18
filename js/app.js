@@ -1534,29 +1534,30 @@ async function shareQuest() {
   const q     = QUEST[site.quest] || QUEST.photo;
   const label = q.label.replace(' · Open', '');
   const where = site.modern ? `${site.name} (${site.modern})` : site.name;
-  // Share a VIA deep-link, NOT the raw Pleiades page: it opens the actual place
-  // in VIA (Pleiades is one tap away in the panel) and unfurls with the OG card.
+  // A VIA deep-link, NOT the raw Pleiades page: it opens the actual place in VIA
+  // (Pleiades is one tap away in the panel) and unfurls with the OG card.
   const url   = `https://danielkorr.github.io/ancient-world-explorer/?site=${site.pleiades}`;
-  // The URL is deliberately NOT embedded in `text`. navigator.share passes `url`
-  // separately, and email/social render both — that's why the old link appeared
-  // twice. Keep the prose clean; the link rides in the url field.
-  const text  = `${label} · ${where}. ${q.text} Be the traveler who closes the gap. #VIAquest`;
+  // Put EVERYTHING — context + the one link — in a single text block, and do NOT
+  // pass navigator.share's separate `url` field. Share targets cherry-pick fields
+  // inconsistently (Gmail keeps only `url`, Outlook keeps only `text`, neither
+  // sets a subject), so a self-contained message is the only way every target
+  // shows the full thing with exactly one link. Social surfaces still unfurl the
+  // VIA card from the URL inside the text.
+  const message =
+    `${label}: ${where}.\n${q.text} Be the traveler who closes the gap.\n${url}\n#VIAquest`;
 
   if (navigator.share) {
-    try { await navigator.share({ title: `${site.name} — VIA quest`, text, url }); return; }
+    try { await navigator.share({ title: `${site.name} — VIA quest`, text: message }); return; }
     catch { /* fall through to clipboard */ }
   }
-  // Clipboard / tweet fallback has no separate url field, so the link goes in
-  // the text here (once), on its own line.
-  const full = `${text}\n${url}`;
   try {
-    await navigator.clipboard.writeText(full);
+    await navigator.clipboard.writeText(message);
     const btn = document.getElementById('quest-share-btn');
     const orig = btn.textContent;
     btn.textContent = '✓ Copied — paste anywhere';
     setTimeout(() => { btn.textContent = orig; }, 2400);
   } catch {
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(full)}`, '_blank');
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`, '_blank');
   }
 }
 
@@ -1574,25 +1575,32 @@ async function shareRoadSegment() {
   if (!m) return;
   const certLabel = (CERT_INFO[m.cert] || {}).label || 'Roman';
   const name = m.name || 'a Roman road';
-  const url  = 'https://itiner-e.org';
-  // URL kept out of `text` (passed separately) so it isn't shown twice.
-  const text = `${certLabel} Roman road: ${name}. Help verify this stretch of the ancient road network. #VIAquest`;
+  // Share a VIA link, not itiner-e.org — that bare external page never showed the
+  // VIA card and dropped people outside the app. No per-segment deep-link exists
+  // (the static Itiner-e dump has no stable segment id), so use the VIA home URL:
+  // it unfurls the VIA card and lands the recipient in the experience.
+  const url  = 'https://danielkorr.github.io/ancient-world-explorer/';
+  // Single self-contained message (see shareQuest) — context + one link, no
+  // separate `url` field, so every share target shows the full thing.
+  const message =
+    `Roman road quest: ${name} (${certLabel.toLowerCase()} route).\n` +
+    `Help verify this stretch of the ancient network — walk it, photograph it, confirm the alignment.\n` +
+    `${url}\n#VIAquest`;
 
   if (navigator.share) {
-    try { await navigator.share({ title: `${name} — VIA road quest`, text, url }); return; }
+    try { await navigator.share({ title: `${name} — VIA road quest`, text: message }); return; }
     catch { /* fall through to clipboard */ }
   }
   const btn = document.getElementById('quest-banner-cta');
-  const full = `${text}\n${url}`;
   try {
-    await navigator.clipboard.writeText(full);
+    await navigator.clipboard.writeText(message);
     if (btn) {
       const orig = btn.textContent;
-      btn.textContent = '✓ Copied — paste into a tweet';
+      btn.textContent = '✓ Copied — paste anywhere';
       setTimeout(() => { btn.textContent = orig; }, 2400);
     }
   } catch {
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(full)}`, '_blank');
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`, '_blank');
   }
 }
 

@@ -844,6 +844,23 @@ function showPanel(site) {
       <span class="p-btn-ext" aria-hidden="true">↗</span>
     </a>` : '';
 
+  // "Email this quest" — only on quest sites. A mailto: link (NOT the OS share
+  // sheet) so it opens the default mail app with a real Subject and a formatted
+  // body prefilled. No image (mailto is plain text), but a proper email.
+  let emailBtn = '';
+  if (quest) {
+    const eLabel = quest.label.replace(' · Open', '');
+    const eWhere = site.modern ? `${site.name} (${site.modern})` : site.name;
+    const eUrl   = `https://danielkorr.github.io/ancient-world-explorer/?site=${site.pleiades}`;
+    const eSubj  = `VIA quest: ${site.name}`;
+    const eBody  = `${eLabel}: ${eWhere}.\n\n${quest.text} Be the traveler who closes the gap.\n\nExplore it on VIA:\n${eUrl}\n\n#VIAquest`;
+    emailBtn = `
+    <a href="${questMailto(eSubj, eBody)}" class="p-btn p-btn-email">
+      <span class="p-btn-icon">✉️</span>
+      <div><div class="p-btn-main">Email this quest</div><div class="p-btn-sub">Opens your mail app — subject &amp; message ready</div></div>
+    </a>`;
+  }
+
   // External links navigate in the SAME tab so the browser Back button/gesture
   // — the one "go back" action that works identically on every device,
   // including mobile — returns you to VIA. saveReturnState() stashes the open
@@ -864,7 +881,7 @@ function showPanel(site) {
       <span class="p-btn-icon">📜</span>
       <div><div class="p-btn-main">Pleiades Gazetteer</div><div class="p-btn-sub">Academic record · sources · cross-references</div></div>
       <span class="p-btn-ext" aria-hidden="true">↗</span>
-    </a>${viciBtn}
+    </a>${viciBtn}${emailBtn}
   `;
 
   // Remember where the map was the first time the panel opens, so closing it
@@ -1143,14 +1160,28 @@ function showSegmentPanel(meta, latlngs) {
     nearbyEl.style.display = 'block';
   }
 
-  // Single external action: the Itiner-e atlas (opens a new tab — no per-segment
-  // state to restore, unlike the same-tab site links).
+  // "Email this quest" on verification-quest stretches (conjectured/hypothetical),
+  // matching the site flow. mailto: with a real subject + body.
+  let emailBtn = '';
+  if (cert === 'j' || cert === 'h') {
+    const eName = (meta && meta.name) ? meta.name : 'a Roman road';
+    const eUrl  = 'https://danielkorr.github.io/ancient-world-explorer/';
+    const eSubj = `VIA road quest: ${eName}`;
+    const eBody = `${ci.label} Roman road: ${eName}.\n\nThis stretch of the ancient road network isn't field-verified. Walking or photographing it can help confirm the alignment.\n\nExplore it on VIA:\n${eUrl}\n\n#VIAquest`;
+    emailBtn = `
+    <a href="${questMailto(eSubj, eBody)}" class="p-btn p-btn-email">
+      <span class="p-btn-icon">✉️</span>
+      <div><div class="p-btn-main">Email this quest</div><div class="p-btn-sub">Opens your mail app — subject &amp; message ready</div></div>
+    </a>`;
+  }
+
+  // Itiner-e atlas (opens a new tab) + the email-this-quest action when relevant.
   document.getElementById('panel-actions').innerHTML = `
     <a href="https://itiner-e.org" target="_blank" rel="noopener" class="p-btn p-btn-gold">
       <span class="p-btn-icon">🗺️</span>
       <div><div class="p-btn-main">Itiner-e Atlas</div><div class="p-btn-sub">Scholarly Roman road dataset · CC BY 4.0</div></div>
       <span class="p-btn-ext" aria-hidden="true">↗</span>
-    </a>`;
+    </a>${emailBtn}`;
 
   const panel = document.getElementById('info-panel');
   panel.classList.add('segment-panel');
@@ -1526,6 +1557,13 @@ function openQuestModal() {
 
 function closeQuestModal() {
   document.getElementById('quest-modal').classList.remove('open');
+}
+
+// Build a mailto: href with a prefilled subject + plain-text body. Used by the
+// "Email this quest" panel button — opens the OS default mail app with a real
+// Subject line (the OS share sheet can't set one). Plain text only: no image.
+function questMailto(subject, body) {
+  return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
 async function shareQuest() {

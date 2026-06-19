@@ -500,6 +500,9 @@ function makeIcon(site, hovered) {
   const ring = quest && !hovered
     ? `<div class="quest-ring" style="color:${color};"></div>`
     : '';
+  const pulse = (typeof pulseSiteId !== 'undefined' && pulseSiteId === site.id)
+    ? `<div class="selected-marker-pulse" style="color:${color};"></div>`
+    : '';
 
   // Visited badge: a check on a gold ring around any site the user checked in
   // to. Gold + the ✓ glyph (not green alone) so it survives red-green vision.
@@ -520,6 +523,7 @@ function makeIcon(site, hovered) {
              <div style="position:relative;width:${sz}px;height:${sz}px;">
                <div data-testid="site-marker" style="${dotStyle}"></div>
                ${ring}
+               ${pulse}
                ${visitedBadge}
              </div>
            </div>`,
@@ -567,6 +571,101 @@ const markersByTier = { documented: [], photo: [], location: [], text: [] };
 const allMarkers    = [];
 
 let   activeMarker = null;
+let   pulseSiteId  = null;
+let   pulseTimer   = null;
+let   pendingClosePulseSiteId = null;
+let   focusToken   = 0;   // guards against stale async reveal callbacks (race)
+
+function setActiveMarker(marker) {
+  if (activeMarker === marker) return;
+  if (activeMarker) {
+    activeMarker.setIcon(makeIcon(activeMarker._site, false));
+    activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
+  }
+  activeMarker = marker || null;
+  if (activeMarker) {
+    activeMarker.setIcon(makeIcon(activeMarker._site, true));
+    activeMarker.setZIndexOffset(1000);
+  }
+}
+
+function triggerMarkerPulse(marker) {
+  if (!marker || !marker._site) return;
+  const prevPulseId = pulseSiteId;
+  clearTimeout(pulseTimer);
+  pulseSiteId = marker._site.id;
+  if (prevPulseId && prevPulseId !== pulseSiteId) {
+    const prev = allMarkers.find(m => m._site && m._site.id === prevPulseId);
+    if (prev) prev.setIcon(makeIcon(prev._site, prev === activeMarker || prev === previewMarker));
+  }
+  marker.setIcon(makeIcon(marker._site, true));
+  pulseTimer = setTimeout(() => {
+    pulseSiteId = null;
+    marker.setIcon(makeIcon(marker._site, marker === activeMarker || marker === previewMarker));
+  }, 1400);
+}
+
+function markerForSite(site) {
+  return allMarkers.find(m => m._site === site) || null;
+}
+
+function clusterGroupForSite(site) {
+  return siteClusters[site.quest || 'documented'] || null;
+}
+
+function revealSiteMarker(site, onReady) {
+  const marker = markerForSite(site);
+  if (!marker) {
+    if (onReady) onReady(null);
+    return;
+  }
+
+  const wasSitesOff = !layerState.sites;
+  let refreshed = false;
+  ensureSitesLayerOn();
+  if (activeTiers.size) {
+    activeTiers.clear();
+    syncFilterUI();
+    refreshed = true;
+  }
+  if (!siteVisibleAtLevel(site, detailLevel)) {
+    setDetailLevel(2);
+  } else if (refreshed || wasSitesOff) {
+    refreshVisibleMarkers();
+  }
+
+  if (QA) {
+    if (onReady) onReady(marker);
+    return;
+  }
+
+  const group = clusterGroupForSite(site);
+  if (group && typeof group.zoomToShowLayer === 'function') {
+    group.zoomToShowLayer(marker, () => onReady && onReady(marker));
+  } else if (onReady) {
+    onReady(marker);
+  }
+}
+
+function focusSite(site, opts) {
+  const pulse = !!(opts && opts.pulse);
+  const pulseOnClose = !!(opts && opts.pulseOnClose);
+  // zoomToShowLayer is async; if a newer focus fires first, the older callback
+  // must not reopen its (now stale) site/panel. Token-guard the callback.
+  const myToken = ++focusToken;
+  revealSiteMarker(site, marker => {
+    if (myToken !== focusToken) return;
+    if (marker) setActiveMarker(marker);
+    showPanel(site);
+    if (marker && pulse) {
+      if (window.innerWidth <= 640 && pulseOnClose && !QA) {
+        pendingClosePulseSiteId = site.id;
+      } else {
+        triggerMarkerPulse(marker);
+      }
+    }
+  });
+}
 
 // Curated sites are the ~95 hand-written entries in SITES_CURATED. The global
 // SITES array spreads those same object references in first (see data.js), so
@@ -601,11 +700,7 @@ SITES.forEach(site => {
     // pan animation — that churn was eating the next click and blocking the
     // double-click-to-zoom. Panel's already showing this site; do nothing.
     if (activeMarker === this) return;
-    if (activeMarker) {
-      activeMarker.setIcon(makeIcon(activeMarker._site, false));
-      activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
-    }
-    activeMarker = this;
+    setActiveMarker(this);
     showPanel(this._site);
   });
 
@@ -658,11 +753,7 @@ if (COARSE_POINTER) {
     for (const m of allMarkers) { if (m._icon === iconEl) { hit = m; break; } }
     if (!hit) return;
     e.preventDefault();   // suppress any late synthesized click → no double-open
-    if (activeMarker && activeMarker !== hit) {
-      activeMarker.setIcon(makeIcon(activeMarker._site, false));
-      activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
-    }
-    activeMarker = hit;
+    setActiveMarker(hit);
     showPanel(hit._site);
   }, { passive: false });
 }
@@ -739,6 +830,10 @@ function setHeroPhoto(hero, heroIcon, url, grad) {
 
 function showPanel(site) {
   hideLegendToast();
+  // A pending close-pulse is a one-shot tied to the site just focused via search.
+  // Opening any other panel (e.g. a marker tap) cancels it so it can't pulse a
+  // stale site after this panel closes. focusSite re-sets it after this returns.
+  pendingClosePulseSiteId = null;
 
   const tc    = TYPE[site.type] || TYPE.city;
   const quest = site.quest ? QUEST[site.quest] : null;
@@ -939,6 +1034,7 @@ function panToWithPanelOffset(latlng, zoom) {
 
 function closePanel() {
   const panel = document.getElementById('info-panel');
+  const pulseSiteIdAfterClose = pendingClosePulseSiteId;
   panel.classList.remove('open');
   panel.classList.remove('segment-panel');
   if (activeMarker) {
@@ -956,6 +1052,257 @@ function closePanel() {
     map.flyTo(panelReturnView.center, panelReturnView.zoom, { duration: 0.4 });
     panelReturnView = null;
   }
+  pendingClosePulseSiteId = null;
+  if (pulseSiteIdAfterClose && window.innerWidth <= 640) {
+    const pulseMarker = allMarkers.find(m => m._site && m._site.id === pulseSiteIdAfterClose);
+    if (pulseMarker) {
+      setTimeout(() => triggerMarkerPulse(pulseMarker), 140);
+    }
+  }
+}
+
+// Search lives in the top bar and resolves to the same site-panel flow as a
+// marker tap. That keeps keyboard, desktop, and mobile selection behavior on
+// one code path.
+const SEARCH_LIMIT = 8;
+let currentSearchResults = [];
+let activeSearchIndex = -1;
+let previewMarker = null;
+
+function normalizeSearchText(text) {
+  return String(text || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
+// Search rows are built with innerHTML, and SITES carries generated upstream
+// Pleiades/vici strings. Escape every interpolated value so a name containing
+// <, ", or </button> can't break the DOM or inject markup.
+function escapeHtml(text) {
+  return String(text == null ? '' : text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function siteSearchEntries(site) {
+  return {
+    name: normalizeSearchText(site.name),
+    modern: normalizeSearchText(site.modern),
+    period: normalizeSearchText(site.period),
+    type: normalizeSearchText(site.type),
+    id: normalizeSearchText(site.id),
+    pleiades: normalizeSearchText(site.pleiades),
+  };
+}
+
+function rankSearchMatch(site, query) {
+  if (!query) return null;
+  const entry = siteSearchEntries(site);
+  const wordPrefix = (text) => text.split(/[\s,()/.-]+/).some(part => part.startsWith(query));
+  if (entry.name === query) return { score: 0, bucket: 'site', match: 'Exact site' };
+  if (entry.name.startsWith(query)) return { score: 1, bucket: 'site', match: 'Site name' };
+  if (wordPrefix(entry.name)) return { score: 2, bucket: 'site', match: 'Site name' };
+  if (entry.name.includes(query)) return { score: 3, bucket: 'site', match: 'Site name' };
+  if (entry.modern === query) return { score: 4, bucket: 'location', match: 'Modern location' };
+  if (entry.modern.startsWith(query)) return { score: 5, bucket: 'location', match: 'Modern location' };
+  if (wordPrefix(entry.modern)) return { score: 6, bucket: 'location', match: 'Modern location' };
+  if (entry.modern.includes(query)) return { score: 7, bucket: 'location', match: 'Modern location' };
+  if (entry.period.includes(query)) return { score: 8, bucket: 'context', match: 'Period' };
+  if (entry.type.includes(query)) return { score: 9, bucket: 'context', match: 'Type' };
+  if (entry.id === query || entry.pleiades === query) return { score: 10, bucket: 'context', match: 'Identifier' };
+  return null;
+}
+
+function searchSites(query) {
+  const q = normalizeSearchText(query);
+  if (!q) return [];
+  return SITES
+    .map(site => ({ site, rank: rankSearchMatch(site, q) }))
+    .filter(hit => !!hit.rank)
+    .sort((a, b) => {
+      if (a.rank.score !== b.rank.score) return a.rank.score - b.rank.score;
+      const aCurated = CURATED_SET.has(a.site) ? 0 : 1;
+      const bCurated = CURATED_SET.has(b.site) ? 0 : 1;
+      if (aCurated !== bCurated) return aCurated - bCurated;
+      return a.site.name.localeCompare(b.site.name);
+    })
+    .slice(0, SEARCH_LIMIT)
+    .map(hit => ({ site: hit.site, bucket: hit.rank.bucket, match: hit.rank.match, score: hit.rank.score }));
+}
+
+function siteSearchMeta(site) {
+  const bits = [];
+  if (site.modern && normalizeSearchText(site.modern) !== normalizeSearchText(site.name)) bits.push(site.modern);
+  if (site.type) bits.push(site.type[0].toUpperCase() + site.type.slice(1));
+  if (site.quest) bits.push((QUEST[site.quest] || {}).label?.replace(' · Open', '') || 'Quest');
+  return bits.join(' · ');
+}
+
+function closeSearchResults() {
+  const list = document.getElementById('site-search-results');
+  const input = document.getElementById('site-search-input');
+  currentSearchResults = [];
+  activeSearchIndex = -1;
+  clearPreviewMarker();
+  if (list) {
+    list.classList.remove('open');
+    list.innerHTML = '';
+  }
+  if (input) input.setAttribute('aria-expanded', 'false');
+}
+
+function clearPreviewMarker() {
+  if (!previewMarker || previewMarker === activeMarker) {
+    previewMarker = null;
+    return;
+  }
+  previewMarker.setIcon(makeIcon(previewMarker._site, false));
+  previewMarker.setZIndexOffset(previewMarker._site.quest ? 500 : 0);
+  previewMarker = null;
+}
+
+function previewSearchResult(index) {
+  clearPreviewMarker();
+  const hit = currentSearchResults[index];
+  if (!hit) return;
+  const marker = markerForSite(hit.site);
+  if (!marker || marker === activeMarker) return;
+  previewMarker = marker;
+  previewMarker.setIcon(makeIcon(previewMarker._site, true));
+  previewMarker.setZIndexOffset(1500);
+}
+
+function setActiveSearchIndex(index) {
+  activeSearchIndex = index;
+  const rows = document.querySelectorAll('#site-search-results [data-testid="site-search-result"]');
+  rows.forEach((row, i) => {
+    const active = i === activeSearchIndex;
+    row.classList.toggle('active', active);
+    row.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+  previewSearchResult(activeSearchIndex);
+}
+
+function renderSearchResults(results, query) {
+  const list = document.getElementById('site-search-results');
+  const input = document.getElementById('site-search-input');
+  if (!list || !input) return;
+  currentSearchResults = results.slice();
+  activeSearchIndex = results.length ? 0 : -1;
+  if (!query) {
+    closeSearchResults();
+    return;
+  }
+  if (!results.length) {
+    list.innerHTML = '<div class="site-search-empty">No matching site or location.</div>';
+  } else {
+    const labels = { site: 'Sites', location: 'Locations', context: 'Context' };
+    let html = '';
+    let lastBucket = null;
+    results.forEach((hit, index) => {
+      if (hit.bucket !== lastBucket) {
+        html += `<div class="site-search-group-label">${labels[hit.bucket] || 'Matches'}</div>`;
+        lastBucket = hit.bucket;
+      }
+      html += `
+        <button
+          type="button"
+          class="site-search-result${index === 0 ? ' active' : ''}"
+          data-testid="site-search-result"
+          data-site-id="${escapeHtml(hit.site.id)}"
+          role="option"
+          aria-selected="${index === 0 ? 'true' : 'false'}"
+        >
+          <span class="site-search-name">${escapeHtml(hit.site.name)}</span>
+          <span class="site-search-meta">${escapeHtml(siteSearchMeta(hit.site))} <span class="site-search-match">· ${escapeHtml(hit.match)}</span></span>
+        </button>
+      `;
+    });
+    list.innerHTML = html;
+  }
+  list.classList.add('open');
+  input.setAttribute('aria-expanded', 'true');
+  previewSearchResult(activeSearchIndex);
+}
+
+function selectSearchResult(index) {
+  const hit = currentSearchResults[index];
+  const input = document.getElementById('site-search-input');
+  if (!hit) return false;
+  if (input) input.value = hit.site.name;
+  closeSearchResults();
+  focusSite(hit.site, { pulse: true, pulseOnClose: true });
+  return true;
+}
+
+function updateSearchResults(query) {
+  renderSearchResults(searchSites(query), query);
+}
+
+function bindSiteSearch() {
+  const wrap = document.getElementById('topbar-search');
+  const input = document.getElementById('site-search-input');
+  const list = document.getElementById('site-search-results');
+  if (!wrap || !input || !list || wrap.dataset.bound === '1') return;
+  wrap.dataset.bound = '1';
+
+  input.addEventListener('input', () => updateSearchResults(input.value));
+  input.addEventListener('focus', () => {
+    if (input.value.trim()) updateSearchResults(input.value);
+  });
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      closeSearchResults();
+      input.blur();
+      return;
+    }
+    if (!currentSearchResults.length) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveSearchIndex((activeSearchIndex + 1) % currentSearchResults.length);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveSearchIndex((activeSearchIndex - 1 + currentSearchResults.length) % currentSearchResults.length);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      selectSearchResult(activeSearchIndex < 0 ? 0 : activeSearchIndex);
+    }
+  });
+
+  list.addEventListener('click', e => {
+    const row = e.target.closest && e.target.closest('[data-testid="site-search-result"]');
+    if (!row) return;
+    const index = Array.from(list.querySelectorAll('[data-testid="site-search-result"]')).indexOf(row);
+    if (index >= 0) selectSearchResult(index);
+  });
+  list.addEventListener('mousemove', e => {
+    const row = e.target.closest && e.target.closest('[data-testid="site-search-result"]');
+    if (!row) return;
+    const index = Array.from(list.querySelectorAll('[data-testid="site-search-result"]')).indexOf(row);
+    if (index >= 0) setActiveSearchIndex(index);
+  });
+  list.addEventListener('mouseleave', () => {
+    clearPreviewMarker();
+    if (activeSearchIndex >= 0) previewSearchResult(activeSearchIndex);
+  });
+
+  // Dismiss on outside interaction. iOS Safari taps on the map/markers go
+  // through custom touchend + preventDefault and never synthesize a click, so a
+  // click-only handler leaves the sheet stuck open over the map. Listen for
+  // touchstart too. (Both are capture-phase and guard on the search wrap.)
+  const dismissIfOutside = e => {
+    if (wrap.contains(e.target)) return;
+    closeSearchResults();
+  };
+  document.addEventListener('click', dismissIfOutside, true);
+  document.addEventListener('touchstart', dismissIfOutside, { capture: true, passive: true });
+  // A map pan/zoom (drag) also means the user left the search interaction.
+  map.on('movestart', closeSearchResults);
 }
 
 // Plain-language read on each Itiner-e certainty class. The blurb doubles as the
@@ -1977,6 +2324,47 @@ map.attributionControl.setPrefix(
   + ' · <a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>'
 );
 
+const buildBadge = document.getElementById('build-badge');
+if (buildBadge) buildBadge.textContent = `VIA ${BUILD !== '?' ? 'v' + BUILD : 'dev'}`;
+
+// Mobile attribution. The on-map credit (Itiner-e CC BY 4.0 + OSM/CARTO/Leaflet)
+// has nowhere uncrowded to live on a phone, so on mobile (CSS hides the native
+// control) it collapses behind a one-tap "ⓘ" by the Key FAB. The popover reads
+// the live attribution control's HTML, so it always shows the exact same credit
+// — including Itiner-e, which is added only after the roads dataset loads.
+(function setupMobileAttribution() {
+  const toggle = document.createElement('button');
+  toggle.id = 'attrib-toggle';
+  toggle.type = 'button';
+  toggle.setAttribute('aria-label', 'Map data sources and credits');
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.textContent = 'ⓘ';
+  const pop = document.createElement('div');
+  pop.id = 'attrib-popover';
+  pop.setAttribute('role', 'dialog');
+  pop.setAttribute('aria-label', 'Map data sources');
+  document.body.appendChild(pop);
+  document.body.appendChild(toggle);
+
+  const closePop = () => { pop.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); };
+  const openPop = () => {
+    const src = map.attributionControl && map.attributionControl.getContainer();
+    pop.innerHTML =
+      '<div style="font-family:Cinzel,serif;font-size:9px;letter-spacing:1.4px;'
+      + 'text-transform:uppercase;color:rgba(212,168,83,0.7);margin-bottom:6px">Sources</div>'
+      + (src ? src.innerHTML : '');
+    pop.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+  };
+  toggle.addEventListener('click', () => {
+    pop.classList.contains('open') ? closePop() : openPop();
+  });
+  const dismiss = e => { if (!pop.contains(e.target) && !toggle.contains(e.target)) closePop(); };
+  document.addEventListener('click', dismiss, true);
+  document.addEventListener('touchstart', dismiss, { capture: true, passive: true });
+  map.on('movestart', closePop);
+})();
+
 map.on('zoomend', () => {
   updateBasemaps();
   // Marker visibility is governed by the DETAIL slider, not zoom, and
@@ -1993,6 +2381,7 @@ syncRoadsFilterUI();
 refreshVisibleMarkers();
 bindDetailSlider();
 syncDetailUI();
+bindSiteSearch();
 
 // Keyboard activation for the legend filter rows (they're role="button"). Site
 // tier rows carry data-tier; roads certainty rows carry data-cert.
@@ -2113,9 +2502,24 @@ window.VIA.build = BUILD;
 window.VIA.openSite = function (key) {
   const s = SITES.find(x => x.id === key || String(x.pleiades) === String(key));
   if (!s) return false;
-  if (typeof activeMarker !== 'undefined') activeMarker = null;
-  showPanel(s);
+  focusSite(s);
   return true;
+};
+window.VIA.searchSites = function (query) {
+  const results = searchSites(query);
+  const input = document.getElementById('site-search-input');
+  if (input) input.value = query;
+  renderSearchResults(results, query);
+  return results.map(hit => ({
+    id: hit.site.id,
+    name: hit.site.name,
+    modern: hit.site.modern,
+    bucket: hit.bucket,
+    match: hit.match,
+  }));
+};
+window.VIA.selectSearchResult = function (index) {
+  return selectSearchResult(index);
 };
 window.VIA.firstQuestSite = function (tier) {
   const s = SITES.find(x => x.quest && (!tier || x.quest === tier));
@@ -2145,6 +2549,10 @@ window.VIA.getState    = function () {
     questBannerVisible: document.getElementById('panel-quest-banner').classList.contains('visible'),
     detailLevel,
     activeTiers: (typeof activeTiers !== 'undefined') ? Array.from(activeTiers) : [],
+    searchOpen: document.getElementById('site-search-results').classList.contains('open'),
+    searchQuery: (document.getElementById('site-search-input') || {}).value || '',
+    searchResultCount: currentSearchResults.length,
+    searchPreviewSite: previewMarker && previewMarker._site ? previewMarker._site.id : null,
     visibleSiteCount,
     siteCount: SITES.length,
   };

@@ -46,7 +46,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=67">
+  <link rel="stylesheet" href="css/style.css?v=80">
 </head>
 <body>
 
@@ -59,17 +59,36 @@
     <h1 id="app-title">VIA</h1>
     <div id="app-subtitle">Ancient World Explorer</div>
   </div>
+  <div id="topbar-search" data-testid="site-search">
+    <label class="sr-only" for="site-search-input">Search for a site or modern location</label>
+    <input
+      id="site-search-input"
+      data-testid="site-search-input"
+      type="search"
+      placeholder="Search sites or locations"
+      autocomplete="off"
+      spellcheck="false"
+      aria-controls="site-search-results"
+      aria-expanded="false"
+    >
+    <div id="site-search-results" data-testid="site-search-results" role="listbox" aria-label="Search results"></div>
+  </div>
   <div id="topbar-right">
-    <div id="era-toggle" data-testid="era-toggle">
-      <button class="era-btn active" id="btn-ancient" data-testid="ancient-era-button" onclick="setEra('ancient')">ANCIENT</button>
-      <button class="era-btn"        id="btn-modern" data-testid="modern-era-button" onclick="setEra('modern')">MODERN</button>
-    </div>
     <button id="profile-pill" onclick="openAuthModal()" title="Sign in">
       <span id="profile-pill-glyph">⊙</span>
       <span id="profile-pill-label">Sign in</span>
     </button>
   </div>
 </div>
+
+<div id="era-toggle-wrap">
+  <div id="era-toggle" data-testid="era-toggle">
+    <button class="era-btn active" id="btn-ancient" data-testid="ancient-era-button" onclick="setEra('ancient')">ANCIENT</button>
+    <button class="era-btn"        id="btn-modern" data-testid="modern-era-button" onclick="setEra('modern')">MODERN</button>
+  </div>
+</div>
+
+<div id="build-badge" aria-live="polite"></div>
 
 <!-- Welcome modal (first-visit intro; reopen via the brand title) -->
 <div id="welcome-modal" onclick="if(event.target===this)closeWelcome()">
@@ -292,11 +311,11 @@
 
 <!-- Data + App. ?v= must match the value on css/style.css above — bump both
      together each deploy to force fresh assets past the cache. -->
-<script src="js/config.js?v=67"></script>
-<script src="js/orbis-days.js?v=67"></script>
-<script src="js/sites-pleiades.js?v=67"></script>
-<script src="js/sites-vici.js?v=67"></script>
-<script src="js/vici-links.js?v=67"></script>
+<script src="js/config.js?v=80"></script>
+<script src="js/orbis-days.js?v=80"></script>
+<script src="js/sites-pleiades.js?v=80"></script>
+<script src="js/sites-vici.js?v=80"></script>
+<script src="js/vici-links.js?v=80"></script>
 <!-- The Itiner-e road dataset is ~2.7MB; parsing it intermittently crashes
      headless Chromium, breaking deterministic tests. Skip it entirely in ?qa=1
      (app.js guards on `typeof ROADS_ITINERE`). document.write here runs during
@@ -304,12 +323,12 @@
      normal (non-QA) path — ordering is preserved. -->
 <script>
   if (!/[?&]qa=1/.test(location.search)) {
-    document.write('<scr' + 'ipt src="js/roads-itinere.js?v=67"><\/scr' + 'ipt>');
+    document.write('<scr' + 'ipt src="js/roads-itinere.js?v=80"><\/scr' + 'ipt>');
   }
 </script>
-<script src="js/data.js?v=67"></script>
-<script src="js/auth.js?v=67"></script>
-<script src="js/app.js?v=67"></script>
+<script src="js/data.js?v=80"></script>
+<script src="js/auth.js?v=80"></script>
+<script src="js/app.js?v=80"></script>
 
 </body>
 </html>

@@ -115,3 +115,6 @@ from ingestion — the no-regrets core of D-06.
 - **Front-end evolution:** stay vanilla, or refactor the view/state layer to `UI = f(state)`?
   The multi-modal state in `app.js` (era × layers × filters × panel) is a likely bug source
   as features grow. Not urgent — revisit when it bites. (D-08 and D-02 above are the other two.)
+
+
+Road geometry: Itiner-e, not ORBIS (2026-06-14). Itiner-e is the authoritative road layer (terrain-following geometry, segment citations, certainty classification, Pleiades links, CC BY 4.0). ORBIS demoted to travel-time/cost modeling. ORBIS models ~751 nodes, not on-the-ground road courses. Full analysis: DATA-SOURCES.md

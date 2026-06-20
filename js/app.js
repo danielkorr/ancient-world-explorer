@@ -127,20 +127,19 @@ const ancientLayer = L.tileLayer(
   }
 );
 
-// Sepia-toned modern basemap that sits permanently underneath DARE in
-// ancient mode. Where DARE has coverage (Roman world), its tiles render
-// on top. Where DARE 404s (panning outside the empire, or a temporary
-// server hiccup), the sepia fallback shows through naturally — no mode
-// swap, no banner, no permanent confusion. CSS class `ancient-fallback`
-// applies the sepia filter (see style.css).
-const ancientFallbackLayer = L.tileLayer(
-  'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-  {
-    maxZoom: 18,
-    className: 'ancient-fallback',
-    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
-  }
-);
+// Stamen (via Stadia Maps) sits permanently underneath DARE in ancient mode.
+// Where DARE has coverage (Roman world), its tiles render on top. Where DARE
+// 404s (panning outside the empire, or a temporary server hiccup), the Stamen
+// floor shows through naturally — no mode swap, no banner, no permanent
+// confusion. Stamen already reads as an "old map" (warm-toned), so no sepia CSS
+// filter is needed — it replaced the old sepia-tinted CARTO light_all fallback.
+// Built in js/basemap.js (ACTIVE_BASEMAP picks terrain/watercolor); attribution
+// rides on the layer and the Leaflet control aggregates it while ancient mode is
+// active. `labels` is the Stamen Toner labels overlay (watercolor only; null for
+// terrain), kept in lockstep with the floor through the era toggle + reveal.
+const _ancientFloor = VIA_createAncientFloor();
+const ancientFallbackLayer  = _ancientFloor.base;
+const ancientFallbackLabels = _ancientFloor.labels;  // null for terrain
 
 const modernLayer = L.tileLayer(
   'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
@@ -153,7 +152,7 @@ const map = L.map('map', {
   center: [38.5, 17.0],
   zoom: 5,
   zoomControl: false,
-  layers: [ancientFallbackLayer, ancientLayer],
+  layers: [ancientFallbackLayer, ...(ancientFallbackLabels ? [ancientFallbackLabels] : []), ancientLayer],
 
   // Navigation feel. Leaflet's defaults make a small flick fling the map a long
   // way (inertiaMaxSpeed is Infinity by default) and scroll-zoom jumps fast.
@@ -1586,10 +1585,12 @@ function setEra(era) {
   if (era === 'ancient') {
     if (map.hasLayer(modernLayer)) map.removeLayer(modernLayer);
     if (!map.hasLayer(ancientFallbackLayer)) map.addLayer(ancientFallbackLayer);
+    if (ancientFallbackLabels && !map.hasLayer(ancientFallbackLabels)) map.addLayer(ancientFallbackLabels);
     if (!map.hasLayer(ancientLayer))         map.addLayer(ancientLayer);
   } else {
     if (map.hasLayer(ancientLayer))         map.removeLayer(ancientLayer);
     if (map.hasLayer(ancientFallbackLayer)) map.removeLayer(ancientFallbackLayer);
+    if (ancientFallbackLabels && map.hasLayer(ancientFallbackLabels)) map.removeLayer(ancientFallbackLabels);
     if (!map.hasLayer(modernLayer))         map.addLayer(modernLayer);
   }
   updateBasemaps();  // re-apply zoom-staged opacity + satellite reveal for the new era
@@ -2303,6 +2304,7 @@ function updateBasemaps() {
   if (currentEra === 'ancient') {
     ancientLayer.setOpacity(ancientOpacityForZoom(z));
     ancientFallbackLayer.setOpacity(1);
+    if (ancientFallbackLabels) ancientFallbackLabels.setOpacity(1);
   } else {
     modernLayer.setOpacity(1);
   }

@@ -58,12 +58,9 @@ body {
   z-index: 1;
 }
 
-/* Light sepia tint so the modern fallback basemap fits the ancient view
-   without obscuring features. Sits permanently under DARE in ancient mode;
-   shows through wherever DARE 404s (out-of-empire pans, server hiccups). */
-.ancient-fallback {
-  filter: sepia(0.5) saturate(0.85);
-}
+/* The ancient-mode floor is now Stamen (via Stadia Maps, see js/basemap.js),
+   which is already warm-toned and reads as an "old map" — so the old sepia CSS
+   filter on the former CARTO light_all fallback was dropped. */
 
 /* Banner element is left in the DOM for backwards compatibility but is now
    never shown — the layered fallback design makes it unnecessary. */

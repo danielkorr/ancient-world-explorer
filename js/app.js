@@ -133,7 +133,7 @@ const ancientLayer = L.tileLayer(
 // when it fails (auth miss, outage, un-whitelisted LAN IP) its tiles render
 // transparent and the sepia CARTO base shows through — so ancient mode never goes
 // white. Where DARE 404s (panning outside the empire, or a server hiccup), the
-// floor shows through naturally too — no mode swap, no banner. ACTIVE_BASEMAP
+// floor shows through naturally too — no mode swap, no banner. ACTIVE_ANCIENT_FLOOR
 // picks terrain/watercolor; attribution rides on each layer and the Leaflet
 // control aggregates it while ancient mode is active. `ancientFallbackLabels` is
 // the Stamen Toner labels overlay (watercolor only; null for terrain), kept in

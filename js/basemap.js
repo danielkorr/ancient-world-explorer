@@ -10,7 +10,7 @@
 // LAN IP), its tiles render transparent in Leaflet and the sepia CARTO base shows
 // through — so ancient mode never goes white. No tileerror handler is needed; the
 // stacking does it. MODERN mode keeps CARTO Voyager (see modernLayer in app.js);
-// ACTIVE_BASEMAP controls the ANCIENT Stamen style only — modern mode is Voyager
+// ACTIVE_ANCIENT_FLOOR controls the ANCIENT Stamen style only — modern mode is Voyager
 // regardless.
 //
 // Loaded as a classic global <script> (VIA uses no ES modules): exposes
@@ -19,7 +19,7 @@
 // (no `export`) so the existing era toggle + zoom-staged reveal keep working.
 
 (function () {
-  const ACTIVE_BASEMAP = 'terrain'; // 'terrain' (default) | 'watercolor'
+  const ACTIVE_ANCIENT_FLOOR = 'terrain'; // 'terrain' (default) | 'watercolor'
 
   const ATTR_OSM    = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
   const ATTR_CARTO  = '&copy; <a href="https://carto.com/attributions">CARTO</a>';
@@ -51,7 +51,7 @@
   //   labels — Stamen Toner labels overlay for watercolor only (null for terrain,
   //            which has its own labels); carries no attribution to avoid dupes.
   window.VIA_createAncientFloor = function () {
-    const cfg = BASEMAPS[ACTIVE_BASEMAP];
+    const cfg = BASEMAPS[ACTIVE_ANCIENT_FLOOR];
 
     const carto = L.tileLayer(
       'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',

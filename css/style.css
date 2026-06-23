@@ -58,9 +58,14 @@ body {
   z-index: 1;
 }
 
-/* The ancient-mode floor is now Stamen (via Stadia Maps, see js/basemap.js),
-   which is already warm-toned and reads as an "old map" — so the old sepia CSS
-   filter on the former CARTO light_all fallback was dropped. */
+/* Ancient-mode floor: a keyless sepia-tinted CARTO light_all base that ALWAYS
+   renders, with the Stamen (Stadia Maps) layer stacked on top of it (see
+   js/basemap.js). The sepia tint makes the CARTO base fit the ancient view when
+   it shows through — i.e. wherever the Stamen layer above fails to authenticate
+   or load. The .ancient-sepia-floor class is set on the CARTO base in basemap.js. */
+.ancient-sepia-floor {
+  filter: sepia(0.5) saturate(0.85);
+}
 
 /* Banner element is left in the DOM for backwards compatibility but is now
    never shown — the layered fallback design makes it unnecessary. */

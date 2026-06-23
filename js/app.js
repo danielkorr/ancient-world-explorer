@@ -127,18 +127,20 @@ const ancientLayer = L.tileLayer(
   }
 );
 
-// Stamen (via Stadia Maps) sits permanently underneath DARE in ancient mode.
-// Where DARE has coverage (Roman world), its tiles render on top. Where DARE
-// 404s (panning outside the empire, or a temporary server hiccup), the Stamen
-// floor shows through naturally — no mode swap, no banner, no permanent
-// confusion. Stamen already reads as an "old map" (warm-toned), so no sepia CSS
-// filter is needed — it replaced the old sepia-tinted CARTO light_all fallback.
-// Built in js/basemap.js (ACTIVE_BASEMAP picks terrain/watercolor); attribution
-// rides on the layer and the Leaflet control aggregates it while ancient mode is
-// active. `labels` is the Stamen Toner labels overlay (watercolor only; null for
-// terrain), kept in lockstep with the floor through the era toggle + reveal.
+// The ancient-mode floor beneath DARE is TWO stacked layers (built in
+// js/basemap.js): a KEYLESS sepia CARTO light_all base that always renders, and
+// the Stadia/Stamen layer ON TOP for the antique look. Stamen needs domain auth;
+// when it fails (auth miss, outage, un-whitelisted LAN IP) its tiles render
+// transparent and the sepia CARTO base shows through — so ancient mode never goes
+// white. Where DARE 404s (panning outside the empire, or a server hiccup), the
+// floor shows through naturally too — no mode swap, no banner. ACTIVE_BASEMAP
+// picks terrain/watercolor; attribution rides on each layer and the Leaflet
+// control aggregates it while ancient mode is active. `ancientFallbackLabels` is
+// the Stamen Toner labels overlay (watercolor only; null for terrain), kept in
+// lockstep with the floor through the era toggle + reveal.
 const _ancientFloor = VIA_createAncientFloor();
-const ancientFallbackLayer  = _ancientFloor.base;
+const ancientFallbackLayer  = _ancientFloor.carto;   // keyless sepia CARTO base
+const ancientStamenLayer    = _ancientFloor.stamen;  // Stamen on top (Stadia)
 const ancientFallbackLabels = _ancientFloor.labels;  // null for terrain
 
 const modernLayer = L.tileLayer(
@@ -146,13 +148,14 @@ const modernLayer = L.tileLayer(
   { maxZoom:19, attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>' }
 );
 
-// Boot with the fallback below + DARE on top. Leaflet stacks tile layers
-// in the order they're added, so fallback-first keeps DARE visually on top.
+// Boot the ancient stack bottom→top: sepia CARTO base, Stamen on top of it,
+// (Toner labels for watercolor), then DARE on top. Leaflet stacks tile layers
+// in the order they're added, so CARTO-first keeps the antique + DARE on top.
 const map = L.map('map', {
   center: [38.5, 17.0],
   zoom: 5,
   zoomControl: false,
-  layers: [ancientFallbackLayer, ...(ancientFallbackLabels ? [ancientFallbackLabels] : []), ancientLayer],
+  layers: [ancientFallbackLayer, ancientStamenLayer, ...(ancientFallbackLabels ? [ancientFallbackLabels] : []), ancientLayer],
 
   // Navigation feel. Leaflet's defaults make a small flick fling the map a long
   // way (inertiaMaxSpeed is Infinity by default) and scroll-zoom jumps fast.
@@ -1585,10 +1588,12 @@ function setEra(era) {
   if (era === 'ancient') {
     if (map.hasLayer(modernLayer)) map.removeLayer(modernLayer);
     if (!map.hasLayer(ancientFallbackLayer)) map.addLayer(ancientFallbackLayer);
+    if (!map.hasLayer(ancientStamenLayer))   map.addLayer(ancientStamenLayer);
     if (ancientFallbackLabels && !map.hasLayer(ancientFallbackLabels)) map.addLayer(ancientFallbackLabels);
     if (!map.hasLayer(ancientLayer))         map.addLayer(ancientLayer);
   } else {
     if (map.hasLayer(ancientLayer))         map.removeLayer(ancientLayer);
+    if (map.hasLayer(ancientStamenLayer))   map.removeLayer(ancientStamenLayer);
     if (map.hasLayer(ancientFallbackLayer)) map.removeLayer(ancientFallbackLayer);
     if (ancientFallbackLabels && map.hasLayer(ancientFallbackLabels)) map.removeLayer(ancientFallbackLabels);
     if (!map.hasLayer(modernLayer))         map.addLayer(modernLayer);
@@ -2304,6 +2309,7 @@ function updateBasemaps() {
   if (currentEra === 'ancient') {
     ancientLayer.setOpacity(ancientOpacityForZoom(z));
     ancientFallbackLayer.setOpacity(1);
+    ancientStamenLayer.setOpacity(1);
     if (ancientFallbackLabels) ancientFallbackLabels.setOpacity(1);
   } else {
     modernLayer.setOpacity(1);

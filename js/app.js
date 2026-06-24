@@ -1204,6 +1204,108 @@ function siteSearchMeta(site) {
   return bits.join(' · ');
 }
 
+// ── ROAD SEARCH (3c) ─────────────────────────────────────
+// Only the 14 curated ROADS are indexed; Itiner-e segment names are consciously
+// deferred (uneven coverage, ~14k dup-named segments — a later pass, not an
+// oversight). A road carries an alias bundle (data.js `search`): Latin name,
+// common English name, an endpoint pair, and extra aliases. Endpoints are
+// tokenized individually (see SEARCH_SPLIT) so "Rome to Brundisium",
+// "Rome-Brundisium" and "Rome Brundisium" all match.
+const SEARCH_SPLIT = /[\s,()/.\-–—]+/;
+const SEARCH_STOPWORDS = new Set(['to', 'and', 'the', 'of']);
+
+// Normalize + split a query into matchable tokens, dropping route connectors.
+function searchQueryTokens(query) {
+  return normalizeSearchText(query).split(SEARCH_SPLIT).filter(t => t && !SEARCH_STOPWORDS.has(t));
+}
+
+// Token-AND match: every query token must word-prefix some string in `strings`.
+// "appian way" → needs a string with a word starting "appian" AND one starting
+// "way" (both satisfied by "appian way"); a single stray token fails the whole.
+function tokensMatchStrings(tokens, strings) {
+  if (!tokens.length) return false;
+  return tokens.every(tok =>
+    strings.some(str => str.split(SEARCH_SPLIT).some(w => w.startsWith(tok)))
+  );
+}
+
+function roadSearchStrings(road) {
+  const s = road.search || {};
+  const parts = [road.name, s.en, s.from, s.to, road.desc, road.built];
+  if (Array.isArray(s.alt)) parts.push(...s.alt);
+  return parts.filter(Boolean).map(normalizeSearchText);
+}
+
+// Precomputed once — 14 entries, cheap.
+const ROAD_SEARCH_INDEX = ROADS.map(road => ({
+  road,
+  name: normalizeSearchText(road.name),
+  strings: roadSearchStrings(road),
+}));
+
+function searchRoads(query) {
+  const tokens = searchQueryTokens(query);
+  if (!tokens.length) return [];
+  const joined = normalizeSearchText(query);
+  const hits = [];
+  for (const entry of ROAD_SEARCH_INDEX) {
+    let score;
+    if (entry.name === joined) score = 0;
+    else if (entry.name.startsWith(joined)) score = 1;
+    else if (tokensMatchStrings(tokens, entry.strings)) score = 2;
+    else continue;
+    hits.push({ road: entry.road, kind: 'road', bucket: 'road', match: 'Roman road', score });
+  }
+  return hits.sort((a, b) => a.score - b.score || a.road.name.localeCompare(b.road.name));
+}
+
+function roadSearchMeta(road) {
+  const s = road.search || {};
+  const bits = [];
+  if (s.en && normalizeSearchText(s.en) !== normalizeSearchText(road.name)) bits.push(s.en);
+  if (s.from && s.to) bits.push(`${s.from} → ${s.to}`);
+  else if (road.desc) bits.push(road.desc);
+  if (road.built) bits.push('est. ' + road.built);
+  return bits.join(' · ');
+}
+
+// Merge site + road hits into one ranked list. Sites are pre-sorted (with the
+// curated/name tiebreak); a stable sort by score keeps that order and slots
+// equal-score roads in after. Road search is fully self-contained here so the
+// later site-matcher upgrade can be reverted without touching road search.
+function searchAll(query) {
+  const siteHits = searchSites(query).map(h => ({ ...h, kind: 'site' }));
+  const roadHits = searchRoads(query);
+  return [...siteHits, ...roadHits].sort((a, b) => a.score - b.score).slice(0, SEARCH_LIMIT);
+}
+
+// Open a curated road: show its panel (which snapshots the return view + opens
+// the card), then fitBounds on the next frame so we can measure the now-open
+// panel and pad the map so the whole road clears it (and the dock on mobile).
+function focusRoad(road) {
+  const latlngs = road.coords.map(c => [c[1], c[0]]);
+  showSegmentPanel({ name: road.name, main: 1, desc: road.desc }, latlngs);
+  const bounds = L.latLngBounds(latlngs);
+  requestAnimationFrame(() => map.fitBounds(bounds, roadFitPadding()));
+}
+
+function roadFitPadding() {
+  const panel = document.getElementById('info-panel');
+  const open = panel && panel.classList.contains('open');
+  if (window.innerWidth <= 640) {
+    // Mobile: the detail card is anchored at the bottom above the dock. Pad the
+    // map below by the distance from the viewport bottom to the card's top, so
+    // the road sits in the strip above the card (and therefore above the dock).
+    let padBottom = 96;
+    if (open) padBottom = Math.round(window.innerHeight - panel.getBoundingClientRect().top) + 12;
+    return { paddingTopLeft: [24, 72], paddingBottomRight: [24, padBottom] };
+  }
+  // Desktop: the panel overlays the right edge — pad right by its width.
+  let padRight = 40;
+  if (open) padRight = Math.round(panel.getBoundingClientRect().width) + 24;
+  return { paddingTopLeft: [40, 40], paddingBottomRight: [padRight, 40] };
+}
+
 function closeSearchResults() {
   const list = document.getElementById('site-search-results');
   const input = document.getElementById('site-search-input');
@@ -1230,7 +1332,7 @@ function clearPreviewMarker() {
 function previewSearchResult(index) {
   clearPreviewMarker();
   const hit = currentSearchResults[index];
-  if (!hit) return;
+  if (!hit || hit.kind === 'road') return;  // roads have no marker to preview
   const marker = markerForSite(hit.site);
   if (!marker || marker === activeMarker) return;
   previewMarker = marker;
@@ -1262,10 +1364,13 @@ function renderSearchResults(results, query) {
   if (!results.length) {
     list.innerHTML = '<div class="site-search-empty">No matching site or location.</div>';
   } else {
-    const labels = { site: 'Sites', location: 'Locations', context: 'Context' };
+    const labels = { site: 'Sites', location: 'Locations', context: 'Context', road: 'Roads' };
     let html = '';
     let lastBucket = null;
     results.forEach((hit, index) => {
+      const isRoad = hit.kind === 'road';
+      const name = isRoad ? hit.road.name : hit.site.name;
+      const meta = isRoad ? roadSearchMeta(hit.road) : siteSearchMeta(hit.site);
       if (hit.bucket !== lastBucket) {
         html += `<div class="site-search-group-label">${labels[hit.bucket] || 'Matches'}</div>`;
         lastBucket = hit.bucket;
@@ -1275,12 +1380,13 @@ function renderSearchResults(results, query) {
           type="button"
           class="site-search-result${index === 0 ? ' active' : ''}"
           data-testid="site-search-result"
-          data-site-id="${escapeHtml(hit.site.id)}"
+          data-kind="${hit.kind}"
+          data-site-id="${isRoad ? '' : escapeHtml(hit.site.id)}"
           role="option"
           aria-selected="${index === 0 ? 'true' : 'false'}"
         >
-          <span class="site-search-name">${escapeHtml(hit.site.name)}</span>
-          <span class="site-search-meta">${escapeHtml(siteSearchMeta(hit.site))} <span class="site-search-match">· ${escapeHtml(hit.match)}</span></span>
+          <span class="site-search-name">${escapeHtml(name)}</span>
+          <span class="site-search-meta">${escapeHtml(meta)} <span class="site-search-match">· ${escapeHtml(hit.match)}</span></span>
         </button>
       `;
     });
@@ -1295,6 +1401,12 @@ function selectSearchResult(index) {
   const hit = currentSearchResults[index];
   const input = document.getElementById('site-search-input');
   if (!hit) return false;
+  if (hit.kind === 'road') {
+    if (input) input.value = hit.road.name;
+    closeSearchResults();
+    focusRoad(hit.road);
+    return true;
+  }
   if (input) input.value = hit.site.name;
   closeSearchResults();
   focusSite(hit.site, { pulse: true, pulseOnClose: true });
@@ -1302,7 +1414,7 @@ function selectSearchResult(index) {
 }
 
 function updateSearchResults(query) {
-  renderSearchResults(searchSites(query), query);
+  renderSearchResults(searchAll(query), query);
 }
 
 function bindSiteSearch() {

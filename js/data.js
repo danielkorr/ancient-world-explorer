@@ -359,34 +359,54 @@ const SITES_CURATED = [
 //  ROADS
 // ═══════════════════════════════════════════════════════════
 
+// `search` is the optional alias bundle for 3c road search (see app.js
+// searchRoads). en = common English name; from/to = endpoint pair, tokenized
+// individually so "Rome to Brundisium" / "Rome-Brundisium" / "Rome Brundisium"
+// all match; alt = extra aliases (modern names, epithets). Itiner-e segment
+// names are CONSCIOUSLY DEFERRED — not indexed here; only these 14 curated roads
+// are searchable for now (a named-Itiner-e pass is a possible later step).
 const ROADS = [
   { name:"Via Appia",         built:"312 BC", desc:"The Queen of Roads — Rome to Brundisium",
+    search:{ en:"Appian Way", from:"Rome", to:"Brundisium", alt:["Regina Viarum","Queen of Roads","Brindisi"] },
     coords:[[12.49,41.89],[13.1,41.6],[13.5,41.57],[14.21,41.09],[14.78,41.13],[15.8,40.85],[17.24,40.47],[17.94,40.63]] },
   { name:"Via Flaminia",      built:"220 BC", desc:"Rome to the Adriatic at Ariminium",
+    search:{ en:"Flaminian Way", from:"Rome", to:"Ariminium", alt:["Rimini","Adriatic"] },
     coords:[[12.49,41.89],[12.52,42.1],[12.52,42.52],[12.6,42.73],[13.05,43.07],[13.72,43.84],[12.34,44.06]] },
   { name:"Via Aurelia",       built:"241 BC", desc:"Rome along the Tyrrhenian coast to Gaul",
+    search:{ en:"Aurelian Way", from:"Rome", to:"Gaul", alt:["Tyrrhenian coast"] },
     coords:[[12.49,41.89],[12.0,42.0],[11.5,42.4],[10.4,43.72],[8.94,44.41],[7.27,43.70],[6.74,43.25],[5.37,43.30]] },
   { name:"Via Aemilia",       built:"187 BC", desc:"Ariminium to Placentia across the Po plain",
+    search:{ en:"Aemilian Way", from:"Ariminium", to:"Placentia", alt:["Rimini","Piacenza","Emilia"] },
     coords:[[12.34,44.06],[11.34,44.49],[10.33,44.80],[9.19,45.05]] },
   { name:"Via Postumia",      built:"148 BC", desc:"Genua to Aquileia across northern Italy",
+    search:{ en:"Postumian Way", from:"Genua", to:"Aquileia", alt:["Genoa"] },
     coords:[[8.94,44.41],[9.19,45.46],[10.99,45.44],[11.88,45.41],[12.48,45.67],[13.37,45.77]] },
   { name:"Via Domitia",       built:"118 BC", desc:"First Roman road in Gaul — Italy to Hispania",
+    search:{ en:"Domitian Way", from:"Italy", to:"Hispania", alt:["Spain","Gaul"] },
     coords:[[5.37,43.30],[4.36,43.84],[3.0,43.18],[1.44,43.6],[-0.58,44.84],[-0.88,41.65],[-3.7,40.42],[-6.34,38.92]] },
   { name:"Via Egnatia",       built:"146 BC", desc:"Dyrrachium to Byzantium — Rome's road to the East",
+    search:{ en:"Egnatian Way", from:"Dyrrachium", to:"Byzantium", alt:["Durres","Constantinople","Istanbul"] },
     coords:[[19.48,41.32],[20.5,41.4],[21.3,40.85],[22.94,40.64],[24.29,41.01],[26.57,41.67],[28.98,41.01]] },
   { name:"Eastern Road",      built:"2nd c. AD", desc:"Asia Minor and Syria",
+    search:{ from:"Asia Minor", to:"Syria", alt:["Anatolia"] },
     coords:[[28.98,41.01],[30.5,40.0],[27.34,37.94],[27.18,39.13],[32.86,39.93],[36.16,36.20]] },
   { name:"Via Maris",         built:"Roman period", desc:"The coastal road from Syria to Egypt",
+    search:{ en:"Way of the Sea", from:"Syria", to:"Egypt" },
     coords:[[36.16,36.20],[36.31,33.51],[35.23,31.78],[34.91,32.50],[29.92,31.20]] },
   { name:"North African Road",built:"Roman period", desc:"Coastal road from Alexandria to Mauretania",
+    search:{ from:"Alexandria", to:"Mauretania", alt:["Carthage","Africa"] },
     coords:[[29.92,31.20],[21.86,32.82],[14.29,32.64],[12.48,32.80],[10.32,36.85],[2.21,36.59],[-5.55,34.07]] },
   { name:"Danube Limes Road", built:"1st c. AD",   desc:"The Danubian frontier highway",
+    search:{ from:"Danube", to:"frontier", alt:["Danubian frontier","limes"] },
     coords:[[28.98,41.01],[22.0,44.8],[19.62,44.97],[19.04,47.57],[16.86,48.12],[16.37,48.21],[13.0,48.5],[10.9,48.4]] },
   { name:"Via Belgica",       built:"1st c. AD",   desc:"Lugdunum to the Channel ports",
+    search:{ en:"Belgican Way", from:"Lugdunum", to:"Channel", alt:["Lyon","Belgica"] },
     coords:[[4.84,45.75],[2.35,48.86],[2.35,50.9],[1.62,50.95]] },
   { name:"Rhine Limes Road",  built:"1st c. AD",   desc:"The Rhine frontier",
+    search:{ from:"Rhine", to:"frontier", alt:["Rhine frontier","limes"] },
     coords:[[6.74,43.25],[6.64,49.75],[6.96,50.94],[7.1,51.5],[7.2,52.0],[8.0,53.5]] },
   { name:"Desert Road",       built:"Roman period", desc:"Palmyra to the Euphrates frontier",
+    search:{ from:"Palmyra", to:"Euphrates", alt:["Syria"] },
     coords:[[36.16,36.20],[37.5,35.5],[38.27,34.55],[40.73,34.75]] },
 ];
 

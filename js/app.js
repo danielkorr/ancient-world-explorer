@@ -222,6 +222,7 @@ function raiseOverlays() {
     map.removeLayer(itinereRoadsGroup); map.addLayer(itinereRoadsGroup);
   }
   if (map.hasLayer(roadsGroup)) { map.removeLayer(roadsGroup); map.addLayer(roadsGroup); }
+  if (map.hasLayer(roadHighlightGroup)) { map.removeLayer(roadHighlightGroup); map.addLayer(roadHighlightGroup); }
   // Sites now live in per-tier cluster groups (siteClusters); raise each so they
   // stay above any tile layer just slid underneath on an era swap.
   if (typeof siteClusters !== 'undefined') {
@@ -249,6 +250,12 @@ function raiseOverlays() {
 const itinereRenderer = L.canvas({ padding: 0.2 });
 const itinereRoadsGroup = L.layerGroup().addTo(map);
 const roadsGroup        = L.layerGroup().addTo(map);
+// Selection highlight for a searched road. Lives above roadsGroup, permanently
+// on the map (mobile-safe: we mutate its CONTENTS, never add/remove the group —
+// see the LayerGroup landmine in CLAUDE.md). Persists after the panel is
+// dismissed so the user can still see and follow the road they searched for;
+// cleared only on a new search or an explicit deselect.
+const roadHighlightGroup = L.layerGroup().addTo(map);
 
 // Per-certainty styling (Itiner-e Segment_s → meta.cert). The user is red-green
 // colorblind, so the DASH PATTERN is the primary "how sure are we" channel and
@@ -1294,31 +1301,81 @@ function searchAll(query) {
   return [...siteHits, ...roadHits].sort((a, b) => a.score - b.score).slice(0, SEARCH_LIMIT);
 }
 
-// Open a curated road: show its panel (which snapshots the return view + opens
-// the card), then fitBounds on the next frame so we can measure the now-open
-// panel and pad the map so the whole road clears it (and the dock on mobile).
+// The road currently lit up by a search selection (null when none).
+let highlightedRoad = null;
+
+// Paint a bright, thick glow over a road so it reads as "the one you searched
+// for" — and stays readable once the panel is dismissed. The user is red-green
+// colorblind, so WIDTH + LUMINANCE do the work (a wide cyan halo under a bright
+// white core), never hue alone. Drawn above the curated saffron road, which
+// stays visible underneath.
+function highlightRoad(road) {
+  clearRoadHighlight();
+  const latlngs = road.coords.map(c => [c[1], c[0]]);
+  L.polyline(latlngs, {
+    color: '#7ad7ff', weight: 16, opacity: 0.4,
+    lineCap: 'round', lineJoin: 'round', interactive: false,
+    className: 'road-highlight-glow',
+  }).addTo(roadHighlightGroup);
+  L.polyline(latlngs, {
+    color: '#fffbe9', weight: 5, opacity: 0.95,
+    lineCap: 'round', lineJoin: 'round', interactive: false,
+  }).addTo(roadHighlightGroup);
+  highlightedRoad = road;
+}
+
+function clearRoadHighlight() {
+  if (!highlightedRoad && !roadHighlightGroup.getLayers().length) return;
+  roadHighlightGroup.clearLayers();
+  highlightedRoad = null;
+}
+
+// Open a curated road: highlight it on the map first (the road is the star and
+// the highlight outlives the panel), then show its panel and fitBounds on the
+// next frame so we can measure the now-open panel and pad the map so the whole
+// road clears it (and the dock on mobile).
 function focusRoad(road) {
   const latlngs = road.coords.map(c => [c[1], c[0]]);
+  highlightRoad(road);
   showSegmentPanel({ name: road.name, main: 1, desc: road.desc }, latlngs);
+  // The road is the star and we fit the map TO it. Drop the return-view snapshot
+  // showSegmentPanel just took so closePanel doesn't fly back to the pre-search
+  // view and abandon the road — the framing (and the highlight) stay put.
+  panelReturnView = null;
   const bounds = L.latLngBounds(latlngs);
   requestAnimationFrame(() => map.fitBounds(bounds, roadFitPadding()));
+}
+
+// Lowest pixel occupied by the fixed top chrome (topbar + era toggle), so road
+// framing keeps the road clear of the era toggle — not just the panel. Measured
+// live because the toggle sits below the topbar and both vary by breakpoint.
+function topChromeBottom() {
+  let bottom = 0;
+  for (const id of ['topbar', 'era-toggle-wrap']) {
+    const el = document.getElementById(id);
+    if (!el || el.offsetParent === null) continue;
+    const r = el.getBoundingClientRect();
+    if (r.height) bottom = Math.max(bottom, r.bottom);
+  }
+  return bottom;
 }
 
 function roadFitPadding() {
   const panel = document.getElementById('info-panel');
   const open = panel && panel.classList.contains('open');
+  const padTop = Math.round(topChromeBottom()) + 16;
   if (window.innerWidth <= 640) {
     // Mobile: the detail card is anchored at the bottom above the dock. Pad the
     // map below by the distance from the viewport bottom to the card's top, so
     // the road sits in the strip above the card (and therefore above the dock).
     let padBottom = 96;
     if (open) padBottom = Math.round(window.innerHeight - panel.getBoundingClientRect().top) + 12;
-    return { paddingTopLeft: [24, 72], paddingBottomRight: [24, padBottom] };
+    return { paddingTopLeft: [24, Math.max(72, padTop)], paddingBottomRight: [24, padBottom] };
   }
   // Desktop: the panel overlays the right edge — pad right by its width.
   let padRight = 40;
   if (open) padRight = Math.round(panel.getBoundingClientRect().width) + 24;
-  return { paddingTopLeft: [40, 40], paddingBottomRight: [padRight, 40] };
+  return { paddingTopLeft: [40, Math.max(40, padTop)], paddingBottomRight: [padRight, 40] };
 }
 
 function closeSearchResults() {
@@ -1424,6 +1481,7 @@ function selectSearchResult(index) {
   }
   if (input) input.value = hit.site.name;
   closeSearchResults();
+  clearRoadHighlight();   // selecting a site supersedes any lit-up road
   focusSite(hit.site, { pulse: true, pulseOnClose: true });
   return true;
 }
@@ -1439,7 +1497,10 @@ function bindSiteSearch() {
   if (!wrap || !input || !list || wrap.dataset.bound === '1') return;
   wrap.dataset.bound = '1';
 
-  input.addEventListener('input', () => updateSearchResults(input.value));
+  input.addEventListener('input', () => {
+    clearRoadHighlight();   // a fresh search retires the previously lit road
+    updateSearchResults(input.value);
+  });
   input.addEventListener('focus', () => {
     if (input.value.trim()) updateSearchResults(input.value);
   });
@@ -2840,6 +2901,8 @@ window.VIA.getState    = function () {
     searchQuery: (document.getElementById('site-search-input') || {}).value || '',
     searchResultCount: currentSearchResults.length,
     searchPreviewSite: previewMarker && previewMarker._site ? previewMarker._site.id : null,
+    roadHighlight: highlightedRoad ? highlightedRoad.name : null,
+    roadHighlightLayers: roadHighlightGroup.getLayers().length,
     visibleSiteCount,
     siteCount: SITES.length,
   };

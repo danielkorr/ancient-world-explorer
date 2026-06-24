@@ -6,9 +6,12 @@
   `danielkorr.github.io`, verified on iPhone at `VIA v84`. The original "crowded and clumsy"
   complaint is fixed: chrome collapsed into one bottom dock (Search · DETAIL · KEY), map-first,
   +/- zoom control, detail panel scrolls without truncation, attribution ⓘ above the dock.
-- **Track 3 — Mobile interaction fixes: IN PROGRESS.** Follow-up A (3a + 3b + 3d) DONE —
-  on-device gated, ready to merge (commit `7610455`, v85, on `mobile-interaction-fixes`).
-  Follow-up B (3c searchable roads) is the last remaining item. ← resume here.
+- **Track 3 — Mobile interaction fixes: CODE-COMPLETE, pending live phone confirm.**
+  Follow-up A (3a + 3b + 3d) already on `main` (commit `7610455`, v85). Follow-up B (3c
+  searchable roads + persistent road highlight) done on `road-search` (commits `1e15286` →
+  `63250f6`, **v87**), 4 commits ahead of `main`, clean fast-forward. Headless-gated; **live
+  on-device confirm still owed** (LAN dev server was unreachable — see 3c note below). ← merge
+  `road-search` → `main` and confirm v87 on the live phone to close Track 3.
 
 > Lesson logged: the local dev server serves *uncommitted working-tree* files, so the phone on
 > the LAN IP showed v84 while production was still v83 — the Dock work had never actually been
@@ -62,7 +65,7 @@ scrolls); the representative image scrolls away with content, which is fine/expe
 
 ---
 
-## Track 3 — Mobile interaction fixes (Follow-up A DONE; 3c remaining) ⏭ RESUME HERE
+## Track 3 — Mobile interaction fixes (Follow-up A on `main`; 3c code-complete) ⏭ MERGE + LIVE CONFIRM
 
 Surfaced during on-device Dock testing. **Not** chrome-reorg items — they are about whether the
 map *responds* the way a thumb expects, which is the core of the mobile UX this whole effort is
@@ -70,10 +73,12 @@ for. Treat as first-class. Spec each as its own discovery-first branch off a cle
 manual on-device gate.
 
 ### Status & sequence
-- **Follow-up A — map gesture + filter fixes (3a + 3b + 3d):** ✅ DONE — implemented and
-  on-device gated. Commit `7610455`, **v85**, branch `mobile-interaction-fixes`, **not yet
-  merged/pushed**. → next action: merge to `main` + live phone confirm.
-- **Follow-up B — searchable roads (3c):** ← the last remaining Track 3 item.
+- **Follow-up A — map gesture + filter fixes (3a + 3b + 3d):** ✅ DONE and **already on `main`**
+  (commit `7610455`, **v85** — `main` is at `f46e0ad`, whose parent is `7610455`).
+- **Follow-up B — searchable roads + persistent road highlight (3c):** ✅ CODE-COMPLETE on
+  `road-search` (commits `1e15286` 3c part 1 → `764e075` 3c part 2 → `63250f6` highlight/framing,
+  **v87**). Headless-gated desktop + mobile. **Owed:** merge `road-search` → `main` (clean
+  fast-forward, +4 commits) and confirm v87 on the live phone.
 
 ### 3a. Double-tap a marker should zoom, not open detail ✅ DONE
 - Implemented: mobile marker `touchend` runs a tap/double-tap discriminator — double-tap on the
@@ -97,7 +102,7 @@ manual on-device gate.
   name (e.g. "Via Appia") visible while interacting with points along it, even after the detail
   panel is closed — keeps the road's identity in view. Feature, keep.
 
-### 3c. Roads should be searchable, with compound/alias matching
+### 3c. Roads should be searchable, with compound/alias matching ✅ DONE (code-complete, v87)
 - Today: search indexes *sites* only; roads aren't searchable. So "Via Appia", "Appian Way",
   "Rome to Tibur" all miss. Compound/multi-word and alias queries match weakly even for sites
   (looks like single-substring matching on one field).
@@ -121,7 +126,7 @@ manual on-device gate.
 
 ## Standing project rules (from AGENTS.md)
 - No ES modules — plain global `<script>` tags.
-- Bump `?v=N` cache token on every CSS/JS change (every sub-resource). **Currently v84.**
+- Bump `?v=N` cache token on every CSS/JS change (every sub-resource). **Currently v87.**
 - No build / package manager / test runner / `tools/` dir. QA is **manual, on-device (iPhone Safari)**.
 - Don't touch: generated files (`js/roads-itinere.js`, `js/sites-pleiades.js`,
   `js/orbis-days.js`, `js/pleiades-photos.json`), Supabase auth (`js/auth.js`, ES256 wedge),
@@ -159,3 +164,59 @@ not exist yet — the copy currently overpromises.** Decisions to make (orthogon
   intake (b). "Direct to scholar" (c) appealing but route through Dano → Pleiades properly.
 - **NEXT (Dano):** check Pleiades' actual contribution process to learn what's realistically
   promiseable and whether the copy can honestly say "Pleiades" at all.
+
+---
+
+## 3c on-device gate findings (2026-06-24) — road highlight is REQUIRED, not polish
+
+Road search works (Via Appia, Via Egnatia surface; panel content is excellent —
+"Dyrrachium to Byzantium", sites-along-this-stretch with distances, Livius credit). But the
+on-device gate on a LONG road (Via Egnatia) exposed a real defect:
+
+- **The panel + era toggle cover the road.** fitBounds frames the road, then the full-height
+  panel immediately occludes it — on a long road crossing mid-screen, you can't see what you
+  searched for.
+- **Closing the panel leaves the user lost** — nothing on the map marks where the road was.
+
+**Decision: road highlight is part of 3c acceptance, not a follow-up.** Without a persisted
+on-map highlight, search→panel→close dumps the user nowhere. Add to the road-search branch
+BEFORE merge:
+- On select, **highlight the road** on the map (brighter/thicker/glow) and **keep the
+  highlight after the panel closes** so the user can see/follow it. Clear on new search / deselect.
+- Make selection **road-first**: frame the highlighted road in the VISIBLE area (account for
+  panel height + top toggle), or open a smaller peek rather than the full-height panel. Road is
+  the star; panel secondary.
+- Re-gate on a long road (Egnatia) AND a short one (Rome–Tibur). Bump v86→v87.
+
+Still to verify in the gate once highlight lands: **site-search regression** (Pompeii / pomp /
+Naples behave as before; "pompeii italy" now resolves).
+
+### 3c gate update (2026-06-24, late) — highlight WORKS; one precise issue: leftover mini-banner
+On-device (phone, v87, LAN IP): road search + highlight **work correctly on mobile** (Via Appia /
+Via Egnatia show the bright line; framing + close-keeps-it-framed behave). The tall detail card is
+fine and dismisses cleanly. **The one real issue:** after the detail card is closed, a persistent
+**mini-tag/banner** remains and **overlays the highlighted road itself** (e.g. sits on top of the
+lit Via Appia), partly obscuring the very thing it labels. Narrow fix — NOT a broad declutter.
+
+Decision needed next session — pick one:
+- (1) Keep a road-name label but **reposition it clear of the road** (corner-anchor or offset),
+  so it labels without covering the highlighted line.
+- (2) **Clear the mini-banner when the detail card closes** — once the card's gone, the bright
+  highlight alone carries "this is the road," so the banner is redundant + obstructive.
+- **DECIDED → (2).** User confirmed: the mini-banner is overkill once the road is highlighted.
+  Next-session fix = when the road detail card closes, also clear/hide the persistent road
+  mini-banner; the highlight alone marks the road. (Leave desktop behavior as-is unless it
+  regresses.)
+
+Then re-gate on phone (Egnatia + Appia: lit road clearly visible/followable after card close,
+banner not covering it) + the still-outstanding **site-search regression** check (Pompeii / pomp /
+Naples unchanged; "pompeii italy" resolves). Branch `road-search`, highlight `63250f6` (v87),
+not pushed. Next commit = mini-banner fix.
+
+---
+
+## Chrome polish backlog (separate from 3c)
+- **Toggle / wordmark swap (mobile):** the ANCIENT/MODERN toggle is a large block low over the
+  map and the VIA wordmark crowds the top-left over country labels. Swap the hierarchy — era
+  toggle pinned at the very top, VIA wordmark below-left. Small chrome tweak, own task (or a
+  "Dock polish v2" pass with the deferred sticky-panel-title).

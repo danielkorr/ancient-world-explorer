@@ -1,4 +1,4 @@
-# VIA — Session checkpoint (updated 2026-06-23)
+# VIA — Session checkpoint (updated 2026-06-24)
 
 ## STATUS AT A GLANCE
 - **Track 1 — Stadia basemap: DONE.** Shipped, live, verified on-device.
@@ -6,7 +6,9 @@
   `danielkorr.github.io`, verified on iPhone at `VIA v84`. The original "crowded and clumsy"
   complaint is fixed: chrome collapsed into one bottom dock (Search · DETAIL · KEY), map-first,
   +/- zoom control, detail panel scrolls without truncation, attribution ⓘ above the dock.
-- **Track 3 — Mobile interaction fixes: captured, NOT started.** ← resume here.
+- **Track 3 — Mobile interaction fixes: IN PROGRESS.** Follow-up A (3a + 3b + 3d) DONE —
+  on-device gated, ready to merge (commit `7610455`, v85, on `mobile-interaction-fixes`).
+  Follow-up B (3c searchable roads) is the last remaining item. ← resume here.
 
 > Lesson logged: the local dev server serves *uncommitted working-tree* files, so the phone on
 > the LAN IP showed v84 while production was still v83 — the Dock work had never actually been
@@ -60,35 +62,40 @@ scrolls); the representative image scrolls away with content, which is fine/expe
 
 ---
 
-## Track 3 — Mobile interaction fixes ⏭ RESUME HERE
+## Track 3 — Mobile interaction fixes (Follow-up A DONE; 3c remaining) ⏭ RESUME HERE
 
 Surfaced during on-device Dock testing. **Not** chrome-reorg items — they are about whether the
 map *responds* the way a thumb expects, which is the core of the mobile UX this whole effort is
 for. Treat as first-class. Spec each as its own discovery-first branch off a clean `main`;
-manual on-device gate. Confirmed direction noted per item so we don't re-derive.
+manual on-device gate.
 
-### Suggested grouping & sequence
-- **Follow-up A — map gesture + filter fixes:** 3a + 3b + 3d (behavioral, smaller).
-- **Follow-up B — searchable roads:** 3c (feature; data + matching, meatier).
-- Do A first, then B (or reprioritize B if "search the Appian Way" is the priority).
+### Status & sequence
+- **Follow-up A — map gesture + filter fixes (3a + 3b + 3d):** ✅ DONE — implemented and
+  on-device gated. Commit `7610455`, **v85**, branch `mobile-interaction-fixes`, **not yet
+  merged/pushed**. → next action: merge to `main` + live phone confirm.
+- **Follow-up B — searchable roads (3c):** ← the last remaining Track 3 item.
 
-### 3a. Double-tap a marker should zoom, not open detail
-- Today: tapping a site/city marker opens the detail panel, so double-tapping it opens detail
-  instead of zooming → can't zoom incrementally on a marker. The +/− buttons help but don't
-  satisfy this.
-- **Wanted (confirmed):** double-tap *on a marker* zooms incrementally (repeatable); single tap
-  opens detail; user summons detail when they choose. Implement via a tap/double-tap
-  discriminator — accept the ~250–300 ms single-tap detail delay as the cost. (Rejected:
-  moving detail to long-press.)
+### 3a. Double-tap a marker should zoom, not open detail ✅ DONE
+- Implemented: mobile marker `touchend` runs a tap/double-tap discriminator — double-tap on the
+  same pin zooms one level (repeatable); lone tap opens detail after a ~280 ms window. Desktop
+  click/dblclick untouched. On-device confirmed.
+- **Decision: pins-only — NOT extended to roads.** Roads are continuous lines with adjacent open
+  map to double-tap for native zoom, and they're canvas segments (proximity-resolved) where a
+  discriminator would cost more and tangle with the 3b threshold. "Double-tap-zoom on roads" is
+  a **deferred maybe**, not planned.
 
-### 3b. Secondary/smaller road segments don't respond to taps
-- Today: primary roads tap → detail panel fine (click→`showSegmentPanel` wiring intact, NOT a
-  Dock regression). Smaller arteries render (some named) but tapping/hovering does nothing.
-- Likely cause: hit-target too thin (1–2 px polyline vs ~44 px finger) and/or the click handler
-  isn't bound to the secondary layer. Fix: widen tap tolerance / invisible click halo on
-  secondary segments, and/or bind `showSegmentPanel` to that layer.
-- Confirm cause when specced: on desktop, does hovering a secondary road change the cursor?
-  No-on-desktop-too → handler/binding issue; works-on-desktop-not-touch → hit-target size.
+### 3b. Secondary/smaller road segments don't respond to taps ✅ DONE
+- Root cause (found via desktop repro): resolver/binding were FINE — desktop click within ~14px
+  of a secondary already opened its panel. The gate was the touch path: the handler acted only
+  on curated SVG paths and bailed on canvas taps. Fix: canvas taps now resolve the nearest
+  segment themselves; threshold widened 14→26px **on coarse pointers only**. On-device confirmed:
+  thin unnamed secondaries open their panel; named roads still tooltip + panel.
+- **Watch (flagged, accepted):** in dense areas, tapping "empty" map near a road can now open
+  that road's panel instead of dismissing (same as desktop already behaved). Dock close still
+  works. Revisit only if it feels wrong in use.
+- **Note (intended, not a bug):** on a long primary road, a contextual mini-panel keeps the road
+  name (e.g. "Via Appia") visible while interacting with points along it, even after the detail
+  panel is closed — keeps the road's identity in view. Feature, keep.
 
 ### 3c. Roads should be searchable, with compound/alias matching
 - Today: search indexes *sites* only; roads aren't searchable. So "Via Appia", "Appian Way",
@@ -101,19 +108,14 @@ manual on-device gate. Confirmed direction noted per item so we don't re-derive.
 - Meatiest of the set (real feature, data/indexing dimension); arguably highest user value —
   "search for the Appian Way" is how a visitor actually thinks.
 
-### 3d. Filter precedence — tier toggles vs the DETAIL slider
-- Today: the KEY tier toggles (Documented / Photo Quest / Location Quest) and the DETAIL slider
-  both filter the same markers with no clear precedence. On-device: untoggling a tier sometimes
-  leaves its markers on, toggles feel inconsistent, slider appears to re-introduce things you
-  turned off. Likely pre-existing (Dock just put the two controls side-by-side) — confirm on a
-  pre-Dock view.
-- **Decision (confirmed):** **toggles are the master filter; the slider sub-filters within what
-  the toggles allow.** A tier toggled OFF never appears, regardless of slider position ("off
-  means off"). The slider only thins/expands density among tiers left ON; it can never
-  re-introduce an off tier. Rationale: the slider is a nice-to-have for the big arrival view;
-  the toggles are the real tool for digging down.
-- Empty state: all three toggles off → **no quest markers shown** (clean empty). (Confirm if
-  anything non-quest should remain, e.g. roads/base.)
+### 3d. Filter precedence — tier toggles vs the DETAIL slider ✅ DONE
+- Root cause: `activeTiers` was **additive** (empty = "everything per slider"; selecting = "all
+  those tiers, ignoring slider") — that inversion was the inconsistency.
+- Implemented **subtractive** model: tiers default ON, **all legend rows lit at rest**; tapping a
+  lit row hides that tier permanently regardless of slider ("off means off"); slider only
+  sub-filters density among shown tiers; all tiers off → clean empty quest map. Proven headless
+  (hiding Photo at full detail: 960→445 markers; slider cycle leaves 445 — slider can't revive a
+  hidden tier) and confirmed on-device.
 
 ---
 
@@ -127,3 +129,33 @@ manual on-device gate. Confirmed direction noted per item so we don't re-derive.
 - Deploy = push to `main` (GitHub Pages). **Verify with `git log --oneline -1` that work is
   actually committed before calling it shipped — the local server serves uncommitted files.**
 - Agent guides: Claude Code reads `CLAUDE.md`; `AGENTS.md` is the Codex/outside-reviewer landmines doc.
+
+---
+
+## Open product questions (not tied to a current track)
+
+### Photo Quest submission pipeline — "Submit it / #VIAquest" (logged 2026-06-23)
+The Photo Quest panel (step 3) tells users to share on social with **#VIAquest** and promises
+"we'll relay confirmed submissions back to Pleiades' scholarly record." **That pipeline does
+not exist yet — the copy currently overpromises.** Decisions to make (orthogonal to Track 3):
+
+- **`#VIAquest` is a hashtag, not a handle.** No account is strictly required for the tag, but
+  a tag no one monitors is a dead drop. Submissions only reach you if something/someone watches
+  the tag, OR there's a non-social intake path. Resolve before the copy ships for real.
+- **Human-in-the-loop is the right design, not a limitation.** The value is contributing to an
+  *authoritative scholarly* record (Pleiades); that authority depends on verification (is the
+  photo real, correctly located, usable?) — which can't be safely automated. Question is *who*
+  curates and *how much friction*, not whether. For v1 the curator is almost certainly **Dano**.
+- **Do NOT wire submitters directly to scholarly record-keepers.** Tension: a direct line dumps
+  an unvetted firehose onto volunteer academics and routes around Pleiades' own contribution
+  process/standards. Better model = three layers: **Intake** (hashtag monitor / form / email) →
+  **Curation** (Dano vets) → **Hand-off** (verified items proposed to Pleiades *through Pleiades'
+  own channels*).
+- **Options, by effort:** (a) soften the copy to match reality now ("reviewed for inclusion",
+  drop the firm Pleiades promise); (b) build a real intake you control (simple form: photo +
+  coords + email) instead of relying on a social hashtag; (c) build the full pipeline with a
+  curation queue + defined Pleiades hand-off (real project, later).
+- **Leaning:** the copy overpromises today — fix that first via (a) or commit to monitoring an
+  intake (b). "Direct to scholar" (c) appealing but route through Dano → Pleiades properly.
+- **NEXT (Dano):** check Pleiades' actual contribution process to learn what's realistically
+  promiseable and whether the copy can honestly say "Pleiades" at all.

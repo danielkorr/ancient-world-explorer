@@ -2,3 +2,7 @@
 .gstack/
 .idea/
 .claude/
+
+# Local dev-server artifacts (regenerated every run)
+.local-dev-server.mjs
+.server-*.log

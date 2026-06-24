@@ -6,17 +6,41 @@
   `danielkorr.github.io`, verified on iPhone at `VIA v84`. The original "crowded and clumsy"
   complaint is fixed: chrome collapsed into one bottom dock (Search · DETAIL · KEY), map-first,
   +/- zoom control, detail panel scrolls without truncation, attribution ⓘ above the dock.
-- **Track 3 — Mobile interaction fixes: CODE-COMPLETE, pending live phone confirm.**
+- **Track 3 — Mobile interaction fixes: NOT shippable yet — known bug to fix before push.**
   Follow-up A (3a + 3b + 3d) already on `main` (commit `7610455`, v85). Follow-up B (3c
-  searchable roads + persistent road highlight) done on `road-search` (commits `1e15286` →
-  `63250f6`, **v87**), 4 commits ahead of `main`, clean fast-forward. Headless-gated; **live
-  on-device confirm still owed** (LAN dev server was unreachable — see 3c note below). ← merge
-  `road-search` → `main` and confirm v87 on the live phone to close Track 3.
+  searchable roads + persistent road highlight) merged to **`main` locally (fast-forward to
+  `abff7d3`, v87), 5 commits ahead of `origin/main`, NOT pushed.** v87 still carries the
+  **mini-banner bug** (option-2 fix decided, not yet coded — see "NEXT SESSION" below).
+  **Do NOT push v87.** ← correct order: code the banner fix → bump v87→v88 → re-gate on phone →
+  push the clean build once.
 
 > Lesson logged: the local dev server serves *uncommitted working-tree* files, so the phone on
 > the LAN IP showed v84 while production was still v83 — the Dock work had never actually been
 > committed despite the plan saying it would. **Always `git log --oneline -1` to confirm a
 > commit exists before calling something shipped.**
+
+---
+
+## ⏭ NEXT SESSION — close Track 3 (do this first)
+
+`main` holds v87 locally (unpushed). **Do not push it** — v87 ships a known flaw. Fix, then ship
+once.
+
+1. **Code the mini-banner fix (option 2):** clear the road **mini-banner** when the **detail card
+   closes.** Decided last session, not yet coded. Today the contextual road mini-banner (the
+   "Via Appia" identity strip from 3b) persists after the detail card is dismissed — option 2 is
+   to clear it on card close. Work on `road-search` or a small follow-up branch off `main`.
+2. **Bump cache token v87 → v88** (every css/js sub-resource in `index.html`).
+3. **Re-gate on the phone.** The LAN dev server was just **not running** last session (hence
+   `ERR_CONNECTION_REFUSED` on `10.0.0.218`) — restart it bound to all interfaces:
+   `python -m http.server 8080 --bind 0.0.0.0`, then load `http://<machine-LAN-IP>:8080`.
+   Confirm: road highlight persists after close, road framing clears panel + top toggle, AND the
+   mini-banner now clears when the card closes.
+4. **THEN push `main` once** — one clean v88 build to production, not a buggy v87 followed by a
+   fixup.
+
+> Why hold: pushing `main` deploys to GitHub Pages immediately. A dead LAN dev server is not a
+> reason to ship an unverified, known-buggy build. Restart the server next session instead.
 
 ---
 
@@ -75,10 +99,11 @@ manual on-device gate.
 ### Status & sequence
 - **Follow-up A — map gesture + filter fixes (3a + 3b + 3d):** ✅ DONE and **already on `main`**
   (commit `7610455`, **v85** — `main` is at `f46e0ad`, whose parent is `7610455`).
-- **Follow-up B — searchable roads + persistent road highlight (3c):** ✅ CODE-COMPLETE on
-  `road-search` (commits `1e15286` 3c part 1 → `764e075` 3c part 2 → `63250f6` highlight/framing,
-  **v87**). Headless-gated desktop + mobile. **Owed:** merge `road-search` → `main` (clean
-  fast-forward, +4 commits) and confirm v87 on the live phone.
+- **Follow-up B — searchable roads + persistent road highlight (3c):** code on `main` locally
+  (merged fast-forward to `abff7d3`, **v87**, unpushed). Commits `1e15286` 3c part 1 → `764e075`
+  3c part 2 → `63250f6` highlight/framing. Headless-gated desktop + mobile. **NOT shippable:**
+  v87 still has the mini-banner bug (option-2 fix not coded). **Owed before push:** banner fix →
+  v88 → phone re-gate → push once. See "NEXT SESSION" at top.
 
 ### 3a. Double-tap a marker should zoom, not open detail ✅ DONE
 - Implemented: mobile marker `touchend` runs a tap/double-tap discriminator — double-tap on the
@@ -98,9 +123,11 @@ manual on-device gate.
 - **Watch (flagged, accepted):** in dense areas, tapping "empty" map near a road can now open
   that road's panel instead of dismissing (same as desktop already behaved). Dock close still
   works. Revisit only if it feels wrong in use.
-- **Note (intended, not a bug):** on a long primary road, a contextual mini-panel keeps the road
-  name (e.g. "Via Appia") visible while interacting with points along it, even after the detail
-  panel is closed — keeps the road's identity in view. Feature, keep.
+- **~~Note (intended, not a bug)~~ → SUPERSEDED:** the contextual road mini-banner (the
+  "Via Appia" identity strip) that stays visible after the detail card closes was first kept as a
+  feature, but on-device it reads as a stuck banner. **Decision reversed — option 2: clear the
+  road mini-banner when the detail card closes.** Not yet coded; it's the v88 blocker in
+  "NEXT SESSION" above.
 
 ### 3c. Roads should be searchable, with compound/alias matching ✅ DONE (code-complete, v87)
 - Today: search indexes *sites* only; roads aren't searchable. So "Via Appia", "Appian Way",
@@ -210,8 +237,10 @@ Decision needed next session — pick one:
 
 Then re-gate on phone (Egnatia + Appia: lit road clearly visible/followable after card close,
 banner not covering it) + the still-outstanding **site-search regression** check (Pompeii / pomp /
-Naples unchanged; "pompeii italy" resolves). Branch `road-search`, highlight `63250f6` (v87),
-not pushed. Next commit = mini-banner fix.
+Naples unchanged; "pompeii italy" resolves). **State now:** v87 is merged to `main` locally
+(fast-forward `abff7d3`), **unpushed**. Next commit = mini-banner fix (option 2) → **bump
+v87→v88** → phone re-gate → push the clean v88 once. Restart the dead LAN dev server first:
+`python -m http.server 8080 --bind 0.0.0.0`.
 
 ---
 

@@ -27,14 +27,28 @@ scholarly documentation). Supabase backs auth + check-ins.
   `js/sites-pleiades.js`, `js/orbis-days.js`, `js/pleiades-photos.json`. They are
   rebuilt by scripts in `scripts/`. Edits belong in the generators, not the output.
 
-- **Cache busting.** Local assets carry a `?v=N` token in `index.html` (currently v10).
-  Bump it on EVERY css/js change or mobile Safari serves stale code. `?v=` on the page
-  URL alone does NOT work — each sub-resource reference must be bumped.
+- **Cache busting.** Local assets carry a `?v=N` token in `index.html`. Bump it on EVERY
+  css/js change or mobile Safari serves stale code. `?v=` on the page URL alone does NOT
+  work — each sub-resource reference must be bumped.
+
+- **Commit before you call anything shipped.** The local dev server serves uncommitted
+  working-tree files, so a phone on the LAN IP can show brand-new code while production
+  is stale. "It works on my phone" is not "it shipped." Always `git log --oneline -1` to
+  confirm the change is actually committed — and Pages deploys ONLY `main`, so commits on
+  a feature branch are not live until merged. When a previously-fixed feature looks broken
+  on the live URL, suspect this deploy gap BEFORE blaming cache.
 
 - **Content model.** Curated sites + roads live in `js/data.js`; it derives the global
   `SITES`. `TYPE` / `QUEST` config objects in `js/app.js` must stay in sync with the
   type/quest strings used in `data.js`. Quest tier data reality: photo≈279, location≈10,
   text=0, documented≈184 — don't assume all tiers are populated.
+
+## Expected workflow
+
+- **Discovery-first for any non-trivial change.** Inventory the real code first, present a
+  short mapping/plan of exactly what you'll touch, pause for confirmation, then implement.
+  Blind-editing on assumptions is how the truncation bug, the inverted filter, and the
+  touch-path/binding mix-up each slipped in — reading the actual code first caught all three.
 
 ## Active work
 

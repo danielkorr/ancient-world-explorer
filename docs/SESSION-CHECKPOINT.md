@@ -1,4 +1,4 @@
-# VIA — Session checkpoint (updated 2026-06-22)
+# VIA — Session checkpoint (updated 2026-06-23)
 
 ## STATUS AT A GLANCE
 - **Track 1 — Stadia basemap: DONE. Shipped to `main`, live, verified on-device.**
@@ -107,3 +107,64 @@ old crowded chrome (top search bar, floating DETAIL slider, 4-icon row, KEY).
 
 ## Out of scope for the Dock work
 - Basemap/tiles (done). Marker clustering (separate). Any data/quest/auth/sync change.
+
+---
+
+## Track 3 — Mobile interaction fixes (NEW, captured 2026-06-22) ⏭ after Dock merges
+
+These surfaced during on-device Dock testing. They are **not** chrome-reorg items — they are
+about whether the map *responds* the way a thumb expects, which is the core of the mobile UX
+this whole effort is for. A decluttered map you can't zoom-without-interruption, can't tap the
+road you want, or can't search by the name you know is still clumsy. Treat as first-class.
+
+Spec each as its own discovery-first branch **after the Dock is merged** (don't stack on the
+Dock branch). Confirmed direction noted per item so we don't re-derive.
+
+### 3a. Double-tap a marker should zoom, not open detail
+- Today: tapping a site/city marker opens the detail panel, so double-tapping it opens detail
+  instead of zooming → can't zoom incrementally on a marker. The +/− buttons added in the Dock
+  help but don't satisfy this.
+- **Wanted (confirmed):** double-tap *on a marker* zooms incrementally (repeatable); single tap
+  opens detail; user summons detail when they choose. Implement via a tap/double-tap
+  discriminator — accept the ~250–300ms single-tap detail delay as the cost. (Option rejected:
+  moving detail to long-press.)
+
+### 3b. Secondary/smaller road segments don't respond to taps
+- Today: primary roads tap → detail panel fine (click→`showSegmentPanel` wiring is intact, NOT
+  a Dock regression). Smaller arteries render (some named) but tapping/hovering does nothing.
+- Likely cause: hit-target too thin (1–2px polyline vs a ~44px finger) and/or the click handler
+  isn't bound to the secondary layer. Fix: widen tap tolerance / add an invisible click halo on
+  secondary segments, and/or bind `showSegmentPanel` to that layer.
+- To confirm cause when specced: on desktop, does hovering a secondary road change the cursor?
+  No-on-desktop-too → handler/binding issue; works-on-desktop-not-touch → hit-target size.
+
+### 3c. Roads should be searchable, with compound/alias matching
+- Today: search indexes *sites* only; roads aren't searchable at all. So "Via Appia",
+  "Appian Way", "Rome to Tibur" all miss. Also compound/multi-word and alias queries match
+  weakly even for sites (looks like single-substring matching on one field).
+- **Wanted:** index road segments with multiple searchable strings — Latin name (Via Appia),
+  common English name (Appian Way), ancient-itinerary names, and an endpoint pair
+  (Rome–Tibur) — and match on any token, not one substring. Note: Itiner-e name/itinerary
+  coverage is uneven (per AGENTS.md), so some segments will have nothing to index — expected.
+- This is the meatiest of the three (a real feature with a data/indexing dimension), and
+  arguably highest user value: "search for the Appian Way" is how a visitor actually thinks.
+
+### Suggested grouping
+- **Follow-up A — map gesture fixes:** 3a + 3b (small, behavioral).
+- **Follow-up B — searchable roads:** 3c (feature; data + matching).
+- Sequence after Dock merge, discovery-first each, manual on-device gate.
+
+### 3d. Filter precedence — tier toggles vs the DETAIL slider
+- Today: the KEY tier toggles (Documented / Photo Quest / Location Quest) and the DETAIL
+  slider both filter the same markers with no clear precedence. Result on-device: untoggling
+  a tier sometimes leaves its markers on the map, toggles seem inconsistent, and the slider
+  appears to re-introduce things you turned off. Likely pre-existing (the Dock just put the
+  two controls side-by-side, exposing the conflict) — confirm on the live pre-Dock site.
+- **Decision (confirmed):** **toggles are the master filter; the slider sub-filters within
+  what the toggles allow.** A tier toggled OFF never appears, regardless of slider position
+  ("off means off"). The slider only thins/expands density among the tiers left ON; it can
+  never re-introduce an off tier. Rationale (user's words): the slider is a nice-to-have for
+  the big arrival view; the toggles are the real tool for digging down.
+- Empty state: all three toggles off → **no quest markers shown** (clean empty), not "slider
+  still shows something." (Confirm if anything non-quest should remain, e.g. roads/base.)
+- Grouping: behavioral/state fix — pairs naturally with **Follow-up A**.

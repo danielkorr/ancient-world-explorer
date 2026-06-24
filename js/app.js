@@ -196,6 +196,14 @@ const satelliteLayer = L.tileLayer(
 window.VIA = window.VIA || {};
 window.VIA.map = map;
 
+// Visible +/− zoom control. Desktop stays the minimalist no-control map (CSS
+// hides it there); on mobile it's pinned above the dock so zoom never depends on
+// double-tapping near a marker (which used to open the detail panel instead).
+// Pinch-to-zoom (Leaflet touchZoom) works alongside it. Mounted in the TOP-right
+// Leaflet container — unlike bottom-right, that container isn't display:none'd on
+// mobile — then CSS fixes it above the dock.
+L.control.zoom({ position: 'topright' }).addTo(map);
+
 // QA / test mode (?qa=1). A deterministic fixture state for headless Playwright
 // journeys: it SKIPS the ~14,800-segment Itiner-e canvas build (the layer that
 // melts headless Chromium and made open-ended visual testing unreliable) and
@@ -832,6 +840,7 @@ function setHeroPhoto(hero, heroIcon, url, grad) {
 
 function showPanel(site) {
   hideLegendToast();
+  closeDockPanels();      // the detail card is the one open surface now
   // A pending close-pulse is a one-shot tied to the site just focused via search.
   // Opening any other panel (e.g. a marker tap) cancels it so it can't pulse a
   // stale site after this panel closes. focusSite re-sets it after this returns.
@@ -1307,6 +1316,82 @@ function bindSiteSearch() {
   map.on('movestart', closeSearchResults);
 }
 
+// ── MOBILE DOCK ──────────────────────────────────────────
+// One slim bottom bar with a search field, a Detail (curation) button, and a Key
+// button. Exactly one of {search overlay, curation popover, key panel, detail
+// card} is open at a time — opening any dock panel closes the others AND the
+// detail card; opening a marker/road detail card closes any dock panel. The
+// search input is reparented into the dock's search overlay so search stays on
+// the single bindSiteSearch code path. Mobile only; the buttons are display:none
+// on desktop and the panels keep their existing desktop homes.
+const DOCK_PANELS = ['search', 'curation', 'key'];
+const DOCK_BTN_ID = { search: 'dock-search', curation: 'dock-curation', key: 'dock-key' };
+
+function syncDockButtons() {
+  const open = DOCK_PANELS.find(p => document.body.classList.contains('dock-' + p + '-open'));
+  for (const p of DOCK_PANELS) {
+    const btn = document.getElementById(DOCK_BTN_ID[p]);
+    if (btn) btn.setAttribute('aria-expanded', p === open ? 'true' : 'false');
+  }
+}
+
+function closeDockPanels() {
+  let had = false;
+  for (const p of DOCK_PANELS) {
+    if (document.body.classList.contains('dock-' + p + '-open')) had = true;
+    document.body.classList.remove('dock-' + p + '-open');
+  }
+  // The KEY panel's visible state is #quest-legend.mobile-open (shared with the
+  // legacy toggleLegend path); keep them in lockstep.
+  const lg = document.getElementById('quest-legend');
+  if (lg) lg.classList.remove('mobile-open');
+  syncDockButtons();
+  return had;
+}
+
+function openDockPanel(which) {
+  const wasOpen = document.body.classList.contains('dock-' + which + '-open');
+  closeDockPanels();
+  if (wasOpen) return;                       // tapping the active button closes it
+  // Only one map surface at a time — opening a dock panel dismisses the detail card.
+  if (document.getElementById('info-panel').classList.contains('open')) closePanel();
+  document.body.classList.add('dock-' + which + '-open');
+  if (which === 'key') {
+    const lg = document.getElementById('quest-legend');
+    if (lg) lg.classList.add('mobile-open');
+  } else if (which === 'search') {
+    const input = document.getElementById('site-search-input');
+    if (input) setTimeout(() => input.focus(), 60);
+  }
+  dismissMobileGuide(true);
+  syncDockButtons();
+}
+
+function bindDock() {
+  // Reparent the topbar search into the dock's search overlay — mobile only, so
+  // desktop keeps its in-topbar search untouched.
+  const isMobile = window.matchMedia('(max-width: 640px)').matches;
+  const host   = document.getElementById('dock-search-panel');
+  const search = document.getElementById('topbar-search');
+  if (isMobile && host && search && search.parentElement !== host) host.appendChild(search);
+
+  const sBtn = document.getElementById('dock-search');
+  const cBtn = document.getElementById('dock-curation');
+  const kBtn = document.getElementById('dock-key');
+  if (sBtn) sBtn.addEventListener('click', () => openDockPanel('search'));
+  if (cBtn) cBtn.addEventListener('click', () => openDockPanel('curation'));
+  if (kBtn) kBtn.addEventListener('click', () => openDockPanel('key'));
+
+  const cancel = document.getElementById('dock-search-cancel');
+  if (cancel) cancel.addEventListener('click', () => { closeSearchResults(); closeDockPanels(); });
+  const scrim = document.getElementById('dock-scrim');
+  if (scrim) scrim.addEventListener('click', () => { closeSearchResults(); closeDockPanels(); });
+
+  // Panning the map (movestart) dismisses any open dock panel; a tap on the open
+  // map is handled by the map 'click' handler below.
+  map.on('movestart', closeDockPanels);
+}
+
 // Plain-language read on each Itiner-e certainty class. The blurb doubles as the
 // seed of the Step-2 "verify this stretch" quest framing (conjectured/hypothetical
 // roads are exactly the field-verification opportunities Itiner-e's model exposes).
@@ -1364,6 +1449,7 @@ function nearestSitesToSegment(ll, maxKm = 10, limit = 5) {
 // drives the "Places along this stretch" bridge.
 function showSegmentPanel(meta, latlngs) {
   hideLegendToast();
+  closeDockPanels();      // the detail card is the one open surface now
 
   const cert = meta && meta.cert;
   const ci   = CERT_INFO[cert] || { label: 'Roman road', blurb: 'A segment of the Itiner-e Roman road network.' };
@@ -1572,6 +1658,7 @@ function saveReturnState() {
 // for taps on the canvas/background (it already drove panel-close on mobile),
 // unlike the layer-level clicks that forced the marker/road touch delegation.
 map.on('click', (e) => {
+  closeDockPanels();      // a tap on the open map dismisses any dock popover
   const seg = findNearestItinere(e.latlng, e.containerPoint);
   if (seg) { showSegmentPanel(seg.meta, seg.ll); return; }
   if (document.getElementById('info-panel').classList.contains('open')) closePanel();
@@ -1611,6 +1698,9 @@ function toggleLayer(which) {
   layerState[which] = !layerState[which];
   const btn = document.getElementById('btn-' + which);
   btn.classList.toggle('active', layerState[which]);
+  // Keep the dock KEY panel's folded-in master row in lockstep with the chip.
+  const lrow = document.getElementById('legend-' + which + '-toggle');
+  if (lrow) lrow.classList.toggle('active', layerState[which]);
   if (which === 'roads') {
     // The "roads" toggle covers both the curated named roads and the Itiner-e
     // baseline — the user thinks of them as one concept.
@@ -2213,11 +2303,15 @@ function toggleLegend() {
 document.addEventListener('click', (e) => {
   const lg = document.getElementById('quest-legend');
   if (!lg || !lg.classList.contains('mobile-open')) return;
-  // Stay open when tapping inside the legend (filtering) or the FAB itself.
-  if (lg.contains(e.target) || (e.target.closest && e.target.closest('#legend-fab'))) return;
+  // Stay open when tapping inside the legend (filtering), the legacy FAB, or the
+  // dock Key button (its own handler toggles the panel).
+  if (lg.contains(e.target) ||
+      (e.target.closest && (e.target.closest('#legend-fab') || e.target.closest('#dock-key')))) return;
   lg.classList.remove('mobile-open');
+  document.body.classList.remove('dock-key-open');
   const fab = document.getElementById('legend-fab');
   if (fab) fab.setAttribute('aria-expanded', 'false');
+  if (typeof syncDockButtons === 'function') syncDockButtons();
 }, true);
 
 function openLegendInfo() {
@@ -2390,6 +2484,7 @@ refreshVisibleMarkers();
 bindDetailSlider();
 syncDetailUI();
 bindSiteSearch();
+bindDock();
 
 // Keyboard activation for the legend filter rows (they're role="button"). Site
 // tier rows carry data-tier; roads certainty rows carry data-cert.
@@ -2398,8 +2493,9 @@ if (_legendEl) {
   _legendEl.addEventListener('keydown', e => {
     const ds = e.target && e.target.dataset ? e.target.dataset : null;
     if (!ds || (e.key !== 'Enter' && e.key !== ' ')) return;
-    if (ds.tier)      { e.preventDefault(); toggleTier(ds.tier); }
-    else if (ds.cert) { e.preventDefault(); toggleCert(ds.cert); }
+    if (ds.tier)       { e.preventDefault(); toggleTier(ds.tier); }
+    else if (ds.cert)  { e.preventDefault(); toggleCert(ds.cert); }
+    else if (ds.layer) { e.preventDefault(); toggleLayer(ds.layer); }
   });
 }
 

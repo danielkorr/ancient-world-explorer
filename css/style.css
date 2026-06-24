@@ -623,6 +623,16 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 #mobile-guide { display: none; }
 #build-badge { display: none; }
 
+/* Mobile dock + its panels and the legend's folded-in master layer rows are
+   mobile-only. Hidden on desktop, where the topbar search and #bottom-controls
+   chips remain the controls. The ≤640px query switches these on. */
+#dock,
+#dock-scrim,
+#dock-search-panel { display: none; }
+.legend-layers-hint,
+.legend-layer-row,
+.legend-layers-sep { display: none; }
+
 /* ── QUEST LEGEND ── */
 #quest-legend {
   position: fixed;
@@ -1541,30 +1551,138 @@ path.leaflet-interactive { outline: none !important; }
   #app-title      { font-size: 18px; letter-spacing: 4px; }
   #app-subtitle   { display: none; }
   #topbar-right   { gap: 6px; }
+  /* Search moved off the top bar into the dock (see #dock-search-panel). The
+     input + results are reparented into the search overlay at boot, so here we
+     reset the topbar-search positioning to flow inside that panel. */
   #topbar-search  {
-    top: calc(env(safe-area-inset-top, 0px) + 62px);
-    left: max(14px, env(safe-area-inset-left, 0px));
-    right: max(14px, env(safe-area-inset-right, 0px));
+    position: static;
+    top: auto;
+    left: auto;
+    right: auto;
     transform: none;
-    width: auto;
+    width: 100%;
   }
+  /* Era toggle slides up to fill the gap the top search left behind — it stays
+     pinned at the top, unchanged in function. */
   #era-toggle-wrap {
-    top: calc(env(safe-area-inset-top, 0px) + 118px);
+    top: calc(env(safe-area-inset-top, 0px) + 62px);
     left: max(14px, env(safe-area-inset-left, 0px));
     right: max(14px, env(safe-area-inset-right, 0px));
   }
   #site-search-input {
-    height: 44px;
-    font-size: 13px;
+    height: 46px;
+    font-size: 14px;
   }
   #site-search-results {
+    position: static;
+    margin-top: 10px;
+    max-height: min(46dvh, 360px);
+    z-index: auto;
+  }
+
+  /* ── Mobile dock ───────────────────────────────────────── */
+  #dock {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     position: fixed;
-    top: calc(env(safe-area-inset-top, 0px) + 174px);
-    left: max(14px, env(safe-area-inset-left, 0px));
-    right: max(14px, env(safe-area-inset-right, 0px));
-    margin-top: 0;
-    max-height: min(38dvh, 300px);
-    z-index: 906;
+    left: 0; right: 0; bottom: 0;
+    z-index: 960;
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(to top, rgba(8,4,0,0.98) 55%, rgba(8,4,0,0.84));
+    border-top: 1px solid rgba(212,168,83,0.28);
+    box-shadow: 0 -8px 24px rgba(0,0,0,0.34);
+  }
+  .dock-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    height: 44px;
+    padding: 0 14px;
+    background: rgba(20,12,2,0.92);
+    border: 1px solid rgba(212,168,83,0.34);
+    border-radius: 12px;
+    color: rgba(240,230,211,0.92);
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .dock-btn[aria-expanded="true"] {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(212,168,83,0.12);
+  }
+  .dock-btn svg { display: block; }
+  .dock-search-field {
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: flex-start;
+    text-transform: none;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0;
+    color: rgba(240,230,211,0.55);
+    border-radius: 999px;
+  }
+  .dock-search-field svg { color: rgba(212,168,83,0.7); flex: 0 0 auto; }
+  .dock-search-placeholder {
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .dock-btn-icon { font-size: 15px; line-height: 1; }
+  .dock-btn-label { line-height: 1; }
+
+  /* Scrim — only behind the search overlay. */
+  #dock-scrim {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 955;
+    background: rgba(4,2,0,0.5);
+  }
+  body.dock-search-open #dock-scrim { display: block; }
+
+  /* Search overlay panel — rides above the dock, holds the reparented input. */
+  #dock-search-panel {
+    display: none;
+    position: fixed;
+    left: 12px; right: 12px;
+    bottom: calc(var(--dock-h) + 10px);
+    z-index: 965;
+    flex-direction: column;
+    padding: 12px;
+    background: rgba(10,5,0,0.98);
+    border: 1px solid rgba(212,168,83,0.3);
+    border-radius: 16px;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.5);
+    max-height: calc(100dvh - var(--dock-h) - 130px);
+  }
+  body.dock-search-open #dock-search-panel { display: flex; }
+  #dock-search-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  #dock-search-title {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: rgba(212,168,83,0.7);
+  }
+  #dock-search-cancel {
+    background: transparent;
+    border: 0;
+    color: var(--gold);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 4px 6px;
   }
 
   #era-toggle {
@@ -1598,77 +1716,85 @@ path.leaflet-interactive { outline: none !important; }
      full-width labeled buttons ate the bottom-left; on a phone the glyph alone
      (🛣️/🏛️/⭐) carries the meaning and the gold border shows on/off state.
      Shape-distinct glyphs, NOT swatch color — the user is red-green colorblind. */
-  #bottom-controls {
-    flex-direction: row;
-    bottom: 18px;
-    left: 12px;
-    gap: 8px;
-  }
-  .ctrl-btn {
-    position: relative;
-    padding: 0;
-    width: 46px;
-    height: 46px;
-    justify-content: center;
-    border-radius: 11px;
-  }
-  .ctrl-btn .swatch-line,
-  .ctrl-btn .swatch-dot,
-  .ctrl-label { display: none; }
-  .ctrl-icon { display: block; font-size: 19px; line-height: 1; }
-  /* Detail slider gets its own row, lifted above the chip row and pinned to the
-     left. Previously it sat in the same bottom row and its right end ran under
-     the Key FAB (bottom-right) — the FAB ate taps on half the slider and the
-     two crowded each other. Now they never share screen space. */
+  /* The Roman Roads / Sites chips fold into the KEY panel's master layer rows;
+     hide the chips themselves on mobile. (#bottom-controls stays in the DOM as
+     the detail-control's parent — display:none on it would also hide the
+     popover, so only the chips are hidden.) */
+  #bottom-controls .ctrl-btn { display: none; }
+
+  /* Curation popover — the Detail slider, opened from the dock's Detail button.
+     Reuses #detail-control; fixed above the dock, hidden until curation is open. */
   .detail-control {
-    position: absolute;
-    bottom: 56px;
-    left: 0;
-    width: 190px;
-    padding: 7px 10px 8px;
-    border-radius: 11px;
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: calc(var(--dock-h) + 10px);
+    width: auto;
+    z-index: 958;
+    display: none;
+    padding: 13px 15px 15px;
+    border-radius: 16px;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.5);
   }
+  body.dock-curation-open .detail-control { display: flex; }
   .detail-head {
-    font-size: 8px;
-    letter-spacing: 1.2px;
+    font-size: 9px;
+    letter-spacing: 1.3px;
   }
   #detail-readout {
-    font-size: 9px;
+    font-size: 10px;
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  #detail-slider { height: 30px; }
 
-  /* Legend collapses behind the FAB. Hidden until the chip toggles it open,
-     then it floats above the FAB as a scrollable sheet. */
-  #legend-fab {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    position: fixed;
-    bottom: 18px;
+  /* The Key FAB is superseded by the dock's Key button — hide it. The legend
+     panel it used to open is now opened from the dock. */
+  #legend-fab { display: none; }
+
+  /* Visible +/− zoom control so zoom never depends on double-tapping near a
+     marker. Right edge, above the dock; pinch-to-zoom also works (Leaflet
+     touchZoom). Leaflet renders it inside the top-right container (which is not
+     hidden on mobile, unlike bottom-right), then we pin it fixed above the dock. */
+  .leaflet-control-zoom {
+    display: block !important;
+    position: fixed !important;
     right: 12px;
-    z-index: 901;
-    height: 46px;
-    padding: 0 15px;
-    background: rgba(8,4,0,0.96);
-    border: 1px solid var(--gold);
-    border-radius: 11px;
-    color: var(--gold);
-    font-family: 'Cinzel', serif;
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    cursor: pointer;
+    bottom: calc(var(--dock-h) + 14px);
+    margin: 0 !important;
+    z-index: 952;
   }
-  #legend-fab[aria-expanded="true"] { background: var(--gold); color: #1a0e00; }
-  #legend-fab svg { display: block; }
+  .leaflet-control-zoom a {
+    width: 44px !important;
+    height: 44px !important;
+    line-height: 44px !important;
+    font-size: 22px !important;
+    background: rgba(8,4,0,0.96) !important;
+    color: var(--gold) !important;
+    border: 1px solid rgba(212,168,83,0.4) !important;
+  }
+  .leaflet-control-zoom a:first-child { border-radius: 12px 12px 0 0 !important; }
+  .leaflet-control-zoom a:last-child  { border-radius: 0 0 12px 12px !important; border-top: none !important; }
+  .leaflet-control-zoom a:hover { background: rgba(20,12,2,0.98) !important; }
   /* The bottom and top edges are both too crowded for a permanent credit (and
      the iPhone home indicator owns the bottom ~34px). Required attribution
      (Itiner-e CC BY 4.0 + OSM/CARTO/Leaflet) instead lives behind a one-tap
      "ⓘ" by the Key FAB — see #attrib-toggle / #attrib-popover. Hide the native
      on-map control on mobile; the ⓘ popover carries the exact same text. */
   .leaflet-bottom.leaflet-right { display: none; }
-  #attrib-toggle { display: flex; }
+  /* ⓘ attribution affordance — bottom-left, riding above the dock (intentional
+     pattern, commit 548de9c; satisfies CC BY without a persistent on-map line). */
+  #attrib-toggle {
+    display: flex;
+    bottom: calc(var(--dock-h) + 14px);
+    left: 12px;
+    right: auto;
+  }
+  #attrib-popover {
+    bottom: calc(var(--dock-h) + 66px);
+    left: 12px;
+    right: auto;
+  }
   #build-badge {
     display: block;
     position: fixed;
@@ -1693,7 +1819,7 @@ path.leaflet-interactive { outline: none !important; }
     position: fixed;
     left: 12px;
     right: 12px;
-    bottom: 76px;
+    bottom: calc(var(--dock-h) + 66px);
     z-index: 902;
     display: flex;
     align-items: flex-start;
@@ -1736,43 +1862,70 @@ path.leaflet-interactive { outline: none !important; }
     cursor: pointer;
   }
 
+  /* KEY panel — opened from the dock's Key button. Rides above the dock as a
+     scrollable sheet. Contains the folded-in master layer rows (Roads / Sites)
+     above the quest-tier and roads-certainty filter rows. */
   #quest-legend {
     display: none;
-    bottom: 74px;
+    left: 12px;
     right: 12px;
-    padding: 11px 13px;
+    bottom: calc(var(--dock-h) + 10px);
+    z-index: 958;
+    padding: 13px 15px;
     gap: 6px;
-    max-height: 60vh;
+    border-radius: 16px;
+    max-height: calc(100dvh - var(--dock-h) - 130px);
     overflow-y: auto;
   }
   #quest-legend.mobile-open { display: flex; }
   .legend-hint { font-size: 8px; }
-  .legend-row { font-size: 11px; letter-spacing: 0.5px; padding: 2px 0; }
+  .legend-row { font-size: 11px; letter-spacing: 0.5px; padding: 3px 0; }
   .legend-dot { width: 9px; height: 9px; }
   .legend-count { font-size: 9px; padding-left: 10px; }
 
-  /* Panel becomes full-screen bottom sheet on mobile */
-  :root { --panel-width: 100vw; }
+  /* Folded-in master layer toggles (mobile only). active = layer on (gold via
+     .legend-row.active); off = dimmed. */
+  .legend-layers-hint { display: block; }
+  .legend-layers-sep  { display: block; }
+  .legend-layer-row   { display: flex; }
+  .legend-layer-row:not(.active) { opacity: 0.4; }
+  .legend-layer-row .legend-line { width: 18px; }
+
+  /* Panel becomes a floating card on mobile */
+  :root {
+    --panel-width: 100vw;
+    /* Full dock height = 8 (pad-top) + 44 (button) + 8 (pad-bottom) + the iPhone
+       home-indicator inset. Everything that "rides above the dock" offsets by
+       this, so panels never overlap the dock on notched phones. */
+    --dock-h: calc(60px + env(safe-area-inset-bottom, 0px));
+  }
 
   /* Slide the bottom sheet with transform, not an animated dvh-based `bottom`.
      iOS Safari mis-places fixed elements positioned with calc(dvh) + bottom (the
      panel opened offscreen — "tapping a city does nothing" on iPhone). A
      translateY transform is the reliable, GPU-accelerated bottom-sheet pattern. */
+  /* Detail card: a dismissible panel anchored ABOVE the dock (the dock stays
+     reachable beneath it). Scrolls internally; expands up to a tall max-height
+     for rich road detail. Never a fixed-height card that truncates — see the
+     removed line-clamps below. Slides up with a transform (the reliable iOS
+     bottom-sheet pattern; an animated dvh `bottom` mis-places on iOS Safari). */
   #info-panel {
     top: auto;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    width: 100%;
-    height: 84dvh;
+    bottom: calc(var(--dock-h) + 8px);
+    right: 8px;
+    left: 8px;
+    width: auto;
+    height: auto;
+    max-height: calc(100dvh - var(--dock-h) - 130px);
     border-left: none;
-    border-top: 1px solid var(--border);
-    border-radius: 16px 16px 0 0;
-    transform: translateY(100%);              /* fully hidden below the viewport */
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow-y: auto;
+    transform: translateY(calc(100% + var(--dock-h) + 24px));  /* hidden below the dock */
     transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  #info-panel.open { transform: translateY(0); right: 0; }
+  #info-panel.open { transform: translateY(0); }
 
   #panel-hero { height: 82px; }
   #hero-inner { padding: 0 58px 0 22px; text-align: left; width: 100%; }
@@ -1800,11 +1953,6 @@ path.leaflet-interactive { outline: none !important; }
   .quest-banner-text {
     font-size: 11.5px;
     margin-bottom: 7px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    max-height: 32px;
-    overflow: hidden;
   }
   .quest-banner-cta {
     padding: 6px 10px;
@@ -1821,10 +1969,6 @@ path.leaflet-interactive { outline: none !important; }
   #panel-desc {
     line-height: 1.55;
     margin-bottom: 14px;
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
   }
   #checkin-row {
     margin: 0 0 14px;
@@ -1841,7 +1985,6 @@ path.leaflet-interactive { outline: none !important; }
   #info-panel.segment-panel #panel-modern-name { margin-bottom: 10px; }
   #info-panel.segment-panel #panel-period { margin-bottom: 9px; }
   #info-panel.segment-panel #panel-desc {
-    -webkit-line-clamp: 3;
     margin-bottom: 12px;
   }
   #info-panel.segment-panel #segment-evidence {

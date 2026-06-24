@@ -46,7 +46,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=83">
+  <link rel="stylesheet" href="css/style.css?v=84">
 </head>
 <body>
 
@@ -197,6 +197,39 @@
   </div>
 </div>
 
+<!-- Mobile dock: one slim persistent bottom bar holding a search field, a
+     curation (Detail) button, and a Key button. Tapping a dock button opens a
+     popover/panel; opening one closes the others (dock controller in app.js).
+     Mobile-only — hidden on desktop, where the topbar search + #bottom-controls
+     remain. The map stays full-bleed; chrome appears only on demand. -->
+<div id="dock" data-testid="mobile-dock">
+  <button id="dock-search" class="dock-btn dock-search-field" type="button"
+          aria-haspopup="dialog" aria-expanded="false" aria-controls="dock-search-panel">
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <span class="dock-search-placeholder">Search sites or locations</span>
+  </button>
+  <button id="dock-curation" class="dock-btn" type="button"
+          aria-haspopup="dialog" aria-expanded="false" aria-controls="detail-control">
+    <span class="dock-btn-icon" aria-hidden="true">☰</span>
+    <span class="dock-btn-label">Detail</span>
+  </button>
+  <button id="dock-key" class="dock-btn" type="button"
+          aria-haspopup="dialog" aria-expanded="false" aria-controls="quest-legend">
+    <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M3 5h18l-7 8.2V21l-4-2.2v-5.6z" fill="currentColor"/></svg>
+    <span class="dock-btn-label">Key</span>
+  </button>
+</div>
+<!-- Scrim behind the open search panel; tap to dismiss. -->
+<div id="dock-scrim" aria-hidden="true"></div>
+<!-- Search overlay. On mobile the topbar #topbar-search (input + results) is
+     reparented in here at boot; the dock search button shows/hides this panel. -->
+<div id="dock-search-panel" role="dialog" aria-label="Search sites or locations" aria-modal="false">
+  <div id="dock-search-head">
+    <span id="dock-search-title">Search</span>
+    <button id="dock-search-cancel" type="button">Cancel</button>
+  </div>
+</div>
+
 <!-- Mobile first-run guide: one lightweight cue after the welcome modal. -->
 <div id="mobile-guide" class="hidden" role="status" aria-live="polite">
   <div>
@@ -214,6 +247,13 @@
 
 <!-- Quest Legend — each row is a tap-to-filter toggle -->
 <div id="quest-legend" data-testid="filter-panel">
+  <!-- Master layer toggles — mobile only (folded in from the bottom-control chips
+       so the dock's KEY panel owns layer on/off). Hidden on desktop, where the
+       #bottom-controls chips remain the layer switches. Sync'd by toggleLayer. -->
+  <div class="legend-hint legend-layers-hint">Layers</div>
+  <div class="legend-row legend-layer-row active" id="legend-roads-toggle" data-testid="roads-layer-row" data-layer="roads" role="button" tabindex="0" onclick="toggleLayer('roads')"><div class="legend-line solid"></div>Roman Roads</div>
+  <div class="legend-row legend-layer-row active" id="legend-sites-toggle" data-testid="sites-layer-row" data-layer="sites" role="button" tabindex="0" onclick="toggleLayer('sites')"><div class="legend-dot" style="background:var(--gold)"></div>Sites &amp; Cities</div>
+  <div class="legend-sep legend-layers-sep"></div>
   <div class="legend-hint">Tap to filter<button id="legend-info-btn" onclick="openLegendInfo()" aria-label="What do these terms mean?" title="What do these mean?">?</button></div>
   <div class="legend-row" data-testid="site-tier-filter" data-tier="documented" role="button" tabindex="0" onclick="toggleTier('documented')"><div class="legend-dot" style="background:#b89a6a"></div>Documented</div>
   <div class="legend-row" data-testid="site-tier-filter" data-tier="photo" role="button" tabindex="0" onclick="toggleTier('photo')"><div class="legend-dot" style="background:#ff9e2c"></div>Photo Quest</div>
@@ -311,11 +351,11 @@
 
 <!-- Data + App. ?v= must match the value on css/style.css above — bump both
      together each deploy to force fresh assets past the cache. -->
-<script src="js/config.js?v=83"></script>
-<script src="js/orbis-days.js?v=83"></script>
-<script src="js/sites-pleiades.js?v=83"></script>
-<script src="js/sites-vici.js?v=83"></script>
-<script src="js/vici-links.js?v=83"></script>
+<script src="js/config.js?v=84"></script>
+<script src="js/orbis-days.js?v=84"></script>
+<script src="js/sites-pleiades.js?v=84"></script>
+<script src="js/sites-vici.js?v=84"></script>
+<script src="js/vici-links.js?v=84"></script>
 <!-- The Itiner-e road dataset is ~2.7MB; parsing it intermittently crashes
      headless Chromium, breaking deterministic tests. Skip it entirely in ?qa=1
      (app.js guards on `typeof ROADS_ITINERE`). document.write here runs during
@@ -323,15 +363,15 @@
      normal (non-QA) path — ordering is preserved. -->
 <script>
   if (!/[?&]qa=1/.test(location.search)) {
-    document.write('<scr' + 'ipt src="js/roads-itinere.js?v=83"><\/scr' + 'ipt>');
+    document.write('<scr' + 'ipt src="js/roads-itinere.js?v=84"><\/scr' + 'ipt>');
   }
 </script>
-<script src="js/data.js?v=83"></script>
-<script src="js/auth.js?v=83"></script>
+<script src="js/data.js?v=84"></script>
+<script src="js/auth.js?v=84"></script>
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
-<script src="js/basemap.js?v=83"></script>
-<script src="js/app.js?v=83"></script>
+<script src="js/basemap.js?v=84"></script>
+<script src="js/app.js?v=84"></script>
 
 </body>
 </html>

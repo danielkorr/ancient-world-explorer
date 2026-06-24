@@ -1176,6 +1176,21 @@ function rankSearchMatch(site, query) {
   if (entry.period.includes(query)) return { score: 8, bucket: 'context', match: 'Period' };
   if (entry.type.includes(query)) return { score: 9, bucket: 'context', match: 'Type' };
   if (entry.id === query || entry.pleiades === query) return { score: 10, bucket: 'context', match: 'Identifier' };
+  // Compound fallback: a multi-word query the single-field checks above all
+  // missed (e.g. "appia via", "pompeii italy", "rome city") still matches when
+  // EVERY token word-prefixes some field. Single-token queries never reach here
+  // (length <= 1 short-circuits), so existing one-word search is untouched.
+  const tokens = searchQueryTokens(query);
+  if (tokens.length > 1) {
+    const strings = [entry.name, entry.modern, entry.period, entry.type].filter(Boolean);
+    if (tokensMatchStrings(tokens, strings)) {
+      const nameWords = entry.name.split(SEARCH_SPLIT);
+      const nameHit = tokens.some(tok => nameWords.some(w => w.startsWith(tok)));
+      return nameHit
+        ? { score: 2.5, bucket: 'site', match: 'Site name' }
+        : { score: 7.5, bucket: 'location', match: 'Multiple terms' };
+    }
+  }
   return null;
 }
 

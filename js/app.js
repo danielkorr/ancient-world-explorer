@@ -318,7 +318,11 @@ function _distToSegPx(p, a, b) {
 // never wrongly excludes a segment that's within THRESH px at low zoom.
 function findNearestItinere(latlng, cp) {
   if (!map.hasLayer(itinereRoadsGroup)) return null;
-  const THRESH = 14;
+  // Touch needs a fatter catch than a mouse: a finger on a 1px secondary line
+  // can't land within 14px the way a cursor can, which is why secondary roads
+  // read as unresponsive on mobile (Track 3 / 3b). Widen the tolerance on
+  // coarse pointers only; desktop stays tight so a mouse doesn't over-resolve.
+  const THRESH = COARSE_POINTER ? 26 : 14;
   const c0 = map.containerPointToLatLng(L.point(0, 0));
   const c1 = map.containerPointToLatLng(L.point(THRESH, THRESH));
   const margin = Math.max(Math.abs(c1.lat - c0.lat), Math.abs(c1.lng - c0.lng));
@@ -633,8 +637,11 @@ function revealSiteMarker(site, onReady) {
   const wasSitesOff = !layerState.sites;
   let refreshed = false;
   ensureSitesLayerOn();
-  if (activeTiers.size) {
-    activeTiers.clear();
+  // Don't let a hidden tier swallow the site we're focusing on — un-hide just
+  // that tier (leave the user's other choices intact).
+  const focusTier = siteTier(site);
+  if (hiddenTiers.has(focusTier)) {
+    hiddenTiers.delete(focusTier);
     syncFilterUI();
     refreshed = true;
   }
@@ -735,9 +742,14 @@ SITES.forEach(site => {
 // to its marker, opens the panel directly. Touch-only (COARSE_POINTER) so desktop
 // click is untouched; preventDefault suppresses any late synthesized click so we
 // never double-fire.
+// Window in which a second tap on the same marker counts as a double-tap (zoom)
+// rather than two single taps. Also the delay a single tap waits before opening
+// detail, so a double-tap can pre-empt it — the accepted cost of 3a.
+const MARKER_DBLTAP_MS = 280;
 if (COARSE_POINTER) {
   const markerPane = map.getPane('markerPane');
   let _tStart = null;
+  let _lastMarkerTap = null;   // {id, t, timer} of the last single-tap awaiting open
   markerPane.addEventListener('touchstart', e => {
     const t = e.changedTouches && e.changedTouches[0];
     _tStart = t ? { x: t.clientX, y: t.clientY } : null;
@@ -763,8 +775,29 @@ if (COARSE_POINTER) {
     for (const m of allMarkers) { if (m._icon === iconEl) { hit = m; break; } }
     if (!hit) return;
     e.preventDefault();   // suppress any late synthesized click → no double-open
-    setActiveMarker(hit);
-    showPanel(hit._site);
+
+    // Tap vs double-tap discriminator (Track 3 / 3a). A double-tap on the SAME
+    // marker zooms in one level — like double-tapping the map — so you can zoom
+    // incrementally on a pin without detail hijacking every tap. A lone tap opens
+    // detail, but only after the double-tap window so a second tap can cancel it.
+    const now = Date.now();
+    if (_lastMarkerTap && _lastMarkerTap.id === hit._site.id && (now - _lastMarkerTap.t) < MARKER_DBLTAP_MS) {
+      clearTimeout(_lastMarkerTap.timer);
+      _lastMarkerTap = null;
+      const z = Math.min(map.getZoom() + 1, map.getMaxZoom());
+      // Offset for the panel only when one is actually open; otherwise centre on
+      // the pin so the zoom stays put under the finger.
+      if (document.getElementById('info-panel').classList.contains('open')) panToWithPanelOffset(hit.getLatLng(), z);
+      else map.setView(hit.getLatLng(), z, { animate: true });
+      return;
+    }
+    if (_lastMarkerTap) clearTimeout(_lastMarkerTap.timer);   // a pending open on another marker — last tap wins
+    const openTimer = setTimeout(() => {
+      _lastMarkerTap = null;
+      setActiveMarker(hit);
+      showPanel(hit._site);
+    }, MARKER_DBLTAP_MS);
+    _lastMarkerTap = { id: hit._site.id, t: now, timer: openTimer };
   }, { passive: false });
 }
 
@@ -780,34 +813,51 @@ if (COARSE_POINTER) {
   overlayPane.addEventListener('touchend', e => {
     const t = e.changedTouches && e.changedTouches[0];
     if (_rStart && t && (Math.abs(t.clientX - _rStart.x) > 12 || Math.abs(t.clientY - _rStart.y) > 12)) return;
-    const pathEl = e.target.closest && e.target.closest('path');
-    if (!pathEl) return;
-    let road = null;
-    roadsGroup.eachLayer(l => { if (l._path === pathEl && l.getTooltip && l.getTooltip()) road = l; });
-    if (!road) return;
-    e.preventDefault();
-    roadsGroup.eachLayer(l => { if (l.closeTooltip) l.closeTooltip(); });  // one at a time
     let ll; try { ll = map.mouseEventToLatLng(t); } catch (_) {}
-    road.openTooltip(ll);
-    // Parity with desktop: a road tap must ALSO open the segment sidebar. On
-    // desktop the map-level 'click' drives showSegmentPanel, but the
-    // preventDefault above suppresses the synthesized click on iOS — so the
-    // panel never opened on mobile (curated-road taps only). Resolve the
-    // nearest Itiner-e segment ourselves and open it here.
-    if (ll) {
-      const seg = findNearestItinere(ll, map.latLngToContainerPoint(ll));
-      if (seg) {
-        showSegmentPanel(seg.meta, seg.ll);
-      } else if (road._curatedRoad) {
-        // No Itiner-e segment under the tap — open a panel from the curated
-        // road's own rich copy so the named roads (Via Appia etc.) always work.
-        const r = road._curatedRoad;
-        // [lat,lng] arrays — the shape nearestSitesToSegment/kmPointToPolyline
-        // index by [0]/[1] (NOT Leaflet LatLng objects from getLatLngs()).
-        const rll = r.coords.map(c => [c[1], c[0]]);
-        showSegmentPanel({ name: r.name, main: 1, desc: r.desc }, rll);
+
+    // A curated named road (SVG path) directly under the finger wins.
+    const pathEl = e.target.closest && e.target.closest('path');
+    let road = null;
+    if (pathEl) roadsGroup.eachLayer(l => { if (l._path === pathEl && l.getTooltip && l.getTooltip()) road = l; });
+
+    if (road) {
+      e.preventDefault();
+      roadsGroup.eachLayer(l => { if (l.closeTooltip) l.closeTooltip(); });  // one at a time
+      road.openTooltip(ll);
+      // Parity with desktop: a road tap must ALSO open the segment sidebar. On
+      // desktop the map-level 'click' drives showSegmentPanel, but the
+      // preventDefault above suppresses the synthesized click on iOS — so the
+      // panel never opened on mobile (curated-road taps only). Resolve the
+      // nearest Itiner-e segment ourselves and open it here.
+      if (ll) {
+        const seg = findNearestItinere(ll, map.latLngToContainerPoint(ll));
+        if (seg) {
+          showSegmentPanel(seg.meta, seg.ll);
+        } else if (road._curatedRoad) {
+          // No Itiner-e segment under the tap — open a panel from the curated
+          // road's own rich copy so the named roads (Via Appia etc.) always work.
+          const r = road._curatedRoad;
+          // [lat,lng] arrays — the shape nearestSitesToSegment/kmPointToPolyline
+          // index by [0]/[1] (NOT Leaflet LatLng objects from getLatLngs()).
+          const rll = r.coords.map(c => [c[1], c[0]]);
+          showSegmentPanel({ name: r.name, main: 1, desc: r.desc }, rll);
+        }
       }
+      return;
     }
+
+    // No curated SVG path under the finger — this is a tap on the Itiner-e
+    // CANVAS (the ~14,800 secondary segments are non-DOM canvas paths). iOS does
+    // not reliably synthesize a click on the canvas, so map.on('click') can't be
+    // trusted to open the segment panel here — which is exactly why secondary
+    // roads read as dead on mobile (Track 3 / 3b). Resolve the nearest segment
+    // ourselves with the touch-widened threshold and open it. No segment within
+    // range → don't preventDefault, so map.on('click') still closes any panel.
+    if (!ll) return;
+    const seg = findNearestItinere(ll, map.latLngToContainerPoint(ll));
+    if (!seg) return;
+    e.preventDefault();
+    showSegmentPanel(seg.meta, seg.ll);
   }, { passive: false });
 }
 
@@ -1713,14 +1763,12 @@ function toggleLayer(which) {
     // bug that membership + content changes in one handler would.
     decorateRoadsLegend();
   } else {
-    // Sites & Cities is the MASTER layer switch, conceptually above the quest
-    // filter. Operating it clears any active tier filter so the toggle always
-    // means the full sites layer. Without this, a leftover Quests/legend filter
-    // makes "Sites & Cities" show only quest cities every time, and the result
-    // depended on whatever state the Quests button was left in (user-reported,
-    // on both mobile and desktop).
-    activeTiers.clear();
-    syncFilterUI();   // un-light the Quests button + legend rows to match
+    // Sites & Cities is the MASTER layer switch, conceptually above the tier
+    // filter. Operating it un-hides every tier so the toggle always means the
+    // full sites layer. Without this, a leftover hidden tier would make "Sites &
+    // Cities" silently omit a category every time it's switched on.
+    hiddenTiers.clear();
+    syncFilterUI();   // re-light every legend row to match
     // The group stays on the map PERMANENTLY; we only change its contents.
     // Re-adding a layer group then mutating it in the same tap handler does not
     // repaint on mobile Safari (the "filter changes show nothing from an empty
@@ -2125,7 +2173,12 @@ async function shareRoadSegment() {
 // (allMarkers + markersByTier are populated in the marker build loop above.)
 
 const QUEST_TIERS  = ['photo', 'location', 'text'];
-const activeTiers  = new Set();              // empty = no filter (zoom disclosure)
+// SUBTRACTIVE tier filter (Track 3 / 3d). Tiers are ON by default — every legend
+// row is lit at rest. Tapping a lit row drops that tier into hiddenTiers and its
+// markers vanish, regardless of the DETAIL slider ("off means off"). The slider
+// only sets disclosure density AMONG the tiers still on; it can never re-introduce
+// a hidden tier. All quest tiers hidden → a clean empty quest map.
+const hiddenTiers  = new Set();              // empty = all tiers shown
 const siteTier     = site => site.quest || 'documented';
 
 // How many sites sit in each tier. Drives the legend counts and disables tiers
@@ -2192,15 +2245,12 @@ function siteVisibleAtLevel(site, level) {
 function refreshVisibleMarkers() {
   TIER_KINDS.forEach(k => siteClusters[k].clearLayers());
   if (!layerState.sites) return;   // sites hidden: groups stay on the map but empty
-  const filtering = activeTiers.size > 0;
   TIER_KINDS.forEach(tier => {
-    // An explicit tier filter shows EVERY site of that tier (intent to see all);
-    // other tiers are dropped. With no filter, the detail level governs which
-    // sites populate the clusters. Bulk addLayers keeps chunkedLoading happy.
-    if (filtering && !activeTiers.has(tier)) return;
-    const subset = filtering
-      ? markersByTier[tier]
-      : markersByTier[tier].filter(m => siteVisibleAtLevel(m._site, detailLevel));
+    // Master filter: a hidden tier never appears, whatever the slider says.
+    if (hiddenTiers.has(tier)) return;
+    // Sub-filter: the detail level always governs density WITHIN a shown tier.
+    // Bulk addLayers keeps chunkedLoading happy.
+    const subset = markersByTier[tier].filter(m => siteVisibleAtLevel(m._site, detailLevel));
     if (subset.length) siteClusters[tier].addLayers(subset);
   });
 }
@@ -2209,9 +2259,11 @@ function refreshVisibleMarkers() {
 function syncFilterUI() {
   const legend = document.getElementById('quest-legend');
   if (legend) {
-    legend.classList.toggle('filtering', activeTiers.size > 0);
+    // A row is "active" (lit) when its tier is SHOWN — the default for all rows.
+    // Hiding a tier un-lights its row; `.filtering` dims the un-lit rows.
+    legend.classList.toggle('filtering', hiddenTiers.size > 0);
     legend.querySelectorAll('.legend-row[data-tier]').forEach(row => {
-      row.classList.toggle('active', activeTiers.has(row.dataset.tier));
+      row.classList.toggle('active', !hiddenTiers.has(row.dataset.tier));
     });
   }
 }
@@ -2254,14 +2306,18 @@ function bindDetailSlider() {
   });
 }
 
-// Tap a legend tier to toggle it in/out of the filter. Empty tiers are inert.
+// Tap a lit legend tier to HIDE it; tap a hidden tier to bring it back. Empty
+// tiers (e.g. Text Quest today) are inert. Subtractive: default all shown.
 function toggleTier(tier) {
   if (!tierCounts[tier]) return;
-  const adding = !activeTiers.has(tier);
-  if (adding) activeTiers.add(tier);
-  else        activeTiers.delete(tier);
-  if (activeTiers.size > 0) ensureSitesLayerOn();
-  if (adding) showLegendToast(tier);   // explain the tier the moment it's picked
+  const hiding = !hiddenTiers.has(tier);
+  if (hiding) {
+    hiddenTiers.add(tier);
+  } else {
+    hiddenTiers.delete(tier);
+    ensureSitesLayerOn();   // bringing a tier back is meaningless with sites off
+  }
+  showLegendToast(tier);    // explain the tier on either action
   syncFilterUI();
   refreshVisibleMarkers();
 }
@@ -2652,7 +2708,7 @@ window.VIA.getState    = function () {
     panelName: (document.getElementById('panel-name') || {}).textContent || null,
     questBannerVisible: document.getElementById('panel-quest-banner').classList.contains('visible'),
     detailLevel,
-    activeTiers: (typeof activeTiers !== 'undefined') ? Array.from(activeTiers) : [],
+    hiddenTiers: (typeof hiddenTiers !== 'undefined') ? Array.from(hiddenTiers) : [],
     searchOpen: document.getElementById('site-search-results').classList.contains('open'),
     searchQuery: (document.getElementById('site-search-input') || {}).value || '',
     searchResultCount: currentSearchResults.length,

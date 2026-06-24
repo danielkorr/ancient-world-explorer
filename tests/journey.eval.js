@@ -70,14 +70,17 @@
   ok('detail-curated-subset', fewCount > 0 && fewCount < allCount);
   ok('detail-full-is-all', allCount === st().siteCount);
 
-  // Journey 6 - legend tier filter narrows to a single tier, then clears.
+  // Journey 6 - subtractive tier filter: hiding a tier drops its markers (and
+  // the slider can't bring them back); showing it again restores them.
   V.setDetail(2);
-  V.toggleTier('photo');
+  const beforeHide = st().visibleSiteCount;
+  V.toggleTier('photo');                 // hide the photo-quest tier
   const tf = st();
-  ok('tier-filter-active', tf.activeTiers.indexOf('photo') > -1);
-  ok('tier-filter-narrows', tf.visibleSiteCount > 0 && tf.visibleSiteCount < tf.siteCount);
-  V.toggleTier('photo');
-  ok('tier-filter-cleared', st().activeTiers.length === 0);
+  ok('tier-hidden-in-state', tf.hiddenTiers.indexOf('photo') > -1);
+  ok('tier-hide-reduces', tf.visibleSiteCount > 0 && tf.visibleSiteCount < beforeHide);
+  V.toggleTier('photo');                 // bring it back
+  const after = st();
+  ok('tier-show-restores', after.hiddenTiers.length === 0 && after.visibleSiteCount === beforeHide);
   V.setDetail(0);
 
   // Journey 7 - share + email affordances are present (quest-modal share hub).

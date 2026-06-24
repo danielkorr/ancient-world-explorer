@@ -1113,6 +1113,14 @@ function closePanel() {
   currentPanelSite = null;
   currentPanelKind = null;
   currentSegmentMeta = null;
+  // Clear the road mini-banner (the curated-road name tooltip) when the detail
+  // card closes. It's kept WHILE you interact along a road, but once the card is
+  // gone the persistent road highlight alone marks the road — leaving the tooltip
+  // up just overlays the lit line it's labelling (option 2, 3c gate). One open at
+  // a time, but close all to be safe.
+  if (typeof roadsGroup !== 'undefined') {
+    roadsGroup.eachLayer(l => { if (l.closeTooltip) l.closeTooltip(); });
+  }
   // Glide back to the view you came from, undoing the offset pan that opening
   // the panel applied. Without this you're left stranded wherever the last
   // marker tap dragged the map.
@@ -1336,6 +1344,12 @@ function clearRoadHighlight() {
 // road clears it (and the dock on mobile).
 function focusRoad(road) {
   const latlngs = road.coords.map(c => [c[1], c[0]]);
+  // A search selection is marked by the highlight, not the tap tooltip — drop any
+  // stray road mini-banner left open from an earlier tap so it can't overlay the
+  // freshly lit road.
+  if (typeof roadsGroup !== 'undefined') {
+    roadsGroup.eachLayer(l => { if (l.closeTooltip) l.closeTooltip(); });
+  }
   highlightRoad(road);
   showSegmentPanel({ name: road.name, main: 1, desc: road.desc }, latlngs);
   // The road is the star and we fit the map TO it. Drop the return-view snapshot
@@ -2903,7 +2917,27 @@ window.VIA.getState    = function () {
     searchPreviewSite: previewMarker && previewMarker._site ? previewMarker._site.id : null,
     roadHighlight: highlightedRoad ? highlightedRoad.name : null,
     roadHighlightLayers: roadHighlightGroup.getLayers().length,
+    // The road mini-banner is a curated-road Leaflet tooltip; detect it in the DOM
+    // so the gate can assert it clears on card close (option 2, 3c).
+    roadTooltipOpen: !!document.querySelector('.leaflet-tooltip.road-tip'),
     visibleSiteCount,
     siteCount: SITES.length,
   };
+};
+
+// QA: replicate a curated-road TAP (opens the road mini-banner tooltip + the
+// segment panel), so the banner-clears-on-close behavior is deterministically
+// gateable headlessly — the real tap path is touch-only (COARSE_POINTER).
+window.VIA.tapRoad = function (name) {
+  let hit = null;
+  roadsGroup.eachLayer(l => {
+    if (!hit && l._curatedRoad && l._curatedRoad.name === name && l.openTooltip) hit = l;
+  });
+  if (!hit) return false;
+  roadsGroup.eachLayer(l => { if (l.closeTooltip) l.closeTooltip(); });
+  const r = hit._curatedRoad;
+  const mid = r.coords[Math.floor(r.coords.length / 2)];
+  hit.openTooltip([mid[1], mid[0]]);
+  showSegmentPanel({ name: r.name, main: 1, desc: r.desc }, r.coords.map(c => [c[1], c[0]]));
+  return true;
 };

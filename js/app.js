@@ -835,9 +835,14 @@ if (COARSE_POINTER) {
 
 // Roads hit the same iOS wall (SVG paths, ~1 tap in 10). Delegate touchend on the
 // overlay pane, match the tapped <path> to its road layer, open the name tooltip.
+// Window in which a second tap near the first counts as a double-tap (zoom)
+// rather than two single taps — and the delay a lone road tap waits before
+// opening detail, so a double-tap can pre-empt it. Mirrors MARKER_DBLTAP_MS.
+const ROAD_DBLTAP_MS = 280;
 if (COARSE_POINTER) {
   const overlayPane = map.getPane('overlayPane');
   let _rStart = null;
+  let _lastRoadTap = null;   // {t, x, y, timer} of the last road tap awaiting open
   overlayPane.addEventListener('touchstart', e => {
     const t = e.changedTouches && e.changedTouches[0];
     _rStart = t ? { x: t.clientX, y: t.clientY } : null;
@@ -856,37 +861,58 @@ if (COARSE_POINTER) {
       return;
     }
 
-    let ll; try { ll = map.mouseEventToLatLng(t); } catch (_) {}
+    const px = t ? t.clientX : 0, py = t ? t.clientY : 0;
+    const now = Date.now();
 
-    // A curated named road (SVG path) directly under the finger wins.
-    const pathEl = e.target.closest && e.target.closest('path');
-    let road = null;
-    if (pathEl) roadsGroup.eachLayer(l => { if (l._path === pathEl && l.getTooltip && l.getTooltip()) road = l; });
-
-    if (road) {
+    // Double-tap ON a road zooms one level, like double-tapping the map — without
+    // this, tap 1 opened the road panel and tap 2 just closed it, so roads could
+    // never be double-tap-zoomed. A second tap inside the window & near the first
+    // cancels the pending single-tap open and zooms toward the point instead.
+    if (_lastRoadTap && (now - _lastRoadTap.t) < ROAD_DBLTAP_MS &&
+        Math.abs(px - _lastRoadTap.x) < 30 && Math.abs(py - _lastRoadTap.y) < 30) {
+      clearTimeout(_lastRoadTap.timer);
+      _lastRoadTap = null;
       e.preventDefault();
-      roadsGroup.eachLayer(l => { if (l.closeTooltip) l.closeTooltip(); });  // one at a time
-      road.openTooltip(ll);
-      roadBannerFromTap = true;   // tap-opened banner: clear it when the card closes
-      // Nearest Itiner-e segment wins, else the curated road's own rich copy so
-      // the named roads (Via Appia etc.) always open a panel. Same resolver the
-      // desktop click path uses.
-      if (ll) openRoadPanelAt(ll, road._curatedRoad);
+      let zll; try { zll = map.mouseEventToLatLng(t); } catch (_) {}
+      const z = Math.min(map.getZoom() + 1, map.getMaxZoom());
+      if (zll) map.setZoomAround(zll, z);   // keep the tapped point under the finger
       return;
     }
 
-    // No curated SVG path under the finger — this is a tap on the Itiner-e
-    // CANVAS (the ~14,800 secondary segments are non-DOM canvas paths). iOS does
-    // not reliably synthesize a click on the canvas, so map.on('click') can't be
-    // trusted to open the segment panel here — which is exactly why secondary
-    // roads read as dead on mobile (Track 3 / 3b). Resolve the nearest segment
-    // ourselves with the touch-widened threshold and open it. No segment within
-    // range → don't preventDefault, so map.on('click') still closes any panel.
-    if (!ll) return;
-    const seg = findNearestItinere(ll, map.latLngToContainerPoint(ll));
-    if (!seg) return;
-    e.preventDefault();
-    showSegmentPanel(seg.meta, seg.ll);
+    let ll; try { ll = map.mouseEventToLatLng(t); } catch (_) {}
+
+    // A curated named road (SVG path) directly under the finger wins; otherwise a
+    // nearby Itiner-e CANVAS segment (the ~14,800 secondaries are non-DOM canvas
+    // paths iOS won't synthesize a click for). Resolve which one this tap hits now.
+    const pathEl = e.target.closest && e.target.closest('path');
+    let road = null;
+    if (pathEl) roadsGroup.eachLayer(l => { if (l._path === pathEl && l.getTooltip && l.getTooltip()) road = l; });
+    const seg = (!road && ll) ? findNearestItinere(ll, map.latLngToContainerPoint(ll)) : null;
+
+    // No road under the finger → don't preventDefault, so Leaflet's own map
+    // double-tap zoom and map.on('click') (panel close) still run on empty canvas.
+    if (!road && !seg) return;
+
+    e.preventDefault();   // we own this tap → suppress the late synthesized click
+
+    // Defer the panel open past the double-tap window so a second tap can pre-empt
+    // it with a zoom (above). A lone tap falls through and opens detail.
+    const doOpen = () => {
+      _lastRoadTap = null;
+      if (road) {
+        roadsGroup.eachLayer(l => { if (l.closeTooltip) l.closeTooltip(); });  // one at a time
+        road.openTooltip(ll);
+        roadBannerFromTap = true;   // tap-opened banner: clear it when the card closes
+        // Nearest Itiner-e segment wins, else the curated road's own rich copy so
+        // the named roads (Via Appia etc.) always open a panel. Same resolver the
+        // desktop click path uses.
+        if (ll) openRoadPanelAt(ll, road._curatedRoad);
+      } else if (seg) {
+        showSegmentPanel(seg.meta, seg.ll);
+      }
+    };
+    if (_lastRoadTap) clearTimeout(_lastRoadTap.timer);
+    _lastRoadTap = { t: now, x: px, y: py, timer: setTimeout(doOpen, ROAD_DBLTAP_MS) };
   }, { passive: false });
 }
 

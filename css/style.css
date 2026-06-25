@@ -1685,19 +1685,30 @@ path.leaflet-interactive { outline: none !important; }
     padding: 4px 6px;
   }
 
+  /* Era is a set-once preference, not primary navigation — so on mobile the
+     toggle is deliberately small and subordinate: a compact pill sized to its
+     content, quiet background, no glow. The active segment still reads by
+     LUMINANCE (gold fill vs transparent), never hue, so it stays colorblind-safe.
+     (Search + map are the primary chrome; this sits under them.) */
   #era-toggle {
-    height: 44px;
-    min-height: 44px;
-    padding: 4px;
-    box-shadow: 0 10px 24px rgba(0,0,0,0.22);
-    min-width: 204px;
+    height: 30px;
+    min-height: 30px;
+    padding: 2px;
+    min-width: 0;
+    width: max-content;
+    background: rgba(10,5,0,0.72);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.16);
   }
   .era-btn {
-    height: 44px;
-    min-height: 44px;
-    padding: 0 11px;
-    font-size: 9px;
+    height: 26px;
+    min-height: 26px;
+    padding: 0 12px;
+    font-size: 8.5px;
     letter-spacing: 1.5px;
+  }
+  /* Drop the bright glow — the fill alone marks the active era; no shouting. */
+  .era-btn.active {
+    box-shadow: none;
   }
 
   /* Collapse the profile pill to icon-only on mobile — keeps the affordance

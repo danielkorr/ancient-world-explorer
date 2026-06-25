@@ -831,6 +831,7 @@ if (COARSE_POINTER) {
       e.preventDefault();
       roadsGroup.eachLayer(l => { if (l.closeTooltip) l.closeTooltip(); });  // one at a time
       road.openTooltip(ll);
+      roadBannerFromTap = true;   // tap-opened banner: clear it when the card closes
       // Parity with desktop: a road tap must ALSO open the segment sidebar. On
       // desktop the map-level 'click' drives showSegmentPanel, but the
       // preventDefault above suppresses the synthesized click on iOS — so the
@@ -1114,12 +1115,14 @@ function closePanel() {
   currentPanelKind = null;
   currentSegmentMeta = null;
   // Clear the road mini-banner (the curated-road name tooltip) when the detail
-  // card closes. It's kept WHILE you interact along a road, but once the card is
-  // gone the persistent road highlight alone marks the road — leaving the tooltip
-  // up just overlays the lit line it's labelling (option 2, 3c gate). One open at
-  // a time, but close all to be safe.
-  if (typeof roadsGroup !== 'undefined') {
+  // card closes — but ONLY when it was opened by a tap. On touch the sticky
+  // tooltip has no mouseout to dismiss it, so it lingers and overlays the lit
+  // road (option 2, 3c gate). On desktop the tooltip is hover-managed and a tap
+  // never sets this flag, so we leave it alone: force-closing it here tore it
+  // down mid-gesture and raced the desktop click→panel path (v88 regression).
+  if (roadBannerFromTap && typeof roadsGroup !== 'undefined') {
     roadsGroup.eachLayer(l => { if (l.closeTooltip) l.closeTooltip(); });
+    roadBannerFromTap = false;
   }
   // Glide back to the view you came from, undoing the offset pan that opening
   // the panel applied. Without this you're left stranded wherever the last
@@ -1349,6 +1352,7 @@ function focusRoad(road) {
   // freshly lit road.
   if (typeof roadsGroup !== 'undefined') {
     roadsGroup.eachLayer(l => { if (l.closeTooltip) l.closeTooltip(); });
+    roadBannerFromTap = false;
   }
   highlightRoad(road);
   showSegmentPanel({ name: road.name, main: 1, desc: road.desc }, latlngs);
@@ -2004,6 +2008,12 @@ let currentPanelSite = null;
 let currentPanelKind = null;  // 'site' | 'segment' — what the info panel is showing
 let currentSegmentMeta = null; // the Itiner-e meta backing a 'segment' panel
 let panelReturnView  = null;  // {center, zoom} captured when the panel opens
+// True when the road mini-banner (curated-road tooltip) was opened by a TAP —
+// the only case that needs clearing on card close. On desktop the tooltip is
+// hover-managed (closes on mouseout), and a TAP never sets this, so closePanel
+// must NOT force-close it there: doing so tore down the tooltip mid-gesture and
+// raced the desktop click→panel path (v88 regression). See closePanel.
+let roadBannerFromTap = false;
 
 function refreshProfilePill() {
   const user = VIA.auth.currentUser();
@@ -2928,7 +2938,9 @@ window.VIA.getState    = function () {
 // QA: replicate a curated-road TAP (opens the road mini-banner tooltip + the
 // segment panel), so the banner-clears-on-close behavior is deterministically
 // gateable headlessly — the real tap path is touch-only (COARSE_POINTER).
-window.VIA.tapRoad = function (name) {
+// Pass fromTap=false to simulate the DESKTOP hover/click case (banner opened
+// without a tap) — that banner must SURVIVE closePanel (no mid-gesture teardown).
+window.VIA.tapRoad = function (name, fromTap) {
   let hit = null;
   roadsGroup.eachLayer(l => {
     if (!hit && l._curatedRoad && l._curatedRoad.name === name && l.openTooltip) hit = l;
@@ -2938,6 +2950,7 @@ window.VIA.tapRoad = function (name) {
   const r = hit._curatedRoad;
   const mid = r.coords[Math.floor(r.coords.length / 2)];
   hit.openTooltip([mid[1], mid[0]]);
+  roadBannerFromTap = (fromTap !== false);  // default true; false = desktop sim
   showSegmentPanel({ name: r.name, main: 1, desc: r.desc }, r.coords.map(c => [c[1], c[0]]));
   return true;
 };

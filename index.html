@@ -46,7 +46,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=88">
+  <link rel="stylesheet" href="css/style.css?v=89">
 </head>
 <body>
 
@@ -351,11 +351,11 @@
 
 <!-- Data + App. ?v= must match the value on css/style.css above — bump both
      together each deploy to force fresh assets past the cache. -->
-<script src="js/config.js?v=88"></script>
-<script src="js/orbis-days.js?v=88"></script>
-<script src="js/sites-pleiades.js?v=88"></script>
-<script src="js/sites-vici.js?v=88"></script>
-<script src="js/vici-links.js?v=88"></script>
+<script src="js/config.js?v=89"></script>
+<script src="js/orbis-days.js?v=89"></script>
+<script src="js/sites-pleiades.js?v=89"></script>
+<script src="js/sites-vici.js?v=89"></script>
+<script src="js/vici-links.js?v=89"></script>
 <!-- The Itiner-e road dataset is ~2.7MB; parsing it intermittently crashes
      headless Chromium, breaking deterministic tests. Skip it entirely in ?qa=1
      (app.js guards on `typeof ROADS_ITINERE`). document.write here runs during
@@ -363,15 +363,15 @@
      normal (non-QA) path — ordering is preserved. -->
 <script>
   if (!/[?&]qa=1/.test(location.search)) {
-    document.write('<scr' + 'ipt src="js/roads-itinere.js?v=88"><\/scr' + 'ipt>');
+    document.write('<scr' + 'ipt src="js/roads-itinere.js?v=89"><\/scr' + 'ipt>');
   }
 </script>
-<script src="js/data.js?v=88"></script>
-<script src="js/auth.js?v=88"></script>
+<script src="js/data.js?v=89"></script>
+<script src="js/auth.js?v=89"></script>
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
-<script src="js/basemap.js?v=88"></script>
-<script src="js/app.js?v=88"></script>
+<script src="js/basemap.js?v=89"></script>
+<script src="js/app.js?v=89"></script>
 
 </body>
 </html>

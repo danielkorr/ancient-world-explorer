@@ -311,6 +311,30 @@ if (!QA && typeof ROADS_ITINERE !== 'undefined') {
   );
 }
 
+// Name index for Itiner-e road search. Every rendered segment carries a scholarly
+// name (endpoint-pair, e.g. "Coptos-Berenike"); a named road is the set of all
+// segments that share it. Grouping by name turns ~14.8k anonymous canvas segments
+// into ~6.2k searchable, highlightable named roads. Built once at load from refs
+// into itinereSegs (normalizeSearchText is a hoisted function — safe to call here).
+const ITINERE_NAME_INDEX = [];
+(function buildItinereNameIndex() {
+  const byName = new Map();
+  for (const s of itinereSegs) {
+    const nm = s.meta && s.meta.name;
+    if (!nm) continue;
+    const key = normalizeSearchText(nm);
+    if (!key) continue;
+    let e = byName.get(key);
+    if (!e) {
+      e = { name: nm, norm: key, segs: [], meta: s.meta };
+      byName.set(key, e);
+      ITINERE_NAME_INDEX.push(e);
+    }
+    e.segs.push(s);
+  }
+  ITINERE_NAME_INDEX.sort((a, b) => a.name.localeCompare(b.name));
+})();
+
 // Pixel distance from point p to segment a-b (all L.Point in container space).
 function _distToSegPx(p, a, b) {
   const dx = b.x - a.x, dy = b.y - a.y;
@@ -1349,14 +1373,54 @@ function roadSearchMeta(road) {
   return bits.join(' · ');
 }
 
+// ── ITINER-E ROAD SEARCH ─────────────────────────────────
+// The ~6,185 named scholarly roads from the Itiner-e atlas (ITINERE_NAME_INDEX).
+// Same token-AND matcher as curated roads, but against the endpoint-pair name
+// only. Two-char minimum so a single letter can't dump thousands of rows.
+const ITINERE_SEARCH_LIMIT = 8;
+function searchItinere(query) {
+  const tokens = searchQueryTokens(query);
+  if (!tokens.length) return [];
+  const joined = normalizeSearchText(query);
+  if (joined.length < 2) return [];
+  const hits = [];
+  for (const entry of ITINERE_NAME_INDEX) {
+    let score;
+    if (entry.norm === joined) score = 0;
+    else if (entry.norm.startsWith(joined)) score = 1;
+    else if (tokensMatchStrings(tokens, [entry.norm])) score = 2;
+    else continue;
+    hits.push({ itinere: entry, kind: 'itinere', bucket: 'itinere', match: 'Itiner-e road', score });
+  }
+  hits.sort((a, b) => a.score - b.score || a.itinere.name.localeCompare(b.itinere.name));
+  return hits.slice(0, ITINERE_SEARCH_LIMIT);
+}
+
+function itinereSearchMeta(entry) {
+  const ci = entry.meta && CERT_INFO[entry.meta.cert];
+  const bits = [];
+  if (ci) bits.push(ci.label);
+  const n = entry.segs.length;
+  bits.push(n === 1 ? '1 segment' : `${n} segments`);
+  return bits.join(' · ');
+}
+
 // Merge site + road hits into one ranked list. Sites are pre-sorted (with the
 // curated/name tiebreak); a stable sort by score keeps that order and slots
 // equal-score roads in after. Road search is fully self-contained here so the
 // later site-matcher upgrade can be reverted without touching road search.
+// Itiner-e roads append as a labeled group after the curated content, with a few
+// reserved slots so scholarly road names always surface even when sites fill up.
 function searchAll(query) {
   const siteHits = searchSites(query).map(h => ({ ...h, kind: 'site' }));
   const roadHits = searchRoads(query);
-  return [...siteHits, ...roadHits].sort((a, b) => a.score - b.score).slice(0, SEARCH_LIMIT);
+  const primary = [...siteHits, ...roadHits].sort((a, b) => a.score - b.score);
+  const itinereHits = searchItinere(query);
+  if (!itinereHits.length) return primary.slice(0, SEARCH_LIMIT);
+  const reserve = Math.min(3, itinereHits.length);
+  const primaryKeep = primary.slice(0, Math.max(SEARCH_LIMIT - reserve, 0));
+  const itinereKeep = itinereHits.slice(0, SEARCH_LIMIT - primaryKeep.length);
+  return [...primaryKeep, ...itinereKeep];
 }
 
 // The road currently lit up by a search selection (null when none).
@@ -1386,6 +1450,50 @@ function clearRoadHighlight() {
   if (!highlightedRoad && !roadHighlightGroup.getLayers().length) return;
   roadHighlightGroup.clearLayers();
   highlightedRoad = null;
+}
+
+// Same cyan-halo-under-white-core highlight as a curated road, but painted across
+// every segment of a named Itiner-e road (it spans many canvas segments). Returns
+// the flattened [lat,lng] list so the caller can fit the map to the whole road.
+function highlightItinere(entry) {
+  clearRoadHighlight();
+  const all = [];
+  for (const s of entry.segs) {
+    L.polyline(s.ll, {
+      color: '#7ad7ff', weight: 14, opacity: 0.4,
+      lineCap: 'round', lineJoin: 'round', interactive: false,
+      className: 'road-highlight-glow',
+    }).addTo(roadHighlightGroup);
+    L.polyline(s.ll, {
+      color: '#fffbe9', weight: 4, opacity: 0.95,
+      lineCap: 'round', lineJoin: 'round', interactive: false,
+    }).addTo(roadHighlightGroup);
+    for (const ll of s.ll) all.push(ll);
+  }
+  // Sentinel so clearRoadHighlight/QA export treat the road as highlighted; only
+  // `.name` is ever read off it (line ~2975), so a bare {name} object is enough.
+  highlightedRoad = { name: entry.name, itinere: true };
+  return all;
+}
+
+// Open a named Itiner-e road from search: light up all its segments, show the
+// segment panel (carrying the road's certainty + nearby-sites context), and fit
+// the map to the whole road. Mirrors focusRoad for the curated 14.
+function focusItinere(entry) {
+  if (typeof roadsGroup !== 'undefined') {
+    roadsGroup.eachLayer(l => { if (l.closeTooltip) l.closeTooltip(); });
+    roadBannerFromTap = false;
+  }
+  const all = highlightItinere(entry);
+  const meta = entry.meta ? { ...entry.meta, name: entry.name } : { name: entry.name };
+  showSegmentPanel(meta, all);
+  // The road is the star — drop the return-view snapshot so closePanel keeps the
+  // framing + highlight instead of flying back to the pre-search view.
+  panelReturnView = null;
+  if (all.length) {
+    const bounds = L.latLngBounds(all);
+    requestAnimationFrame(() => map.fitBounds(bounds, roadFitPadding()));
+  }
 }
 
 // Open a curated road: highlight it on the map first (the road is the star and
@@ -1469,7 +1577,7 @@ function clearPreviewMarker() {
 function previewSearchResult(index) {
   clearPreviewMarker();
   const hit = currentSearchResults[index];
-  if (!hit || hit.kind === 'road') return;  // roads have no marker to preview
+  if (!hit || hit.kind !== 'site') return;  // only sites have a marker to preview
   const marker = markerForSite(hit.site);
   if (!marker || marker === activeMarker) return;
   previewMarker = marker;
@@ -1499,15 +1607,16 @@ function renderSearchResults(results, query) {
     return;
   }
   if (!results.length) {
-    list.innerHTML = '<div class="site-search-empty">No matching site or location.</div>';
+    list.innerHTML = '<div class="site-search-empty">No matching site, road, or location.</div>';
   } else {
-    const labels = { site: 'Sites', location: 'Locations', context: 'Context', road: 'Roads' };
+    const labels = { site: 'Sites', location: 'Locations', context: 'Context', road: 'Roads', itinere: 'Itiner-e roads' };
     let html = '';
     let lastBucket = null;
     results.forEach((hit, index) => {
-      const isRoad = hit.kind === 'road';
-      const name = isRoad ? hit.road.name : hit.site.name;
-      const meta = isRoad ? roadSearchMeta(hit.road) : siteSearchMeta(hit.site);
+      let name, meta;
+      if (hit.kind === 'road') { name = hit.road.name; meta = roadSearchMeta(hit.road); }
+      else if (hit.kind === 'itinere') { name = hit.itinere.name; meta = itinereSearchMeta(hit.itinere); }
+      else { name = hit.site.name; meta = siteSearchMeta(hit.site); }
       if (hit.bucket !== lastBucket) {
         html += `<div class="site-search-group-label">${labels[hit.bucket] || 'Matches'}</div>`;
         lastBucket = hit.bucket;
@@ -1518,7 +1627,7 @@ function renderSearchResults(results, query) {
           class="site-search-result${index === 0 ? ' active' : ''}"
           data-testid="site-search-result"
           data-kind="${hit.kind}"
-          data-site-id="${isRoad ? '' : escapeHtml(hit.site.id)}"
+          data-site-id="${hit.kind === 'site' ? escapeHtml(hit.site.id) : ''}"
           role="option"
           aria-selected="${index === 0 ? 'true' : 'false'}"
         >
@@ -1542,6 +1651,12 @@ function selectSearchResult(index) {
     if (input) input.value = hit.road.name;
     closeSearchResults();
     focusRoad(hit.road);
+    return true;
+  }
+  if (hit.kind === 'itinere') {
+    if (input) input.value = hit.itinere.name;
+    closeSearchResults();
+    focusItinere(hit.itinere);
     return true;
   }
   if (input) input.value = hit.site.name;

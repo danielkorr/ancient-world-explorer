@@ -421,6 +421,23 @@ const ROAD_CASING_WEIGHT = 6;
 const ROAD_FILL_COLOR    = '#ffd66b';     // bright saffron — high luminance vs casing
 const ROAD_FILL_WEIGHT   = 3;
 
+// Open the road-segment panel for a tap/click at `latlng`: the nearest Itiner-e
+// segment wins; otherwise fall back to the curated road's own rich copy. The
+// fallback is load-bearing for the named roads (Via Appia, Via Maris, …) — their
+// hand-drawn geometry drifts away from any Itiner-e segment as you zoom in, so
+// without it the panel only opened at the one zoom where the two happened to
+// coincide. Returns true if a panel was opened.
+function openRoadPanelAt(latlng, curatedRoad) {
+  const seg = latlng && findNearestItinere(latlng, map.latLngToContainerPoint(latlng));
+  if (seg) { showSegmentPanel(seg.meta, seg.ll); return true; }
+  if (curatedRoad) {
+    const rll = curatedRoad.coords.map(c => [c[1], c[0]]);
+    showSegmentPanel({ name: curatedRoad.name, main: 1, desc: curatedRoad.desc }, rll);
+    return true;
+  }
+  return false;
+}
+
 ROADS.forEach(road => {
   const latlngs = road.coords.map(c => [c[1], c[0]]);
   // Casing first, then fill on top — same coords, different stroke weight.
@@ -451,7 +468,15 @@ ROADS.forEach(road => {
      `<b style="color:#d4a853">${road.name}</b><br>${road.desc}<br><span style="opacity:.55">Est. ${road.built}</span>`,
      { className:'road-tip', sticky:true }
    )
-   .on('click', function (e) { this.openTooltip(e.latlng); });
+   .on('click', function (e) {
+     // Desktop: open the name tooltip AND the segment panel, then stop the event
+     // so the map-level click doesn't re-resolve (and possibly close) the panel.
+     // Mobile routes curated-road taps through the overlayPane touchend handler,
+     // which preventDefaults the synthesized click — so this rarely runs on touch.
+     this.openTooltip(e.latlng);
+     L.DomEvent.stopPropagation(e);
+     openRoadPanelAt(e.latlng, this._curatedRoad);
+   });
   // Stash the curated road so a tap can open its panel directly, without
   // depending on an Itiner-e segment happening to sit under the finger.
   hit._curatedRoad = road;
@@ -820,6 +845,17 @@ if (COARSE_POINTER) {
   overlayPane.addEventListener('touchend', e => {
     const t = e.changedTouches && e.changedTouches[0];
     if (_rStart && t && (Math.abs(t.clientX - _rStart.x) > 12 || Math.abs(t.clientY - _rStart.y) > 12)) return;
+
+    // On mobile the detail panel covers the map. If one is already open, a tap on
+    // the visible map/road should return you to the map (dismiss) — not stack
+    // another panel you can't locate under the panel. (Desktop keeps switch-panel
+    // behavior: the sidebar leaves the whole map visible.)
+    if (document.getElementById('info-panel').classList.contains('open')) {
+      e.preventDefault();
+      closePanel();
+      return;
+    }
+
     let ll; try { ll = map.mouseEventToLatLng(t); } catch (_) {}
 
     // A curated named road (SVG path) directly under the finger wins.
@@ -832,25 +868,10 @@ if (COARSE_POINTER) {
       roadsGroup.eachLayer(l => { if (l.closeTooltip) l.closeTooltip(); });  // one at a time
       road.openTooltip(ll);
       roadBannerFromTap = true;   // tap-opened banner: clear it when the card closes
-      // Parity with desktop: a road tap must ALSO open the segment sidebar. On
-      // desktop the map-level 'click' drives showSegmentPanel, but the
-      // preventDefault above suppresses the synthesized click on iOS — so the
-      // panel never opened on mobile (curated-road taps only). Resolve the
-      // nearest Itiner-e segment ourselves and open it here.
-      if (ll) {
-        const seg = findNearestItinere(ll, map.latLngToContainerPoint(ll));
-        if (seg) {
-          showSegmentPanel(seg.meta, seg.ll);
-        } else if (road._curatedRoad) {
-          // No Itiner-e segment under the tap — open a panel from the curated
-          // road's own rich copy so the named roads (Via Appia etc.) always work.
-          const r = road._curatedRoad;
-          // [lat,lng] arrays — the shape nearestSitesToSegment/kmPointToPolyline
-          // index by [0]/[1] (NOT Leaflet LatLng objects from getLatLngs()).
-          const rll = r.coords.map(c => [c[1], c[0]]);
-          showSegmentPanel({ name: r.name, main: 1, desc: r.desc }, rll);
-        }
-      }
+      // Nearest Itiner-e segment wins, else the curated road's own rich copy so
+      // the named roads (Via Appia etc.) always open a panel. Same resolver the
+      // desktop click path uses.
+      if (ll) openRoadPanelAt(ll, road._curatedRoad);
       return;
     }
 

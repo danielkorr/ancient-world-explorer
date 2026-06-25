@@ -6,3 +6,6 @@
 # Local dev-server artifacts (regenerated every run)
 .local-dev-server.mjs
 .server-*.log
+
+# Mobile QA screenshot artifacts (tests/mobile-shots.sh)
+tests/screenshots/

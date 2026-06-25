@@ -22,6 +22,24 @@ bash tests/run-journeys.sh
 
 Exit `0` = all journeys passed, `1` = a check failed (CI-friendly).
 
+### Mobile visual pass (screenshots, not assertions)
+
+```bash
+bash tests/mobile-shots.sh
+# BROWSE=/path/to/browse PORT=8065 bash tests/mobile-shots.sh
+```
+
+Drives the same `?qa=1` fixture at the 375×812 mobile breakpoint and captures a
+viewport screenshot of each key flow (boot, search, site panel, road panel, quest
+panel, full-density, modern era, legend) into `tests/screenshots/mobile/`
+(gitignored). It **asserts nothing** — it's the first net for eyeballing mobile
+chrome + panel layout regressions (you or a paired agent like Codex review the
+images). Because `?qa=1` skips the Itiner-e road canvas, these shots cover chrome +
+panel *layout*, not map imagery or the secondary-road network — and they are **not**
+a substitute for real iOS-Safari touch testing on a device (Chromium doesn't
+reproduce iOS tap-synthesis behavior, which is where VIA's load-bearing mobile bugs
+live).
+
 ## How it works
 
 - **Fixture route `?qa=1`** (see the QA block in `js/app.js`): skips the ~14,800-segment

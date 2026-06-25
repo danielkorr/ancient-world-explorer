@@ -351,9 +351,12 @@ function findNearestItinere(latlng, cp) {
   if (!map.hasLayer(itinereRoadsGroup)) return null;
   // Touch needs a fatter catch than a mouse: a finger on a 1px secondary line
   // can't land within 14px the way a cursor can, which is why secondary roads
-  // read as unresponsive on mobile (Track 3 / 3b). Widen the tolerance on
-  // coarse pointers only; desktop stays tight so a mouse doesn't over-resolve.
-  const THRESH = COARSE_POINTER ? 26 : 14;
+  // read as unresponsive on mobile (Track 3 / 3b). The desktop catch is widened
+  // to 22px because VIA's faint Itiner-e lines don't pixel-align with the bold
+  // roads drawn into the DARE basemap — users aim at the basemap road, so a tight
+  // 14px catch missed VIA's line entirely. 22px is still tight enough that a mouse
+  // on empty map doesn't over-resolve to a distant segment.
+  const THRESH = COARSE_POINTER ? 26 : 22;
   const c0 = map.containerPointToLatLng(L.point(0, 0));
   const c1 = map.containerPointToLatLng(L.point(THRESH, THRESH));
   const margin = Math.max(Math.abs(c1.lat - c0.lat), Math.abs(c1.lng - c0.lng));

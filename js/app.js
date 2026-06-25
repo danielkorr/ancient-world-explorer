@@ -3043,7 +3043,10 @@ window.VIA.openSite = function (key) {
   return true;
 };
 window.VIA.searchSites = function (query) {
-  const results = searchSites(query);
+  // Tag with kind:'site' so the QA path matches production's searchAll() hit shape
+  // (searchSites() omits kind). Without it, the kind-strict render/preview branches
+  // treat these as non-site and the search-previews-marker journey check fails.
+  const results = searchSites(query).map(hit => ({ ...hit, kind: 'site' }));
   const input = document.getElementById('site-search-input');
   if (input) input.value = query;
   renderSearchResults(results, query);

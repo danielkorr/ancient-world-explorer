@@ -2281,9 +2281,13 @@ function showSegmentPanel(meta, latlngs) {
 
   const panel = document.getElementById('info-panel');
   panel.classList.add('segment-panel');
-  if (!panel.classList.contains('open')) {
-    panelReturnView = { center: map.getCenter(), zoom: map.getZoom() };
-  }
+  // A road tap opens this panel WITHOUT panning the map, so there's nothing to
+  // "return" from. Snapshotting a view here meant closePanel later flew you back
+  // to it — and if you'd zoomed in to inspect the road while the panel was open,
+  // a stray click (a gap in the line, no segment under the finger) yanked you all
+  // the way back out. Keep your current view; closePanel won't fly anywhere.
+  // (Search → focusRoad/focusItinere set their own framing via fitBounds.)
+  panelReturnView = null;
   panel.classList.add('open');
   dismissMobileGuide(true);
 }

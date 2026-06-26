@@ -215,6 +215,30 @@ body {
   pointer-events: none;
 }
 
+/* Desktop "nearest secondary road" hover readout — names the faint Itiner-e
+   canvas line under the cursor so you can tell what's tappable. Follows the
+   cursor; never intercepts pointer events. */
+#road-hover-readout {
+  position: fixed;
+  z-index: 1200;
+  pointer-events: none;
+  background: rgba(10,5,0,0.92);
+  color: var(--gold);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+#road-hover-readout.show { opacity: 1; }
+
 #era-toggle {
   pointer-events: all;
   display: flex;

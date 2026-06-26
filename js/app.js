@@ -347,16 +347,17 @@ function _distToSegPx(p, a, b) {
 // Nearest Itiner-e segment to a tap, or null if none within THRESH px. The
 // latlng bbox prefilter is sized from the current zoom (degrees-per-pixel) so it
 // never wrongly excludes a segment that's within THRESH px at low zoom.
-function findNearestItinere(latlng, cp) {
+function findNearestItinere(latlng, cp, threshPx) {
   if (!map.hasLayer(itinereRoadsGroup)) return null;
   // Touch needs a fatter catch than a mouse: a finger on a 1px secondary line
   // can't land within 14px the way a cursor can, which is why secondary roads
-  // read as unresponsive on mobile (Track 3 / 3b). The desktop catch is widened
-  // to 22px because VIA's faint Itiner-e lines don't pixel-align with the bold
+  // read as unresponsive on mobile (Track 3 / 3b). The catch is also widened on
+  // desktop because VIA's faint Itiner-e lines don't pixel-align with the bold
   // roads drawn into the DARE basemap — users aim at the basemap road, so a tight
-  // 14px catch missed VIA's line entirely. 22px is still tight enough that a mouse
-  // on empty map doesn't over-resolve to a distant segment.
-  const THRESH = COARSE_POINTER ? 26 : 22;
+  // catch missed VIA's line entirely. 28/32px is still tight enough that a click on
+  // empty map doesn't over-resolve, and the desktop hover readout uses this same
+  // value so "if you see the name, a click lands it."
+  const THRESH = threshPx != null ? threshPx : (COARSE_POINTER ? 32 : 28);
   const c0 = map.containerPointToLatLng(L.point(0, 0));
   const c1 = map.containerPointToLatLng(L.point(THRESH, THRESH));
   const margin = Math.max(Math.abs(c1.lat - c0.lat), Math.abs(c1.lng - c0.lng));
@@ -2193,6 +2194,41 @@ map.on('click', (e) => {
   if (seg) { showSegmentPanel(seg.meta, seg.ll); return; }
   if (document.getElementById('info-panel').classList.contains('open')) closePanel();
 });
+
+// ── SECONDARY-ROAD HOVER READOUT (desktop) ───────────────
+// The ~14,800 Itiner-e segments are canvas paths, not DOM nodes, so they have no
+// native hover and you can't tell which faint line is tappable. As the cursor
+// nears one we resolve the closest segment (same threshold as the click) and show
+// its name by the cursor — so "if you can read it, a click opens it." Touch
+// devices skip this (no hover); throttled to one resolve per animation frame.
+if (!COARSE_POINTER) {
+  const readout = document.createElement('div');
+  readout.id = 'road-hover-readout';
+  readout.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(readout);
+  let _hoverRaf = 0, _lastMove = null;
+  const hide = () => { readout.classList.remove('show'); };
+  map.on('mousemove', (e) => {
+    _lastMove = e;
+    if (_hoverRaf) return;
+    _hoverRaf = requestAnimationFrame(() => {
+      _hoverRaf = 0;
+      const ev = _lastMove;
+      if (!ev) return;
+      const seg = findNearestItinere(ev.latlng, ev.containerPoint);
+      const name = seg && seg.meta && seg.meta.name;
+      if (name) {
+        readout.textContent = name;
+        readout.style.left = (ev.originalEvent.clientX + 14) + 'px';
+        readout.style.top  = (ev.originalEvent.clientY + 16) + 'px';
+        readout.classList.add('show');
+      } else {
+        hide();
+      }
+    });
+  });
+  map.on('mouseout', hide);
+}
 
 // ── ERA TOGGLE ───────────────────────────────────────────
 

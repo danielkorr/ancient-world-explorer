@@ -1,8 +1,26 @@
 # v2 Spec — Documented Coverage Layer
 
-> Status: **Phases A + B SHIPPED (A v95, B v97).** Phase C not started. Captures the
-> approach agreed before touching the `MAX_SITES` cap, so we expand coverage *without*
-> eroding the simplicity and "logical pathway" the map depends on.
+> Status: **Phases A + B + C SHIPPED (A v95, B v97, C v99).** The foreground-cap retune
+> is deliberately deferred (see Phase C note). Captures the approach agreed before touching
+> the `MAX_SITES` cap, so we expand coverage *without* eroding the simplicity and "logical
+> pathway" the map depends on.
+>
+> **Phase C (shipped, v99) — auto-reveal + polish.** Zoom in past `AUTO_REVEAL_ZOOM = 10`
+> and the coverage dots now appear **automatically**, without touching the slider — the
+> "commit to an area, see everything documented here" magic that closes the see-vs-click loop
+> for someone who never discovers the Detail control. `coverageWanted()`/`coverageVisible()`
+> unify the two paths (explicit slider "Documented" from zoom 7 everywhere; auto-reveal from
+> zoom 10 regardless of slider), and the lazy load + tap resolution both key off them. Dots
+> **fade in** over a two-zoom band on auto-reveal (`coverageDotFill`) so they don't pop, and a
+> **one-time toast** ("these faint dots are documented places — tap one…") fires the first time
+> they ever paint so the reveal isn't mysterious. Verified: `run-journeys.sh` green and a
+> real-browser e2e (zoom to 11 with the slider untouched → dots auto-load + render → tap one
+> ("Kerpiç") → panel opens → zoom back to 8 → coverage correctly stops resolving).
+>
+> **Deferred (not built): foreground-cap retune.** Revisiting `MAX_SITES=400` now that the
+> tail has a home would change the *curated* foreground (the rich ~900) for no clear win —
+> lowering it strips good sites; raising it dilutes the quest signal. Left alone on purpose;
+> revisit only with a concrete reason.
 >
 > **Phase B (shipped, v97) — coverage as a map layer.** Rather than the separate "opt-in
 > toggle + auto zoom-reveal" this spec first imagined, Phase B **extends the existing detail

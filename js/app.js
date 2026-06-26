@@ -1505,7 +1505,8 @@ function coverageSearchMeta(r) {
 // mutate its contents (the mobile-safe pattern).
 const coverageRenderer  = L.canvas({ padding: 0.3 });
 const coverageDotsGroup = L.layerGroup().addTo(map);
-const MIN_COVERAGE_ZOOM = 7;       // below this the viewport is too wide to be useful
+const MIN_COVERAGE_ZOOM = 7;       // slider "Documented": dots from here, everywhere you pan
+const AUTO_REVEAL_ZOOM  = 10;      // Phase C: zoom in this deep and dots auto-reveal, no slider
 const MAX_COVERAGE_DOTS = 4000;    // hard cap per render — bounds worst-case cost
 const COVERAGE_DOT_STYLE = {
   renderer: coverageRenderer, radius: 3,
@@ -1514,24 +1515,46 @@ const COVERAGE_DOT_STYLE = {
   interactive: false,
 };
 
-function coverageActive() { return detailLevel >= 3 && _coverageState === 'ready' && !!_coverageData; }
+// Should coverage be on screen right now? Either the slider is explicitly on
+// "Documented" (past the floor zoom), OR you've zoomed in deep enough that
+// committing to an area auto-reveals it (Phase C). Drives the lazy load too.
+function coverageWanted() {
+  if (_coverageState === 'error') return false;
+  const z = map.getZoom();
+  return (detailLevel >= 3 && z >= MIN_COVERAGE_ZOOM) || (z >= AUTO_REVEAL_ZOOM);
+}
+// …and is it actually paintable (wanted AND the lazy data has arrived).
+function coverageVisible() {
+  return _coverageState === 'ready' && !!_coverageData && coverageWanted();
+}
+
+// Density fade (Phase C): on auto-reveal the dots fade in over a two-zoom band so
+// they don't pop. Full strength when the slider is explicitly on "Documented".
+function coverageDotFill() {
+  if (detailLevel >= 3) return 0.85;
+  const t = Math.max(0, Math.min(1, (map.getZoom() - AUTO_REVEAL_ZOOM) / 2));
+  return 0.30 + t * 0.5;   // 0.30 at the reveal edge → 0.80 two zooms deeper
+}
 
 function renderCoverageDots() {
   coverageDotsGroup.clearLayers();
-  if (!coverageActive() || map.getZoom() < MIN_COVERAGE_ZOOM) return;
+  if (!coverageVisible()) return;
+  const fill  = coverageDotFill();
+  const style = Object.assign({}, COVERAGE_DOT_STYLE, { fillOpacity: fill, opacity: Math.min(0.7, fill + 0.05) });
   const b = map.getBounds().pad(0.2);
   let n = 0;
   for (const r of _coverageData) {
     if (!b.contains([r.lat, r.lng])) continue;
-    L.circleMarker([r.lat, r.lng], COVERAGE_DOT_STYLE).addTo(coverageDotsGroup);
+    L.circleMarker([r.lat, r.lng], style).addTo(coverageDotsGroup);
     if (++n >= MAX_COVERAGE_DOTS) break;
   }
+  maybeHintCoverage();   // one-time "what are these dots" nudge
 }
 
 // Nearest coverage place to a tap, or null. Only resolves when the dots are
 // actually showing, so a coverage tap can't fire on an invisible layer.
 function findNearestCoverage(latlng, cp, threshPx) {
-  if (!coverageActive() || map.getZoom() < MIN_COVERAGE_ZOOM) return null;
+  if (!coverageVisible()) return null;
   const THRESH = threshPx != null ? threshPx : (COARSE_POINTER ? 30 : 24);
   const c0 = map.containerPointToLatLng(L.point(0, 0));
   const c1 = map.containerPointToLatLng(L.point(THRESH, THRESH));
@@ -1544,6 +1567,26 @@ function findNearestCoverage(latlng, cp, threshPx) {
     if (d < bestD) { bestD = d; best = r; }
   }
   return best;
+}
+
+// One-time nudge the first time coverage dots ever paint — so an auto-reveal
+// (dots appearing on deep zoom without touching the slider) isn't mysterious.
+// Reuses the legend toast; gated by localStorage so it shows at most once ever.
+let _coverageHintShown = false;
+function maybeHintCoverage() {
+  if (_coverageHintShown) return;
+  _coverageHintShown = true;   // once per session regardless of storage availability
+  try { if (localStorage.getItem('via.coverageHinted') === '1') return; } catch (e) {}
+  try { localStorage.setItem('via.coverageHinted', '1'); } catch (e) {}
+  const el = document.getElementById('legend-toast');
+  const t  = document.getElementById('legend-toast-title');
+  const b  = document.getElementById('legend-toast-body');
+  if (!el || !t || !b) return;
+  t.textContent = 'Documented places';
+  b.textContent = 'These faint dots are documented places from the Pleiades gazetteer — tap one to open it. Drag Detail to “Documented” to keep them on.';
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 6500);
 }
 
 // Merge site + road hits into one ranked list. Sites are pre-sorted (with the
@@ -2913,7 +2956,7 @@ function syncDetailUI() {
 function setDetailLevel(level) {
   detailLevel = Math.max(0, Math.min(DETAIL_LABELS.length - 1, level));
   if (detailLevel > 0) ensureSitesLayerOn();   // revealing more turns sites on
-  if (detailLevel >= 3) ensureCoverageLoaded(); // the "Documented" stop needs the long tail
+  if (coverageWanted()) ensureCoverageLoaded(); // "Documented" stop (or deep zoom) needs the tail
   refreshVisibleMarkers();
   renderCoverageDots();   // show/clear the coverage dots for the new level
   syncDetailUI();
@@ -3150,6 +3193,7 @@ map.on('zoomend', () => {
   // Marker visibility is governed by the DETAIL slider, not zoom, and
   // markercluster re-clusters by itself — so there's nothing to recompute
   // here beyond the zoom-staged basemap opacity + satellite reveal…
+  if (coverageWanted()) ensureCoverageLoaded();  // deep zoom auto-reveals coverage (Phase C)
   renderCoverageDots();   // …except the coverage dots, which are viewport-culled + zoom-gated
   if (typeof syncDetailUI === 'function') syncDetailUI();   // refresh the "zoom in" hint
 });

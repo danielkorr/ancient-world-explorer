@@ -1051,15 +1051,21 @@ function showPanel(site) {
   badge.style.cssText   = `color:${color};background:${color}18;border:1px solid ${color}40;display:inline-block;font-size:9px;letter-spacing:2px;padding:3px 9px;border-radius:3px;margin-bottom:9px;font-family:'Cinzel',serif;font-weight:600;`;
 
   document.getElementById('panel-name').textContent        = site.name;
-  document.getElementById('panel-modern-name').textContent = site.modern;
+  document.getElementById('panel-modern-name').textContent = site.modern || '';
   document.getElementById('panel-period').innerHTML        = `<span style="font-size:13px">⏳</span>&nbsp;${site.period}`;
-  document.getElementById('panel-desc').textContent        = site.desc;
+  // Coverage places carry no curated description — show an honest-thin note that
+  // points at Pleiades (the primary action below) instead of an empty panel.
+  document.getElementById('panel-desc').textContent        = site.coverage
+    ? 'Documented place from the Pleiades gazetteer — a minimal record. Open Pleiades below for sources, dating, and cross-references.'
+    : (site.desc || '');
 
   // ORBIS card — live values from the Stanford ORBIS network.
   // Direct Pleiades match wins; else nearest ORBIS node within 75km;
   // else fall back to the curated hardcoded estimate on the site.
   const orbisCard = document.getElementById('orbis-card');
-  const orbis = orbisLookup(site);
+  // Coverage places get no ORBIS card — a nearest-node travel estimate for an
+  // obscure thin record would read as fabricated certainty (honest-thin).
+  const orbis = site.coverage ? null : orbisLookup(site);
   if (orbis) {
     const dStr = orbisFormatDays(orbis.days);
     document.getElementById('orbis-days').textContent = dStr;
@@ -1408,22 +1414,91 @@ function itinereSearchMeta(entry) {
   return bits.join(' · ');
 }
 
+// ── DOCUMENTED COVERAGE SEARCH (v2 Phase A) ──────────────
+// The ~25k documented Pleiades long tail (sites-coverage.js, lazy-loaded). This
+// is what makes basemap-only places like Euphranta findable without rendering a
+// single extra marker. Loaded on first search; until then searchCoverage returns
+// [] and the loader re-runs the query when the data lands.
+let _coverageState = 'idle';   // idle | loading | ready | error
+let _coverageData  = null;     // processed, deduped, site-shaped records
+
+function ensureCoverageLoaded() {
+  if (QA || _coverageState !== 'idle') return;   // QA stays light; load once
+  _coverageState = 'loading';
+  const s = document.createElement('script');
+  s.src = 'js/sites-coverage.js?v=' + BUILD;     // same cache token as the app
+  s.async = true;
+  s.onload = () => {
+    const raw = (typeof window.SITES_COVERAGE !== 'undefined') ? window.SITES_COVERAGE : [];
+    // Dedup against everything already interactive (curated + foreground Pleiades
+    // + vici), by pleiades id. Site-shape the thin records so showPanel can render
+    // them, and precompute the normalized name so search doesn't re-normalize 25k
+    // strings per keystroke.
+    const existing = new Set(SITES.map(x => x.pleiades).filter(Boolean));
+    _coverageData = [];
+    for (const r of raw) {
+      if (r.pleiades && existing.has(r.pleiades)) continue;
+      r.id = 'cov-' + r.pleiades;
+      r.modern = '';
+      r.desc = '';
+      r.rome_days = 0;
+      r.coverage = true;
+      r._n = normalizeSearchText(r.name);
+      _coverageData.push(r);
+    }
+    _coverageState = 'ready';
+    // Re-run the in-flight query so coverage hits appear now that we have them.
+    const input = document.getElementById('site-search-input');
+    if (input && input.value.trim()) updateSearchResults(input.value);
+  };
+  s.onerror = () => { _coverageState = 'error'; };
+  document.head.appendChild(s);
+}
+
+const COVERAGE_SEARCH_LIMIT = 6;
+function searchCoverage(query) {
+  if (_coverageState !== 'ready' || !_coverageData) return [];
+  const tokens = searchQueryTokens(query);
+  if (!tokens.length) return [];
+  const joined = normalizeSearchText(query);
+  if (joined.length < 2) return [];
+  const hits = [];
+  for (const r of _coverageData) {
+    let score;
+    if (r._n === joined) score = 0;
+    else if (r._n.startsWith(joined)) score = 1;
+    else if (tokensMatchStrings(tokens, [r._n])) score = 2;
+    else continue;
+    hits.push({ coverage: r, kind: 'coverage', bucket: 'coverage', match: 'Pleiades place', score });
+  }
+  hits.sort((a, b) => a.score - b.score || a.coverage.name.localeCompare(b.coverage.name));
+  return hits.slice(0, COVERAGE_SEARCH_LIMIT);
+}
+
+function coverageSearchMeta(r) {
+  const bits = [];
+  if (r.type) bits.push(r.type[0].toUpperCase() + r.type.slice(1));
+  if (r.period) bits.push(r.period);
+  return bits.join(' · ');
+}
+
 // Merge site + road hits into one ranked list. Sites are pre-sorted (with the
 // curated/name tiebreak); a stable sort by score keeps that order and slots
-// equal-score roads in after. Road search is fully self-contained here so the
-// later site-matcher upgrade can be reverted without touching road search.
-// Itiner-e roads append as a labeled group after the curated content, with a few
-// reserved slots so scholarly road names always surface even when sites fill up.
+// equal-score roads in after. Itiner-e roads + documented coverage append as
+// labeled groups after the curated content, with a few reserved slots so they
+// always surface even when curated sites fill the list.
 function searchAll(query) {
   const siteHits = searchSites(query).map(h => ({ ...h, kind: 'site' }));
   const roadHits = searchRoads(query);
   const primary = [...siteHits, ...roadHits].sort((a, b) => a.score - b.score);
-  const itinereHits = searchItinere(query);
-  if (!itinereHits.length) return primary.slice(0, SEARCH_LIMIT);
-  const reserve = Math.min(3, itinereHits.length);
-  const primaryKeep = primary.slice(0, Math.max(SEARCH_LIMIT - reserve, 0));
-  const itinereKeep = itinereHits.slice(0, SEARCH_LIMIT - primaryKeep.length);
-  return [...primaryKeep, ...itinereKeep];
+  // Itiner-e first, then coverage — keeps each as a contiguous, single-labeled
+  // group when renderSearchResults emits bucket headers.
+  const secondary = [...searchItinere(query), ...searchCoverage(query)];
+  if (!secondary.length) return primary.slice(0, SEARCH_LIMIT);
+  const reserve = Math.min(3, secondary.length);
+  const primaryKeep   = primary.slice(0, Math.max(SEARCH_LIMIT - reserve, 0));
+  const secondaryKeep = secondary.slice(0, SEARCH_LIMIT - primaryKeep.length);
+  return [...primaryKeep, ...secondaryKeep];
 }
 
 // The road currently lit up by a search selection (null when none).
@@ -1497,6 +1572,30 @@ function focusItinere(entry) {
     const bounds = L.latLngBounds(all);
     requestAnimationFrame(() => map.fitBounds(bounds, roadFitPadding()));
   }
+}
+
+// ── DOCUMENTED COVERAGE FOCUS (v2 Phase A) ───────────────
+// Coverage places have no permanent marker (no map layer in Phase A), so opening
+// one from search drops a temporary highlight pin at its spot, opens the honest-
+// thin panel, and pans there. The pin is what answers "where IS this?" — the
+// thing the basemap label never could. Cleared on the next search / pin / close.
+const coveragePinGroup = L.layerGroup().addTo(map);
+function clearCoveragePin() { if (coveragePinGroup.getLayers().length) coveragePinGroup.clearLayers(); }
+function showCoveragePin(site) {
+  clearCoveragePin();
+  // Reuse the active-marker icon so it reads as a real VIA pin (the point of the
+  // exercise: this place IS now in VIA). Non-interactive — the panel is already up.
+  L.marker([site.lat, site.lng], { icon: makeIcon(site, true), zIndexOffset: 1800, interactive: false })
+    .addTo(coveragePinGroup);
+}
+
+function focusCoverage(record) {
+  clearRoadHighlight();
+  showCoveragePin(record);
+  showPanel(record);
+  panelReturnView = null;   // the place is the star; closePanel keeps the framing
+  const z = Math.max(map.getZoom(), 8);
+  requestAnimationFrame(() => panToWithPanelOffset([record.lat, record.lng], z));
 }
 
 // Open a curated road: highlight it on the map first (the road is the star and
@@ -1612,13 +1711,14 @@ function renderSearchResults(results, query) {
   if (!results.length) {
     list.innerHTML = '<div class="site-search-empty">No matching site, road, or location.</div>';
   } else {
-    const labels = { site: 'Sites', location: 'Locations', context: 'Context', road: 'Roads', itinere: 'Itiner-e roads' };
+    const labels = { site: 'Sites', location: 'Locations', context: 'Context', road: 'Roads', itinere: 'Itiner-e roads', coverage: 'More places · Pleiades' };
     let html = '';
     let lastBucket = null;
     results.forEach((hit, index) => {
       let name, meta;
       if (hit.kind === 'road') { name = hit.road.name; meta = roadSearchMeta(hit.road); }
       else if (hit.kind === 'itinere') { name = hit.itinere.name; meta = itinereSearchMeta(hit.itinere); }
+      else if (hit.kind === 'coverage') { name = hit.coverage.name; meta = coverageSearchMeta(hit.coverage); }
       else { name = hit.site.name; meta = siteSearchMeta(hit.site); }
       if (hit.bucket !== lastBucket) {
         html += `<div class="site-search-group-label">${labels[hit.bucket] || 'Matches'}</div>`;
@@ -1662,6 +1762,12 @@ function selectSearchResult(index) {
     focusItinere(hit.itinere);
     return true;
   }
+  if (hit.kind === 'coverage') {
+    if (input) input.value = hit.coverage.name;
+    closeSearchResults();
+    focusCoverage(hit.coverage);
+    return true;
+  }
   if (input) input.value = hit.site.name;
   closeSearchResults();
   clearRoadHighlight();   // selecting a site supersedes any lit-up road
@@ -1682,9 +1788,12 @@ function bindSiteSearch() {
 
   input.addEventListener('input', () => {
     clearRoadHighlight();   // a fresh search retires the previously lit road
+    clearCoveragePin();     // …and the previously pinned coverage place
+    ensureCoverageLoaded(); // lazy-load the documented long tail on first keystroke
     updateSearchResults(input.value);
   });
   input.addEventListener('focus', () => {
+    ensureCoverageLoaded();
     if (input.value.trim()) updateSearchResults(input.value);
   });
   input.addEventListener('keydown', e => {

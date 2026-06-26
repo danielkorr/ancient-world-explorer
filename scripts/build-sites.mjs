@@ -23,6 +23,7 @@ const CACHE     = path.join(ROOT, '.cache');
 const GZ_PATH   = path.join(CACHE, 'pleiades-places.csv.gz');
 const CSV_PATH  = path.join(CACHE, 'pleiades-places.csv');
 const OUT_PATH  = path.join(ROOT, 'js', 'sites-pleiades.js');
+const OUT_COVERAGE = path.join(ROOT, 'js', 'sites-coverage.js');
 
 const DUMP_URL = 'https://atlantides.org/downloads/pleiades/dumps/pleiades-places-latest.csv.gz';
 
@@ -201,6 +202,41 @@ function transformRow(p) {
   return site;
 }
 
+// Coverage transform: the documented long tail (Phase A, v2-spec-coverage-layer).
+// Same Roman-era + coords + known-precision gate as the foreground, but with NO
+// 80-char description requirement — these are the thin records the foreground
+// filter drops (e.g. Euphranta/Macomades, pleiades 363959, desc 57 chars). No
+// quest (documented reference, not a contribution target in Phase A); the desc is
+// honest-thin (may be empty) and capped to bound payload.
+function transformCoverage(p) {
+  const lat = Number(p.reprLat);
+  const lng = Number(p.reprLong);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  if (lat === 0 && lng === 0) return null;   // Pleiades "null island" = missing coords
+  const title = (p.title || '').trim();      // some titles carry leading/trailing space
+  if (!title) return null;
+  const periods = (p.timePeriodsKeys || p.timePeriods || '').split(/[,;\s]+/).filter(Boolean);
+  if (!isRomanEra(periods)) return null;
+  const precision = (p.locationPrecision || '').toLowerCase() || 'unknown';
+  if (precision === 'unknown') return null;
+
+  const featureTypes = (p.featureTypes || '').split(/[,;]+/).map(s => s.trim()).filter(Boolean);
+  const type = mapType(featureTypes);
+
+  // Honest-thin: no desc (coverage panels link out to Pleiades for the full
+  // record), no slug id (synthesized at runtime as cov-<pleiades>). Both are pure
+  // payload — dropping them keeps the lazy bundle lean (1.27 MB → well under) for
+  // a layer whose whole job is "findable + locatable", not rich content.
+  return {
+    name:     title,
+    type,
+    lat:      Number(lat.toFixed(4)),
+    lng:      Number(lng.toFixed(4)),
+    period:   pickPeriodLabel(periods),
+    pleiades: String(p.id),
+  };
+}
+
 // ── EMIT ──────────────────────────────────────────────────
 
 function emit(sites) {
@@ -241,6 +277,41 @@ function emit(sites) {
   ].join('\n');
 }
 
+function emitCoverage(sites) {
+  const lines = sites.map(s => {
+    const fields = [
+      `name:${JSON.stringify(s.name)}`,
+      `type:${JSON.stringify(s.type)}`,
+      `lat:${s.lat}`,
+      `lng:${s.lng}`,
+      `period:${JSON.stringify(s.period)}`,
+      `pleiades:${JSON.stringify(s.pleiades)}`,
+    ].join(', ');
+    return `  { ${fields} },`;
+  });
+
+  return [
+    '// ═══════════════════════════════════════════════════════════',
+    '//  VIA — Ancient World Explorer',
+    '//  sites-coverage.js — auto-generated documented-coverage long tail',
+    '//  (v2-spec-coverage-layer Phase A). LAZY-LOADED, search-only — NOT in',
+    '//  index.html cold start, NOT merged into the global SITES.',
+    '//',
+    '//  DO NOT EDIT BY HAND. Regenerate with:',
+    '//    node scripts/build-sites.mjs',
+    '//',
+    `//  Source: ${DUMP_URL}`,
+    `//  Generated: ${new Date().toISOString()}`,
+    `//  Count: ${sites.length}`,
+    '// ═══════════════════════════════════════════════════════════',
+    '',
+    'window.SITES_COVERAGE = [',
+    ...lines,
+    '];',
+    '',
+  ].join('\n');
+}
+
 // ── MAIN ──────────────────────────────────────────────────
 
 // Photo-quest overlay: js/pleiades-photos.json (produced by
@@ -256,13 +327,15 @@ async function loadPhotoOverlay() {
 async function main() {
   await ensureDump();
   console.log(`⊙ streaming CSV ...`);
-  let scanned = 0, kept = [];
+  let scanned = 0, kept = [], cov = [];
   for await (const row of parseCsv(CSV_PATH)) {
     scanned++;
     const site = transformRow(row);
     if (site) kept.push(site);
+    const c = transformCoverage(row);   // relaxed long tail, same stream
+    if (c) cov.push(c);
   }
-  console.log(`✓ scanned ${scanned} places, ${kept.length} passed filter`);
+  console.log(`✓ scanned ${scanned} places, ${kept.length} foreground-eligible, ${cov.length} coverage-eligible`);
 
   kept.sort((a, b) => b._descLen - a._descLen);
   let sites = kept.slice(0, MAX_SITES).map(({ _descLen, ...rest }) => rest);
@@ -289,6 +362,19 @@ async function main() {
 
   await writeFile(OUT_PATH, emit(sites));
   console.log(`✓ wrote ${path.relative(ROOT, OUT_PATH)}`);
+
+  // Coverage long tail: the relaxed pool minus whatever shipped to the foreground
+  // (by pleiades id). Curated + vici dedup happens at runtime against the global
+  // SITES set, so the build only needs to subtract the foreground here. Sorted by
+  // name for a stable, reviewable diff.
+  const foregroundIds = new Set(sites.map(s => s.pleiades));
+  const coverage = cov
+    .filter(c => !foregroundIds.has(c.pleiades))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  await writeFile(OUT_COVERAGE, emitCoverage(coverage));
+  console.log(`✓ wrote ${path.relative(ROOT, OUT_COVERAGE)} (${coverage.length} coverage sites)`);
+  const hasEuphranta = coverage.some(c => c.pleiades === '363959');
+  console.log(`  Euphranta/Macomades (363959) in coverage: ${hasEuphranta ? 'YES' : 'NO'}`);
 }
 
 main().catch(e => { console.error(e); process.exit(1); });

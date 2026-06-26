@@ -1,12 +1,26 @@
 # v2 Spec — Documented Coverage Layer
 
-> Status: **Proposed / not started.** Spec only. Captures the approach agreed before
-> touching the `MAX_SITES` cap, so we expand coverage *without* eroding the simplicity
-> and "logical pathway" the map depends on.
+> Status: **Phase A SHIPPED (v95).** Phases B + C not started. Captures the approach
+> agreed before touching the `MAX_SITES` cap, so we expand coverage *without* eroding the
+> simplicity and "logical pathway" the map depends on.
 >
 > One-line: turn the full Pleiades long tail into a **quiet, opt-in, searchable background
 > layer** beneath the curated + quest foreground — the same move we already made for roads
 > (faint Itiner-e baseline under the 14 curated named roads).
+>
+> **Phase A (shipped, v95) — data + search, zero default visual change.**
+> `scripts/build-sites.mjs` now also emits `js/sites-coverage.js`
+> (`window.SITES_COVERAGE`, **24,978** documented Pleiades places, ~500 KB gzip) — the
+> relaxed long tail (Roman + coords + known precision, **no** 80-char desc gate, null-island
+> dropped), minus the 400 foreground ids. It is **lazy-loaded on first search** (not in cold
+> start), deduped at runtime against the global `SITES` by `pleiades`, and folded into the
+> search index as a **"More places · Pleiades"** group after the Itiner-e roads. Selecting a
+> result (`focusCoverage`) drops a temporary VIA pin at the spot, opens an **honest-thin
+> panel** (name / type / period / coords + Pleiades link + a "minimal record" note, no ORBIS
+> card), and pans there. **Euphranta/Macomades (pleiades 363959)** — the basemap-only label
+> that motivated this — is now searchable and openable. Verified: node matcher test,
+> `run-journeys.sh` green (desktop + mobile), and a real-browser e2e (type → lazy-load →
+> click → panel). The map is unchanged until you search; cold start is untouched.
 
 ## Problem
 

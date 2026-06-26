@@ -919,10 +919,12 @@ if (COARSE_POINTER) {
     const seg = (!road && ll) ? findNearestItinere(ll, cp) : null;
     // A documented-coverage dot, but only when no road won and the dots are showing.
     const cov = (!road && !seg && ll) ? findNearestCoverage(ll, cp) : null;
+    // …or the searched place's pin (reopen its panel even when dots aren't showing).
+    const pin = (!road && !seg && !cov && ll) ? nearestPinnedCoverage(ll, cp) : null;
 
     // Nothing under the finger → don't preventDefault, so Leaflet's own map
     // double-tap zoom and map.on('click') (panel close) still run on empty canvas.
-    if (!road && !seg && !cov) return;
+    if (!road && !seg && !cov && !pin) return;
 
     e.preventDefault();   // we own this tap → suppress the late synthesized click
 
@@ -942,6 +944,8 @@ if (COARSE_POINTER) {
         showSegmentPanel(seg.meta, seg.ll);
       } else if (cov) {
         focusCoverage(cov);
+      } else if (pin) {
+        focusCoverage(pin);
       }
     };
     if (_lastRoadTap) clearTimeout(_lastRoadTap.timer);
@@ -1640,13 +1644,29 @@ function focusItinere(entry) {
 // thin panel, and pans there. The pin is what answers "where IS this?" — the
 // thing the basemap label never could. Cleared on the next search / pin / close.
 const coveragePinGroup = L.layerGroup().addTo(map);
-function clearCoveragePin() { if (coveragePinGroup.getLayers().length) coveragePinGroup.clearLayers(); }
+let _pinnedCoverage = null;   // the coverage place dropped by a search selection
+function clearCoveragePin() {
+  _pinnedCoverage = null;
+  if (coveragePinGroup.getLayers().length) coveragePinGroup.clearLayers();
+}
 function showCoveragePin(site) {
   clearCoveragePin();
+  _pinnedCoverage = site;
   // Reuse the active-marker icon so it reads as a real VIA pin (the point of the
-  // exercise: this place IS now in VIA). Non-interactive — the panel is already up.
+  // exercise: this place IS now in VIA).
   L.marker([site.lat, site.lng], { icon: makeIcon(site, true), zIndexOffset: 1800, interactive: false })
     .addTo(coveragePinGroup);
+}
+
+// The search pin persists after the panel closes so you can still see the place —
+// but a coverage record has no permanent marker, so without this a tap on the pin
+// did nothing (single-click = nothing, double-click just zoomed). Resolve a tap
+// near the pinned place so it reopens its panel, regardless of the detail level
+// (you don't need the Documented dots showing to get back to what you searched).
+function nearestPinnedCoverage(latlng, cp) {
+  if (!_pinnedCoverage) return null;
+  const p = map.latLngToContainerPoint([_pinnedCoverage.lat, _pinnedCoverage.lng]);
+  return Math.hypot(cp.x - p.x, cp.y - p.y) <= 30 ? _pinnedCoverage : null;
 }
 
 function focusCoverage(record) {
@@ -2253,6 +2273,8 @@ map.on('click', (e) => {
   if (seg) { showSegmentPanel(seg.meta, seg.ll); return; }
   const cov = findNearestCoverage(e.latlng, e.containerPoint);  // only resolves when dots show
   if (cov) { focusCoverage(cov); return; }
+  const pin = nearestPinnedCoverage(e.latlng, e.containerPoint);  // reopen a searched place's panel
+  if (pin) { focusCoverage(pin); return; }
   if (document.getElementById('info-panel').classList.contains('open')) closePanel();
 });
 

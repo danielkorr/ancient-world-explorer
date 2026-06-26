@@ -24,6 +24,15 @@ Exit `0` = all journeys passed, `1` = a check failed (CI-friendly).
 
 ### Mobile visual pass (screenshots, not assertions)
 
+PowerShell (Windows):
+
+```powershell
+.\tests\mobile-shots.ps1
+# .\tests\mobile-shots.ps1 -Browse C:\path\to\browse.exe -Port 8065
+```
+
+POSIX shell:
+
 ```bash
 bash tests/mobile-shots.sh
 # BROWSE=/path/to/browse PORT=8065 bash tests/mobile-shots.sh

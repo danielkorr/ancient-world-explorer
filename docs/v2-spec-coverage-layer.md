@@ -1,8 +1,26 @@
 # v2 Spec — Documented Coverage Layer
 
-> Status: **Phase A SHIPPED (v95).** Phases B + C not started. Captures the approach
-> agreed before touching the `MAX_SITES` cap, so we expand coverage *without* eroding the
-> simplicity and "logical pathway" the map depends on.
+> Status: **Phases A + B SHIPPED (A v95, B v97).** Phase C not started. Captures the
+> approach agreed before touching the `MAX_SITES` cap, so we expand coverage *without*
+> eroding the simplicity and "logical pathway" the map depends on.
+>
+> **Phase B (shipped, v97) — coverage as a map layer.** Rather than the separate "opt-in
+> toggle + auto zoom-reveal" this spec first imagined, Phase B **extends the existing detail
+> slider** with a 4th stop — `Curated → Quest detail → Full detail → Documented` — because
+> that slider is already the app's progressive-disclosure control (one mental model beats two).
+> At the "Documented" stop the ~25k coverage places render as small, quiet **canvas dots**
+> (`coverageDotsGroup`, a shared `L.canvas()`): light fill + thin dark outline so they read by
+> **size + luminance, not hue** (colorblind-safe), clearly subordinate to the curated icons.
+> The dots are **viewport-culled** (re-rendered on move/zoom) and **zoom-gated** (`MIN_COVERAGE_ZOOM
+> = 7`, hard cap `MAX_COVERAGE_DOTS = 4000`) so we never paint 25k at once; below the zoom gate
+> the readout says "zoom in to reveal". Taps resolve to the nearest dot (`findNearestCoverage`,
+> same nearest-point model as the roads since canvas paths aren't DOM nodes), wired into both
+> `map.on('click')` and the mobile `touchend` **after** roads/markers, and only when the dots
+> are actually showing. Selecting one opens the same honest-thin panel as search
+> (`focusCoverage`). The desktop hover readout also names the nearest dot. Verified:
+> `run-journeys.sh` green (desktop + mobile) and a real-browser e2e (slider→Documented→zoom→dots
+> render→tap a dot→panel opens). **The see-vs-click gap is now closed on the map itself** — at the
+> Documented level, places like Euphranta are visible *and* tappable, not just searchable.
 >
 > One-line: turn the full Pleiades long tail into a **quiet, opt-in, searchable background
 > layer** beneath the curated + quest foreground — the same move we already made for roads

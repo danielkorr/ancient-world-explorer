@@ -915,11 +915,14 @@ if (COARSE_POINTER) {
     const pathEl = e.target.closest && e.target.closest('path');
     let road = null;
     if (pathEl) roadsGroup.eachLayer(l => { if (l._path === pathEl && l.getTooltip && l.getTooltip()) road = l; });
-    const seg = (!road && ll) ? findNearestItinere(ll, map.latLngToContainerPoint(ll)) : null;
+    const cp  = ll ? map.latLngToContainerPoint(ll) : null;
+    const seg = (!road && ll) ? findNearestItinere(ll, cp) : null;
+    // A documented-coverage dot, but only when no road won and the dots are showing.
+    const cov = (!road && !seg && ll) ? findNearestCoverage(ll, cp) : null;
 
-    // No road under the finger → don't preventDefault, so Leaflet's own map
+    // Nothing under the finger → don't preventDefault, so Leaflet's own map
     // double-tap zoom and map.on('click') (panel close) still run on empty canvas.
-    if (!road && !seg) return;
+    if (!road && !seg && !cov) return;
 
     e.preventDefault();   // we own this tap → suppress the late synthesized click
 
@@ -937,6 +940,8 @@ if (COARSE_POINTER) {
         if (ll) openRoadPanelAt(ll, road._curatedRoad);
       } else if (seg) {
         showSegmentPanel(seg.meta, seg.ll);
+      } else if (cov) {
+        focusCoverage(cov);
       }
     };
     if (_lastRoadTap) clearTimeout(_lastRoadTap.timer);
@@ -1451,6 +1456,9 @@ function ensureCoverageLoaded() {
     // Re-run the in-flight query so coverage hits appear now that we have them.
     const input = document.getElementById('site-search-input');
     if (input && input.value.trim()) updateSearchResults(input.value);
+    // If the slider is already on "Documented", paint the dots now (Phase B).
+    renderCoverageDots();
+    if (typeof syncDetailUI === 'function') syncDetailUI();
   };
   s.onerror = () => { _coverageState = 'error'; };
   document.head.appendChild(s);
@@ -1481,6 +1489,57 @@ function coverageSearchMeta(r) {
   if (r.type) bits.push(r.type[0].toUpperCase() + r.type.slice(1));
   if (r.period) bits.push(r.period);
   return bits.join(' · ');
+}
+
+// ── DOCUMENTED COVERAGE MAP LAYER (v2 Phase B) ───────────
+// The top stop of the detail slider ("Documented") renders the ~25k coverage
+// places as small, quiet canvas dots — subordinate to the curated icons (size +
+// luminance carry it, never hue: the user is red-green colorblind). They are
+// VIEWPORT-CULLED and zoom-gated so we never paint 25k dots at once. Taps resolve
+// to the nearest dot (canvas paths aren't DOM nodes — same model as the roads),
+// only when the layer is showing. The group stays permanently on the map; we only
+// mutate its contents (the mobile-safe pattern).
+const coverageRenderer  = L.canvas({ padding: 0.3 });
+const coverageDotsGroup = L.layerGroup().addTo(map);
+const MIN_COVERAGE_ZOOM = 7;       // below this the viewport is too wide to be useful
+const MAX_COVERAGE_DOTS = 4000;    // hard cap per render — bounds worst-case cost
+const COVERAGE_DOT_STYLE = {
+  renderer: coverageRenderer, radius: 3,
+  color: '#2a1c0c', weight: 0.6, opacity: 0.7,   // thin dark outline = luminance edge
+  fillColor: '#e8dcc0', fillOpacity: 0.85,        // light fill, quiet neutral (no hue cue)
+  interactive: false,
+};
+
+function coverageActive() { return detailLevel >= 3 && _coverageState === 'ready' && !!_coverageData; }
+
+function renderCoverageDots() {
+  coverageDotsGroup.clearLayers();
+  if (!coverageActive() || map.getZoom() < MIN_COVERAGE_ZOOM) return;
+  const b = map.getBounds().pad(0.2);
+  let n = 0;
+  for (const r of _coverageData) {
+    if (!b.contains([r.lat, r.lng])) continue;
+    L.circleMarker([r.lat, r.lng], COVERAGE_DOT_STYLE).addTo(coverageDotsGroup);
+    if (++n >= MAX_COVERAGE_DOTS) break;
+  }
+}
+
+// Nearest coverage place to a tap, or null. Only resolves when the dots are
+// actually showing, so a coverage tap can't fire on an invisible layer.
+function findNearestCoverage(latlng, cp, threshPx) {
+  if (!coverageActive() || map.getZoom() < MIN_COVERAGE_ZOOM) return null;
+  const THRESH = threshPx != null ? threshPx : (COARSE_POINTER ? 30 : 24);
+  const c0 = map.containerPointToLatLng(L.point(0, 0));
+  const c1 = map.containerPointToLatLng(L.point(THRESH, THRESH));
+  const margin = Math.max(Math.abs(c1.lat - c0.lat), Math.abs(c1.lng - c0.lng));
+  let best = null, bestD = THRESH;
+  for (const r of _coverageData) {
+    if (Math.abs(latlng.lat - r.lat) > margin || Math.abs(latlng.lng - r.lng) > margin) continue;
+    const p = map.latLngToContainerPoint([r.lat, r.lng]);
+    const d = Math.hypot(cp.x - p.x, cp.y - p.y);
+    if (d < bestD) { bestD = d; best = r; }
+  }
+  return best;
 }
 
 // Merge site + road hits into one ranked list. Sites are pre-sorted (with the
@@ -2192,6 +2251,8 @@ map.on('click', (e) => {
   closeDockPanels();      // a tap on the open map dismisses any dock popover
   const seg = findNearestItinere(e.latlng, e.containerPoint);
   if (seg) { showSegmentPanel(seg.meta, seg.ll); return; }
+  const cov = findNearestCoverage(e.latlng, e.containerPoint);  // only resolves when dots show
+  if (cov) { focusCoverage(cov); return; }
   if (document.getElementById('info-panel').classList.contains('open')) closePanel();
 });
 
@@ -2216,7 +2277,11 @@ if (!COARSE_POINTER) {
       const ev = _lastMove;
       if (!ev) return;
       const seg = findNearestItinere(ev.latlng, ev.containerPoint);
-      const name = seg && seg.meta && seg.meta.name;
+      let name = seg && seg.meta && seg.meta.name;
+      if (!name) {   // no road nearer → name the nearest coverage dot, if any show
+        const cov = findNearestCoverage(ev.latlng, ev.containerPoint);
+        if (cov) name = cov.name;
+      }
       if (name) {
         readout.textContent = name;
         readout.style.left = (ev.originalEvent.clientX + 14) + 'px';
@@ -2790,7 +2855,7 @@ function syncFilterUI() {
   }
 }
 
-const DETAIL_LABELS = ['Curated', 'Quest detail', 'Full detail'];
+const DETAIL_LABELS = ['Curated', 'Quest detail', 'Full detail', 'Documented'];
 
 function detailStatsForLevel(level) {
   const idx = Math.max(0, Math.min(DETAIL_LABELS.length - 1, level));
@@ -2806,8 +2871,19 @@ function syncDetailUI() {
   const stats = detailStatsForLevel(detailLevel);
   if (document.activeElement !== slider) slider.value = String(stats.level);
   slider.setAttribute('aria-valuenow', String(stats.level));
-  slider.setAttribute('aria-valuetext', `${stats.label}, ${stats.questCount.toLocaleString()} quests visible`);
-  readout.textContent = `${stats.label} · ${stats.questCount.toLocaleString()} quests`;
+  // The "Documented" stop reports coverage state, not a quest count: it's a
+  // different layer (the ~25k Pleiades long tail), lazy + zoom-gated.
+  let text;
+  if (stats.level >= 3) {
+    if (_coverageState === 'idle' || _coverageState === 'loading') text = 'Documented · loading…';
+    else if (_coverageState === 'error') text = 'Documented · unavailable';
+    else if (map.getZoom() < MIN_COVERAGE_ZOOM) text = 'Documented · zoom in to reveal';
+    else text = `Documented · ${(_coverageData ? _coverageData.length : 0).toLocaleString()} places`;
+  } else {
+    text = `${stats.label} · ${stats.questCount.toLocaleString()} quests`;
+  }
+  slider.setAttribute('aria-valuetext', text);
+  readout.textContent = text;
 }
 
 // The slider sets WHAT is shown (curated / +quests / all), not the zoom.
@@ -2815,7 +2891,9 @@ function syncDetailUI() {
 function setDetailLevel(level) {
   detailLevel = Math.max(0, Math.min(DETAIL_LABELS.length - 1, level));
   if (detailLevel > 0) ensureSitesLayerOn();   // revealing more turns sites on
+  if (detailLevel >= 3) ensureCoverageLoaded(); // the "Documented" stop needs the long tail
   refreshVisibleMarkers();
+  renderCoverageDots();   // show/clear the coverage dots for the new level
   syncDetailUI();
 }
 
@@ -3049,8 +3127,13 @@ map.on('zoomend', () => {
   updateBasemaps();
   // Marker visibility is governed by the DETAIL slider, not zoom, and
   // markercluster re-clusters by itself — so there's nothing to recompute
-  // here beyond the zoom-staged basemap opacity + satellite reveal.
+  // here beyond the zoom-staged basemap opacity + satellite reveal…
+  renderCoverageDots();   // …except the coverage dots, which are viewport-culled + zoom-gated
+  if (typeof syncDetailUI === 'function') syncDetailUI();   // refresh the "zoom in" hint
 });
+// Coverage dots are culled to the viewport, so re-render after a pan too (only
+// does work when the "Documented" level is active — otherwise an instant no-op).
+map.on('moveend', () => { renderCoverageDots(); });
 
 // Prime at boot (zoom 5, ancient era): sepia landing + curated sites only.
 updateBasemaps();

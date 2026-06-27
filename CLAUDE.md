@@ -8,12 +8,13 @@ VIA — Ancient World Explorer. A static, single-page Leaflet map that overlays 
 
 ## Running / Developing
 
-No build, no package manager, no tests. It's plain HTML/CSS/JS with Leaflet loaded from a CDN.
+No build step. It's plain HTML/CSS/JS with Leaflet loaded from a CDN, deployed as-is. The only `package.json` is dev-only (it pins Playwright for the WebKit touch test; `node_modules/` is gitignored and never shipped). Tests are a thin headless harness, see the testing bullet below.
 
 - Open `index.html` directly works for read-only map browsing, but auth + Supabase need a real origin. Serve with `python -m http.server 8000` and load `http://localhost:8000`. The Supabase redirect-URL allowlist must include whatever origin you use.
 - Deploy target is GitHub Pages — pushing to `main` ships the site.
 - **Commit when the work is done, and confirm the commit landed** (`git log --oneline -1`) before reporting anything as shipped — the dev server serves the uncommitted working tree, so "looks right in the browser" is not "committed." Do **not** push unless explicitly asked.
 - **PowerShell is the primary shell and PS 5.1 has no `&&`/`||`** — chaining with `&&` is a parser error. Put commands on separate lines, or use `; if ($?) { ... }`. (The Bash tool, when used, is real bash and does support `&&`.)
+- **Testing (see `tests/README.md`).** Three headless harnesses: `run-journeys` (deterministic desktop behavior, Chromium/`browse`), `mobile-shots` (mobile-width screenshots, Chromium), and `tests/webkit-touch/` (the **only** one that exercises the real WebKit engine + a real touchscreen — the iOS-Safari tap path Chromium and `browse` structurally cannot reach). Run the touch test after any change to marker/road/coverage taps or the `COARSE_POINTER` branch: `node tests/webkit-touch/test.mjs` (one-time: `npm install && npx playwright install webkit`; no Mac needed). This pattern is also installed machine-wide as the **`/webkit-touch` skill** (`~/.claude/skills/webkit-touch/`) to scaffold the same harness into any project; VIA's `tests/webkit-touch/` is its committed reference implementation. None of these replace a real-device pass.
 - **Cache-bust on every css/js change.** Local assets carry a `?v=N` token in `index.html`. Bump it on *every* css/js edit or mobile Safari serves stale code — it caches sub-resources hard. A `?v=` on the page URL alone does not work (the HTML refreshes but the cached sub-resources don't). When a deployed mobile site shows old behavior after a fix, suspect a stale URL/HTML cache *before* the code: confirm the canonical Pages URL (nothing after the base path), force a fresh HTML fetch with a throwaway `?fresh=1`, and verify the served asset `?v=` matches HEAD.
 
 ## Architecture

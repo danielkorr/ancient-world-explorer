@@ -1810,17 +1810,20 @@ path.leaflet-interactive { outline: none !important; }
     margin: 0 !important;
     z-index: 952;
   }
+  /* Shared utility-chrome material (see #attrib-toggle, #build-badge): the same
+     0.34 gold border + 0.92 glass the dock pills use, so the scattered map
+     controls read as one quiet system instead of three different widgets. */
   .leaflet-control-zoom a {
     width: 40px !important;
     height: 34px !important;
     line-height: 34px !important;
     font-size: 20px !important;
-    background: rgba(8,4,0,0.96) !important;
+    background: rgba(8,4,0,0.92) !important;
     color: var(--gold) !important;
-    border: 1px solid rgba(212,168,83,0.4) !important;
+    border: 1px solid rgba(212,168,83,0.34) !important;
   }
-  .leaflet-control-zoom a:first-child { border-radius: 12px 12px 0 0 !important; }
-  .leaflet-control-zoom a:last-child  { border-radius: 0 0 12px 12px !important; border-top: none !important; }
+  .leaflet-control-zoom a:first-child { border-radius: 11px 11px 0 0 !important; }
+  .leaflet-control-zoom a:last-child  { border-radius: 0 0 11px 11px !important; border-top: none !important; }
   .leaflet-control-zoom a:hover { background: rgba(20,12,2,0.98) !important; }
   /* The bottom and top edges are both too crowded for a permanent credit (and
      the iPhone home indicator owns the bottom ~34px). Required attribution
@@ -1835,7 +1838,11 @@ path.leaflet-interactive { outline: none !important; }
     width: 34px;
     height: 34px;
     font-size: 15px;
-    border-radius: 9px;
+    border-radius: 11px;
+    /* Calm the once-loud full-gold border down to the shared utility material —
+       attribution is the least-important control, it shouldn't shout. */
+    border-color: rgba(212,168,83,0.34);
+    background: rgba(8,4,0,0.92);
     bottom: calc(var(--dock-h) + 6px);
     left: 8px;
     right: auto;
@@ -1855,8 +1862,8 @@ path.leaflet-interactive { outline: none !important; }
     min-width: 0;
     padding: 3px 8px;
     border-radius: 999px;
-    background: rgba(8,4,0,0.88);
-    border: 1px solid rgba(212,168,83,0.28);
+    background: rgba(8,4,0,0.92);
+    border: 1px solid rgba(212,168,83,0.34);
     color: rgba(240,230,211,0.7);
     font-family: 'Cinzel', serif;
     font-size: 8px;

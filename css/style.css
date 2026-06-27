@@ -1589,9 +1589,11 @@ path.leaflet-interactive { outline: none !important; }
   /* Era toggle slides up to fill the gap the top search left behind — it stays
      pinned at the top, unchanged in function. */
   #era-toggle-wrap {
-    top: calc(env(safe-area-inset-top, 0px) + 62px);
+    top: calc(env(safe-area-inset-top, 0px) + 12px);
     left: max(14px, env(safe-area-inset-left, 0px));
     right: max(14px, env(safe-area-inset-right, 0px));
+    display: flex;
+    justify-content: center;
   }
   #site-search-input {
     height: 46px;
@@ -1726,8 +1728,8 @@ path.leaflet-interactive { outline: none !important; }
   .era-btn {
     height: 26px;
     min-height: 26px;
-    padding: 0 12px;
-    font-size: 8.5px;
+    padding: 0 13px;
+    font-size: 9px;
     letter-spacing: 1.5px;
   }
   /* Drop the bright glow — the fill alone marks the active era; no shouting. */
@@ -1761,8 +1763,8 @@ path.leaflet-interactive { outline: none !important; }
      Reuses #detail-control; fixed above the dock, hidden until curation is open. */
   .detail-control {
     position: fixed;
-    left: 12px;
-    right: 12px;
+    left: 52px;
+    right: 24px;
     bottom: calc(var(--dock-h) + 10px);
     width: auto;
     z-index: 958;
@@ -1795,15 +1797,17 @@ path.leaflet-interactive { outline: none !important; }
     display: block !important;
     position: fixed !important;
     right: 12px;
-    bottom: calc(var(--dock-h) + 14px);
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
     margin: 0 !important;
     z-index: 952;
   }
   .leaflet-control-zoom a {
-    width: 44px !important;
-    height: 44px !important;
-    line-height: 44px !important;
-    font-size: 22px !important;
+    width: 40px !important;
+    height: 34px !important;
+    line-height: 34px !important;
+    font-size: 20px !important;
     background: rgba(8,4,0,0.96) !important;
     color: var(--gold) !important;
     border: 1px solid rgba(212,168,83,0.4) !important;
@@ -1821,8 +1825,12 @@ path.leaflet-interactive { outline: none !important; }
      pattern, commit 548de9c; satisfies CC BY without a persistent on-map line). */
   #attrib-toggle {
     display: flex;
-    bottom: calc(var(--dock-h) + 14px);
-    left: 12px;
+    width: 34px;
+    height: 34px;
+    font-size: 15px;
+    border-radius: 9px;
+    bottom: calc(var(--dock-h) + 6px);
+    left: 8px;
     right: auto;
   }
   #attrib-popover {
@@ -1833,20 +1841,21 @@ path.leaflet-interactive { outline: none !important; }
   #build-badge {
     display: block;
     position: fixed;
-    top: calc(env(safe-area-inset-top, 0px) + 120px);
-    right: max(14px, env(safe-area-inset-right, 0px));
+    top: auto;
+    bottom: calc(var(--dock-h) + 6px);
+    right: max(10px, env(safe-area-inset-right, 0px));
     z-index: 907;
-    min-width: 62px;
-    padding: 7px 10px;
+    min-width: 0;
+    padding: 3px 8px;
     border-radius: 999px;
-    background: rgba(8,4,0,0.94);
-    border: 1px solid rgba(212,168,83,0.35);
-    color: rgba(240,230,211,0.92);
+    background: rgba(8,4,0,0.88);
+    border: 1px solid rgba(212,168,83,0.28);
+    color: rgba(240,230,211,0.7);
     font-family: 'Cinzel', serif;
-    font-size: 10px;
-    letter-spacing: 1.3px;
+    font-size: 8px;
+    letter-spacing: 1px;
     text-align: center;
-    box-shadow: 0 10px 24px rgba(0,0,0,0.24);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
     pointer-events: none;
   }
 

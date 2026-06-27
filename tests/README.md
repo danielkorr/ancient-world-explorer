@@ -49,6 +49,23 @@ a substitute for real iOS-Safari touch testing on a device (Chromium doesn't
 reproduce iOS tap-synthesis behavior, which is where VIA's load-bearing mobile bugs
 live).
 
+### iOS-Safari touch pass (WebKit engine, real taps)
+
+The two passes above run on Chromium (the `browse` binary), which has **no touch
+emulation and isn't the WebKit engine** — so it can't reach VIA's `COARSE_POINTER`
+branch or the delegated `touchend` handlers where the load-bearing mobile bugs live.
+`tests/webkit-touch/` closes that gap with Playwright's WebKit + an iPhone descriptor
+and real `touchscreen.tap()`:
+
+```bash
+node tests/webkit-touch/test.mjs          # light ?qa=1 fixture
+QA=0 node tests/webkit-touch/test.mjs     # heavy map → also exercises Itiner-e segment taps
+```
+
+One-time setup (no Mac needed — Playwright ships its own WebKit for Windows/Linux):
+`npm install` then `npx playwright install webkit`. Full how/why + the maxTouchPoints
+quirk are in `tests/webkit-touch/SKILL.md`. Still not a substitute for a real device.
+
 ## How it works
 
 - **Fixture route `?qa=1`** (see the QA block in `js/app.js`): skips the ~14,800-segment
@@ -70,6 +87,8 @@ live).
 - `run-journeys.sh` — serves the site, navigates to `?qa=1`, runs the journey, asserts.
 - `journey.eval.js` — the in-page journey + assertions; returns a JSON verdict
   `{failed, fails:[…]}`. Add new checks here.
+- `webkit-touch/test.mjs` — WebKit-engine + real-touch regression test (markers, roads,
+  coverage taps via the `touchend` path). `webkit-touch/SKILL.md` is its full guide.
 
 ## Adding a journey
 

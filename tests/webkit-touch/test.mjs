@@ -101,8 +101,14 @@ try {
   }));
   ok('window.VIA.ready', touch.ready);
   ok('touch emulation: ontouchstart', touch.onTouchStart);
-  ok('touch emulation: maxTouchPoints > 0', touch.maxTouch > 0);
   ok('touch emulation: pointer:coarse', touch.coarse);
+  // COARSE_POINTER (app.js) = pointer:coarse || maxTouchPoints || ontouchstart — ANY one engages
+  // the touchend path. Assert the composite, not maxTouchPoints alone: Playwright's WebKit build on
+  // Windows/Linux reports maxTouchPoints=0 even under the iPhone descriptor (it's populated on macOS
+  // WebKit only), so demanding it would fail green builds on non-Mac dev machines for no real reason.
+  ok('COARSE_POINTER branch engages (coarse || maxTouch || ontouchstart)',
+     touch.coarse || touch.maxTouch > 0 || touch.onTouchStart);
+  console.log(`    (maxTouchPoints=${touch.maxTouch} — informational; 0 is expected on WebKit-Windows/Linux)`);
 
   // 2) real TAP on a site marker opens its panel (the COARSE_POINTER touchend path)
   // Zoom onto the site first so its marker declusters into an individual icon.

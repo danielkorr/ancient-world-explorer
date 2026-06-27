@@ -9,3 +9,7 @@
 
 # Mobile QA screenshot artifacts (tests/mobile-shots.sh)
 tests/screenshots/
+
+# Playwright (webkit-touch test) — local-only dev dependency
+node_modules/
+package-lock.json

@@ -38,16 +38,21 @@ needs a phone — but it catches the touch regressions Chromium cannot.
 
 ## One-time setup
 
-This repo has no `package.json` (the other tests reuse the browse binary's bundled
-Chromium). WebKit needs Playwright's own browser binary, so install once:
+There's a dev-only `package.json` (the site itself has no build; that file exists
+solely to pin Playwright). WebKit needs Playwright's own browser binary, so install
+once:
 
 ```bash
-npm i -D playwright            # or: npm i -g playwright
-npx playwright install webkit  # downloads the WebKit browser (~100 MB, one time)
+npm install                    # installs the pinned `playwright` devDependency
+npx playwright install webkit  # downloads the WebKit browser (~60 MB, one time)
 ```
 
-`node_modules/` is not gitignored here yet — if you install locally, add it to
-`.gitignore` or use the global install (`-g`).
+`node_modules/`, `package-lock.json` are gitignored — this tooling is local-only,
+never shipped to Pages.
+
+**No Mac required.** Playwright ships its own WebKit build for Windows and Linux, so
+this runs anywhere Node does. It's WebKit-the-engine, not Safari-the-app — close
+enough to catch the iOS engine quirks, but see the maxTouchPoints note below.
 
 ## Run
 
@@ -69,8 +74,12 @@ Exit `0` = all checks green, `1` = a check failed, `2` = setup/boot problem
 
 ## What it checks
 
-1. **Touch emulation is real** — `ontouchstart`, `navigator.maxTouchPoints`, and
-   `matchMedia('(pointer: coarse)')` all confirm the `COARSE_POINTER` branch is live.
+1. **Touch emulation is real** — `ontouchstart` + `matchMedia('(pointer: coarse)')`
+   confirm the `COARSE_POINTER` branch is live, and the test asserts the *composite*
+   `coarse || maxTouchPoints || ontouchstart` exactly as `app.js` gates on it.
+   `navigator.maxTouchPoints` is reported but **not** required: Playwright's WebKit
+   build on Windows/Linux leaves it `0` even under the iPhone descriptor (it's only
+   populated on macOS WebKit), and VIA needs just one of the three signals.
 2. **Marker tap opens the panel** — a real `touchscreen.tap()` on a site marker
    triggers the `touchend` delegation and opens `#info-panel`. This is the exact
    path that reads as broken on iOS when it regresses.

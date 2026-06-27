@@ -1,0 +1,11 @@
+{
+  "name": "ancient-world-explorer-devtools",
+  "private": true,
+  "description": "Local dev-only tooling for VIA. The site itself has no build; this exists solely so the webkit-touch test can install Playwright. Not shipped.",
+  "scripts": {
+    "test:webkit": "node tests/webkit-touch/test.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}

@@ -1620,6 +1620,10 @@ path.leaflet-interactive { outline: none !important; }
     box-shadow: 0 -8px 24px rgba(0,0,0,0.34);
   }
   .dock-btn {
+    /* All three dock controls share ONE shape language: equal-rhythm pills.
+       Search still leads (wider flex-grow below), but DETAIL/KEY now carry real
+       width so the right side balances instead of trailing off as small tags. */
+    flex: 1 1 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1628,7 +1632,7 @@ path.leaflet-interactive { outline: none !important; }
     padding: 0 14px;
     background: rgba(20,12,2,0.92);
     border: 1px solid rgba(212,168,83,0.34);
-    border-radius: 12px;
+    border-radius: 999px;
     color: rgba(240,230,211,0.92);
     font-family: 'Cinzel', serif;
     font-size: 11px;
@@ -1642,15 +1646,18 @@ path.leaflet-interactive { outline: none !important; }
     background: rgba(212,168,83,0.12);
   }
   .dock-btn svg { display: block; }
+  /* Search leads the row (≈1.6× a button) — its SIZE marks it primary, not a
+     different shape. It stays an input affordance (Inter, sentence case) on
+     purpose; a Cinzel-caps placeholder would read as a button, not a field.
+     Slightly brighter text so the biggest element isn't also the faintest. */
   .dock-search-field {
-    flex: 1 1 auto;
+    flex: 1.6 1 0;
     min-width: 0;
     justify-content: flex-start;
     text-transform: none;
     font-family: 'Inter', sans-serif;
     letter-spacing: 0;
-    color: rgba(240,230,211,0.55);
-    border-radius: 999px;
+    color: rgba(240,230,211,0.64);
   }
   .dock-search-field svg { color: rgba(212,168,83,0.7); flex: 0 0 auto; }
   .dock-search-placeholder {

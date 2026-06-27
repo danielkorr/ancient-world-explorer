@@ -1431,6 +1431,7 @@ function itinereSearchMeta(entry) {
 // [] and the loader re-runs the query when the data lands.
 let _coverageState = 'idle';   // idle | loading | ready | error
 let _coverageData  = null;     // processed, deduped, site-shaped records
+let _coverageVisibleCount = 0; // dots painted in the last render — drives the adaptive catch
 
 function ensureCoverageLoaded() {
   if (QA || _coverageState !== 'idle') return;   // QA stays light; load once
@@ -1548,14 +1549,34 @@ function renderCoverageDots() {
     L.circleMarker([r.lat, r.lng], style).addTo(coverageDotsGroup);
     if (++n >= MAX_COVERAGE_DOTS) break;
   }
-  maybeHintCoverage();   // one-time "what are these dots" nudge
+  _coverageVisibleCount = n;   // feeds coverageCatchPx() — the catch tracks dot density
+  maybeHintCoverage();         // one-time "what are these dots" nudge
+}
+
+// Adaptive tap-catch radius for coverage dots. A fixed radius can't win at both
+// ends: tight enough to disambiguate dense low-zoom dots is far too small to hit a
+// lone dot at high zoom (the bug — a 28px island in a 200px-empty sea). So size the
+// catch to the LOCAL dot spacing: estimate average neighbour distance from the dots
+// actually on screen (~sqrt(viewportArea / count), a cheap density proxy that tracks
+// both zoom AND regional density), and own half of it — the Voronoi half-spacing, i.e.
+// "snap to the visibly-nearest dot." Floored at the old fixed value (never tighter,
+// so dense areas don't regress) and capped so a click in genuine emptiness still
+// falls through to closePanel instead of yanking in a far-off dot.
+function coverageCatchPx() {
+  const floor = COARSE_POINTER ? 30 : 28;
+  const cap   = COARSE_POINTER ? 90 : 80;
+  const n = _coverageVisibleCount;
+  if (!n) return floor;
+  const sz = map.getSize();                       // container px {x:w, y:h}
+  const spacing = Math.sqrt((sz.x * sz.y) / n);   // avg px between neighbouring dots
+  return Math.max(floor, Math.min(cap, spacing * 0.5));
 }
 
 // Nearest coverage place to a tap, or null. Only resolves when the dots are
 // actually showing, so a coverage tap can't fire on an invisible layer.
 function findNearestCoverage(latlng, cp, threshPx) {
   if (!coverageVisible()) return null;
-  const THRESH = threshPx != null ? threshPx : (COARSE_POINTER ? 30 : 24);
+  const THRESH = threshPx != null ? threshPx : coverageCatchPx();
   const c0 = map.containerPointToLatLng(L.point(0, 0));
   const c1 = map.containerPointToLatLng(L.point(THRESH, THRESH));
   const margin = Math.max(Math.abs(c1.lat - c0.lat), Math.abs(c1.lng - c0.lng));
@@ -2336,8 +2357,19 @@ if (!COARSE_POINTER) {
   readout.id = 'road-hover-readout';
   readout.setAttribute('aria-hidden', 'true');
   document.body.appendChild(readout);
-  let _hoverRaf = 0, _lastMove = null;
-  const hide = () => { readout.classList.remove('show'); };
+  let _hoverRaf = 0, _lastMove = null, _hoverClickable = false;
+  const mapEl = map.getContainer();
+  // Roads + coverage dots are canvas paths, not DOM nodes, so the browser never
+  // paints a pointer cursor over them — they read as dead even though a click
+  // resolves to the nearest one. Drive the cursor off the SAME resolver the click
+  // uses: pointer exactly when a click would land something, so "if it's a hand,
+  // it's clickable" (the deep-zoom catch radius is tiny and otherwise invisible).
+  const setClickable = (on) => {
+    if (on === _hoverClickable) return;
+    _hoverClickable = on;
+    mapEl.style.cursor = on ? 'pointer' : '';   // '' reverts to Leaflet's grab
+  };
+  const hide = () => { readout.classList.remove('show'); setClickable(false); };
   map.on('mousemove', (e) => {
     _lastMove = e;
     if (_hoverRaf) return;
@@ -2347,17 +2379,22 @@ if (!COARSE_POINTER) {
       if (!ev) return;
       const seg = findNearestItinere(ev.latlng, ev.containerPoint);
       let name = seg && seg.meta && seg.meta.name;
-      if (!name) {   // no road nearer → name the nearest coverage dot, if any show
+      // A click resolves on any nearby segment (even unnamed), a coverage dot, or
+      // a pinned search result — track that for the cursor, the name for the label.
+      let clickable = !!seg;
+      if (!name) {   // no named road nearer → name the nearest coverage dot, if any show
         const cov = findNearestCoverage(ev.latlng, ev.containerPoint);
-        if (cov) name = cov.name;
+        if (cov) { name = cov.name; clickable = true; }
       }
+      if (!clickable && nearestPinnedCoverage(ev.latlng, ev.containerPoint)) clickable = true;
+      setClickable(clickable);
       if (name) {
         readout.textContent = name;
         readout.style.left = (ev.originalEvent.clientX + 14) + 'px';
         readout.style.top  = (ev.originalEvent.clientY + 16) + 'px';
         readout.classList.add('show');
       } else {
-        hide();
+        readout.classList.remove('show');
       }
     });
   });

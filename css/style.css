@@ -1730,6 +1730,9 @@ path.leaflet-interactive { outline: none !important; }
     min-width: 0;
     width: max-content;
     background: rgba(10,5,0,0.72);
+    /* Shared chrome border (0.34) so the top controls belong to the same
+       material system as the dock + map utilities, not the fainter 0.22. */
+    border-color: rgba(212,168,83,0.34);
     box-shadow: 0 4px 12px rgba(0,0,0,0.16);
   }
   .era-btn {
@@ -1752,6 +1755,10 @@ path.leaflet-interactive { outline: none !important; }
     padding: 0;
     justify-content: center;
     gap: 0;
+    /* Tie the signed-out "bullseye" into the shared 0.34 chrome border so it
+       reads as part of the system, not a separate dark blob. (The signed-in
+       gold-gradient state keeps its own border via higher specificity.) */
+    border-color: rgba(212,168,83,0.34);
   }
   #profile-pill-glyph  { width: 24px; height: 24px; }
   #profile-pill-label  { display: none; }

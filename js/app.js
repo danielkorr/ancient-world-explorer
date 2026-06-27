@@ -1583,7 +1583,7 @@ function maybeHintCoverage() {
   const b  = document.getElementById('legend-toast-body');
   if (!el || !t || !b) return;
   t.textContent = 'Documented places';
-  b.textContent = 'These faint dots are documented places from the Pleiades gazetteer — tap one to open it. Drag Detail to “Documented” to keep them on.';
+  b.textContent = 'These faint dots are documented places from the Pleiades gazetteer — tap one to open it. Drag Detail to “+ Documented” to keep them on.';
   el.classList.add('show');
   clearTimeout(_toastTimer);
   _toastTimer = setTimeout(() => el.classList.remove('show'), 6500);
@@ -2885,9 +2885,10 @@ const TIER_INFO = {
 
 // Content disclosure is now driven by the DETAIL slider, not zoom — clustering
 // carries the density load, so we no longer thin markers by zoom. Three levels:
-//   0 Curated      — the ~95 hand-written cities (clean landing, the default).
-//   1 Quest detail — curated + every quest (the actionable game layer).
-//   2 Full detail  — the entire Pleiades set.
+//   0 Highlights   — the ~95 hand-written cities (clean landing, the default).
+//   1 Quests       — curated + every quest (the actionable game layer).
+//   2 All sites    — the entire foreground Pleiades set.
+//   3 + Documented — adds the ~25k Pleiades long-tail coverage dots (lazy).
 // Markers always cluster, so even level 2 reads as a handful of bubbles, not
 // 473 dots of orange measles.
 let detailLevel = 0;
@@ -2924,7 +2925,7 @@ function syncFilterUI() {
   }
 }
 
-const DETAIL_LABELS = ['Curated', 'Quest detail', 'Full detail', 'Documented'];
+const DETAIL_LABELS = ['Highlights', 'Quests', 'All sites', '+ Documented'];
 
 function detailStatsForLevel(level) {
   const idx = Math.max(0, Math.min(DETAIL_LABELS.length - 1, level));
@@ -2944,12 +2945,17 @@ function syncDetailUI() {
   // different layer (the ~25k Pleiades long tail), lazy + zoom-gated.
   let text;
   if (stats.level >= 3) {
-    if (_coverageState === 'idle' || _coverageState === 'loading') text = 'Documented · loading…';
-    else if (_coverageState === 'error') text = 'Documented · unavailable';
-    else if (map.getZoom() < MIN_COVERAGE_ZOOM) text = 'Documented · zoom in to reveal';
-    else text = `Documented · ${(_coverageData ? _coverageData.length : 0).toLocaleString()} places`;
+    if (_coverageState === 'idle' || _coverageState === 'loading') text = '+ Documented · loading…';
+    else if (_coverageState === 'error') text = '+ Documented · unavailable';
+    else if (map.getZoom() < MIN_COVERAGE_ZOOM) text = '+ Documented · zoom in to reveal';
+    else text = `+ Documented · ${(_coverageData ? _coverageData.length : 0).toLocaleString()} places`;
+  } else if (stats.level === 1) {
+    // "Quests": the count that matters is the quest tally (the game layer).
+    text = `Quests · ${stats.questCount.toLocaleString()} quests`;
   } else {
-    text = `${stats.label} · ${stats.questCount.toLocaleString()} quests`;
+    // "Highlights" (0) and "All sites" (2) count SITES, not quests, so the
+    // number visibly moves between stops instead of repeating the quest tally.
+    text = `${stats.label} · ${stats.siteCount.toLocaleString()} sites`;
   }
   slider.setAttribute('aria-valuetext', text);
   readout.textContent = text;

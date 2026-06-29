@@ -653,9 +653,12 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 #dock,
 #dock-scrim,
 #dock-search-panel { display: none; }
-.legend-layers-hint,
-.legend-layer-row,
-.legend-layers-sep { display: none; }
+/* #quest-legend-scoped so these beat the later `.legend-row { display:flex }`
+   at equal class-specificity (source order was letting the rows leak onto
+   desktop, duplicating the bottom-left Roads/Sites chips). */
+#quest-legend .legend-layers-hint,
+#quest-legend .legend-layer-row,
+#quest-legend .legend-layers-sep { display: none; }
 
 /* ── QUEST LEGEND ── */
 #quest-legend {
@@ -1952,9 +1955,10 @@ path.leaflet-interactive { outline: none !important; }
 
   /* Folded-in master layer toggles (mobile only). active = layer on (gold via
      .legend-row.active); off = dimmed. */
-  .legend-layers-hint { display: block; }
-  .legend-layers-sep  { display: block; }
-  .legend-layer-row   { display: flex; }
+  /* Match the #quest-legend-scoped desktop hide so these re-show on mobile. */
+  #quest-legend .legend-layers-hint { display: block; }
+  #quest-legend .legend-layers-sep  { display: block; }
+  #quest-legend .legend-layer-row   { display: flex; }
   .legend-layer-row:not(.active) { opacity: 0.4; }
   .legend-layer-row .legend-line { width: 18px; }
 
@@ -2227,9 +2231,10 @@ path.leaflet-interactive { outline: none !important; }
    viewport rectangle is drawn by Leaflet (gold) inside. Desktop only. */
 #empire-inset {
   position: fixed;
-  left: 14px;
-  bottom: 14px;
-  width: 188px;
+  left: 18px;
+  top: 112px;            /* below the era toggle (top:64 + ~36 tall); the
+                            bottom-left corner belongs to #bottom-controls */
+  width: 184px;
   z-index: 900;
   background: var(--ink-panel);
   border: 1px solid var(--gold-dim);

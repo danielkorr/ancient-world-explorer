@@ -879,7 +879,7 @@ function buildEmpireInset() {
   if (toggle && wrap) {
     toggle.addEventListener('click', () => {
       const collapsed = wrap.classList.toggle('collapsed');
-      toggle.textContent = collapsed ? '▴' : '▾';
+      toggle.textContent = collapsed ? '▸' : '▾';
       toggle.setAttribute('aria-label', collapsed ? 'Expand the empire inset' : 'Collapse the empire inset');
       if (!collapsed) setTimeout(() => insetMap.invalidateSize(), 0);
     });

@@ -46,7 +46,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=109">
+  <link rel="stylesheet" href="css/style.css?v=110">
 </head>
 <body>
 
@@ -204,10 +204,10 @@
      empire scale; a gold rectangle tracks the main map's viewport so you always
      know which corner of the Roman world you're looking at. Click to fly there.
      app.js (`buildEmpireInset`) builds the inner Leaflet map + viewport rect. -->
-<div id="empire-inset" data-testid="empire-inset">
+<div id="empire-inset" class="collapsed" data-testid="empire-inset">
   <div id="empire-inset-head">
     <span id="empire-inset-title">The Empire</span>
-    <button id="empire-inset-toggle" type="button" aria-label="Collapse the empire inset" title="Collapse">▾</button>
+    <button id="empire-inset-toggle" type="button" aria-label="Expand the empire inset" title="Show locator map">▸</button>
   </div>
   <div id="empire-inset-map"></div>
 </div>
@@ -390,7 +390,7 @@
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
 <script src="js/basemap.js?v=106"></script>
-<script src="js/app.js?v=109"></script>
+<script src="js/app.js?v=110"></script>
 
 </body>
 </html>

@@ -915,38 +915,48 @@ if (COARSE_POINTER) {
   }, { passive: true });
   markerPane.addEventListener('touchend', e => {
     const t = e.changedTouches && e.changedTouches[0];
+    if (!t) return;
     // Ignore drags — only a near-stationary touch counts as a tap.
-    if (_tStart && t && (Math.abs(t.clientX - _tStart.x) > 12 || Math.abs(t.clientY - _tStart.y) > 12)) return;
-    const iconEl = e.target.closest && e.target.closest('.leaflet-marker-icon');
-    if (!iconEl) return;
-    // A cluster bubble: run markercluster's OWN zoom-or-spiderfy — the same path
-    // a desktop click takes (zoom to fit all members; spiderfy the last coincident
-    // ones at max zoom). iOS never synthesizes that click, so we invoke it
-    // directly. The old blind setView(+2) under-zoomed tight clusters and could
-    // leak the tap through to a member marker, opening its panel (the "tap the 2,
-    // get Puteoli" bug) instead of revealing both members.
-    if (iconEl.querySelector && iconEl.querySelector('.via-cluster')) {
-      e.preventDefault();
-      let cluster = null, group = null;
-      for (const k of TIER_KINDS) {
-        const fg = siteClusters[k] && siteClusters[k]._featureGroup;
-        if (!fg) continue;
-        const found = fg.getLayers().find(l => l._icon === iconEl);
-        if (found) { cluster = found; group = siteClusters[k]; break; }
+    if (_tStart && (Math.abs(t.clientX - _tStart.x) > 12 || Math.abs(t.clientY - _tStart.y) > 12)) return;
+
+    // CLUSTER WINS ON OVERLAP. A finger covers ~44px, so a lone marker (e.g.
+    // Puteoli, documented tier) can sit on top of a cluster bubble from a
+    // DIFFERENT tier (the Cumae+Baiae photo "2"). Trusting e.target meant tapping
+    // the marker's side of the cluster opened that marker's panel instead of
+    // zooming. So GEOMETRICALLY hit-test every visible cluster icon against the
+    // touch point — the cluster wins wherever the finger lands inside its bubble —
+    // and run markercluster's own zoom-or-spiderfy (the click path iOS never
+    // synthesizes) to spread the pile apart.
+    const cx = t.clientX, cy = t.clientY;
+    let cluster = null, clusterGroup = null;
+    for (const k of TIER_KINDS) {
+      const group = siteClusters[k];
+      const fg = group && group._featureGroup;
+      if (!fg) continue;
+      for (const l of fg.getLayers()) {
+        if (!l._icon || typeof l.getChildCount !== 'function') continue;   // L.MarkerCluster only
+        const r = l._icon.getBoundingClientRect();
+        if (cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom) { cluster = l; clusterGroup = group; break; }
       }
-      if (group && cluster && typeof group._zoomOrSpiderfy === 'function') {
-        group._zoomOrSpiderfy({ layer: cluster });
-      } else if (cluster && cluster.zoomToBounds) {
+      if (cluster) break;
+    }
+    if (cluster) {
+      e.preventDefault();
+      if (typeof clusterGroup._zoomOrSpiderfy === 'function') {
+        clusterGroup._zoomOrSpiderfy({ layer: cluster });
+      } else if (cluster.zoomToBounds) {
         cluster.zoomToBounds({ padding: [60, 60] });
       } else {
-        // Fallback: couldn't resolve the cluster object — at least zoom in.
         let ll; try { ll = map.mouseEventToLatLng(t); } catch (_) {}
         if (ll) map.setView(ll, Math.min(map.getZoom() + 2, map.getMaxZoom()), { animate: true });
       }
       return;
     }
+
     // An individual marker (rendered un-clustered): open its panel. Markers live
     // in cluster groups now, so match against the master list, not a single group.
+    const iconEl = e.target.closest && e.target.closest('.leaflet-marker-icon');
+    if (!iconEl) return;
     let hit = null;
     for (const m of allMarkers) { if (m._icon === iconEl) { hit = m; break; } }
     if (!hit) return;

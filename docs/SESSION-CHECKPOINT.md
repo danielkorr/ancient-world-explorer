@@ -97,7 +97,7 @@ exist in the coverage layer). Alexander is unrelated new work.
   submissions relayed to Pleiades, but no intake/curation pipeline exists. Right model =
   Intake → Dano curates → hand-off through Pleiades' own channels. Near-term: soften the
   copy OR stand up a real intake form. Dano to check Pleiades' contribution process for
-  what's honestly promiseable.
+  what's honestly promisable.
 - **Top-chrome hierarchy.** The ANCIENT/MODERN era toggle is visually loud but
   functionally minor (set-once). Consider shrinking/subordinating it (search + nav are
   primary). Partly touched by the topbar fix; the toggle demotion itself is still open.

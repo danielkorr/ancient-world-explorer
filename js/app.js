@@ -795,6 +795,102 @@ SITES.forEach(site => {
   allMarkers.push(marker);
 });
 
+// ── DUAL-NAME LABELS ─────────────────────────────────────
+// OrganicMaps-style "local + alternate" naming, our own slant: the ancient name
+// over the modern one (Londinium / London). Off by default (the "Names" chip).
+// Permanent Leaflet tooltips, but gated three ways so they never become soup:
+//   • the Names layer must be on,
+//   • zoom must be deep enough that markers have declustered (MIN_LABEL_ZOOM),
+//   • the marker must be individually visible (not folded into a cluster and
+//     actually in its tier group at the current detail level).
+let labelsOn = false;
+const MIN_LABEL_ZOOM = 7;
+
+function escLabel(s) {
+  return String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+}
+function nameLabelHtml(site) {
+  const modern = site.modern && site.modern !== site.name
+    ? `<span class="vnl-modern">${escLabel(site.modern)}</span>` : '';
+  return `<span class="vnl-ancient">${escLabel(site.name)}</span>${modern}`;
+}
+function refreshNameLabels() {
+  const show = labelsOn && map.getZoom() >= MIN_LABEL_ZOOM;
+  for (const m of allMarkers) {
+    let want = false;
+    if (show) {
+      const grp = siteClusters[m._site.quest || 'documented'];
+      // hasLayer → marker is in its tier group at this detail level;
+      // getVisibleParent === m → it's standing alone, not inside a cluster.
+      want = grp && map.hasLayer(grp) && grp.hasLayer(m) && grp.getVisibleParent(m) === m;
+    }
+    if (want) {
+      if (!m.getTooltip()) {
+        m.bindTooltip(nameLabelHtml(m._site), {
+          permanent: true, direction: 'right', offset: [10, 0],
+          className: 'via-name-label', interactive: false,
+        });
+      }
+      m.openTooltip();
+    } else if (m.getTooltip()) {
+      m.unbindTooltip();
+    }
+  }
+}
+// Re-evaluate on every view change (declustering happens on both) and whenever
+// the marker set itself changes (detail slider / tier filters call this too).
+map.on('zoomend moveend', refreshNameLabels);
+
+// ── EMPIRE INSET ─────────────────────────────────────────
+// A fixed locator map (desktop only — CSS hides #empire-inset on mobile). Shows
+// the DARE atlas at empire scale with a keyless sepia CARTO floor underneath (so
+// it never goes blank where DARE 404s, same floor logic as the main map). A gold
+// rectangle tracks the main map's viewport; clicking flies the main map there.
+// Its own fresh tile-layer instances — a Leaflet TileLayer belongs to one map.
+let empireInset = null;
+function buildEmpireInset() {
+  const host = document.getElementById('empire-inset-map');
+  if (!host || empireInset) return;
+  const insetBase = L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', { maxZoom: 11 });
+  const insetDare = L.tileLayer(
+    'https://dh.gu.se/tiles/imperium/{z}/{x}/{y}.png', { maxNativeZoom: 11, maxZoom: 11 });
+  const insetMap = L.map(host, {
+    center: [40, 19], zoom: 4, zoomControl: false, attributionControl: false,
+    dragging: false, scrollWheelZoom: false, doubleClickZoom: false,
+    boxZoom: false, keyboard: false, touchZoom: false, tap: false,
+    inertia: false, fadeAnimation: false, layers: [insetBase, insetDare],
+  });
+  // Viewport rectangle — non-interactive so clicks fall through to the map.
+  const rect = L.rectangle(map.getBounds(), {
+    color: '#d4a853', weight: 1.5, fillColor: '#d4a853', fillOpacity: 0.14,
+    interactive: false,
+  }).addTo(insetMap);
+  const syncRect = () => rect.setBounds(map.getBounds());
+  map.on('move zoom', syncRect);
+  // Click anywhere on the inset → fly the main map to that point (keep its zoom).
+  insetMap.on('click', e => map.flyTo(e.latlng, map.getZoom()));
+  empireInset = { map: insetMap, rect };
+
+  // Collapse / expand. Collapsed = header pill only; invalidate size on expand so
+  // tiles lay out correctly after being display:none.
+  const toggle = document.getElementById('empire-inset-toggle');
+  const wrap = document.getElementById('empire-inset');
+  if (toggle && wrap) {
+    toggle.addEventListener('click', () => {
+      const collapsed = wrap.classList.toggle('collapsed');
+      toggle.textContent = collapsed ? '▴' : '▾';
+      toggle.setAttribute('aria-label', collapsed ? 'Expand the empire inset' : 'Collapse the empire inset');
+      if (!collapsed) setTimeout(() => insetMap.invalidateSize(), 0);
+    });
+  }
+  // The host can be sized 0 at boot (just-laid-out flex/grid); settle it once.
+  setTimeout(() => insetMap.invalidateSize(), 0);
+}
+// Skip in QA mode — deterministic fixture keeps chrome minimal and avoids extra
+// tile fetches that slow the headless journeys.
+if (!QA) buildEmpireInset();
+
 // iOS Safari does NOT synthesize a `click` from a tap on a Leaflet divIcon — the
 // ?debug=1 overlay confirmed `touchstart on [DIV]` with no click ever firing, so
 // marker.on('click') (which Leaflet drives off the synthesized click) never runs.
@@ -2482,7 +2578,7 @@ function setEra(era) {
 
 // ── LAYER TOGGLES ────────────────────────────────────────
 
-const layerState = { roads:true, sites:true };
+const layerState = { roads:true, sites:true, names:false };
 
 function toggleLayer(which) {
   dismissMobileGuide(true);
@@ -2492,6 +2588,14 @@ function toggleLayer(which) {
   // Keep the dock KEY panel's folded-in master row in lockstep with the chip.
   const lrow = document.getElementById('legend-' + which + '-toggle');
   if (lrow) lrow.classList.toggle('active', layerState[which]);
+  if (which === 'names') {
+    // Dual-name labels (ancient · modern) painted beside each visible site.
+    // Pure label layer — touches no marker group, so it's immune to the mobile
+    // add/remove repaint bug. Cluster + zoom gating lives in refreshNameLabels.
+    labelsOn = layerState.names;
+    refreshNameLabels();
+    return;
+  }
   if (which === 'roads') {
     // The "roads" toggle covers both the curated named roads and the Itiner-e
     // baseline — the user thinks of them as one concept.
@@ -3001,6 +3105,9 @@ function refreshVisibleMarkers() {
     const subset = markersByTier[tier].filter(m => siteVisibleAtLevel(m._site, detailLevel));
     if (subset.length) siteClusters[tier].addLayers(subset);
   });
+  // The visible marker set just changed (slider / tier filter / sites toggle);
+  // keep the dual-name labels matched to it. No-op when the Names layer is off.
+  if (typeof refreshNameLabels === 'function') refreshNameLabels();
 }
 
 // Reflect the active tier set onto the legend rows (and dim the rest).

@@ -2178,3 +2178,101 @@ path.leaflet-interactive { outline: none !important; }
 .ld-links a:hover { color: var(--gold); text-decoration: underline; }
 .ld-links .p-btn-ext { font-size: 10px; opacity: 0.6; }
 .ld-more { font-size: 11.5px; color: var(--text-muted); font-style: italic; }
+
+/* ── DUAL-NAME LABELS ──────────────────────────────────────
+   The "Names" chip swatch (a tiny serif Aa) and the on-map permanent tooltips
+   that pair the ancient name with the modern one. Tooltips are non-interactive
+   so they never steal a marker tap. */
+.swatch-name {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--gold);
+  width: 18px;
+  text-align: center;
+}
+.leaflet-tooltip.via-name-label {
+  background: rgba(10, 5, 0, 0.82);
+  border: none;
+  border-left: 2px solid var(--gold-dim);
+  border-radius: 3px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+  padding: 2px 7px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.leaflet-tooltip.via-name-label::before { display: none; }   /* kill the arrow */
+.via-name-label .vnl-ancient {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: var(--gold);
+  line-height: 1.15;
+}
+.via-name-label .vnl-modern {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-size: 10.5px;
+  font-weight: 300;
+  color: var(--parchment);
+  opacity: 0.78;
+  line-height: 1.1;
+}
+
+/* ── EMPIRE INSET ──────────────────────────────────────────
+   Bottom-left locator map. Sepia-tinted to sit in the ancient palette; the
+   viewport rectangle is drawn by Leaflet (gold) inside. Desktop only. */
+#empire-inset {
+  position: fixed;
+  left: 14px;
+  bottom: 14px;
+  width: 188px;
+  z-index: 900;
+  background: var(--ink-panel);
+  border: 1px solid var(--gold-dim);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+  user-select: none;
+}
+#empire-inset-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 6px 4px 10px;
+  border-bottom: 1px solid var(--gold-faint);
+}
+#empire-inset-title {
+  font-family: 'Cinzel', serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+#empire-inset-toggle {
+  background: none;
+  border: none;
+  color: var(--gold);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+#empire-inset-toggle:hover { background: var(--gold-faint); }
+#empire-inset-map {
+  width: 100%;
+  height: 132px;
+  cursor: pointer;
+  filter: sepia(0.32) saturate(0.92) contrast(0.96);
+}
+#empire-inset.collapsed #empire-inset-map { display: none; }
+
+@media (max-width: 640px) {
+  /* Keep the map full-bleed on phones — the inset is a desktop affordance. */
+  #empire-inset { display: none; }
+}

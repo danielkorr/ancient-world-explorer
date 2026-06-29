@@ -46,7 +46,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=108">
+  <link rel="stylesheet" href="css/style.css?v=109">
 </head>
 <body>
 
@@ -188,6 +188,9 @@
   <button class="ctrl-btn active" id="btn-sites" data-testid="sites-filter-button" onclick="toggleLayer('sites')">
     <span class="ctrl-icon" aria-hidden="true">🏛️</span><div class="swatch-dot"></div><span class="ctrl-label">Sites &amp; Cities</span>
   </button>
+  <button class="ctrl-btn" id="btn-names" data-testid="names-filter-button" onclick="toggleLayer('names')" title="Show ancient + modern place names on the map">
+    <span class="ctrl-icon" aria-hidden="true">🏷️</span><div class="swatch-name">Aa</div><span class="ctrl-label">Names</span>
+  </button>
   <div class="detail-control" id="detail-control" data-testid="detail-filter-control" aria-label="Map detail">
     <div class="detail-head">
       <span class="detail-title">Detail</span>
@@ -195,6 +198,18 @@
     </div>
     <input id="detail-slider" data-testid="detail-filter-slider" type="range" min="0" max="3" step="1" value="0" aria-label="Map detail">
   </div>
+</div>
+
+<!-- Empire inset — a fixed locator map (desktop only). Shows the DARE atlas at
+     empire scale; a gold rectangle tracks the main map's viewport so you always
+     know which corner of the Roman world you're looking at. Click to fly there.
+     app.js (`buildEmpireInset`) builds the inner Leaflet map + viewport rect. -->
+<div id="empire-inset" data-testid="empire-inset">
+  <div id="empire-inset-head">
+    <span id="empire-inset-title">The Empire</span>
+    <button id="empire-inset-toggle" type="button" aria-label="Collapse the empire inset" title="Collapse">▾</button>
+  </div>
+  <div id="empire-inset-map"></div>
 </div>
 
 <!-- Mobile dock: one slim persistent bottom bar holding a search field, a
@@ -375,7 +390,7 @@
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
 <script src="js/basemap.js?v=106"></script>
-<script src="js/app.js?v=108"></script>
+<script src="js/app.js?v=109"></script>
 
 </body>
 </html>

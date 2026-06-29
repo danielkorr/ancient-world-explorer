@@ -492,8 +492,11 @@ ROADS.forEach(road => {
   const hit = L.polyline(latlngs, {
     color: '#000', weight: 22, opacity: 0, lineCap: 'round', lineJoin: 'round',
   })
+   // Hover shows just the road NAME — a compact one-line label, not a paragraph.
+   // The full desc + date live in the road panel that a click opens (and used to
+   // make this hover box 3 lines tall, which overlapped the cursor readout).
    .bindTooltip(
-     `<b style="color:#d4a853">${road.name}</b><br>${road.desc}<br><span style="opacity:.55">Est. ${road.built}</span>`,
+     `<b style="color:#d4a853">${road.name}</b>`,
      { className:'road-tip', sticky:true }
    )
    .on('click', function (e) {
@@ -2538,7 +2541,11 @@ if (!COARSE_POINTER) {
       }
       if (!clickable && nearestPinnedCoverage(ev.latlng, ev.containerPoint)) clickable = true;
       setClickable(clickable);
-      if (name) {
+      // Don't stack the cursor readout on top of a curated-road tooltip — that
+      // tooltip already names the road under the cursor, so the readout would be
+      // a redundant second label overlapping the first.
+      const roadTipOpen = !!document.querySelector('.leaflet-tooltip.road-tip');
+      if (name && !roadTipOpen) {
         readout.textContent = name;
         readout.style.left = (ev.originalEvent.clientX + 14) + 'px';
         readout.style.top  = (ev.originalEvent.clientY + 16) + 'px';

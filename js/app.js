@@ -919,13 +919,30 @@ if (COARSE_POINTER) {
     if (_tStart && t && (Math.abs(t.clientX - _tStart.x) > 12 || Math.abs(t.clientY - _tStart.y) > 12)) return;
     const iconEl = e.target.closest && e.target.closest('.leaflet-marker-icon');
     if (!iconEl) return;
-    // A cluster bubble: drill in toward it. markercluster's zoomToBoundsOnClick
-    // relies on a click iOS never synthesizes, so we zoom ourselves — repeated
-    // taps split the cluster and eventually spiderfy the last coincident sites.
+    // A cluster bubble: run markercluster's OWN zoom-or-spiderfy — the same path
+    // a desktop click takes (zoom to fit all members; spiderfy the last coincident
+    // ones at max zoom). iOS never synthesizes that click, so we invoke it
+    // directly. The old blind setView(+2) under-zoomed tight clusters and could
+    // leak the tap through to a member marker, opening its panel (the "tap the 2,
+    // get Puteoli" bug) instead of revealing both members.
     if (iconEl.querySelector && iconEl.querySelector('.via-cluster')) {
       e.preventDefault();
-      let ll; try { ll = map.mouseEventToLatLng(t); } catch (_) {}
-      if (ll) map.setView(ll, Math.min(map.getZoom() + 2, map.getMaxZoom()), { animate: true });
+      let cluster = null, group = null;
+      for (const k of TIER_KINDS) {
+        const fg = siteClusters[k] && siteClusters[k]._featureGroup;
+        if (!fg) continue;
+        const found = fg.getLayers().find(l => l._icon === iconEl);
+        if (found) { cluster = found; group = siteClusters[k]; break; }
+      }
+      if (group && cluster && typeof group._zoomOrSpiderfy === 'function') {
+        group._zoomOrSpiderfy({ layer: cluster });
+      } else if (cluster && cluster.zoomToBounds) {
+        cluster.zoomToBounds({ padding: [60, 60] });
+      } else {
+        // Fallback: couldn't resolve the cluster object — at least zoom in.
+        let ll; try { ll = map.mouseEventToLatLng(t); } catch (_) {}
+        if (ll) map.setView(ll, Math.min(map.getZoom() + 2, map.getMaxZoom()), { animate: true });
+      }
       return;
     }
     // An individual marker (rendered un-clustered): open its panel. Markers live

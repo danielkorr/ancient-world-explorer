@@ -571,6 +571,15 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   flex-shrink: 0;
 }
 
+.swatch-campaign {
+  width: 18px;
+  height: 3px;
+  border-radius: 2px;
+  background: #8f7cc3;
+  box-shadow: 0 0 0 1px rgba(240,230,211,0.12);
+  flex-shrink: 0;
+}
+
 /* Mobile-only affordances — hidden on desktop, switched on in the ≤640px query.
    The icon glyphs replace the swatch+label on the compact chips; the FAB collapses
    the legend. */
@@ -960,6 +969,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 .legend-line.solid  { border-top-style: solid;  border-top-color: #d2a657; }
 .legend-line.dashed { border-top-style: dashed; border-top-color: #b89a6a; }
 .legend-line.dotted { border-top-style: dotted; border-top-width: 2px; border-top-color: #9a86b8; }
+.legend-line.alexander { border-top-style: solid; border-top-color: #8f7cc3; }
 /* Selected certainty: brighten the line to gold (no dot to ring here). */
 .legend-row.active .legend-line { border-top-color: var(--gold); }
 
@@ -980,6 +990,17 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 }
 
 #info-panel.open { right: 0; }
+
+#info-panel.alexander-panel #panel-hero {
+  height: 128px;
+}
+
+#info-panel.alexander-panel #hero-icon {
+  font-family: 'Cinzel', serif;
+  font-size: 42px;
+  font-weight: 700;
+  color: rgba(240,230,211,0.92);
+}
 
 /* Panel hero area */
 #panel-hero {

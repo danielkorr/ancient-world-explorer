@@ -250,6 +250,8 @@ function raiseOverlays() {
 const itinereRenderer = L.canvas({ padding: 0.2 });
 const itinereRoadsGroup = L.layerGroup().addTo(map);
 const roadsGroup        = L.layerGroup().addTo(map);
+const alexanderRouteGroup = L.layerGroup().addTo(map);
+const alexanderStopsGroup = L.layerGroup().addTo(map);
 // Selection highlight for a searched road. Lives above roadsGroup, permanently
 // on the map (mobile-safe: we mutate its CONTENTS, never add/remove the group —
 // see the LayerGroup landmine in CLAUDE.md). Persists after the panel is
@@ -510,6 +512,210 @@ ROADS.forEach(road => {
   hit._curatedRoad = road;
   hit.addTo(roadsGroup);
 });
+
+// ── ALEXANDER CAMPAIGN LAYER ─────────────────────────────
+// Separate from SITES/ROADS on purpose: these are chronological campaign events
+// first and place records second. The layer defaults off and only renders when
+// the user opts in.
+
+const ALEXANDER_ROUTE_STYLE = {
+  attested:      { color: '#b89aef', weight: 3.0, opacity: 0.88, dashArray: null },
+  reconstructed: { color: '#9f8bd0', weight: 2.5, opacity: 0.74, dashArray: '7,6' },
+  uncertain:     { color: '#8a7aa8', weight: 2.2, opacity: 0.66, dashArray: '1,7' },
+};
+const ALEXANDER_DEFAULT_STYLE = ALEXANDER_ROUTE_STYLE.reconstructed;
+
+const alexanderStopLayers = [];
+let activeAlexanderLayer = null;
+let alexanderHasAutoFit = false;
+
+function alexanderPhase(stop) {
+  if (typeof ALEXANDER_PHASES === 'undefined' || !stop) return null;
+  return ALEXANDER_PHASES[stop.phase] || null;
+}
+
+function alexanderStopStyle(stop, active = false) {
+  const phase = alexanderPhase(stop);
+  const color = (phase && phase.color) || '#8f7cc3';
+  return {
+    radius: active ? 8 : 5,
+    color: active ? '#f0e6d3' : '#1a0f00',
+    weight: active ? 3 : 1.5,
+    fillColor: color,
+    fillOpacity: active ? 1 : 0.92,
+    opacity: 1,
+  };
+}
+
+function setActiveAlexanderLayer(layer) {
+  if (activeAlexanderLayer && activeAlexanderLayer.setStyle) {
+    activeAlexanderLayer.setStyle(alexanderStopStyle(activeAlexanderLayer._alexanderStop, false));
+  }
+  activeAlexanderLayer = layer || null;
+  if (activeAlexanderLayer && activeAlexanderLayer.setStyle) {
+    activeAlexanderLayer.setStyle(alexanderStopStyle(activeAlexanderLayer._alexanderStop, true));
+    activeAlexanderLayer.bringToFront();
+  }
+}
+
+function refreshAlexanderLayer() {
+  alexanderRouteGroup.clearLayers();
+  alexanderStopsGroup.clearLayers();
+  alexanderStopLayers.length = 0;
+  activeAlexanderLayer = null;
+
+  if (!layerState.alexander || typeof ALEXANDER_STOPS === 'undefined') return;
+
+  if (typeof ALEXANDER_ROUTES !== 'undefined') {
+    for (const route of ALEXANDER_ROUTES) {
+      if (!route.coords || route.coords.length < 2) continue;
+      const st = ALEXANDER_ROUTE_STYLE[route.certainty] || ALEXANDER_DEFAULT_STYLE;
+      L.polyline(route.coords.map(c => [c[1], c[0]]), {
+        color: st.color,
+        weight: st.weight,
+        opacity: st.opacity,
+        ...(st.dashArray ? { dashArray: st.dashArray } : {}),
+        lineCap: 'round',
+        lineJoin: 'round',
+        interactive: false,
+      }).addTo(alexanderRouteGroup);
+    }
+  }
+
+  for (const stop of ALEXANDER_STOPS) {
+    if (typeof stop.lat !== 'number' || typeof stop.lng !== 'number') continue;
+    const layer = L.circleMarker([stop.lat, stop.lng], {
+      ...alexanderStopStyle(stop, false),
+      interactive: false,
+      pane: 'markerPane',
+    }).addTo(alexanderStopsGroup);
+    layer._alexanderStop = stop;
+    alexanderStopLayers.push(layer);
+  }
+}
+
+function fitAlexanderBoundsOnce() {
+  if (alexanderHasAutoFit || typeof ALEXANDER_STOPS === 'undefined') return;
+  const pts = ALEXANDER_STOPS
+    .filter(s => typeof s.lat === 'number' && typeof s.lng === 'number')
+    .map(s => [s.lat, s.lng]);
+  if (!pts.length) return;
+  alexanderHasAutoFit = true;
+  requestAnimationFrame(() => map.fitBounds(L.latLngBounds(pts), { padding: [36, 36] }));
+}
+
+function findNearestAlexanderStop(latlng, containerPoint) {
+  if (!layerState.alexander || !alexanderStopLayers.length) return null;
+  const threshold = COARSE_POINTER ? 28 : 18;
+  let best = null;
+  let bestPx = Infinity;
+  for (const layer of alexanderStopLayers) {
+    const pt = map.latLngToContainerPoint(layer.getLatLng());
+    const d = pt.distanceTo(containerPoint);
+    if (d < bestPx) { bestPx = d; best = layer; }
+  }
+  return best && bestPx <= threshold ? best : null;
+}
+
+function showAlexanderPanel(stop, layer) {
+  hideLegendToast();
+  closeDockPanels();
+  pendingClosePulseSiteId = null;
+
+  currentPanelKind = 'alexander';
+  currentPanelSite = null;
+  currentSegmentMeta = null;
+  if (activeMarker) {
+    activeMarker.setIcon(makeIcon(activeMarker._site, false));
+    activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
+    activeMarker = null;
+  }
+  setActiveAlexanderLayer(layer || alexanderStopLayers.find(x => x._alexanderStop === stop));
+
+  const phase = alexanderPhase(stop);
+  const color = (phase && phase.color) || '#8f7cc3';
+  const certaintyLabel = {
+    secure: 'Secure',
+    approximate: 'Approximate',
+    disputed: 'Disputed',
+    uncertain: 'Uncertain',
+  }[stop.certainty] || 'Approximate';
+
+  const hero = document.getElementById('panel-hero');
+  const heroIcon = document.getElementById('hero-icon');
+  let heroCredit = document.getElementById('hero-credit');
+  if (!heroCredit) {
+    heroCredit = document.createElement('div');
+    heroCredit.id = 'hero-credit';
+    hero.appendChild(heroCredit);
+  }
+  hero.style.background = `radial-gradient(ellipse at center, ${color}22 0%, #110a00 70%)`;
+  heroIcon.textContent = 'A';
+  heroIcon.style.opacity = '';
+  heroCredit.style.display = 'none';
+  document.getElementById('hero-coords').textContent = stop.year_label || '';
+  document.getElementById('hero-modern').textContent = (phase && phase.label) ? phase.label : 'Alexander campaign';
+
+  const badge = document.getElementById('panel-badge');
+  badge.textContent = `ALEXANDER · ${certaintyLabel}`.toUpperCase();
+  badge.style.cssText = `color:${color};background:${color}18;border:1px solid ${color}40;display:inline-block;font-size:9px;letter-spacing:2px;padding:3px 9px;border-radius:3px;margin-bottom:9px;font-family:'Cinzel',serif;font-weight:600;`;
+
+  document.getElementById('panel-name').textContent = stop.name;
+  document.getElementById('panel-modern-name').textContent = stop.modern || '';
+  document.getElementById('panel-period').textContent = `${stop.year_label || ''} · ${(phase && phase.label) || 'Alexander campaign'} · ${stop.type || 'event'}`;
+  document.getElementById('panel-desc').textContent = [stop.desc, stop.significance].filter(Boolean).join(' ');
+  document.getElementById('panel-desc').style.whiteSpace = '';
+
+  document.getElementById('orbis-card').classList.remove('visible');
+  document.getElementById('quest-progress').style.display = 'none';
+  document.getElementById('checkin-row').style.display = 'none';
+  document.getElementById('panel-quest-banner').className = '';
+  const nearbyEl = document.getElementById('segment-nearby');
+  if (nearbyEl) nearbyEl.style.display = 'none';
+
+  const evidence = [
+    ['Year', stop.year_label || ''],
+    ['Phase', (phase && `${phase.label} · ${phase.years}`) || 'Alexander campaign'],
+    ['Event type', stop.type || 'event'],
+    ['Location certainty', certaintyLabel],
+  ];
+  if (stop.source_note) evidence.push(['Note', stop.source_note]);
+  if (stop.ancient_sources && stop.ancient_sources.length) {
+    evidence.push(['Ancient sources', stop.ancient_sources.join('; ')]);
+  }
+  const evidenceEl = document.getElementById('segment-evidence');
+  if (evidenceEl) {
+    evidenceEl.innerHTML = evidence
+      .filter(([, value]) => value)
+      .map(([label, value]) => `<div class="seg-evidence-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`)
+      .join('');
+    evidenceEl.style.display = 'block';
+  }
+
+  const actions = [];
+  if (stop.links && stop.links.length) {
+    for (const link of stop.links) {
+      actions.push(`
+        <a href="${escapeHtml(link.url)}" target="_blank" rel="noopener" class="p-btn p-btn-gold">
+          <span class="p-btn-icon">↗</span>
+          <div><div class="p-btn-main">${escapeHtml(link.label)}</div><div class="p-btn-sub">Source record</div></div>
+          <span class="p-btn-ext" aria-hidden="true">↗</span>
+        </a>`);
+    }
+  }
+  document.getElementById('panel-actions').innerHTML = actions.join('');
+
+  const panel = document.getElementById('info-panel');
+  panel.classList.remove('segment-panel');
+  panel.classList.remove('alexander-panel');
+  panel.classList.add('alexander-panel');
+  if (!panel.classList.contains('open')) {
+    panelReturnView = { center: map.getCenter(), zoom: map.getZoom() };
+  }
+  panel.classList.add('open');
+  dismissMobileGuide(true);
+  panToWithPanelOffset([stop.lat, stop.lng]);
+}
 
 // ── SITE MARKERS ─────────────────────────────────────────
 
@@ -1199,6 +1405,8 @@ function closePanel() {
   const pulseSiteIdAfterClose = pendingClosePulseSiteId;
   panel.classList.remove('open');
   panel.classList.remove('segment-panel');
+  panel.classList.remove('alexander-panel');
+  setActiveAlexanderLayer(null);
   if (activeMarker) {
     activeMarker.setIcon(makeIcon(activeMarker._site, false));
     activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
@@ -1453,6 +1661,43 @@ function searchItinere(query) {
   }
   hits.sort((a, b) => a.score - b.score || a.itinere.name.localeCompare(b.itinere.name));
   return hits.slice(0, ITINERE_SEARCH_LIMIT);
+}
+
+// ── ALEXANDER SEARCH ──────────────────────────────────────
+function alexanderSearchStrings(stop) {
+  const phase = alexanderPhase(stop);
+  const parts = [stop.name, stop.modern, stop.type, stop.year_label, phase && phase.label];
+  if (Array.isArray(stop.alt_names)) parts.push(...stop.alt_names);
+  return parts.filter(Boolean).map(normalizeSearchText);
+}
+
+function searchAlexander(query) {
+  if (typeof ALEXANDER_STOPS === 'undefined') return [];
+  const tokens = searchQueryTokens(query);
+  if (!tokens.length) return [];
+  const joined = normalizeSearchText(query);
+  const hits = [];
+  for (const stop of ALEXANDER_STOPS) {
+    const name = normalizeSearchText(stop.name);
+    const strings = alexanderSearchStrings(stop);
+    let score;
+    if (name === joined) score = 0;
+    else if (name.startsWith(joined)) score = 1;
+    else if (tokensMatchStrings(tokens, strings)) score = 3;
+    else continue;
+    hits.push({ alexander: stop, kind: 'alexander', bucket: 'alexander', match: 'Alexander campaign', score });
+  }
+  hits.sort((a, b) => a.score - b.score || a.alexander.year - b.alexander.year);
+  return hits.slice(0, 8);
+}
+
+function alexanderSearchMeta(stop) {
+  const phase = alexanderPhase(stop);
+  const bits = ['Alexander'];
+  if (stop.type) bits.push(stop.type[0].toUpperCase() + stop.type.slice(1));
+  if (stop.year_label) bits.push(stop.year_label);
+  if (phase) bits.push(phase.label);
+  return bits.join(' · ');
 }
 
 function itinereSearchMeta(entry) {
@@ -2355,6 +2600,7 @@ function showSegmentPanel(meta, latlngs) {
     </a>${emailBtn}`;
 
   const panel = document.getElementById('info-panel');
+  panel.classList.remove('alexander-panel');
   panel.classList.add('segment-panel');
   // A road tap opens this panel WITHOUT panning the map, so there's nothing to
   // "return" from. Snapshotting a view here meant closePanel later flew you back
@@ -2391,6 +2637,8 @@ function saveReturnState() {
 // unlike the layer-level clicks that forced the marker/road touch delegation.
 map.on('click', (e) => {
   closeDockPanels();      // a tap on the open map dismisses any dock popover
+  const alex = findNearestAlexanderStop(e.latlng, e.containerPoint);
+  if (alex) { showAlexanderPanel(alex._alexanderStop, alex); return; }
   const seg = findNearestItinere(e.latlng, e.containerPoint);
   if (seg) { showSegmentPanel(seg.meta, seg.ll); return; }
   const cov = findNearestCoverage(e.latlng, e.containerPoint);  // only resolves when dots show
@@ -2482,7 +2730,7 @@ function setEra(era) {
 
 // ── LAYER TOGGLES ────────────────────────────────────────
 
-const layerState = { roads:true, sites:true };
+const layerState = { roads:true, sites:true, alexander:false };
 
 function toggleLayer(which) {
   dismissMobileGuide(true);
@@ -2503,7 +2751,7 @@ function toggleLayer(which) {
     // CSS-only — does not mutate the group, so it can't trip the mobile repaint
     // bug that membership + content changes in one handler would.
     decorateRoadsLegend();
-  } else {
+  } else if (which === 'sites') {
     // Sites & Cities is the MASTER layer switch, conceptually above the tier
     // filter. Operating it un-hides every tier so the toggle always means the
     // full sites layer. Without this, a leftover hidden tier would make "Sites &
@@ -2516,6 +2764,9 @@ function toggleLayer(which) {
     // map" bug). Never removing the group sidesteps it: refreshVisibleMarkers shows
     // nothing when sites is off.
     refreshVisibleMarkers();
+  } else if (which === 'alexander') {
+    refreshAlexanderLayer();
+    if (layerState.alexander) fitAlexanderBoundsOnce();
   }
 }
 

@@ -188,6 +188,9 @@
   <button class="ctrl-btn active" id="btn-sites" data-testid="sites-filter-button" onclick="toggleLayer('sites')">
     <span class="ctrl-icon" aria-hidden="true">🏛️</span><div class="swatch-dot"></div><span class="ctrl-label">Sites &amp; Cities</span>
   </button>
+  <button class="ctrl-btn" id="btn-alexander" data-testid="alexander-layer-button" onclick="toggleLayer('alexander')">
+    <span class="ctrl-icon" aria-hidden="true">A</span><div class="swatch-campaign"></div><span class="ctrl-label">Alexander</span>
+  </button>
   <div class="detail-control" id="detail-control" data-testid="detail-filter-control" aria-label="Map detail">
     <div class="detail-head">
       <span class="detail-title">Detail</span>
@@ -253,6 +256,7 @@
   <div class="legend-hint legend-layers-hint">Layers</div>
   <div class="legend-row legend-layer-row active" id="legend-roads-toggle" data-testid="roads-layer-row" data-layer="roads" role="button" tabindex="0" onclick="toggleLayer('roads')"><div class="legend-line solid"></div>Roman Roads</div>
   <div class="legend-row legend-layer-row active" id="legend-sites-toggle" data-testid="sites-layer-row" data-layer="sites" role="button" tabindex="0" onclick="toggleLayer('sites')"><div class="legend-dot" style="background:var(--gold)"></div>Sites &amp; Cities</div>
+  <div class="legend-row legend-layer-row" id="legend-alexander-toggle" data-testid="alexander-layer-row" data-layer="alexander" role="button" tabindex="0" onclick="toggleLayer('alexander')"><div class="legend-line alexander"></div>Alexander</div>
   <div class="legend-sep legend-layers-sep"></div>
   <div class="legend-hint">Tap to filter<button id="legend-info-btn" onclick="openLegendInfo()" aria-label="What do these terms mean?" title="What do these mean?">?</button></div>
   <div class="legend-row" data-testid="site-tier-filter" data-tier="documented" role="button" tabindex="0" onclick="toggleTier('documented')"><div class="legend-dot" style="background:#b89a6a"></div>Documented</div>
@@ -371,6 +375,7 @@
   }
 </script>
 <script src="js/data.js?v=106"></script>
+<script src="js/alexander.js?v=106"></script>
 <script src="js/auth.js?v=106"></script>
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->

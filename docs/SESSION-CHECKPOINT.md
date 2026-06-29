@@ -1,251 +1,103 @@
-# VIA — Session checkpoint (updated 2026-06-24)
+# VIA — Session checkpoint (updated 2026-06-29)
 
-## STATUS AT A GLANCE
-- **Track 1 — Stadia basemap: DONE.** Shipped, live, verified on-device.
-- **Track 2 — Mobile Dock redesign: DONE.** Shipped to `main` (commit `560ea50`), live on
-  `danielkorr.github.io`, verified on iPhone at `VIA v84`. The original "crowded and clumsy"
-  complaint is fixed: chrome collapsed into one bottom dock (Search · DETAIL · KEY), map-first,
-  +/- zoom control, detail panel scrolls without truncation, attribution ⓘ above the dock.
-- **Track 3 — Mobile interaction fixes: NOT shippable yet — known bug to fix before push.**
-  Follow-up A (3a + 3b + 3d) already on `main` (commit `7610455`, v85). Follow-up B (3c
-  searchable roads + persistent road highlight) merged to **`main` locally (fast-forward to
-  `abff7d3`, v87), 5 commits ahead of `origin/main`, NOT pushed.** v87 still carries the
-  **mini-banner bug** (option-2 fix decided, not yet coded — see "NEXT SESSION" below).
-  **Do NOT push v87.** ← correct order: code the banner fix → bump v87→v88 → re-gate on phone →
-  push the clean build once.
-
-> Lesson logged: the local dev server serves *uncommitted working-tree* files, so the phone on
-> the LAN IP showed v84 while production was still v83 — the Dock work had never actually been
-> committed despite the plan saying it would. **Always `git log --oneline -1` to confirm a
-> commit exists before calling something shipped.**
+## Status at a glance
+- **`main`** — clean, current, everything below shipped & live on GitHub Pages.
+  Cache tokens: `app.js` / `style.css` = **v108**, `sites-linked-data.js` = **v107**
+  (the data files config/orbis/pleiades/vici still ride **v106**, unchanged).
+- **`alexander-module`** — new feature branch (origin-tracked), the Alexander
+  campaign layer isolated off `main`. Not deployed. See its section below. ⏭ resume there.
+- HEADs: `main` = `bdd57c3`, `alexander-module` = `bcea734`.
 
 ---
 
-## ⏭ NEXT SESSION — close Track 3 (do this first)
+## Shipped this session (on `main`, live)
 
-`main` holds v87 locally (unpushed). **Do not push it** — v87 ships a known flaw. Fix, then ship
-once.
-
-1. **Code the mini-banner fix (option 2):** clear the road **mini-banner** when the **detail card
-   closes.** Decided last session, not yet coded. Today the contextual road mini-banner (the
-   "Via Appia" identity strip from 3b) persists after the detail card is dismissed — option 2 is
-   to clear it on card close. Work on `road-search` or a small follow-up branch off `main`.
-2. **Bump cache token v87 → v88** (every css/js sub-resource in `index.html`).
-3. **Re-gate on the phone.** The LAN dev server was just **not running** last session (hence
-   `ERR_CONNECTION_REFUSED` on `10.0.0.218`) — restart it bound to all interfaces:
-   `python -m http.server 8080 --bind 0.0.0.0`, then load `http://<machine-LAN-IP>:8080`.
-   Confirm: road highlight persists after close, road framing clears panel + top toggle, AND the
-   mini-banner now clears when the card closes.
-4. **THEN push `main` once** — one clean v88 build to production, not a buggy v87 followed by a
-   fixup.
-
-> Why hold: pushing `main` deploys to GitHub Pages immediately. A dead LAN dev server is not a
-> reason to ship an unverified, known-buggy build. Restart the server next session instead.
-
----
-
-## Track 1 — Stadia basemap ✅ SHIPPED
-
-On `main`, live on GitHub Pages, verified on iPhone (LAN IP + live domain).
-
-**What shipped:**
-- Ancient-mode floor is a stack (bottom→top): **keyless sepia-CARTO base → Stamen (Stadia)
-  → Toner labels (watercolor only) → DARE**. When Stamen can't authenticate/load, its tiles
-  render transparent and the CARTO base shows through — **ancient mode never goes white**.
-  Pure layer stacking, no tileerror handler.
-- Modern mode unchanged (CARTO Voyager). DARE + Esri satellite untouched.
-- Constant is **`ACTIVE_ANCIENT_FLOOR`** (`terrain` default | `watercolor`) — controls the
-  Stamen top layer only.
-- Auth: **domain-based, no API key in repo.** Whitelisted in the Stadia dashboard:
-  `danielkorr.github.io` (all-subdomains, covers apex) and the dev LAN IP `10.0.0.218`.
-  `localhost`/`127.0.0.1` keyless. (LAN IP is DHCP — may need re-adding if it changes;
-  consider a router reservation.)
-- Attribution via Leaflet's native control; CARTO base credit shows in ancient mode too.
-
-**Key commits:** `11c82d3` (rename) → `34a6c61` (fallback floor) → `00765f6` (initial migration).
-**Files:** `js/basemap.js` (`window.VIA_createAncientFloor()`), `js/app.js` (ancient stack),
-`css/style.css` (`.ancient-sepia-floor`), `index.html`, `docs/v1-spec-stadia-basemap.md`.
+- **Pleiades Linked Data Sidebar** — site panels show a "Primary sources &
+  evidence" card: inbound scholarly cross-refs (EDH inscriptions, ToposText texts,
+  Nomisma coins, MANTO myth, AGO, PAThs). **Evidence-only by design** — Vici, Itiner-e,
+  and identity hubs (Wikidata/GeoNames/Getty/VIAF/Trismegistos/WHG) are excluded
+  (already in VIA or one Pleiades click away). Built for all **960 foreground markers**
+  (470 have data); coverage long-tail excluded. Builder `scripts/build-linked-data.mjs`
+  reads the `pleiades.datasets` GitHub bulk `data/sidebar/` (sidesteps the live-site
+  bot wall), caches `.cache/pleiades-sidebar/`, emits `js/sites-linked-data.js`.
+  Commits `414661b` (spike) → `fa63a6a` (foreground) → `8d7201a` (cache).
+- **Map polish** (`988705b`): primary roads toned down (casing 6→4.5 @ opacity 0.7,
+  saffron core 3→2 @ 0.92 — quieter on first load, keeps luminance contrast);
+  documented markers 9→11px; coverage dots now scale with zoom (3px→7px at z14+);
+  search-select pulse 2→4 rings.
+- **Topbar desktop fixes** (`bdd57c3`): "Ancient World Explorer" subtitle 8→11px @
+  opacity 0.45→0.72; Sign-in pill enlarged + full-gold text + gold-dim border (peer
+  of the era toggle). **Mobile subtitle stays hidden** — at 375px it collides with the
+  centered era toggle (verified); comment in the mobile CSS records why.
+- **WebKit/touch test harness** — `tests/webkit-touch/` (Playwright WebKit + iPhone,
+  real `touchscreen.tap()`), the only test that exercises the `COARSE_POINTER`/`touchend`
+  path Chromium/`browse` can't. Also installed machine-wide as the **`/webkit-touch`
+  skill** (`~/.claude/skills/webkit-touch/`, local-only — `.claude/` is gitignored;
+  VIA's `tests/webkit-touch/` is the portable reference). One-time setup: `npm install`
+  + `npx playwright install webkit` (no Mac needed). Gotcha: WebKit-on-Windows reports
+  `maxTouchPoints=0`, so the test asserts the `coarse||maxTouch||ontouchstart` composite.
 
 ---
 
-## Track 2 — Mobile Dock redesign ✅ SHIPPED
+## Alexander module — branch `alexander-module` ⏭ RESUME HERE for that work
 
-Shipped to `main` (commit `560ea50`), live, verified on iPhone at `VIA v84`.
+In-progress campaign-route layer, deliberately isolated off `main` so the live site
+stays focused. Pushed to origin (tracking set).
 
-**What shipped:** chrome collapsed into one bottom **dock (Search · DETAIL · KEY)**; map is
-full-bleed/map-first; era toggle + VIA wordmark + profile pill stay in the top bar; **+/− zoom
-control** added (bottom-right) and pinch-zoom confirmed working; detail panel **scrolls the
-full road/site detail with no truncation** (removed the `-webkit-line-clamp` on `#panel-desc`
-and `.quest-banner-text`); KEY panel holds the roads/sites master toggles plus tier/certainty
-filters; attribution **ⓘ popover repositioned above the dock** (kept the ⓘ pattern from commit
-`548de9c` rather than a persistent native credit line). One-closes-others + tap-map-to-dismiss
-working. Cache token **v84**.
+**What's on the branch** (commit `bcea734`, branched from `main @ 988705b`):
+- `js/alexander.js` (`ALEXANDER_STOPS` data), `docs/v2-spec-alexander-layer.md`,
+  `docs/alexander-wireframes.html`.
+- `app.js`: `alexanderRouteGroup`/`StopsGroup`, route+stop rendering, phase styling,
+  `showAlexanderPanel`, `findNearestAlexanderStop`, `searchAlexander`, `layerState`
+  + `toggleLayer('alexander')`, map-click resolution, panel-class reset.
+- `index.html`: Alexander layer button + legend row + `alexander.js` script tag.
+- `css`: `.swatch-campaign`, `.legend-line.alexander`, `#info-panel.alexander-panel`.
 
-**Spec:** `docs/v1-spec-mobile-dock.md`. Dead branch `mobile-dock-redesign` can be deleted
-(the work landed directly on `main`; the branch never held it).
+**Behind `main` by 2 commits** it doesn't have: `515ac15` (cache v107) and `bdd57c3`
+(topbar fix v108). It DOES include the map-polish (`988705b` was its branch point).
 
-**Optional polish noted, not done:** sticky panel title (road name stays pinned while the body
-scrolls); the representative image scrolls away with content, which is fine/expected.
+**Integration risks when merging back into `main` (read before merging):**
+1. **`index.html` version-token conflict.** Branch still has `app.js`/`style.css`
+   `?v=106` (+ `alexander.js?v=106`); `main` moved them to `v108`. A merge WILL
+   conflict on those `<script>`/`<link>` token lines. Resolve = take `main`'s `v108`
+   for app/css, then bump again to bust cache, and re-add the `alexander.js` tag at the
+   same version.
+2. **`alexander.js` script tag lives only on the branch** — confirm it survives the
+   merge (it's the one new asset main has never seen).
+3. **`toggleLayer` restructure.** The branch changed the curated-roads `} else {` into
+   `} else if (which === 'sites')` to add an `alexander` branch. Merge against main's
+   current `app.js` and verify that chain is intact (no keyword-collision; it's the one
+   Alexander change with no "alexander" string in it).
+4. **Staleness.** Best to `git rebase main` (or merge main in) on the branch BEFORE
+   resuming, to pull in road polish/topbar/cache bumps and shrink the eventual diff.
 
----
-
-## Track 3 — Mobile interaction fixes (Follow-up A on `main`; 3c code-complete) ⏭ MERGE + LIVE CONFIRM
-
-Surfaced during on-device Dock testing. **Not** chrome-reorg items — they are about whether the
-map *responds* the way a thumb expects, which is the core of the mobile UX this whole effort is
-for. Treat as first-class. Spec each as its own discovery-first branch off a clean `main`;
-manual on-device gate.
-
-### Status & sequence
-- **Follow-up A — map gesture + filter fixes (3a + 3b + 3d):** ✅ DONE and **already on `main`**
-  (commit `7610455`, **v85** — `main` is at `f46e0ad`, whose parent is `7610455`).
-- **Follow-up B — searchable roads + persistent road highlight (3c):** code on `main` locally
-  (merged fast-forward to `abff7d3`, **v87**, unpushed). Commits `1e15286` 3c part 1 → `764e075`
-  3c part 2 → `63250f6` highlight/framing. Headless-gated desktop + mobile. **NOT shippable:**
-  v87 still has the mini-banner bug (option-2 fix not coded). **Owed before push:** banner fix →
-  v88 → phone re-gate → push once. See "NEXT SESSION" at top.
-
-### 3a. Double-tap a marker should zoom, not open detail ✅ DONE
-- Implemented: mobile marker `touchend` runs a tap/double-tap discriminator — double-tap on the
-  same pin zooms one level (repeatable); lone tap opens detail after a ~280 ms window. Desktop
-  click/dblclick untouched. On-device confirmed.
-- **Decision: pins-only — NOT extended to roads.** Roads are continuous lines with adjacent open
-  map to double-tap for native zoom, and they're canvas segments (proximity-resolved) where a
-  discriminator would cost more and tangle with the 3b threshold. "Double-tap-zoom on roads" is
-  a **deferred maybe**, not planned.
-
-### 3b. Secondary/smaller road segments don't respond to taps ✅ DONE
-- Root cause (found via desktop repro): resolver/binding were FINE — desktop click within ~14px
-  of a secondary already opened its panel. The gate was the touch path: the handler acted only
-  on curated SVG paths and bailed on canvas taps. Fix: canvas taps now resolve the nearest
-  segment themselves; threshold widened 14→26px **on coarse pointers only**. On-device confirmed:
-  thin unnamed secondaries open their panel; named roads still tooltip + panel.
-- **Watch (flagged, accepted):** in dense areas, tapping "empty" map near a road can now open
-  that road's panel instead of dismissing (same as desktop already behaved). Dock close still
-  works. Revisit only if it feels wrong in use.
-- **~~Note (intended, not a bug)~~ → SUPERSEDED:** the contextual road mini-banner (the
-  "Via Appia" identity strip) that stays visible after the detail card closes was first kept as a
-  feature, but on-device it reads as a stuck banner. **Decision reversed — option 2: clear the
-  road mini-banner when the detail card closes.** Not yet coded; it's the v88 blocker in
-  "NEXT SESSION" above.
-
-### 3c. Roads should be searchable, with compound/alias matching ✅ DONE (code-complete, v87)
-- Today: search indexes *sites* only; roads aren't searchable. So "Via Appia", "Appian Way",
-  "Rome to Tibur" all miss. Compound/multi-word and alias queries match weakly even for sites
-  (looks like single-substring matching on one field).
-- **Wanted:** index road segments with multiple searchable strings — Latin name (Via Appia),
-  common English name (Appian Way), ancient-itinerary names, and an endpoint pair (Rome–Tibur)
-  — and match on any token, not one substring. Itiner-e name/itinerary coverage is uneven (per
-  AGENTS.md), so some segments will have nothing to index — expected.
-- Meatiest of the set (real feature, data/indexing dimension); arguably highest user value —
-  "search for the Appian Way" is how a visitor actually thinks.
-
-### 3d. Filter precedence — tier toggles vs the DETAIL slider ✅ DONE
-- Root cause: `activeTiers` was **additive** (empty = "everything per slider"; selecting = "all
-  those tiers, ignoring slider") — that inversion was the inconsistency.
-- Implemented **subtractive** model: tiers default ON, **all legend rows lit at rest**; tapping a
-  lit row hides that tier permanently regardless of slider ("off means off"); slider only
-  sub-filters density among shown tiers; all tiers off → clean empty quest map. Proven headless
-  (hiding Photo at full detail: 960→445 markers; slider cycle leaves 445 — slider can't revive a
-  hidden tier) and confirmed on-device.
+**Not to be confused with:** the OneDrive "Cowork" density folder — that was an
+*old-architecture* fork that bulk-injected ~900 Pleiades places into a monolithic
+`data.js`; it was rejected (would regress the build-split site, and those places already
+exist in the coverage layer). Alexander is unrelated new work.
 
 ---
 
-## Standing project rules (from AGENTS.md)
-- No ES modules — plain global `<script>` tags.
-- Bump `?v=N` cache token on every CSS/JS change (every sub-resource). **Currently v87.**
-- No build / package manager / test runner / `tools/` dir. QA is **manual, on-device (iPhone Safari)**.
-- Don't touch: generated files (`js/roads-itinere.js`, `js/sites-pleiades.js`,
-  `js/orbis-days.js`, `js/pleiades-photos.json`), Supabase auth (`js/auth.js`, ES256 wedge),
-  or the Pleiades-URI marker join key.
-- Deploy = push to `main` (GitHub Pages). **Verify with `git log --oneline -1` that work is
-  actually committed before calling it shipped — the local server serves uncommitted files.**
-- Agent guides: Claude Code reads `CLAUDE.md`; `AGENTS.md` is the Codex/outside-reviewer landmines doc.
+## Standing project rules (full detail in `CLAUDE.md` / `AGENTS.md`)
+- No ES modules — plain global `<script>` tags. No build / package manager / test
+  runner (the dev-only `package.json` exists solely to pin Playwright for webkit-touch).
+- **Bump `?v=N` on every CSS/JS change** so mobile Safari refetches. Currently **v108**
+  (app/css). Keep `app.js` and `style.css` matched.
+- Don't hand-edit generated files: `js/roads-itinere.js`, `js/sites-pleiades.js`,
+  `js/sites-coverage.js`, `js/sites-vici.js`, `js/sites-linked-data.js`, `js/orbis-days.js`,
+  `js/pleiades-photos.json`. Don't touch Supabase auth (`js/auth.js`, ES256 wedge).
+- Deploy = push to `main` (Pages). **`git log --oneline -1` to confirm a commit landed
+  before calling it shipped** — the dev server serves uncommitted working-tree files.
+- Mobile final sign-off = real iPhone Safari; `tests/webkit-touch/` is the headless net.
 
 ---
 
-## Open product questions (not tied to a current track)
-
-### Photo Quest submission pipeline — "Submit it / #VIAquest" (logged 2026-06-23)
-The Photo Quest panel (step 3) tells users to share on social with **#VIAquest** and promises
-"we'll relay confirmed submissions back to Pleiades' scholarly record." **That pipeline does
-not exist yet — the copy currently overpromises.** Decisions to make (orthogonal to Track 3):
-
-- **`#VIAquest` is a hashtag, not a handle.** No account is strictly required for the tag, but
-  a tag no one monitors is a dead drop. Submissions only reach you if something/someone watches
-  the tag, OR there's a non-social intake path. Resolve before the copy ships for real.
-- **Human-in-the-loop is the right design, not a limitation.** The value is contributing to an
-  *authoritative scholarly* record (Pleiades); that authority depends on verification (is the
-  photo real, correctly located, usable?) — which can't be safely automated. Question is *who*
-  curates and *how much friction*, not whether. For v1 the curator is almost certainly **Dano**.
-- **Do NOT wire submitters directly to scholarly record-keepers.** Tension: a direct line dumps
-  an unvetted firehose onto volunteer academics and routes around Pleiades' own contribution
-  process/standards. Better model = three layers: **Intake** (hashtag monitor / form / email) →
-  **Curation** (Dano vets) → **Hand-off** (verified items proposed to Pleiades *through Pleiades'
-  own channels*).
-- **Options, by effort:** (a) soften the copy to match reality now ("reviewed for inclusion",
-  drop the firm Pleiades promise); (b) build a real intake you control (simple form: photo +
-  coords + email) instead of relying on a social hashtag; (c) build the full pipeline with a
-  curation queue + defined Pleiades hand-off (real project, later).
-- **Leaning:** the copy overpromises today — fix that first via (a) or commit to monitoring an
-  intake (b). "Direct to scholar" (c) appealing but route through Dano → Pleiades properly.
-- **NEXT (Dano):** check Pleiades' actual contribution process to learn what's realistically
-  promiseable and whether the copy can honestly say "Pleiades" at all.
-
----
-
-## 3c on-device gate findings (2026-06-24) — road highlight is REQUIRED, not polish
-
-Road search works (Via Appia, Via Egnatia surface; panel content is excellent —
-"Dyrrachium to Byzantium", sites-along-this-stretch with distances, Livius credit). But the
-on-device gate on a LONG road (Via Egnatia) exposed a real defect:
-
-- **The panel + era toggle cover the road.** fitBounds frames the road, then the full-height
-  panel immediately occludes it — on a long road crossing mid-screen, you can't see what you
-  searched for.
-- **Closing the panel leaves the user lost** — nothing on the map marks where the road was.
-
-**Decision: road highlight is part of 3c acceptance, not a follow-up.** Without a persisted
-on-map highlight, search→panel→close dumps the user nowhere. Add to the road-search branch
-BEFORE merge:
-- On select, **highlight the road** on the map (brighter/thicker/glow) and **keep the
-  highlight after the panel closes** so the user can see/follow it. Clear on new search / deselect.
-- Make selection **road-first**: frame the highlighted road in the VISIBLE area (account for
-  panel height + top toggle), or open a smaller peek rather than the full-height panel. Road is
-  the star; panel secondary.
-- Re-gate on a long road (Egnatia) AND a short one (Rome–Tibur). Bump v86→v87.
-
-Still to verify in the gate once highlight lands: **site-search regression** (Pompeii / pomp /
-Naples behave as before; "pompeii italy" now resolves).
-
-### 3c gate update (2026-06-24, late) — highlight WORKS; one precise issue: leftover mini-banner
-On-device (phone, v87, LAN IP): road search + highlight **work correctly on mobile** (Via Appia /
-Via Egnatia show the bright line; framing + close-keeps-it-framed behave). The tall detail card is
-fine and dismisses cleanly. **The one real issue:** after the detail card is closed, a persistent
-**mini-tag/banner** remains and **overlays the highlighted road itself** (e.g. sits on top of the
-lit Via Appia), partly obscuring the very thing it labels. Narrow fix — NOT a broad declutter.
-
-Decision needed next session — pick one:
-- (1) Keep a road-name label but **reposition it clear of the road** (corner-anchor or offset),
-  so it labels without covering the highlighted line.
-- (2) **Clear the mini-banner when the detail card closes** — once the card's gone, the bright
-  highlight alone carries "this is the road," so the banner is redundant + obstructive.
-- **DECIDED → (2).** User confirmed: the mini-banner is overkill once the road is highlighted.
-  Next-session fix = when the road detail card closes, also clear/hide the persistent road
-  mini-banner; the highlight alone marks the road. (Leave desktop behavior as-is unless it
-  regresses.)
-
-Then re-gate on phone (Egnatia + Appia: lit road clearly visible/followable after card close,
-banner not covering it) + the still-outstanding **site-search regression** check (Pompeii / pomp /
-Naples unchanged; "pompeii italy" resolves). **State now:** v87 is merged to `main` locally
-(fast-forward `abff7d3`), **unpushed**. Next commit = mini-banner fix (option 2) → **bump
-v87→v88** → phone re-gate → push the clean v88 once. Restart the dead LAN dev server first:
-`python -m http.server 8080 --bind 0.0.0.0`.
-
----
-
-## Chrome polish backlog (separate from 3c)
-- **Toggle / wordmark swap (mobile):** the ANCIENT/MODERN toggle is a large block low over the
-  map and the VIA wordmark crowds the top-left over country labels. Swap the hierarchy — era
-  toggle pinned at the very top, VIA wordmark below-left. Small chrome tweak, own task (or a
-  "Dock polish v2" pass with the deferred sticky-panel-title).
+## Open threads (not done — condensed; expand from git history if revisited)
+- **Photo Quest `#VIAquest` pipeline overpromises.** Panel step-3 promises confirmed
+  submissions relayed to Pleiades, but no intake/curation pipeline exists. Right model =
+  Intake → Dano curates → hand-off through Pleiades' own channels. Near-term: soften the
+  copy OR stand up a real intake form. Dano to check Pleiades' contribution process for
+  what's honestly promiseable.
+- **Top-chrome hierarchy.** The ANCIENT/MODERN era toggle is visually loud but
+  functionally minor (set-once). Consider shrinking/subordinating it (search + nav are
+  primary). Partly touched by the topbar fix; the toggle demotion itself is still open.

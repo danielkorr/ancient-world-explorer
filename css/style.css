@@ -1444,7 +1444,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   border-radius: 50%;
   border: 2px solid currentColor;
   box-shadow: 0 0 0 2px rgba(255,255,255,0.55), 0 0 14px currentColor;
-  animation: selectedMarkerPulse 0.7s ease-out 2;
+  animation: selectedMarkerPulse 0.7s ease-out 4;
   pointer-events: none;
 }
 

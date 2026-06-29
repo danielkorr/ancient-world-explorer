@@ -445,9 +445,9 @@ function showRoadsToast(cert) {
 }
 
 const ROAD_CASING_COLOR = '#1a0e00';     // deep umber — dark enough vs both sepia and DARE
-const ROAD_CASING_WEIGHT = 6;
+const ROAD_CASING_WEIGHT = 4.5;          // toned down from 6 — less overwhelming on first load
 const ROAD_FILL_COLOR    = '#ffd66b';     // bright saffron — high luminance vs casing
-const ROAD_FILL_WEIGHT   = 3;
+const ROAD_FILL_WEIGHT   = 2;            // toned down from 3 — slimmer saffron core
 
 // Open the road-segment panel for a tap/click at `latlng`: the nearest Itiner-e
 // segment wins; otherwise fall back to the curated road's own rich copy. The
@@ -472,7 +472,7 @@ ROADS.forEach(road => {
   L.polyline(latlngs, {
     color: ROAD_CASING_COLOR,
     weight: ROAD_CASING_WEIGHT,
-    opacity: 0.85,
+    opacity: 0.7,
     lineCap: 'round',
     lineJoin: 'round',
     interactive: false,
@@ -480,12 +480,12 @@ ROADS.forEach(road => {
   L.polyline(latlngs, {
     color: ROAD_FILL_COLOR,
     weight: ROAD_FILL_WEIGHT,
-    opacity: 1,
+    opacity: 0.92,
     lineCap: 'round',
     lineJoin: 'round',
     interactive: false,          // purely the visible stroke; the hit-line below handles taps
   }).addTo(roadsGroup);
-  // Invisible fat hit-line. A 3px road is nearly impossible to land a finger on,
+  // Invisible fat hit-line. A 2px road is nearly impossible to land a finger on,
   // and the name tooltip used to be hover-only (no hover exists on touch — that's
   // why road names vanished on mobile). This wide transparent stroke makes the road
   // tappable, and `click` opens the name on a phone while hover still works on desktop.
@@ -527,7 +527,7 @@ const COARSE_POINTER = !!(
   || (navigator.maxTouchPoints > 0)
   || ('ontouchstart' in window)
 );
-// 18px of padding around a 9px dot = a 45px tap target (50px on the 14px quests),
+// 18px of padding around an 11px dot = a 47px tap target (50px on the 14px quests),
 // clearing Apple's 44px minimum. Visible dot size is unchanged — only the
 // invisible hit box grows, so the map looks identical but fingers stop missing.
 const HIT_PAD = COARSE_POINTER ? 18 : 0;
@@ -552,7 +552,7 @@ function makeIcon(site, hovered) {
   const color  = quest ? quest.color : (TYPE[site.type]?.color || '#d4a853');
   // Quests render larger than documented dots — they're the actionable layer
   // and need to be easy to spot.
-  const sz     = hovered ? 18 : (quest ? 14 : 9);
+  const sz     = hovered ? 20 : (quest ? 14 : 11);
   const hit    = sz + HIT_PAD * 2;  // transparent tap area around the dot
   const shape  = quest ? (quest.shape || 'circle') : 'circle';
 
@@ -676,7 +676,7 @@ function triggerMarkerPulse(marker) {
   pulseTimer = setTimeout(() => {
     pulseSiteId = null;
     marker.setIcon(makeIcon(marker._site, marker === activeMarker || marker === previewMarker));
-  }, 1400);
+  }, 2850);   // 4 broadcast rings (0.7s each) — see .selected-marker-pulse
 }
 
 function markerForSite(site) {
@@ -1577,11 +1577,24 @@ function coverageDotFill() {
   return 0.30 + t * 0.5;   // 0.30 at the reveal edge → 0.80 two zooms deeper
 }
 
+// Coverage dots scale up as you zoom into finer levels so they stop reading as
+// pinpricks against the detailed deep-zoom basemap. Quiet (3px) at the reveal
+// floor where they're dense; larger (up to 7px) once you've committed to an area.
+function coverageDotRadius() {
+  const z = map.getZoom();
+  if (z >= 14) return 7;
+  if (z >= 13) return 6;
+  if (z >= 12) return 5;
+  if (z >= 11) return 4.5;
+  if (z >= 10) return 4;
+  return 3;
+}
+
 function renderCoverageDots() {
   coverageDotsGroup.clearLayers();
   if (!coverageVisible()) return;
   const fill  = coverageDotFill();
-  const style = Object.assign({}, COVERAGE_DOT_STYLE, { fillOpacity: fill, opacity: Math.min(0.7, fill + 0.05) });
+  const style = Object.assign({}, COVERAGE_DOT_STYLE, { radius: coverageDotRadius(), fillOpacity: fill, opacity: Math.min(0.7, fill + 0.05) });
   const b = map.getBounds().pad(0.2);
   let n = 0;
   for (const r of _coverageData) {

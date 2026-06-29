@@ -2,16 +2,41 @@
 
 ## Status at a glance
 - **`main`** — clean, current, everything below shipped & live on GitHub Pages.
-  Cache tokens: `app.js` / `style.css` = **v108**, `sites-linked-data.js` = **v107**
+  Cache tokens: `app.js` / `style.css` = **v111**, `sites-linked-data.js` = **v107**
   (the data files config/orbis/pleiades/vici still ride **v106**, unchanged).
 - **`alexander-module`** — new feature branch (origin-tracked), the Alexander
   campaign layer isolated off `main`. Not deployed. See its section below. ⏭ resume there.
-- HEADs: `main` = `bdd57c3`, `alexander-module` = `bcea734`.
+- HEADs: `main` = `0c07cd3`, `alexander-module` = `bcea734`
+  (branch now **6 commits behind** `main`: linked-data + map polish + topbar + the
+  v109–v111 map-features/declutter work below).
 
 ---
 
 ## Shipped this session (on `main`, live)
 
+- **Dual-name labels + Empire inset** (`8af3474`) — two OrganicMaps-inspired features.
+  *Names* layer chip (bottom controls) paints permanent on-map labels pairing the
+  ancient name (Cinzel gold) over the modern one (dim Inter), e.g. *Londinium / London*;
+  gated three ways so it never clutters: layer on **+** zoom ≥ `MIN_LABEL_ZOOM` (7) **+**
+  marker individually visible (not clustered). Non-interactive tooltips (never steal a
+  tap); `refreshNameLabels()` re-runs on view change and whenever the marker set changes.
+  *Empire inset* = a fixed top-left locator (desktop only, **collapsed by default** to a
+  "The Empire ▸" pill) showing the DARE atlas at empire scale over a keyless sepia CARTO
+  floor, with a gold rectangle tracking the main viewport; click to fly there. Own
+  tile-layer instances; skipped in `?qa=1`.
+- **Chrome declutter** (`3326a05`) — fixed a **pre-existing** desktop double-toggle: the
+  legend's Roman Roads / Sites & Cities rows are meant to be mobile-only but
+  `.legend-row{display:flex}` was beating `.legend-layer-row{display:none}` on source
+  order, so they leaked onto desktop and duplicated the bottom-left chips. Scoped the
+  hide/show rules to `#quest-legend .legend-layer-row` so they win. Also moved the empire
+  inset out of the bottom-left corner (it collided with `#bottom-controls`) into the free
+  top-left slot below the era toggle.
+- **Hover-label cleanup** (`0c07cd3`) — desktop hover stacked two labels wherever a
+  curated road overlaps the Itiner-e baseline. Trimmed the curated-road tooltip from
+  name+desc+date (3 lines) to just the road name (full desc/date still open in the road
+  panel on click), and the cursor-following segment-name readout now suppresses itself
+  while a `.road-tip` is open (it named the same road). The new dual-name layer was NOT
+  the culprit — verified correctly gated off below zoom 7.
 - **Pleiades Linked Data Sidebar** — site panels show a "Primary sources &
   evidence" card: inbound scholarly cross-refs (EDH inscriptions, ToposText texts,
   Nomisma coins, MANTO myth, AGO, PAThs). **Evidence-only by design** — Vici, Itiner-e,
@@ -81,7 +106,7 @@ exist in the coverage layer). Alexander is unrelated new work.
 ## Standing project rules (full detail in `CLAUDE.md` / `AGENTS.md`)
 - No ES modules — plain global `<script>` tags. No build / package manager / test
   runner (the dev-only `package.json` exists solely to pin Playwright for webkit-touch).
-- **Bump `?v=N` on every CSS/JS change** so mobile Safari refetches. Currently **v108**
+- **Bump `?v=N` on every CSS/JS change** so mobile Safari refetches. Currently **v111**
   (app/css). Keep `app.js` and `style.css` matched.
 - Don't hand-edit generated files: `js/roads-itinere.js`, `js/sites-pleiades.js`,
   `js/sites-coverage.js`, `js/sites-vici.js`, `js/sites-linked-data.js`, `js/orbis-days.js`,

@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════
-//  VIA — build-linked-data.mjs   (SPIKE — curated sites only)
+//  VIA — build-linked-data.mjs   (foreground sites)
 //
 //  Incorporates the Pleiades "Linked Data Sidebar"
 //  (https://pleiades.stoa.org/help/linked-data-sidebar): the aggregation
@@ -29,12 +29,13 @@
 //  Grouped by source, scholarly sources first, capped per source.
 //
 //  Usage:
-//    node scripts/build-linked-data.mjs            # all curated pleiades ids
+//    node scripts/build-linked-data.mjs            # all foreground pleiades ids (960)
 //    node scripts/build-linked-data.mjs --sample 8 # spike a handful
 //    node scripts/build-linked-data.mjs --refresh  # bust the sidebar cache
 //
-//  SPIKE SCOPE: curated sites only (ids in js/data.js). Phase 2 would extend
-//  to foreground Pleiades ids and emit alongside the other build outputs.
+//  SCOPE: foreground = curated + SITES_PLEIADES + SITES_VICI (the real markers /
+//  full panels), deduped. The ~25k coverage long tail is excluded (thin panel,
+//  no card). Emitted alongside the other build outputs.
 // ═══════════════════════════════════════════════════════════
 
 import { mkdir, readFile, writeFile, stat } from 'node:fs/promises';
@@ -93,10 +94,17 @@ const EVIDENCE_KEYS = new Set(SOURCES.filter((s) => s.ev).map((s) => s.key));
 async function exists(p) { try { await stat(p); return true; } catch { return false; } }
 function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
 
-async function loadCuratedPleiadesIds() {
+// Foreground = every place that renders as a real marker + opens the full panel:
+// curated (data.js) + SITES_PLEIADES + SITES_VICI, deduped by pleiades id. NOT the
+// ~25k coverage long tail (background canvas dots open a thin panel, no card). The
+// regex is format-agnostic: matches both `pleiades:"123"` (data.js) and the
+// JSON-style `"pleiades":"123"` (generated files).
+async function loadForegroundPleiadesIds() {
   const ids = new Set();
-  const text = await readFile(path.join(ROOT, 'js', 'data.js'), 'utf8');
-  for (const m of text.matchAll(/pleiades\s*:\s*"(\d+)"/g)) ids.add(m[1]);
+  for (const file of ['js/data.js', 'js/sites-pleiades.js', 'js/sites-vici.js']) {
+    const text = await readFile(path.join(ROOT, file), 'utf8');
+    for (const m of text.matchAll(/pleiades"?\s*:\s*"?(\d+)/g)) ids.add(m[1]);
+  }
   return [...ids];
 }
 
@@ -158,9 +166,9 @@ function rollup(features) {
 
 async function main() {
   await mkdir(CACHE_DIR, { recursive: true });
-  let ids = await loadCuratedPleiadesIds();
+  let ids = await loadForegroundPleiadesIds();
   if (SAMPLE) ids = ids.slice(0, SAMPLE);
-  console.log(`Linked-data sidebar spike: ${ids.length} curated Pleiades ids`);
+  console.log(`Linked-data sidebar: ${ids.length} foreground Pleiades ids`);
 
   const out = {};
   let withData = 0, totalFeatures = 0;
@@ -191,7 +199,7 @@ async function main() {
   await writeFile(OUT_PATH, `${banner}window.SITES_LINKED_DATA = ${JSON.stringify(out)};\n`);
 
   console.log(`\nWrote ${OUT_PATH}`);
-  console.log(`  ${withData}/${ids.length} curated places have sidebar data`);
+  console.log(`  ${withData}/${ids.length} foreground places have sidebar data`);
   console.log(`  ${totalFeatures} total inbound features`);
   console.log(`  source coverage (places per source):`);
   [...sourceTally.entries()].sort((a, b) => b[1] - a[1])

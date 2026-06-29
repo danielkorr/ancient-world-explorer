@@ -46,7 +46,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=100">
+  <link rel="stylesheet" href="css/style.css?v=106">
 </head>
 <body>
 
@@ -341,6 +341,9 @@
 
     <div class="p-actions" id="panel-actions" data-testid="selected-site-related-links"></div>
 
+    <!-- Linked Data Sidebar — Pleiades inbound scholarly cross-references -->
+    <div id="linked-data-card"></div>
+
     <!-- Quest progress meter (shown when signed in) -->
     <div id="quest-progress">
       <div id="qp-label">Your quest progress <span id="qp-count">0 / 0</span></div>
@@ -351,11 +354,12 @@
 
 <!-- Data + App. ?v= must match the value on css/style.css above — bump both
      together each deploy to force fresh assets past the cache. -->
-<script src="js/config.js?v=89"></script>
-<script src="js/orbis-days.js?v=89"></script>
-<script src="js/sites-pleiades.js?v=89"></script>
-<script src="js/sites-vici.js?v=89"></script>
-<script src="js/vici-links.js?v=89"></script>
+<script src="js/config.js?v=106"></script>
+<script src="js/orbis-days.js?v=106"></script>
+<script src="js/sites-pleiades.js?v=106"></script>
+<script src="js/sites-vici.js?v=106"></script>
+<script src="js/vici-links.js?v=106"></script>
+<script src="js/sites-linked-data.js?v=106"></script>
 <!-- The Itiner-e road dataset is ~2.7MB; parsing it intermittently crashes
      headless Chromium, breaking deterministic tests. Skip it entirely in ?qa=1
      (app.js guards on `typeof ROADS_ITINERE`). document.write here runs during
@@ -363,15 +367,15 @@
      normal (non-QA) path — ordering is preserved. -->
 <script>
   if (!/[?&]qa=1/.test(location.search)) {
-    document.write('<scr' + 'ipt src="js/roads-itinere.js?v=89"><\/scr' + 'ipt>');
+    document.write('<scr' + 'ipt src="js/roads-itinere.js?v=106"><\/scr' + 'ipt>');
   }
 </script>
-<script src="js/data.js?v=89"></script>
-<script src="js/auth.js?v=89"></script>
+<script src="js/data.js?v=106"></script>
+<script src="js/auth.js?v=106"></script>
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
-<script src="js/basemap.js?v=89"></script>
-<script src="js/app.js?v=103"></script>
+<script src="js/basemap.js?v=106"></script>
+<script src="js/app.js?v=106"></script>
 
 </body>
 </html>

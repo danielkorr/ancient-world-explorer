@@ -1141,10 +1141,13 @@ function showPanel(site) {
     </a>
     <a href="${plUrl}" onclick="saveReturnState()" class="p-btn p-btn-gold">
       <span class="p-btn-icon">📜</span>
-      <div><div class="p-btn-main">Pleiades Gazetteer</div><div class="p-btn-sub">Academic record · sources · cross-references</div></div>
+      <div><div class="p-btn-main">Pleiades Gazetteer</div><div class="p-btn-sub">The authoritative scholarly place record</div></div>
       <span class="p-btn-ext" aria-hidden="true">↗</span>
     </a>${viciBtn}${emailBtn}
   `;
+
+  // Pleiades Linked Data Sidebar — scholarly cross-references for this place.
+  renderLinkedData(site);
 
   // Remember where the map was the first time the panel opens, so closing it
   // returns you whence you came instead of stranding you at the last offset
@@ -1256,6 +1259,43 @@ function escapeHtml(text) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+// ── Linked Data Sidebar (Pleiades inbound scholarly cross-references) ──
+// Renders #linked-data-card from window.SITES_LINKED_DATA (built by
+// scripts/build-linked-data.mjs from the Pleiades sidebar collection). Each source
+// is a native <details> disclosure so a link-rich place stays compact. The ★/☆ glyph
+// encodes reciprocity (filled = the external dataset and Pleiades reference each
+// other) as SHAPE, not color — colorblind-safe. External links open same-tab +
+// saveReturnState() so the Back gesture returns to VIA, matching panel-actions.
+function renderLinkedData(site) {
+  const el = document.getElementById('linked-data-card');
+  if (!el) return;
+  const data = site && site.pleiades && window.SITES_LINKED_DATA
+    ? window.SITES_LINKED_DATA[site.pleiades] : null;
+  if (!data || !data.sources || !data.sources.length) { el.innerHTML = ''; return; }
+
+  const sources = data.sources.map((s) => {
+    const star = s.recip ? '★' : '☆';
+    const starTitle = s.recip
+      ? 'Reciprocated — Pleiades and this dataset link each other'
+      : 'One-way link into Pleiades';
+    const links = s.items.map((it) =>
+      `<li><a href="${escapeHtml(it.u)}" onclick="saveReturnState()" rel="noopener">` +
+      `${escapeHtml(it.t)}<span class="p-btn-ext" aria-hidden="true">↗</span></a></li>`
+    ).join('');
+    const more = s.n > s.items.length ? `<li class="ld-more">+ ${s.n - s.items.length} more</li>` : '';
+    return `<details class="ld-src">` +
+      `<summary><span class="ld-star" title="${starTitle}">${star}</span>` +
+      `<span class="ld-label">${escapeHtml(s.label)}</span><span class="ld-n">${s.n}</span></summary>` +
+      `<ul class="ld-links">${links}${more}</ul></details>`;
+  }).join('');
+
+  const n = data.sources.length;
+  el.innerHTML =
+    `<div class="ld-head"><span class="ld-head-icon">🔎</span>Primary sources &amp; evidence` +
+    `<span class="ld-sub">via Pleiades · ${n} dataset${n > 1 ? 's' : ''}</span></div>` +
+    `<div class="ld-sources">${sources}</div>`;
 }
 
 function siteSearchEntries(site) {
@@ -2225,6 +2265,7 @@ function showSegmentPanel(meta, latlngs) {
   document.getElementById('orbis-card').classList.remove('visible');
   document.getElementById('quest-progress').style.display = 'none';
   document.getElementById('checkin-row').style.display    = 'none';
+  document.getElementById('linked-data-card').innerHTML   = '';  // site-only
 
   // Places along this stretch — the roads↔sites bridge. Each row jumps to that
   // site's panel. Photo thumb when the site has a vici image. The catalogue is

@@ -2097,3 +2097,82 @@ path.leaflet-interactive { outline: none !important; }
   :root { --panel-width: 340px; }
   #panel-name { font-size: 22px; }
 }
+
+/* ════════════════════════════════
+   LINKED DATA SIDEBAR  (#linked-data-card)
+   Pleiades inbound scholarly cross-references. Quiet by default — a stack of
+   collapsible source rows below the action buttons. ★/☆ = reciprocity (shape,
+   not color → colorblind-safe).
+   ════════════════════════════════ */
+#linked-data-card:empty { display: none; }
+#linked-data-card {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.ld-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--gold);
+}
+.ld-head-icon { font-size: 12px; }
+.ld-sub {
+  margin-left: auto;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.ld-sources { margin-top: 8px; display: flex; flex-direction: column; gap: 2px; }
+.ld-src { border-radius: 6px; }
+.ld-src > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--text-body);
+  transition: background 0.12s ease;
+}
+.ld-src > summary::-webkit-details-marker { display: none; }
+.ld-src > summary:hover { background: var(--gold-faint); }
+.ld-star { width: 14px; text-align: center; color: var(--gold); font-size: 12px; }
+.ld-label { flex: 1; }
+.ld-n {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: rgba(240,230,211,0.06);
+  border-radius: 10px;
+  padding: 1px 8px;
+  min-width: 22px;
+  text-align: center;
+}
+.ld-src[open] > summary { color: var(--gold); }
+.ld-links {
+  list-style: none;
+  margin: 2px 0 6px;
+  padding: 0 8px 0 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ld-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  color: var(--text-body);
+  text-decoration: none;
+  line-height: 1.35;
+}
+.ld-links a:hover { color: var(--gold); text-decoration: underline; }
+.ld-links .p-btn-ext { font-size: 10px; opacity: 0.6; }
+.ld-more { font-size: 11.5px; color: var(--text-muted); font-style: italic; }

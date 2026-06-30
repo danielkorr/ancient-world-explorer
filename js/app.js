@@ -647,38 +647,22 @@ const siteClusters = {};
 TIER_KINDS.forEach(k => { siteClusters[k] = L.markerClusterGroup(clusterOpts(k)); map.addLayer(siteClusters[k]); });
 
 // Cluster click/tap action, shared by desktop and touch. Zoom in CENTRED on the
-// cluster's own latlng (the members' weighted centre, which hugs the dense part)
-// rather than fitting the bounding box — so a cluster with one distant member
-// still drills toward the pile instead of stranding it at the edge. Coincident
-// members (or already at max zoom) spiderfy instead. getBoundsZoom gives a zoom
-// that fits the members with margin; we floor it at +1 so a click always moves.
+// cluster centre and zoom in a GENTLE, fixed amount — a predictable drill-in, not
+// a teleport. Fitting the members' bounds was wrong both ways: fitting ALL of them
+// strands the dense pair at the edge when one member is far off (the "3" west of
+// Italy is Cumae + Baiae + Paestum, Paestum 91km south); fitting only the dense
+// knot over-zoomed to street level and dropped you in "nowheresville" with no
+// context. Instead step in two zoom levels centred on the cluster, so you stay
+// oriented and the cluster visibly splits (the "3" becomes a "2" + a separated
+// member near the centre); click again to go deeper. Coincident members / max
+// zoom spiderfy instead.
 function zoomIntoCluster(cluster) {
   if (!cluster || typeof cluster.getLatLng !== 'function') return;
   const b = cluster.getBounds && cluster.getBounds();
   const atMax = map.getZoom() >= map.getMaxZoom();
   const coincident = b && b.isValid() && b.getNorthEast().equals(b.getSouthWest());
   if ((atMax || coincident) && typeof cluster.spiderfy === 'function') { cluster.spiderfy(); return; }
-  // Fit only the DENSE KNOT, not the whole cluster. markercluster's zoomToBounds
-  // (and any centre-of-bounds approach) is dragged toward a lone far-flung member
-  // — e.g. the "3" off west Italy is Cumae + Baiae + Paestum, and Paestum is 91km
-  // south, so fitting all three drops you between them and strands the pair at the
-  // edge. Take the component-wise median (robust to the outlier — it lands inside
-  // the pair), keep only members near it, and fitBounds THAT subset so the members
-  // you're drilling into land centred and framed.
-  const ms = (cluster.getAllChildMarkers ? cluster.getAllChildMarkers() : []).filter(Boolean);
-  if (ms.length >= 2) {
-    const lats = ms.map(m => m.getLatLng().lat).sort((a, b) => a - b);
-    const lngs = ms.map(m => m.getLatLng().lng).sort((a, b) => a - b);
-    const mid = arr => arr[Math.floor(arr.length / 2)];
-    const med = L.latLng(mid(lats), mid(lngs));
-    const KNOT_KM = 40;
-    const near = ms.filter(m => m.getLatLng().distanceTo(med) < KNOT_KM * 1000);
-    const pts = (near.length >= 2 ? near : ms).map(m => m.getLatLng());
-    map.fitBounds(L.latLngBounds(pts), { padding: [55, 55], maxZoom: map.getMaxZoom(), animate: true });
-    return;
-  }
-  let z = (b && b.isValid()) ? map.getBoundsZoom(b, false, L.point(120, 120)) : map.getZoom() + 2;
-  z = Math.min(Math.max(z, map.getZoom() + 1), map.getMaxZoom());
+  const z = Math.min(map.getZoom() + 2, map.getMaxZoom());
   map.setView(cluster.getLatLng(), z, { animate: true });
 }
 // Desktop drives this off the synthesized clusterclick (touch can't — handled in

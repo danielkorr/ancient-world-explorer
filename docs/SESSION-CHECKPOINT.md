@@ -2,11 +2,11 @@
 
 ## Status at a glance
 - **`main`** — clean, current, everything below shipped & live on GitHub Pages.
-  Cache tokens: `app.js` / `style.css` = **v115**, `sites-linked-data.js` = **v107**
+  Cache tokens: `app.js` / `style.css` = **v116**, `sites-linked-data.js` = **v107**
   (the data files config/orbis/pleiades/vici still ride **v106**, unchanged).
 - **`alexander-module`** — new feature branch (origin-tracked), the Alexander
   campaign layer isolated off `main`. Not deployed. See its section below. ⏭ resume there.
-- HEADs: `main` = `1d4a18f`, `alexander-module` = `bcea734`
+- HEADs: `main` = `8fc27a8`, `alexander-module` = `bcea734`
   (branch now **~10 commits behind** `main`: linked-data + map polish + topbar + the
   v109–v115 map-features / declutter / cluster-tap / chrome work below).
 
@@ -37,18 +37,19 @@
   panel on click), and the cursor-following segment-name readout now suppresses itself
   while a `.road-tip` is open (it named the same road). The new dual-name layer was NOT
   the culprit — verified correctly gated off below zoom 7.
-- **Cluster-tap overhaul** (`11c66fc` → `382c9ff` → `bdbb1b7`) — three rounds on the
-  Bay-of-Naples clusters (Cumae/Baiae/Puteoli/Paestum), all mobile-tap-driven. (1) On
-  touch, tapping a cluster ran a blind `setView(+2)` that under-zoomed and leaked into a
-  member panel; now resolves the cluster and zooms. (2) Per-tier clusters let a **lone
-  marker overlap a cluster from another tier** (Puteoli atop the Cumae+Baiae photo "2") —
-  the touch handler now **geometrically hit-tests** cluster bubbles (not `e.target`) and
-  the cluster wins on overlap. (3) Clusters with one **far-flung member** (Paestum is 91km
-  from the pair) zoomed to fit ALL members and stranded the pair at the edge; cluster zoom
-  is now driven on **both desktop + touch** (`zoomIntoCluster`, native
-  zoomToBounds/spiderfy OFF) — it takes the component-wise **median** member (robust to
-  the outlier), keeps members within ~40km, and fitBounds that knot, so the dense members
-  land centred. See [[project-cluster-overlap-tap]]. Verified on the WebKit+touch harness.
+- **Cluster-tap overhaul** (`11c66fc` → `382c9ff` → `bdbb1b7` → `8fc27a8`) — several rounds
+  on the Bay-of-Naples clusters (Cumae/Baiae/Puteoli/Paestum). (1) On touch, tapping a
+  cluster ran a blind `setView(+2)` that leaked into a member panel; now resolves the
+  cluster first. (2) Per-tier clusters let a **lone marker overlap a cluster from another
+  tier** (Puteoli atop the Cumae+Baiae photo "2") — the touch handler now **geometrically
+  hit-tests** cluster bubbles (not `e.target`) and the cluster wins on overlap (nearest
+  bubble centre when several overlap). (3) Cluster ZOOM is now driven on **both desktop +
+  touch** via `zoomIntoCluster` (native zoomToBounds/spiderfy OFF). **Final approach: a
+  gentle fixed `+2` step centred on the cluster** — fit-to-bounds was tried and reverted
+  (fitting ALL members stranded the pair when one is 91km off; fitting only the dense knot
+  over-zoomed to street level / "nowheresville"). +2 keeps you oriented and the cluster
+  visibly splits (the "3" → a centred "2"); click again to go deeper. Coincident / max-zoom
+  still spiderfy. See [[project-cluster-overlap-tap]]. Verified on the WebKit+touch harness.
 - **Chrome gold-outline unify** (`1d4a18f`) — desktop controls used a gradient of border
   strengths (era toggle 0.22 / search 0.28 / detail 0.32); bumped all to the chips' &
   legend's `rgba(212,168,83,0.4)` so every control reads as one family. Active toggles
@@ -122,7 +123,7 @@ exist in the coverage layer). Alexander is unrelated new work.
 ## Standing project rules (full detail in `CLAUDE.md` / `AGENTS.md`)
 - No ES modules — plain global `<script>` tags. No build / package manager / test
   runner (the dev-only `package.json` exists solely to pin Playwright for webkit-touch).
-- **Bump `?v=N` on every CSS/JS change** so mobile Safari refetches. Currently **v115**
+- **Bump `?v=N` on every CSS/JS change** so mobile Safari refetches. Currently **v116**
   (app/css). Keep `app.js` and `style.css` matched.
 - Don't hand-edit generated files: `js/roads-itinere.js`, `js/sites-pleiades.js`,
   `js/sites-coverage.js`, `js/sites-vici.js`, `js/sites-linked-data.js`, `js/orbis-days.js`,

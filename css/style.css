@@ -118,7 +118,7 @@ body {
   height: 42px;
   padding: 0 15px;
   border-radius: 999px;
-  border: 1px solid rgba(212,168,83,0.28);
+  border: 1px solid rgba(212,168,83,0.4);   /* match the control chips' gold outline */
   background: rgba(10,5,0,0.9);
   color: var(--parchment);
   font-family: 'Inter', sans-serif;
@@ -244,7 +244,9 @@ body {
   display: flex;
   align-items: center;
   background: rgba(10,5,0,0.88);
-  border: 1px solid var(--border);
+  /* Shared subtle gold outline (0.4) — matches the Roman Roads / Sites chips so
+     every control reads as one family. */
+  border: 1px solid rgba(212,168,83,0.4);
   border-radius: 30px;
   padding: 3px;
 }
@@ -576,7 +578,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
    the legend. */
 .detail-control {
   background: rgba(8,4,0,0.96);
-  border: 1px solid rgba(212,168,83,0.32);
+  border: 1px solid rgba(212,168,83,0.4);   /* match the control chips' gold outline */
   color: rgba(240,230,211,0.92);
   padding: 8px 11px 9px;
   border-radius: 7px;

@@ -626,9 +626,14 @@ const CLUSTER_COLOR = {
 function clusterOpts(kind) {
   return {
     maxClusterRadius: 56,             // px; aggressive enough to clear small screens
-    spiderfyOnMaxZoom: true,          // fan out the last few coincident sites
+    // Both native click behaviours are OFF — we drive cluster clicks ourselves
+    // (zoomIntoCluster) on BOTH desktop (clusterclick) and touch (the touchend
+    // delegation). markercluster's own zoomToBounds fits the bounding BOX, whose
+    // centre is the midpoint of the extremes; a cluster with one far-flung member
+    // then drops you between them and strands the dense members at the corner.
+    spiderfyOnMaxZoom: false,
     showCoverageOnHover: false,       // no hover on touch; avoids stray polygons
-    zoomToBoundsOnClick: true,        // desktop: tap a cluster -> zoom to members
+    zoomToBoundsOnClick: false,
     chunkedLoading: true,             // don't stall the main thread on the dense set
     spiderfyDistanceMultiplier: 1.6,  // wider fan for fat-finger taps
     iconCreateFunction: cluster => L.divIcon({
@@ -640,6 +645,45 @@ function clusterOpts(kind) {
 }
 const siteClusters = {};
 TIER_KINDS.forEach(k => { siteClusters[k] = L.markerClusterGroup(clusterOpts(k)); map.addLayer(siteClusters[k]); });
+
+// Cluster click/tap action, shared by desktop and touch. Zoom in CENTRED on the
+// cluster's own latlng (the members' weighted centre, which hugs the dense part)
+// rather than fitting the bounding box — so a cluster with one distant member
+// still drills toward the pile instead of stranding it at the edge. Coincident
+// members (or already at max zoom) spiderfy instead. getBoundsZoom gives a zoom
+// that fits the members with margin; we floor it at +1 so a click always moves.
+function zoomIntoCluster(cluster) {
+  if (!cluster || typeof cluster.getLatLng !== 'function') return;
+  const b = cluster.getBounds && cluster.getBounds();
+  const atMax = map.getZoom() >= map.getMaxZoom();
+  const coincident = b && b.isValid() && b.getNorthEast().equals(b.getSouthWest());
+  if ((atMax || coincident) && typeof cluster.spiderfy === 'function') { cluster.spiderfy(); return; }
+  // Fit only the DENSE KNOT, not the whole cluster. markercluster's zoomToBounds
+  // (and any centre-of-bounds approach) is dragged toward a lone far-flung member
+  // — e.g. the "3" off west Italy is Cumae + Baiae + Paestum, and Paestum is 91km
+  // south, so fitting all three drops you between them and strands the pair at the
+  // edge. Take the component-wise median (robust to the outlier — it lands inside
+  // the pair), keep only members near it, and fitBounds THAT subset so the members
+  // you're drilling into land centred and framed.
+  const ms = (cluster.getAllChildMarkers ? cluster.getAllChildMarkers() : []).filter(Boolean);
+  if (ms.length >= 2) {
+    const lats = ms.map(m => m.getLatLng().lat).sort((a, b) => a - b);
+    const lngs = ms.map(m => m.getLatLng().lng).sort((a, b) => a - b);
+    const mid = arr => arr[Math.floor(arr.length / 2)];
+    const med = L.latLng(mid(lats), mid(lngs));
+    const KNOT_KM = 40;
+    const near = ms.filter(m => m.getLatLng().distanceTo(med) < KNOT_KM * 1000);
+    const pts = (near.length >= 2 ? near : ms).map(m => m.getLatLng());
+    map.fitBounds(L.latLngBounds(pts), { padding: [55, 55], maxZoom: map.getMaxZoom(), animate: true });
+    return;
+  }
+  let z = (b && b.isValid()) ? map.getBoundsZoom(b, false, L.point(120, 120)) : map.getZoom() + 2;
+  z = Math.min(Math.max(z, map.getZoom() + 1), map.getMaxZoom());
+  map.setView(cluster.getLatLng(), z, { animate: true });
+}
+// Desktop drives this off the synthesized clusterclick (touch can't — handled in
+// the touchend delegation instead).
+TIER_KINDS.forEach(k => siteClusters[k].on('clusterclick', e => zoomIntoCluster(e.layer)));
 
 // Master marker lists. allMarkers = every marker (icon-refresh, touch lookup);
 // markersByTier = the source-of-truth per category so filters are pure
@@ -928,28 +972,26 @@ if (COARSE_POINTER) {
     // and run markercluster's own zoom-or-spiderfy (the click path iOS never
     // synthesizes) to spread the pile apart.
     const cx = t.clientX, cy = t.clientY;
-    let cluster = null, clusterGroup = null;
+    let cluster = null, bestD = Infinity;
     for (const k of TIER_KINDS) {
-      const group = siteClusters[k];
-      const fg = group && group._featureGroup;
+      const fg = siteClusters[k] && siteClusters[k]._featureGroup;
       if (!fg) continue;
       for (const l of fg.getLayers()) {
         if (!l._icon || typeof l.getChildCount !== 'function') continue;   // L.MarkerCluster only
         const r = l._icon.getBoundingClientRect();
-        if (cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom) { cluster = l; clusterGroup = group; break; }
+        if (cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom) {
+          // Several tier clusters can overlap under one finger; pick the one whose
+          // bubble centre is nearest the touch (the one actually aimed at), not the
+          // first tier in iteration order.
+          const dx = (r.left + r.right) / 2 - cx, dy = (r.top + r.bottom) / 2 - cy;
+          const d = dx * dx + dy * dy;
+          if (d < bestD) { bestD = d; cluster = l; }
+        }
       }
-      if (cluster) break;
     }
     if (cluster) {
       e.preventDefault();
-      if (typeof clusterGroup._zoomOrSpiderfy === 'function') {
-        clusterGroup._zoomOrSpiderfy({ layer: cluster });
-      } else if (cluster.zoomToBounds) {
-        cluster.zoomToBounds({ padding: [60, 60] });
-      } else {
-        let ll; try { ll = map.mouseEventToLatLng(t); } catch (_) {}
-        if (ll) map.setView(ll, Math.min(map.getZoom() + 2, map.getMaxZoom()), { animate: true });
-      }
+      zoomIntoCluster(cluster);   // same centred zoom/spiderfy the desktop click uses
       return;
     }
 

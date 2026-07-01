@@ -2185,6 +2185,47 @@ path.leaflet-interactive { outline: none !important; }
 .ld-links .p-btn-ext { font-size: 10px; opacity: 0.6; }
 .ld-more { font-size: 11.5px; color: var(--text-muted); font-style: italic; }
 
+/* ════════════════════════════════
+   LIVE PLEIADES ENRICHMENT  (#pleiades-detail-card)
+   Description/names fetched from the CORS-open Pleiades JSON API on panel open.
+   Reuses the linked-data card vocabulary (.ld-*) so the two read as siblings;
+   glyphs (✎ names, § notes) are shape, not color → colorblind-safe.
+   ════════════════════════════════ */
+#pleiades-detail-card:empty { display: none; }
+#pleiades-detail-card {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.pl-src[open] > summary { color: var(--gold); }
+.pl-list li { font-size: 12.5px; color: var(--text-body); line-height: 1.4; list-style: disc; margin-left: 4px; }
+.pl-lang { color: var(--text-muted); font-size: 11px; }
+.pl-notes {
+  padding: 2px 8px 6px 30px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-body);
+}
+.pl-tags { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 5px; }
+.pl-tag {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  background: rgba(240,230,211,0.06);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 2px 8px;
+}
+.pl-credit { margin-top: 10px; font-size: 10.5px; color: var(--text-muted); font-style: italic; }
+.pl-loading { display: flex; gap: 5px; padding: 12px 2px 4px; }
+.pl-loading span {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gold-faint);
+  animation: pl-pulse 1s ease-in-out infinite;
+}
+.pl-loading span:nth-child(2) { animation-delay: 0.15s; }
+.pl-loading span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes pl-pulse { 0%, 100% { opacity: 0.25; } 50% { opacity: 0.8; } }
+
 /* ── DUAL-NAME LABELS ──────────────────────────────────────
    The "Names" chip swatch (a tiny serif Aa) and the on-map permanent tooltips
    that pair the ancient name with the modern one. Tooltips are non-interactive

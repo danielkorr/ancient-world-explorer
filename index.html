@@ -46,7 +46,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=116">
+  <link rel="stylesheet" href="css/style.css?v=117">
 </head>
 <body>
 
@@ -333,6 +333,8 @@
     <div class="p-rule"></div>
     <div id="panel-period"></div>
     <div id="panel-desc"></div>
+    <!-- Live Pleiades enrichment — description/names fetched on panel open -->
+    <div id="pleiades-detail-card"></div>
     <div id="segment-evidence"></div>
 
     <!-- Check-in row -->
@@ -390,7 +392,7 @@
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
 <script src="js/basemap.js?v=106"></script>
-<script src="js/app.js?v=116"></script>
+<script src="js/app.js?v=117"></script>
 
 </body>
 </html>

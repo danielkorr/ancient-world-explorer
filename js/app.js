@@ -1301,6 +1301,20 @@ function showPanel(site) {
   // Pleiades Linked Data Sidebar — scholarly cross-references for this place.
   renderLinkedData(site);
 
+  // Live Pleiades enrichment — descriptive prose + alternate names pulled from
+  // the CORS-open Pleiades JSON API at open time (Path A, zero bundle cost).
+  // Render now with a shimmer, fill when it resolves. A per-open token guards
+  // against the user tapping a different place mid-fetch; failure leaves the
+  // panel exactly as it is today.
+  renderPleiadesDetailLoading(site);
+  const _plToken = ++panelOpenToken;
+  if (site.pleiades) {
+    fetchPleiadesDetail(site.pleiades).then(data => {
+      if (_plToken !== panelOpenToken) return;   // panel changed under us
+      applyPleiadesDetail(site, data);
+    });
+  }
+
   // Remember where the map was the first time the panel opens, so closing it
   // returns you whence you came instead of stranding you at the last offset
   // pan. Only capture on the initial open — tapping a second marker while the
@@ -1448,6 +1462,158 @@ function renderLinkedData(site) {
     `<div class="ld-head"><span class="ld-head-icon">🔎</span>Primary sources &amp; evidence` +
     `<span class="ld-sub">via Pleiades · ${n} dataset${n > 1 ? 's' : ''}</span></div>` +
     `<div class="ld-sources">${sources}</div>`;
+}
+
+// ── Live Pleiades enrichment (#pleiades-detail-card) ──────────────────────
+// Coverage/thin panels — and, more quietly, curated ones — pull descriptive
+// prose + alternate names straight from the Pleiades JSON API at open time. The
+// API is CORS-open (access-control-allow-origin: *), so the browser fetches it
+// directly; NOTHING is baked into our static bundles (Path A — zero payload
+// growth). Cached per-id (the promise is cached, deduping repeat + concurrent
+// opens; sessionStorage mirrors the slim result for instant re-opens). On any
+// failure we resolve to null and the panel keeps exactly its existing content
+// (honest-thin note for coverage, curated desc for foreground). Pleiades text
+// is CC BY 3.0 — the card renders a credit line from the record's own rights.
+const _pleiadesDetailCache = new Map();
+
+// Strip HTML tags then decode entities (textarea trick — treats content as text,
+// so no scripts run and no resources load, unlike innerHTML on a live element).
+function stripHtmlToText(html) {
+  const noTags = String(html == null ? '' : html).replace(/<[^>]*>/g, ' ');
+  const ta = document.createElement('textarea');
+  ta.innerHTML = noTags;
+  return ta.value.replace(/\s+/g, ' ').trim();
+}
+
+// Reduce the ~27 KB raw record to the handful of fields the panel shows.
+function slimPleiades(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const names = [];
+  const seen = new Set();
+  for (const n of (raw.names || [])) {
+    const label = (n.romanized || n.attested || '').trim();
+    if (!label) continue;
+    const key = label.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    names.push({ label, lang: (n.language || '').trim() });
+    if (names.length >= 8) break;
+  }
+  // Pleiades `subject` mixes human tags ("extant remains", "UWHS") with machine
+  // tags ("dare:major=1"). Keep only the human-readable ones.
+  const subjects = (raw.subject || [])
+    .filter(s => typeof s === 'string' && !s.includes('=') && !/^dare:/i.test(s))
+    .slice(0, 6);
+  const creators = (raw.creators || []).map(c => (c && c.name) || c).filter(Boolean);
+  return {
+    description: (raw.description || '').trim(),
+    details:     stripHtmlToText(raw.details),
+    names,
+    subjects,
+    rights:      (raw.rights || '').trim(),
+    creators,
+  };
+}
+
+function fetchPleiadesDetail(pleiadesId) {
+  const id = String(pleiadesId || '');
+  if (!id) return Promise.resolve(null);
+  if (_pleiadesDetailCache.has(id)) return _pleiadesDetailCache.get(id);
+
+  const p = (async () => {
+    try {
+      const cached = sessionStorage.getItem('via.pl.' + id);
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 6000);
+    try {
+      const res = await fetch(`https://pleiades.stoa.org/places/${id}/json`, { signal: ctrl.signal });
+      if (!res.ok) return null;
+      const slim = slimPleiades(await res.json());
+      try { sessionStorage.setItem('via.pl.' + id, JSON.stringify(slim)); } catch {}
+      return slim;
+    } catch {
+      return null;
+    } finally {
+      clearTimeout(timer);
+    }
+  })();
+
+  _pleiadesDetailCache.set(id, p);
+  // Don't cache a transient failure for the whole session — let a later open retry.
+  p.then(v => { if (!v) _pleiadesDetailCache.delete(id); });
+  return p;
+}
+
+// Quiet shimmer while the fetch is in flight, so the panel isn't visibly empty.
+function renderPleiadesDetailLoading(site) {
+  const el = document.getElementById('pleiades-detail-card');
+  if (!el) return;
+  el.innerHTML = site && site.pleiades
+    ? '<div class="pl-loading" aria-hidden="true"><span></span><span></span><span></span></div>'
+    : '';
+}
+
+// Fill #pleiades-detail-card (and, for coverage places, the main #panel-desc)
+// from a slim Pleiades record. Mirrors renderLinkedData's <details> idiom so the
+// two cards read as siblings. Colorblind-safe: no color-only signals.
+function applyPleiadesDetail(site, data) {
+  const el = document.getElementById('pleiades-detail-card');
+  if (!el) return;
+  if (!data) { el.innerHTML = ''; return; }
+
+  // Coverage places carry no curated prose — promote the Pleiades description
+  // into the main body, replacing the honest-thin placeholder. Foreground sites
+  // keep their curated desc; their Pleiades text (if any) rides in the card.
+  const descEl = document.getElementById('panel-desc');
+  if (site.coverage && descEl && data.description) {
+    descEl.textContent = data.description;
+  }
+
+  const rows = [];
+
+  // "Also known as" — alternate/ancient names (the scholar's hook).
+  if (data.names.length) {
+    const items = data.names.map(n => {
+      const lang = n.lang ? ` <span class="pl-lang">(${escapeHtml(n.lang)})</span>` : '';
+      return `<li>${escapeHtml(n.label)}${lang}</li>`;
+    }).join('');
+    rows.push(
+      `<details class="ld-src pl-src"><summary>` +
+      `<span class="ld-star" aria-hidden="true">✎</span>` +
+      `<span class="ld-label">Also known as</span>` +
+      `<span class="ld-n">${data.names.length}</span></summary>` +
+      `<ul class="ld-links pl-list">${items}</ul></details>`
+    );
+  }
+
+  // "Notes" — the Barrington Atlas directory note / details prose. For coverage
+  // places whose description we just promoted, skip if it's the same text.
+  if (data.details && data.details !== data.description) {
+    rows.push(
+      `<details class="ld-src pl-src"><summary>` +
+      `<span class="ld-star" aria-hidden="true">§</span>` +
+      `<span class="ld-label">Notes</span></summary>` +
+      `<div class="pl-notes">${escapeHtml(data.details)}</div></details>`
+    );
+  }
+
+  // Subjects — small human-readable tags.
+  const tags = data.subjects.length
+    ? `<div class="pl-tags">${data.subjects.map(s => `<span class="pl-tag">${escapeHtml(s)}</span>`).join('')}</div>`
+    : '';
+
+  if (!rows.length && !tags) { el.innerHTML = ''; return; }
+
+  // Attribution — Pleiades text is CC BY 3.0 (record carries its own rights).
+  const by = data.creators.length ? data.creators.slice(0, 3).join(', ') : 'Pleiades contributors';
+  const credit = `<div class="pl-credit">Text: ${escapeHtml(by)} · Pleiades · CC BY</div>`;
+
+  el.innerHTML =
+    `<div class="ld-head"><span class="ld-head-icon">📖</span>From Pleiades` +
+    `<span class="ld-sub">the scholarly record</span></div>` +
+    `<div class="ld-sources">${rows.join('')}</div>${tags}${credit}`;
 }
 
 function siteSearchEntries(site) {
@@ -2431,6 +2597,8 @@ function showSegmentPanel(meta, latlngs) {
   document.getElementById('quest-progress').style.display = 'none';
   document.getElementById('checkin-row').style.display    = 'none';
   document.getElementById('linked-data-card').innerHTML   = '';  // site-only
+  document.getElementById('pleiades-detail-card').innerHTML = ''; // site-only
+  panelOpenToken++;  // invalidate any in-flight site Pleiades fetch
 
   // Places along this stretch — the roads↔sites bridge. Each row jumps to that
   // site's panel. Photo thumb when the site has a vici image. The catalogue is
@@ -2707,6 +2875,7 @@ let currentPanelSite = null;
 let currentPanelKind = null;  // 'site' | 'segment' — what the info panel is showing
 let currentSegmentMeta = null; // the Itiner-e meta backing a 'segment' panel
 let panelReturnView  = null;  // {center, zoom} captured when the panel opens
+let panelOpenToken   = 0;     // bumped each panel open; guards async Pleiades fetch races
 // True when the road mini-banner (curated-road tooltip) was opened by a TAP —
 // the only case that needs clearing on card close. On desktop the tooltip is
 // hover-managed (closes on mouseout), and a TAP never sets this, so closePanel

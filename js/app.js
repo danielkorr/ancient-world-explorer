@@ -1485,6 +1485,26 @@ function stripHtmlToText(html) {
   return ta.value.replace(/\s+/g, ' ').trim();
 }
 
+// Derive a modern-place name from the Barrington Atlas note. The `details` field
+// reads "The Barrington Atlas Directory notes: <modern>, <alt>…". We take the
+// primary (first) reflex and reject it when it's just the ancient name repeated
+// (e.g. "Garian") or a bare descriptor — comparing against the site's own name +
+// alternates. Returns '' when there's no trustworthy modern reflex.
+function deriveModernName(detailsText, title, names) {
+  const m = /Barrington Atlas Directory notes:\s*(.+)$/i.exec(detailsText || '');
+  if (!m) return '';
+  const norm = s => String(s || '').toLowerCase().normalize('NFKD')
+    .replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
+  const skip = new Set([norm(title), ...names.map(n => norm(n.label))]);
+  let cand = m[1].split(',')[0].replace(/\s*\([^)]*\)\s*$/, '').replace(/[.\s]+$/, '').trim();
+  if (!cand || cand.length > 40) return '';
+  // "Ancient/Modern" notes (e.g. "Roma/Rome"): keep the first sub-part that
+  // isn't just the ancient name; if every part is the ancient name, reject.
+  const parts = cand.split('/').map(s => s.trim()).filter(Boolean);
+  cand = parts.find(p => !skip.has(norm(p))) || '';
+  return cand;
+}
+
 // Reduce the ~27 KB raw record to the handful of fields the panel shows.
 function slimPleiades(raw) {
   if (!raw || typeof raw !== 'object') return null;
@@ -1505,9 +1525,11 @@ function slimPleiades(raw) {
     .filter(s => typeof s === 'string' && !s.includes('=') && !/^dare:/i.test(s))
     .slice(0, 6);
   const creators = (raw.creators || []).map(c => (c && c.name) || c).filter(Boolean);
+  const details = stripHtmlToText(raw.details);
   return {
     description: (raw.description || '').trim(),
-    details:     stripHtmlToText(raw.details),
+    details,
+    modern:      deriveModernName(details, raw.title, names),
     names,
     subjects,
     rights:      (raw.rights || '').trim(),
@@ -1569,6 +1591,18 @@ function applyPleiadesDetail(site, data) {
   const descEl = document.getElementById('panel-desc');
   if (site.coverage && descEl && data.description) {
     descEl.textContent = data.description;
+  }
+
+  // Fill a blank modern-place name from the Barrington note (coverage records
+  // ship with modern:''). Never overrides a name the record already has. Cache
+  // it onto the record so a re-open shows it instantly, and update both the
+  // panel line and the hero line that showPanel populates from site.modern.
+  if (!site.modern && data.modern) {
+    site.modern = data.modern;
+    const pm = document.getElementById('panel-modern-name');
+    const hm = document.getElementById('hero-modern');
+    if (pm) pm.textContent = data.modern;
+    if (hm) hm.textContent = data.modern;
   }
 
   const rows = [];

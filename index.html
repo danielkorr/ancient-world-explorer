@@ -46,7 +46,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=117">
+  <link rel="stylesheet" href="css/style.css?v=119">
 </head>
 <body>
 
@@ -346,6 +346,10 @@
     <!-- Places along this stretch (road-segment panels only) -->
     <div id="segment-nearby"></div>
 
+    <!-- Pleiades places linked to this road by Itiner-e (road-segment panels only,
+         lazy-loaded from js/roads-itinere-pleiades.js on first road tap) -->
+    <div id="segment-pleiades"></div>
+
     <!-- ORBIS Travel Time Card -->
     <div id="orbis-card">
       <div id="orbis-label">⚡ ORBIS · Travel to Rome</div>
@@ -384,7 +388,7 @@
      normal (non-QA) path — ordering is preserved. -->
 <script>
   if (!/[?&]qa=1/.test(location.search)) {
-    document.write('<scr' + 'ipt src="js/roads-itinere.js?v=106"><\/scr' + 'ipt>');
+    document.write('<scr' + 'ipt src="js/roads-itinere.js?v=119"><\/scr' + 'ipt>');
   }
 </script>
 <script src="js/data.js?v=106"></script>
@@ -392,7 +396,7 @@
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
 <script src="js/basemap.js?v=106"></script>
-<script src="js/app.js?v=118"></script>
+<script src="js/app.js?v=119"></script>
 
 </body>
 </html>

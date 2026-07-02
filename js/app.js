@@ -303,7 +303,7 @@ if (!QA && typeof ROADS_ITINERE !== 'undefined') {
     }
     // `pl` ref lets the certainty filter show/hide this segment by mutating the
     // group's contents (mobile-safe), never toggling group membership.
-    itinereSegs.push({ ll: latlngs, meta, pl, minLat, maxLat, minLng, maxLng });
+    itinereSegs.push({ ll: latlngs, meta, id: seg.id, pl, minLat, maxLat, minLng, maxLng });
   }
   // CC BY 4.0 attribution — required by the dataset license.
   map.attributionControl.addAttribution(
@@ -457,7 +457,7 @@ const ROAD_FILL_WEIGHT   = 2;            // toned down from 3 — slimmer saffro
 // coincide. Returns true if a panel was opened.
 function openRoadPanelAt(latlng, curatedRoad) {
   const seg = latlng && findNearestItinere(latlng, map.latLngToContainerPoint(latlng));
-  if (seg) { showSegmentPanel(seg.meta, seg.ll); return true; }
+  if (seg) { showSegmentPanel(seg.meta, seg.ll, [seg.id]); return true; }
   if (curatedRoad) {
     const rll = curatedRoad.coords.map(c => [c[1], c[0]]);
     showSegmentPanel({ name: curatedRoad.name, main: 1, desc: curatedRoad.desc }, rll);
@@ -1093,7 +1093,7 @@ if (COARSE_POINTER) {
         // desktop click path uses.
         if (ll) openRoadPanelAt(ll, road._curatedRoad);
       } else if (seg) {
-        showSegmentPanel(seg.meta, seg.ll);
+        showSegmentPanel(seg.meta, seg.ll, [seg.id]);
       } else if (cov) {
         focusCoverage(cov);
       } else if (pin) {
@@ -1155,6 +1155,8 @@ function showPanel(site) {
   document.getElementById('segment-evidence').style.display = 'none';
   const _segNear = document.getElementById('segment-nearby');
   if (_segNear) _segNear.style.display = 'none';
+  const _segPl = document.getElementById('segment-pleiades');
+  if (_segPl) { _segPl.style.display = 'none'; _segPl.innerHTML = ''; }
 
   // Hero. Any site with a vici.org photo shows it as the hero with a credit/
   // license caption (the "imagery exists in the wild" made literal); elevation
@@ -1861,6 +1863,122 @@ function ensureCoverageLoaded() {
   document.head.appendChild(s);
 }
 
+// ── ITINER-E PLEIADES ASSOCIATIONS (lazy) ────────────────
+// The Pleiades places Itiner-e links to each road segment live in a ~1 MB sibling
+// file, loaded on first road tap (NOT at cold start). `_roadPPState` mirrors the
+// coverage lazy-load: idle → loading → ready/error. On load we re-render the open
+// road panel so the places appear without a second tap.
+let _roadPPState = 'idle';
+let _lastSegmentArgs = null;   // { segIds } of the open road panel, for re-render on lazy load
+function ensureRoadPleiadesLoaded() {
+  if (QA || _roadPPState !== 'idle') return;
+  _roadPPState = 'loading';
+  const s = document.createElement('script');
+  s.src = 'js/roads-itinere-pleiades.js?v=' + BUILD;
+  s.async = true;
+  s.onload = () => {
+    _roadPPState = 'ready';
+    // Re-render if a road panel is still open so its Pleiades places paint now.
+    if (currentPanelKind === 'segment' && _lastSegmentArgs) {
+      renderSegmentPleiades(_lastSegmentArgs.segIds);
+    }
+  };
+  s.onerror = () => { _roadPPState = 'error'; };
+  document.head.appendChild(s);
+}
+
+// Resolve a list of segment ids to their unique Pleiades places (deduped across
+// the road's segments), each as { pid, name, type, lat, lng }. Returns [] until
+// the lazy file is ready.
+function itinerePlaces(segIds) {
+  if (_roadPPState !== 'ready' || !window.ROADS_ITINERE_PP || !window.ROADS_ITINERE_PP_PLACES) return [];
+  const PP = window.ROADS_ITINERE_PP, TBL = window.ROADS_ITINERE_PP_PLACES;
+  const seen = new Set(), out = [];
+  for (const id of (segIds || [])) {
+    const idxs = PP[id];
+    if (!idxs) continue;
+    for (const i of idxs) {
+      const p = TBL[i];
+      if (!p || seen.has(p[0])) continue;
+      seen.add(p[0]);
+      out.push({ pid: p[0], name: p[1], type: p[2], lng: p[3], lat: p[4] });
+    }
+  }
+  return out;
+}
+
+// Memoized pleiades-id → catalogued site, so a road's Pleiades place can jump
+// straight to a rich VIA panel when we already have that site (else it links out).
+let _siteByPidCache = null;
+function siteByPid(pid) {
+  if (!_siteByPidCache) {
+    _siteByPidCache = new Map();
+    for (const s of SITES) if (s.pleiades) _siteByPidCache.set(String(s.pleiades), s);
+  }
+  return _siteByPidCache.get(String(pid)) || null;
+}
+
+// Render the "Pleiades places on this road" section of a road-segment panel.
+// Rows that match a catalogued VIA site jump to that site's panel; the rest link
+// out to the Pleiades gazetteer. Hidden entirely for curated roads / no places.
+const SEG_PLEIADES_CAP = 14;
+function renderSegmentPleiades(segIds) {
+  const el = document.getElementById('segment-pleiades');
+  if (!el) return;
+  if (!segIds || !segIds.length) { el.style.display = 'none'; el.innerHTML = ''; return; }
+
+  const places = itinerePlaces(segIds);
+  if (!places.length) {
+    // Distinguish "still loading" from "genuinely none" so it never reads broken.
+    if (_roadPPState === 'idle' || _roadPPState === 'loading') {
+      el.innerHTML = '<div class="seg-near-label">Pleiades places on this road</div>' +
+                     '<div class="seg-pl-loading">Loading linked places…</div>';
+      el.style.display = 'block';
+    } else {
+      el.style.display = 'none'; el.innerHTML = '';
+    }
+    return;
+  }
+
+  places.sort((a, b) => a.name.localeCompare(b.name));
+  el.innerHTML = '';
+  const label = document.createElement('div');
+  label.className = 'seg-near-label';
+  label.textContent = 'Pleiades places on this road';
+  el.appendChild(label);
+
+  for (const p of places.slice(0, SEG_PLEIADES_CAP)) {
+    const site = siteByPid(p.pid);
+    const row = document.createElement(site ? 'button' : 'a');
+    row.className = 'seg-pl-row';
+    if (site) {
+      row.type = 'button';
+      row.addEventListener('click', (e) => { e.stopPropagation(); showPanel(site); });
+    } else {
+      row.href = 'https://pleiades.stoa.org/places/' + p.pid;
+      row.target = '_blank';
+      row.rel = 'noopener';
+    }
+    const name = document.createElement('span');
+    name.className = 'seg-pl-name';
+    name.textContent = p.name || ('Pleiades ' + p.pid);
+    const meta = document.createElement('span');
+    meta.className = 'seg-pl-meta';
+    meta.textContent = site ? 'In VIA →' : (p.type || 'Pleiades') + ' ↗';
+    row.append(name, meta);
+    el.appendChild(row);
+  }
+
+  const extra = places.length - SEG_PLEIADES_CAP;
+  if (extra > 0) {
+    const more = document.createElement('div');
+    more.className = 'seg-pl-more';
+    more.textContent = `+${extra} more linked place${extra === 1 ? '' : 's'}`;
+    el.appendChild(more);
+  }
+  el.style.display = 'block';
+}
+
 const COVERAGE_SEARCH_LIMIT = 6;
 function searchCoverage(query) {
   if (_coverageState !== 'ready' || !_coverageData) return [];
@@ -2097,7 +2215,10 @@ function focusItinere(entry) {
   }
   const all = highlightItinere(entry);
   const meta = entry.meta ? { ...entry.meta, name: entry.name } : { name: entry.name };
-  showSegmentPanel(meta, all);
+  // A named road is many segments; deep-link uses the first, Pleiades places union
+  // across all of them.
+  const segIds = (entry.segs || []).map(s => s.id).filter(x => x != null);
+  showSegmentPanel(meta, all, segIds);
   // The road is the star — drop the return-view snapshot so closePanel keeps the
   // framing + highlight instead of flying back to the pre-search view.
   panelReturnView = null;
@@ -2526,7 +2647,14 @@ function nearestSitesToSegment(ll, maxKm = 10, limit = 5) {
 // No per-segment URI exists in the static dump, so the external link points at the
 // Itiner-e atlas rather than a deep segment link. `latlngs` (the segment geometry)
 // drives the "Places along this stretch" bridge.
-function showSegmentPanel(meta, latlngs) {
+// segIds: the Itiner-e route-segment id(s) behind this panel. A tap resolves to
+// one exact segment ([id]); a named-road search passes all its segments' ids (the
+// deep-link uses the first, Pleiades places union across them). Curated roads (the
+// hand-drawn 14) have no Itiner-e id → segIds omitted, link falls back to the atlas
+// home, no Pleiades section.
+function showSegmentPanel(meta, latlngs, segIds) {
+  segIds = (segIds || []).filter(x => x != null);
+  _lastSegmentArgs = { segIds };
   hideLegendToast();
   closeDockPanels();      // the detail card is the one open surface now
 
@@ -2701,12 +2829,27 @@ function showSegmentPanel(meta, latlngs) {
   }
 
   // Itiner-e atlas (opens a new tab) + the email-this-quest action when relevant.
+  // When we know the exact route-segment id, deep-link straight to that segment's
+  // page (…/route-segment/<id>) instead of the atlas home — the whole point of the
+  // export rebuild. Curated roads with no id keep the generic home link.
+  const itUrl = segIds.length
+    ? `https://itiner-e.org/route-segment/${segIds[0]}`
+    : 'https://itiner-e.org';
+  const itSub = segIds.length
+    ? 'This exact segment on Itiner-e · CC BY 4.0'
+    : 'Scholarly Roman road dataset · CC BY 4.0';
   document.getElementById('panel-actions').innerHTML = `
-    <a href="https://itiner-e.org" target="_blank" rel="noopener" class="p-btn p-btn-gold">
+    <a href="${itUrl}" target="_blank" rel="noopener" class="p-btn p-btn-gold">
       <span class="p-btn-icon">🗺️</span>
-      <div><div class="p-btn-main">Itiner-e Atlas</div><div class="p-btn-sub">Scholarly Roman road dataset · CC BY 4.0</div></div>
+      <div><div class="p-btn-main">Itiner-e Atlas</div><div class="p-btn-sub">${itSub}</div></div>
       <span class="p-btn-ext" aria-hidden="true">↗</span>
     </a>${emailBtn}`;
+
+  // Pleiades places Itiner-e links to this road. Lazy-load the companion file on
+  // first road tap; renderSegmentPleiades re-runs from ensureRoadPleiadesLoaded's
+  // onload once it's ready.
+  if (segIds.length) ensureRoadPleiadesLoaded();
+  renderSegmentPleiades(segIds);
 
   const panel = document.getElementById('info-panel');
   panel.classList.add('segment-panel');
@@ -2746,7 +2889,7 @@ function saveReturnState() {
 map.on('click', (e) => {
   closeDockPanels();      // a tap on the open map dismisses any dock popover
   const seg = findNearestItinere(e.latlng, e.containerPoint);
-  if (seg) { showSegmentPanel(seg.meta, seg.ll); return; }
+  if (seg) { showSegmentPanel(seg.meta, seg.ll, [seg.id]); return; }
   const cov = findNearestCoverage(e.latlng, e.containerPoint);  // only resolves when dots show
   if (cov) { focusCoverage(cov); return; }
   const pin = nearestPinnedCoverage(e.latlng, e.containerPoint);  // reopen a searched place's panel

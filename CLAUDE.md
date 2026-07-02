@@ -50,6 +50,31 @@ Interaction model:
 - Adding a road = append to `ROADS`; coords are `[lng, lat]` pairs (note the order — flipped when fed to Leaflet at `app.js:46`).
 - Adding a new `type` or `quest` value requires adding a matching entry to the `TYPE` / `QUEST` config objects in `app.js`.
 
+## Regenerating the data
+
+The app has no build step, but every `js/*` data layer is **generated** from an
+external scholarly gazetteer by a script in `scripts/`. Full catalogue, dependency
+graph, run order, and license notes live in **`docs/DATA-REGEN.md`** — read it before
+touching any generated file. Fast path: run **`/regen-data`** in Claude Code (reads
+the playbook and runs the rebuild you ask for in the right order), or use the npm
+aliases directly:
+
+| What changed | Command |
+|---|---|
+| Itiner-e roads | `npm run regen:roads` (`node scripts/build-roads.mjs --refresh` for a fresh export) |
+| Pleiades site catalogue | `npm run regen:sites` |
+| Travel-time to Rome | `npm run regen:orbis` |
+| Whole site/gazetteer pipeline (in dep order) | `npm run regen:sites-all` |
+| Everything | `npm run regen:all` |
+
+Two ordering rules: `build-linked-data` runs **last** (it scrapes foreground ids out
+of `data.js` + `sites-pleiades.js` + `sites-vici.js`), and `detect-pleiades-photos`
+runs **before** `build-sites` for fresh photo-quest signal. `build-orbis` /
+`build-roads` are independent. After any regen: **cache-bust `index.html`** (bump the
+`?v=N` tokens on changed assets), skim the diff, commit, confirm it landed. Never push
+unless asked. (`build-enrichment.mjs` is an unused v2 spike — its output isn't wired
+into the app.)
+
 ## Social layer (auth + check-ins)
 
 `js/auth.js` exposes a provider-agnostic API at `window.VIA.auth` — `currentUser`, `signIn(name)`, `signOut`, `checkIn(site)`, `removeCheckIn(site)`, `getCheckin(site)`, `getUserCheckins`, `getSiteVisitCount(site)`, `onChange(fn)`. Today it's backed by `LocalBackend` (localStorage); the file's data-model header doubles as the **Supabase schema spec** for when we provision the cloud backend.

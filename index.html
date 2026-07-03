@@ -46,7 +46,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=121">
+  <link rel="stylesheet" href="css/style.css?v=124">
 </head>
 <body>
 
@@ -55,8 +55,8 @@
 
 <!-- Top Bar -->
 <div id="topbar" data-testid="main-nav">
-  <div id="app-brand" onclick="openWelcome()" role="button" tabindex="0" title="About VIA">
-    <h1 id="app-title">VIA</h1>
+  <div id="app-brand" onclick="openWelcome()" role="button" tabindex="0" title="About VIA — what this is & where the data comes from">
+    <h1 id="app-title">VIA<span id="brand-info" aria-hidden="true">ⓘ</span></h1>
     <div id="app-subtitle">Ancient World Explorer</div>
   </div>
   <div id="topbar-search" data-testid="site-search">
@@ -109,6 +109,12 @@
         </div>
       </div>
       <p class="welcome-kicker">Learn history. Help write it.</p>
+      <div class="welcome-sources">
+        <div class="welcome-sources-title">Plan a Roman journey</div>
+        <p>Tap any place, then tap a second — VIA traces the route a Roman traveller would have taken and tells you how many days it took, in road, river, and sea. The travel model is <strong>ORBIS</strong>, Stanford's geospatial reconstruction of the Roman world.</p>
+        <div class="welcome-sources-title">Built on the scholarly record</div>
+        <p><strong>Pleiades</strong> for places, <strong>Itiner-e</strong> for the road network, <strong>ORBIS</strong> for travel — the same open gazetteers historians use. VIA just puts them on one map.</p>
+      </div>
     </div>
     <button class="auth-primary" onclick="closeWelcome()">Begin Exploring</button>
   </div>
@@ -376,7 +382,10 @@
 <!-- Journey routing (ORBIS) — hint banner shown while picking a destination,
      and the days/km/denarii result card. Populated by app.js. -->
 <div id="route-hint" role="status">
-  <span id="route-hint-text"></span>
+  <div id="route-hint-body">
+    <span id="route-hint-text"></span>
+    <span id="route-hint-sub"></span>
+  </div>
   <button type="button" onclick="cancelRoutePick()" aria-label="Cancel route">✕</button>
 </div>
 <div id="route-readout" role="status">
@@ -414,7 +423,7 @@
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
 <script src="js/basemap.js?v=106"></script>
-<script src="js/app.js?v=122"></script>
+<script src="js/app.js?v=124"></script>
 
 </body>
 </html>

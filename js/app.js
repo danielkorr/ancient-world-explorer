@@ -2077,6 +2077,19 @@ function showRouteHint(origin) {
   if (!el) return;
   el.querySelector('#route-hint-text').textContent =
     'Journey from ' + (origin.name || 'here') + ' — tap another place for the route';
+  // One-time primer explaining what the journey tool actually is (ORBIS), shown
+  // only on the user's first route so it never nags. Mirrors maybeHintCoverage.
+  const sub = el.querySelector('#route-hint-sub');
+  if (sub) {
+    let primed = true;
+    try { primed = localStorage.getItem('via.journeyPrimed') === '1'; } catch (e) {}
+    if (!primed) {
+      sub.textContent = 'Times & cost come from ORBIS — Stanford’s model of real Roman travel by road, river and sea.';
+      try { localStorage.setItem('via.journeyPrimed', '1'); } catch (e) {}
+    } else {
+      sub.textContent = '';
+    }
+  }
   el.classList.add('show');
 }
 function hideRouteHint() {
@@ -3812,7 +3825,7 @@ function syncDetailUI() {
     if (_coverageState === 'idle' || _coverageState === 'loading') text = '+ Documented · loading…';
     else if (_coverageState === 'error') text = '+ Documented · unavailable';
     else if (map.getZoom() < MIN_COVERAGE_ZOOM) text = '+ Documented · zoom in to reveal';
-    else text = `+ Documented · ${(_coverageData ? _coverageData.length : 0).toLocaleString()} places`;
+    else text = `+ Documented · ${(_coverageData ? _coverageData.length : 0).toLocaleString()}`;
   } else if (stats.level === 1) {
     // "Quests": the count that matters is the quest tally (the game layer).
     text = `Quests · ${stats.questCount.toLocaleString()} quests`;

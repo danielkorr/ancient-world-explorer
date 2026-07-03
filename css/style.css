@@ -589,10 +589,13 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   gap: 5px;
 }
 .detail-head {
+  /* Stacked (title over readout) so the readout gets the box's full width. On one
+     row the long "+ Documented · 24,455 places" string ran past the border — the
+     title ate ~48px, leaving too little for the number. */
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
   font-size: 9px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -605,13 +608,19 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   letter-spacing: 0.2px;
   text-transform: none;
   white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 #detail-slider {
-  width: 100%;
+  /* Inset by the thumb radius (+ its glow ring) so the thumb never overhangs the
+     panel at the extremes — a full-width track lets the thumb center reach the
+     very edge, pushing half the thumb past the container's right border. */
+  width: calc(100% - 20px);
+  margin: 0 10px;
   appearance: none;
   -webkit-appearance: none;
   height: 22px;
-  margin: 0;
   background: transparent;
   cursor: pointer;
 }
@@ -878,10 +887,45 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   text-align: center;
   margin: 18px 0 0;
 }
+.welcome-sources {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(212,168,83,0.22);
+}
+.welcome-sources-title {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1.7px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 7px;
+}
+.welcome-sources-title:not(:first-child) { margin-top: 15px; }
+.welcome-sources p { font-size: 12.5px; margin: 0; color: var(--text-body); }
+.welcome-sources strong { color: rgba(240,230,211,0.98); }
 
 /* Brand is a button that reopens the welcome modal. */
-#app-brand { cursor: pointer; }
+#app-brand {
+  cursor: pointer;
+  /* Make the whole title block read as a button — nobody was discovering it was
+     clickable. A padded hit-area + a hover tint/underline + a small ⓘ glyph. */
+  border-radius: 6px;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  transition: background 0.15s ease;
+}
+#app-brand:hover { background: rgba(212,168,83,0.09); }
+#app-brand:hover #app-subtitle { text-decoration: underline; text-underline-offset: 2px; }
+#app-brand:hover #brand-info { opacity: 1; }
 #app-brand:focus-visible { outline: 1px solid var(--gold-dim); outline-offset: 3px; }
+#brand-info {
+  font-size: 0.5em;
+  vertical-align: super;
+  margin-left: 3px;
+  opacity: 0.55;
+  letter-spacing: 0;
+  transition: opacity 0.15s ease;
+}
 
 #legend-info {
   position: fixed;
@@ -1447,8 +1491,15 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s;
 }
 #route-hint.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
-#route-hint::before { content: "🧭"; font-size: 15px; }
-#route-hint-text { flex: 1; }
+#route-hint::before { content: "🧭"; font-size: 15px; flex-shrink: 0; }
+#route-hint-body { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+#route-hint-text { display: block; }
+/* One-time primer: what ORBIS is, shown only on the first journey. Hidden until
+   JS fills it in (empty = display:none via :empty). */
+#route-hint-sub {
+  font-size: 10.5px; line-height: 1.35; color: rgba(196,193,224,0.82);
+}
+#route-hint-sub:empty { display: none; }
 #route-hint button {
   flex-shrink: 0; background: none; border: none; color: #a5b4fc;
   font-size: 16px; line-height: 1; cursor: pointer; padding: 2px 4px;
@@ -2316,13 +2367,18 @@ path.leaflet-interactive { outline: none !important; }
    that pair the ancient name with the modern one. Tooltips are non-interactive
    so they never steal a marker tap. */
 .swatch-name {
+  /* Boxed so it reads as a legend KEY (a type specimen), not as text that runs
+     into the adjacent "Names" caps — "Aa NAMES" was misread as one word "AA". */
   font-family: 'Cinzel', serif;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   line-height: 1;
   color: var(--gold);
-  width: 18px;
   text-align: center;
+  padding: 2px 4px;
+  border: 1px solid rgba(212,168,83,0.5);
+  border-radius: 3px;
+  background: rgba(212,168,83,0.08);
 }
 .leaflet-tooltip.via-name-label {
   background: rgba(10, 5, 0, 0.82);

@@ -3160,39 +3160,59 @@ if (!COARSE_POINTER) {
     mapEl.style.cursor = on ? 'pointer' : '';   // '' reverts to Leaflet's grab
   };
   const hide = () => { readout.classList.remove('show'); setClickable(false); };
+  // The name label is DWELL-gated and uses a much tighter catch than the click.
+  // With ~15k dense Itiner-e segments a 28px catch means the cursor is "near a
+  // road" almost everywhere, so a move-driven label became constant soup that
+  // buried any search (the reported bug: a road tag popped up at nearly every
+  // point, often unrelated to where the user was looking). Now the label only
+  // resolves after the cursor SETTLES (>~220ms still) and only within ~12px — so
+  // scanning/panning the map is silent, and the name appears only when you park
+  // on a line. The pointer cursor still tracks the full click catch in real time
+  // (cheap, subtle affordance — it's just a hand, not a floating label).
+  const LABEL_THRESH = 12, DWELL_MS = 220;
+  let _dwellTimer = 0;
+  const showLabelFor = (ev) => {
+    const seg = findNearestItinere(ev.latlng, ev.containerPoint, LABEL_THRESH);
+    let name = seg && seg.meta && seg.meta.name;
+    if (!name) {   // no named road within the tight catch → nearest coverage dot
+      const cov = findNearestCoverage(ev.latlng, ev.containerPoint);
+      if (cov) name = cov.name;
+    }
+    // Don't stack the cursor readout on top of a curated-road tooltip — that
+    // tooltip already names the road under the cursor, so the readout would be
+    // a redundant second label overlapping the first.
+    const roadTipOpen = !!document.querySelector('.leaflet-tooltip.road-tip');
+    if (name && !roadTipOpen) {
+      readout.textContent = name;
+      readout.style.left = (ev.originalEvent.clientX + 14) + 'px';
+      readout.style.top  = (ev.originalEvent.clientY + 16) + 'px';
+      readout.classList.add('show');
+    } else {
+      readout.classList.remove('show');
+    }
+  };
   map.on('mousemove', (e) => {
     _lastMove = e;
+    // Any motion hides the current label and restarts the dwell clock — the label
+    // is for a settled cursor, not a moving one, so a sweep across the map shows
+    // nothing until the cursor actually stops.
+    readout.classList.remove('show');
+    if (_dwellTimer) clearTimeout(_dwellTimer);
+    _dwellTimer = setTimeout(() => { if (_lastMove) showLabelFor(_lastMove); }, DWELL_MS);
     if (_hoverRaf) return;
     _hoverRaf = requestAnimationFrame(() => {
       _hoverRaf = 0;
       const ev = _lastMove;
       if (!ev) return;
-      const seg = findNearestItinere(ev.latlng, ev.containerPoint);
-      let name = seg && seg.meta && seg.meta.name;
-      // A click resolves on any nearby segment (even unnamed), a coverage dot, or
-      // a pinned search result — track that for the cursor, the name for the label.
-      let clickable = !!seg;
-      if (!name) {   // no named road nearer → name the nearest coverage dot, if any show
-        const cov = findNearestCoverage(ev.latlng, ev.containerPoint);
-        if (cov) { name = cov.name; clickable = true; }
-      }
+      // Clickability (the pointer cursor) tracks the full click catch in real time:
+      // any nearby segment (even unnamed), a coverage dot, or a pinned search result.
+      let clickable = !!findNearestItinere(ev.latlng, ev.containerPoint);
+      if (!clickable && findNearestCoverage(ev.latlng, ev.containerPoint)) clickable = true;
       if (!clickable && nearestPinnedCoverage(ev.latlng, ev.containerPoint)) clickable = true;
       setClickable(clickable);
-      // Don't stack the cursor readout on top of a curated-road tooltip — that
-      // tooltip already names the road under the cursor, so the readout would be
-      // a redundant second label overlapping the first.
-      const roadTipOpen = !!document.querySelector('.leaflet-tooltip.road-tip');
-      if (name && !roadTipOpen) {
-        readout.textContent = name;
-        readout.style.left = (ev.originalEvent.clientX + 14) + 'px';
-        readout.style.top  = (ev.originalEvent.clientY + 16) + 'px';
-        readout.classList.add('show');
-      } else {
-        readout.classList.remove('show');
-      }
     });
   });
-  map.on('mouseout', hide);
+  map.on('mouseout', () => { if (_dwellTimer) clearTimeout(_dwellTimer); hide(); });
 }
 
 // ── ERA TOGGLE ───────────────────────────────────────────

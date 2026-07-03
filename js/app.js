@@ -1940,6 +1940,16 @@ function itinerePlaces(segIds) {
 let _orbisGraphPromise = null;      // lazy-load the ~140 KB graph once
 let routeOrigin  = null;            // site armed as the journey origin
 let routePicking = false;           // true while awaiting a destination tap
+let routeBasis   = 'days';          // 'days'|'km'|'expense' — fastest/shortest/cheapest (v2 toggle)
+let _activeRoute = null;            // { origin, dest, a, b } of the drawn route, for re-routing on toggle
+
+// The three cost bases the toggle exposes. `stat` is which readout figure this
+// basis optimizes (so we can emphasize it), `label` the button text.
+const ROUTE_BASES = [
+  { key: 'days',    label: 'Fastest',  stat: 'days' },
+  { key: 'km',      label: 'Shortest', stat: 'km' },
+  { key: 'expense', label: 'Cheapest', stat: 'expense' },
+];
 
 // Inject js/orbis-graph.js on first use (mirrors ensureCoverageLoaded). Resolves
 // true once window.ORBIS_ROUTE can route. Kept out of index.html cold start.
@@ -1989,8 +1999,23 @@ async function completeRoute(dest) {
   const b = R.snapToNode(dest.lat, dest.lng);
   if (!a || !b) { showRouteReadoutError('No ORBIS network node is near one of these places.'); return; }
   if (a.node.id === b.node.id) { showRouteReadoutError('Both places snap to the same ORBIS node — pick somewhere farther.'); return; }
-  const r = R.route(a.node.id, b.node.id);
+  const r = R.route(a.node.id, b.node.id, routeBasis);
   if (!r) { showRouteReadoutError('No ORBIS route connects these two places.'); return; }
+  _activeRoute = { origin, dest, a, b };
+  drawRoute(r, origin, dest);
+  showRouteReadout(origin, dest, r, a, b);
+}
+
+// Re-route the SAME endpoints under a different cost basis (the fastest/
+// shortest/cheapest toggle). Redraws + updates the readout in place.
+function setRouteBasis(basis) {
+  if (!_activeRoute || !ROUTE_BASES.some(b => b.key === basis)) return;
+  routeBasis = basis;
+  const R = window.ORBIS_ROUTE;
+  if (!R || !R.ready()) return;
+  const { origin, dest, a, b } = _activeRoute;
+  const r = R.route(a.node.id, b.node.id, basis);
+  if (!r) { showRouteReadoutError('No route for that option.'); return; }
   drawRoute(r, origin, dest);
   showRouteReadout(origin, dest, r, a, b);
 }
@@ -2000,7 +2025,8 @@ async function completeRoute(dest) {
 // through the ORBIS node coords, plus dotted "access" legs from each real place
 // to its snapped node, and endpoint rings. Fits the map to the whole journey.
 function drawRoute(r, origin, dest) {
-  clearRoute();
+  routeGroup.clearLayers();   // just the old geometry — NOT clearRoute() (that
+                              // nulls _activeRoute, which the basis toggle needs)
   const pts = r.nodes.map(n => [n.lat, n.lng]);
   if (pts.length < 2) return;
   L.polyline(pts, { color: '#ffffff', weight: 8, opacity: 0.9,  lineJoin: 'round', lineCap: 'round' }).addTo(routeGroup);
@@ -2018,8 +2044,11 @@ function drawRoute(r, origin, dest) {
 }
 
 // Erase any drawn route + hide the readout. Safe to call anytime.
+// (routeBasis persists as a user preference across journeys; only the drawn
+// route's endpoints are forgotten.)
 function clearRoute() {
   routeGroup.clearLayers();
+  _activeRoute = null;
   const rr = document.getElementById('route-readout');
   if (rr) rr.classList.remove('show');
 }
@@ -2055,10 +2084,17 @@ function hideRouteHint() {
   if (el) el.classList.remove('show');
 }
 
-// ── route readout (the days/km/denarii result card) ──
+// ── route readout (the days/km/denarii result card + basis toggle) ──
+const ROUTE_BASIS_DESC = {
+  days:    'fastest by time',
+  km:      'shortest by distance',
+  expense: 'cheapest by cost',
+};
+
 function showRouteReadout(origin, dest, r, a, b) {
   const el = document.getElementById('route-readout');
   if (!el) return;
+  const basis = r.basis || 'days';
   const days = r.totalDays < 1 ? '<1' : String(Math.round(r.totalDays));
   const km   = Math.round(r.totalKm).toLocaleString();
   const den  = r.totalExpense < 1 ? '<1' : String(Math.round(r.totalExpense));
@@ -2066,15 +2102,26 @@ function showRouteReadout(origin, dest, r, a, b) {
   // Note the snap distance honestly when either endpoint is far from its node.
   const snapNote = (a.distKm > 20 || b.distKm > 20)
     ? ' · snapped to nearest ORBIS node' : '';
+
   el.querySelector('#route-readout-route').textContent =
     (origin.name || 'Origin') + ' → ' + (dest.name || 'Destination');
+
+  // Stats — emphasize the figure the active basis optimizes (.on).
+  const stat = (b2, html) => `<span class="rstat${basis === b2 ? ' on' : ''}">${html}</span>`;
   el.querySelector('#route-readout-stats').innerHTML =
-    '<b>' + days + '</b> day' + (days === '1' ? '' : 's') +
-    ' · <b>' + km + '</b> km' +
-    ' · <b>' + den + '</b> denarii';
+    stat('days',    '<b>' + days + '</b> day' + (days === '1' ? '' : 's')) + ' · ' +
+    stat('km',      '<b>' + km + '</b> km') + ' · ' +
+    stat('expense', '<b>' + den + '</b> denarii');
+
+  // Fastest/Shortest/Cheapest segmented toggle.
+  el.querySelector('#route-readout-toggle').innerHTML = ROUTE_BASES.map(bb =>
+    `<button type="button" class="rtoggle-btn${basis === bb.key ? ' on' : ''}"` +
+    ` onclick="setRouteBasis('${bb.key}')" aria-pressed="${basis === bb.key}">${bb.label}</button>`
+  ).join('');
+
   el.querySelector('#route-readout-detail').textContent =
     (modes ? 'via ' + modes + ' · ' : '') +
-    'ORBIS network · summer · civilian · fastest by time' + snapNote;
+    'ORBIS network · summer · civilian · ' + (ROUTE_BASIS_DESC[basis] || 'fastest by time') + snapNote;
   el.classList.add('show');
 }
 function showRouteReadoutError(msg) {
@@ -2083,6 +2130,7 @@ function showRouteReadoutError(msg) {
   if (!el) return;
   el.querySelector('#route-readout-route').textContent = 'Route unavailable';
   el.querySelector('#route-readout-stats').innerHTML = '';
+  el.querySelector('#route-readout-toggle').innerHTML = '';
   el.querySelector('#route-readout-detail').textContent = msg;
   el.classList.add('show');
 }

@@ -1473,7 +1473,22 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 #route-readout-route  { font-size: 12px; font-weight: 600; color: #a5b4fc; padding-right: 22px; }
 #route-readout-stats  { font-size: 17px; margin-top: 4px; letter-spacing: 0.2px; }
 #route-readout-stats b { color: #c7d2fe; }
+/* The figure the active basis optimizes gets a subtle underline + full-strength
+   text (the rest dim slightly) so the toggle's effect is legible at a glance. */
+#route-readout-stats .rstat { opacity: 0.5; transition: opacity 0.15s; }
+#route-readout-stats .rstat.on { opacity: 1; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.7); text-underline-offset: 3px; }
 #route-readout-detail { font-size: 10.5px; opacity: 0.62; margin-top: 5px; line-height: 1.35; }
+
+/* Fastest / Shortest / Cheapest segmented toggle. */
+#route-readout-toggle { display: flex; gap: 0; margin-top: 9px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(99,102,241,0.35); }
+.rtoggle-btn {
+  flex: 1; padding: 6px 4px; font-family: inherit; font-size: 11px; font-weight: 500;
+  background: transparent; border: none; border-right: 1px solid rgba(99,102,241,0.25);
+  color: #b9b7d6; cursor: pointer; transition: background 0.15s, color 0.15s;
+}
+.rtoggle-btn:last-child { border-right: none; }
+.rtoggle-btn:hover { background: rgba(99,102,241,0.12); color: #e6e4f5; }
+.rtoggle-btn.on { background: rgba(99,102,241,0.35); color: #fff; font-weight: 600; }
 
 /* "Opens externally" cue — pinned top-right. Visible enough to read as a
    signpost ("this leaves VIA") without competing with the button label. */

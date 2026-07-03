@@ -46,7 +46,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=120">
+  <link rel="stylesheet" href="css/style.css?v=121">
 </head>
 <body>
 
@@ -383,6 +383,8 @@
   <button type="button" id="route-readout-close" onclick="clearRoute()" aria-label="Clear route">✕</button>
   <div id="route-readout-route"></div>
   <div id="route-readout-stats"></div>
+  <!-- Fastest / Shortest / Cheapest cost-basis toggle (populated by app.js). -->
+  <div id="route-readout-toggle" role="group" aria-label="Optimize route by"></div>
   <div id="route-readout-detail"></div>
 </div>
 
@@ -392,7 +394,7 @@
 <script src="js/orbis-days.js?v=106"></script>
 <!-- Client-side ORBIS routing logic (small). The heavy graph it reads
      (js/orbis-graph.js) is LAZY-loaded by app.js on first route request. -->
-<script src="js/orbis-route.js?v=120"></script>
+<script src="js/orbis-route.js?v=121"></script>
 <script src="js/sites-pleiades.js?v=106"></script>
 <script src="js/sites-vici.js?v=106"></script>
 <script src="js/vici-links.js?v=106"></script>
@@ -412,7 +414,7 @@
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
 <script src="js/basemap.js?v=106"></script>
-<script src="js/app.js?v=120"></script>
+<script src="js/app.js?v=121"></script>
 
 </body>
 </html>

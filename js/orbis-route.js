@@ -115,15 +115,24 @@
   }
 
   // ── Dijkstra on `days` with prev-pointer reconstruction ───
-  function route(fromId, toId) {
+  // basis picks the edge weight Dijkstra minimizes:
+  //   'days'    → fastest   (default; matches the days-to-Rome card)
+  //   'km'      → shortest
+  //   'expense' → cheapest
+  // Regardless of basis, ALL three totals are summed along the chosen path so
+  // the readout can show fastest/shortest/cheapest trade-offs against each other.
+  const COST_KEYS = { days: 'days', km: 'km', expense: 'expense' };
+
+  function route(fromId, toId, basis) {
     if (!ready()) return null;
+    const key = COST_KEYS[basis] || 'days';
     if (fromId === toId) {
       const n = nodeById(fromId);
       if (!n) return null;
-      return { path: [fromId], nodes: [n], totalDays: 0, totalKm: 0, totalExpense: 0, legs: [] };
+      return { path: [fromId], nodes: [n], totalDays: 0, totalKm: 0, totalExpense: 0, legs: [], basis: key };
     }
     const adj = buildAdj();
-    const dist = new Map();      // nodeId → cumulative days
+    const dist = new Map();      // nodeId → cumulative cost in the chosen basis
     const prev = new Map();      // nodeId → { from, edge }
     const done = new Set();
     const heap = new MinHeap();
@@ -138,7 +147,7 @@
       const edges = adj.get(u) || [];
       for (const e of edges) {
         if (done.has(e.to)) continue;
-        const nd = d + e.days;
+        const nd = d + e[key];
         if (nd < (dist.has(e.to) ? dist.get(e.to) : Infinity)) {
           dist.set(e.to, nd);
           prev.set(e.to, { from: u, edge: e });
@@ -152,12 +161,13 @@
     // Walk prev-pointers back from destination to origin.
     const path = [];
     const legs = [];
-    let totalKm = 0, totalExpense = 0;
+    let totalDays = 0, totalKm = 0, totalExpense = 0;
     let cur = toId;
     while (cur !== fromId) {
       const p = prev.get(cur);
       if (!p) return null;  // broken chain (shouldn't happen if reachable)
       path.push(cur);
+      totalDays += p.edge.days;
       totalKm += p.edge.km;
       totalExpense += p.edge.expense;
       legs.push(p.edge.mode);
@@ -170,10 +180,11 @@
     return {
       path,
       nodes: path.map(id => nodeById(id)),
-      totalDays: dist.get(toId),
+      totalDays,          // summed along the path, not the basis cost
       totalKm,
       totalExpense,
       legs,
+      basis: key,
     };
   }
 

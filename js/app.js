@@ -250,6 +250,11 @@ function raiseOverlays() {
 const itinereRenderer = L.canvas({ padding: 0.2 });
 const itinereRoadsGroup = L.layerGroup().addTo(map);
 const roadsGroup        = L.layerGroup().addTo(map);
+// ORBIS journey route overlay — a planned A→B path drawn on top of everything.
+// Permanently on the map (mobile-safe: mutate CONTENTS, never add/remove the
+// group — see the LayerGroup landmine in CLAUDE.md); wired in the JOURNEY
+// ROUTING section below.
+const routeGroup        = L.layerGroup().addTo(map);
 // Selection highlight for a searched road. Lives above roadsGroup, permanently
 // on the map (mobile-safe: we mutate its CONTENTS, never add/remove the group —
 // see the LayerGroup landmine in CLAUDE.md). Persists after the panel is
@@ -1133,6 +1138,13 @@ function setHeroPhoto(hero, heroIcon, url, grad) {
 }
 
 function showPanel(site) {
+  // Journey routing: if a route is armed, the next place the user opens (marker,
+  // cluster, or coverage — all funnel here) is the DESTINATION, not a panel to
+  // show. Complete the route instead of rendering the panel.
+  if (routePicking && routeOrigin && site && site.id !== routeOrigin.id) {
+    completeRoute(site);
+    return;
+  }
   hideLegendToast();
   closeDockPanels();      // the detail card is the one open surface now
   // A pending close-pulse is a one-shot tied to the site just focused via search.
@@ -1283,6 +1295,10 @@ function showPanel(site) {
   // site + home view first, so the Back reload drops you right where you were
   // instead of a cold start. The ↗ signals the button leaves VIA.
   document.getElementById('panel-actions').innerHTML = `
+    <button type="button" onclick="armRouteFromCurrent()" class="p-btn p-btn-route">
+      <span class="p-btn-icon">🧭</span>
+      <div><div class="p-btn-main">Plan a route from here</div><div class="p-btn-sub">Trace an ORBIS journey to another place</div></div>
+    </button>
     <a href="${gmUrl}" onclick="saveReturnState()" class="p-btn p-btn-maps">
       <span class="p-btn-icon">🗺️</span>
       <div><div class="p-btn-main">Google Maps</div><div class="p-btn-sub">Modern streets, places &amp; directions</div></div>
@@ -1905,6 +1921,170 @@ function itinerePlaces(segIds) {
     }
   }
   return out;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  ORBIS JOURNEY ROUTING (lean route lookup, v1)
+//
+//  Client-side Dijkstra over the full ORBIS graph (js/orbis-graph.js,
+//  LAZY-LOADED here) via window.ORBIS_ROUTE (js/orbis-route.js). Lets you pick
+//  any open place as an origin, then tap a second place; we snap both onto the
+//  nearest ORBIS nodes, route between them, draw the path, and show a compact
+//  days/km/denarii readout.
+//
+//  HONEST SCOPE: the ORBIS/gorbit weights are a single frozen parameterization
+//  (summer, civilian, fastest by time). No month or transport-mode dimension
+//  exists in this data — this is a route LOOKUP, not a seasonal simulator.
+// ══════════════════════════════════════════════════════════════
+
+let _orbisGraphPromise = null;      // lazy-load the ~140 KB graph once
+let routeOrigin  = null;            // site armed as the journey origin
+let routePicking = false;           // true while awaiting a destination tap
+
+// Inject js/orbis-graph.js on first use (mirrors ensureCoverageLoaded). Resolves
+// true once window.ORBIS_ROUTE can route. Kept out of index.html cold start.
+function ensureOrbisGraphLoaded() {
+  if (_orbisGraphPromise) return _orbisGraphPromise;
+  if (window.ORBIS_ROUTE && window.ORBIS_ROUTE.ready()) {
+    _orbisGraphPromise = Promise.resolve(true);
+    return _orbisGraphPromise;
+  }
+  _orbisGraphPromise = new Promise((resolve) => {
+    const s = document.createElement('script');
+    s.src = 'js/orbis-graph.js?v=' + BUILD;   // same cache token as the app
+    s.async = true;
+    s.onload  = () => resolve(!!(window.ORBIS_ROUTE && window.ORBIS_ROUTE.ready()));
+    s.onerror = () => resolve(false);
+    document.head.appendChild(s);
+  });
+  return _orbisGraphPromise;
+}
+
+// Arm route mode from the currently open panel's place. Warms the graph while
+// the user picks, closes the panel so the map is tappable, and shows a hint.
+// routeOrigin/routePicking are module state — closePanel does NOT clear them.
+function armRouteFromCurrent() {
+  const site = currentPanelSite;
+  if (!site || typeof site.lat !== 'number') return;
+  ensureOrbisGraphLoaded();
+  clearRoute();
+  routeOrigin  = site;
+  routePicking = true;
+  closePanel();
+  showRouteHint(site);
+}
+
+// Complete a route: destination is any place the user taps next (a site or a
+// coverage place — both funnel through showPanel, which calls this). Snaps both
+// endpoints to ORBIS nodes, routes, draws, and shows the readout.
+async function completeRoute(dest) {
+  const origin = routeOrigin;
+  routePicking = false;
+  hideRouteHint();
+  if (!origin || !dest) return;
+  const ok = await ensureOrbisGraphLoaded();
+  const R = window.ORBIS_ROUTE;
+  if (!ok || !R || !R.ready()) { showRouteReadoutError('Routing data could not load.'); return; }
+  const a = R.snapToNode(origin.lat, origin.lng);
+  const b = R.snapToNode(dest.lat, dest.lng);
+  if (!a || !b) { showRouteReadoutError('No ORBIS network node is near one of these places.'); return; }
+  if (a.node.id === b.node.id) { showRouteReadoutError('Both places snap to the same ORBIS node — pick somewhere farther.'); return; }
+  const r = R.route(a.node.id, b.node.id);
+  if (!r) { showRouteReadoutError('No ORBIS route connects these two places.'); return; }
+  drawRoute(r, origin, dest);
+  showRouteReadout(origin, dest, r, a, b);
+}
+
+// Draw the route: an indigo line (white casing beneath for contrast on any
+// basemap — indigo is colorblind-safe, unlike the map's red/green quest hues)
+// through the ORBIS node coords, plus dotted "access" legs from each real place
+// to its snapped node, and endpoint rings. Fits the map to the whole journey.
+function drawRoute(r, origin, dest) {
+  clearRoute();
+  const pts = r.nodes.map(n => [n.lat, n.lng]);
+  if (pts.length < 2) return;
+  L.polyline(pts, { color: '#ffffff', weight: 8, opacity: 0.9,  lineJoin: 'round', lineCap: 'round' }).addTo(routeGroup);
+  L.polyline(pts, { color: '#4f46e5', weight: 4, opacity: 0.95, lineJoin: 'round', lineCap: 'round' }).addTo(routeGroup);
+  // Dotted legs bridging the real place to its snapped ORBIS node (honest about
+  // the snap — the network doesn't have a node at every place).
+  const dashOpt = { color: '#4f46e5', weight: 2, opacity: 0.6, dashArray: '2 6' };
+  L.polyline([[origin.lat, origin.lng], pts[0]], dashOpt).addTo(routeGroup);
+  L.polyline([pts[pts.length - 1], [dest.lat, dest.lng]], dashOpt).addTo(routeGroup);
+  // Endpoints: hollow ring = start, filled = finish.
+  L.circleMarker([origin.lat, origin.lng], { radius: 6, color: '#4f46e5', weight: 3, fillColor: '#ffffff', fillOpacity: 1 }).addTo(routeGroup);
+  L.circleMarker([dest.lat, dest.lng],     { radius: 6, color: '#4f46e5', weight: 3, fillColor: '#4f46e5', fillOpacity: 1 }).addTo(routeGroup);
+  const b = L.latLngBounds([[origin.lat, origin.lng], [dest.lat, dest.lng], ...pts]);
+  map.fitBounds(b.pad(0.18), { animate: true });
+}
+
+// Erase any drawn route + hide the readout. Safe to call anytime.
+function clearRoute() {
+  routeGroup.clearLayers();
+  const rr = document.getElementById('route-readout');
+  if (rr) rr.classList.remove('show');
+}
+
+// Cancel an armed pick (e.g. user tapped empty map) without drawing anything.
+function cancelRoutePick() {
+  routePicking = false;
+  routeOrigin  = null;
+  hideRouteHint();
+}
+
+// Summarize the coarse leg modes of a route, e.g. "road · sea".
+function routeModeSummary(r) {
+  const L2 = window.ORBIS_ROUTE ? window.ORBIS_ROUTE.MODE_LABELS : [];
+  const order = [], seen = new Set();
+  for (const m of (r.legs || [])) {
+    const label = L2[m] || 'mixed';
+    if (!seen.has(label)) { seen.add(label); order.push(label); }
+  }
+  return order.join(' · ');
+}
+
+// ── route hint banner (shown while awaiting the destination tap) ──
+function showRouteHint(origin) {
+  const el = document.getElementById('route-hint');
+  if (!el) return;
+  el.querySelector('#route-hint-text').textContent =
+    'Journey from ' + (origin.name || 'here') + ' — tap another place for the route';
+  el.classList.add('show');
+}
+function hideRouteHint() {
+  const el = document.getElementById('route-hint');
+  if (el) el.classList.remove('show');
+}
+
+// ── route readout (the days/km/denarii result card) ──
+function showRouteReadout(origin, dest, r, a, b) {
+  const el = document.getElementById('route-readout');
+  if (!el) return;
+  const days = r.totalDays < 1 ? '<1' : String(Math.round(r.totalDays));
+  const km   = Math.round(r.totalKm).toLocaleString();
+  const den  = r.totalExpense < 1 ? '<1' : String(Math.round(r.totalExpense));
+  const modes = routeModeSummary(r);
+  // Note the snap distance honestly when either endpoint is far from its node.
+  const snapNote = (a.distKm > 20 || b.distKm > 20)
+    ? ' · snapped to nearest ORBIS node' : '';
+  el.querySelector('#route-readout-route').textContent =
+    (origin.name || 'Origin') + ' → ' + (dest.name || 'Destination');
+  el.querySelector('#route-readout-stats').innerHTML =
+    '<b>' + days + '</b> day' + (days === '1' ? '' : 's') +
+    ' · <b>' + km + '</b> km' +
+    ' · <b>' + den + '</b> denarii';
+  el.querySelector('#route-readout-detail').textContent =
+    (modes ? 'via ' + modes + ' · ' : '') +
+    'ORBIS network · summer · civilian · fastest by time' + snapNote;
+  el.classList.add('show');
+}
+function showRouteReadoutError(msg) {
+  clearRoute();
+  const el = document.getElementById('route-readout');
+  if (!el) return;
+  el.querySelector('#route-readout-route').textContent = 'Route unavailable';
+  el.querySelector('#route-readout-stats').innerHTML = '';
+  el.querySelector('#route-readout-detail').textContent = msg;
+  el.classList.add('show');
 }
 
 // Memoized pleiades-id → catalogued site, so a road's Pleiades place can jump
@@ -2888,6 +3068,17 @@ function saveReturnState() {
 // unlike the layer-level clicks that forced the marker/road touch delegation.
 map.on('click', (e) => {
   closeDockPanels();      // a tap on the open map dismisses any dock popover
+  // Journey routing: while awaiting a destination, a coverage place completes
+  // the route (funnels through focusCoverage→showPanel); a tap on empty map or a
+  // road cancels the pick. (Marker taps never reach this handler — Leaflet stops
+  // their propagation — so they complete the route via showPanel directly.)
+  if (routePicking) {
+    const cov = findNearestCoverage(e.latlng, e.containerPoint) ||
+                nearestPinnedCoverage(e.latlng, e.containerPoint);
+    if (cov) { focusCoverage(cov); return; }
+    cancelRoutePick();
+    return;
+  }
   const seg = findNearestItinere(e.latlng, e.containerPoint);
   if (seg) { showSegmentPanel(seg.meta, seg.ll, [seg.id]); return; }
   const cov = findNearestCoverage(e.latlng, e.containerPoint);  // only resolves when dots show
@@ -2961,6 +3152,7 @@ if (!COARSE_POINTER) {
 function setEra(era) {
   if (era === currentEra) return;
   currentEra = era;
+  clearRoute();   // a drawn journey shouldn't linger across an era swap
   document.getElementById('btn-ancient').classList.toggle('active', era === 'ancient');
   document.getElementById('btn-modern').classList.toggle('active',  era === 'modern');
 

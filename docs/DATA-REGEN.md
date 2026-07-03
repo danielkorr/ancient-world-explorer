@@ -24,7 +24,7 @@ committed. All sources are slow-moving academic datasets, so regeneration is an
 | 3 | `js/sites-pleiades.js` + `js/sites-coverage.js` | `build-sites.mjs` | `regen:sites` | Pleiades CSV dump | ✅ (coverage lazy) |
 | 4 | `js/vici-links.js` | `build-vici-links.mjs` | `regen:vici-links` | cached Pleiades JSON refs | ✅ cold start |
 | 5 | `js/sites-linked-data.js` | `build-linked-data.mjs` | `regen:linked-data` | pleiades.datasets sidebar | ✅ cold start |
-| 6 | `js/orbis-days.js` | `build-orbis.mjs` | `regen:orbis` | ORBIS network (gorbit mirror) | ✅ cold start |
+| 6 | `js/orbis-days.js` + `js/orbis-graph.js` | `build-orbis.mjs` | `regen:orbis` | ORBIS network (gorbit mirror) | ✅ (graph lazy) |
 | 7 | `js/roads-itinere.js` + `js/roads-itinere-pleiades.js` | `build-roads.mjs` | `regen:roads` | Itiner-e live export | ✅ (pp lazy) |
 | — | `js/sites-enrichment.json` | `build-enrichment.mjs` | — | Pleiades + Wikidata + Commons | ⚠️ **NOT wired** (spike) |
 
@@ -84,6 +84,9 @@ alias). Examples:
 node scripts/build-roads.mjs --refresh          # re-download the ~37 MB Itiner-e export
 node scripts/build-sites.mjs --refresh          # re-download the Pleiades CSV dump
 node scripts/build-orbis.mjs --refresh          # re-download the gorbit CSVs
+                                                # (emits BOTH orbis-days.js [Rome-rooted,
+                                                #  cold start] and orbis-graph.js [full
+                                                #  graph, lazy — client-side journey routing])
 node scripts/detect-pleiades-photos.mjs --refresh
 ```
 

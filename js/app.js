@@ -1286,6 +1286,17 @@ function showPanel(site) {
       <span class="p-btn-ext" aria-hidden="true">↗</span>
     </a>` : '';
 
+  // OmnesViae — schematic Tabula Peutingeriana + Antonine Itinerary reconstruction.
+  // Hand-curated per curated site (site.omnesviae, data.js): their /api/labels
+  // search has no CORS and no Pleiades id to join against, so ids were resolved
+  // by hand and spot-verified; ~65 of the 74 curated sites have a match.
+  const omnesviaeBtn = site.omnesviae ? `
+    <a href="${site.omnesviae}" onclick="saveReturnState()" class="p-btn p-btn-omnesviae">
+      <span class="p-btn-icon">🛣️</span>
+      <div><div class="p-btn-main">OmnesViae</div><div class="p-btn-sub">See it on the ancient Roman road map</div></div>
+      <span class="p-btn-ext" aria-hidden="true">↗</span>
+    </a>` : '';
+
   // "Email this quest" — only on quest sites. A mailto: link (NOT the OS share
   // sheet) so it opens the default mail app with a real Subject + body prefilled.
   // Same payload as the quest-modal email button (one helper, can't drift).
@@ -1323,7 +1334,7 @@ function showPanel(site) {
       <span class="p-btn-icon">📜</span>
       <div><div class="p-btn-main">Pleiades Gazetteer</div><div class="p-btn-sub">The authoritative scholarly place record</div></div>
       <span class="p-btn-ext" aria-hidden="true">↗</span>
-    </a>${liviusBtn}${viciBtn}${emailBtn}
+    </a>${liviusBtn}${omnesviaeBtn}${viciBtn}${emailBtn}
   `;
 
   // Pleiades Linked Data Sidebar — scholarly cross-references for this place.

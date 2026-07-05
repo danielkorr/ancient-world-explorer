@@ -1881,34 +1881,46 @@ let _coverageVisibleCount = 0; // dots painted in the last render — drives the
 function ensureCoverageLoaded() {
   if (QA || _coverageState !== 'idle') return;   // QA stays light; load once
   _coverageState = 'loading';
+
+  // Cosmetic hero photos for the coverage long tail (build-coverage-photos.mjs,
+  // Wikidata P1584->P18, "looks related" bar not a scholarly-precision one).
+  // Fetched in parallel with the script tag; a failure here just means coverage
+  // panels stay honest-thin, never blocks the coverage data itself from loading.
+  const photoPromise = fetch('js/coverage-photos.json?v=' + BUILD)
+    .then(r => r.ok ? r.json() : {})
+    .catch(() => ({}));
+
   const s = document.createElement('script');
   s.src = 'js/sites-coverage.js?v=' + BUILD;     // same cache token as the app
   s.async = true;
   s.onload = () => {
     const raw = (typeof window.SITES_COVERAGE !== 'undefined') ? window.SITES_COVERAGE : [];
-    // Dedup against everything already interactive (curated + foreground Pleiades
-    // + vici), by pleiades id. Site-shape the thin records so showPanel can render
-    // them, and precompute the normalized name so search doesn't re-normalize 25k
-    // strings per keystroke.
-    const existing = new Set(SITES.map(x => x.pleiades).filter(Boolean));
-    _coverageData = [];
-    for (const r of raw) {
-      if (r.pleiades && existing.has(r.pleiades)) continue;
-      r.id = 'cov-' + r.pleiades;
-      r.modern = '';
-      r.desc = '';
-      r.rome_days = 0;
-      r.coverage = true;
-      r._n = normalizeSearchText(r.name);
-      _coverageData.push(r);
-    }
-    _coverageState = 'ready';
-    // Re-run the in-flight query so coverage hits appear now that we have them.
-    const input = document.getElementById('site-search-input');
-    if (input && input.value.trim()) updateSearchResults(input.value);
-    // If the slider is already on "Documented", paint the dots now (Phase B).
-    renderCoverageDots();
-    if (typeof syncDetailUI === 'function') syncDetailUI();
+    photoPromise.then((photos) => {
+      // Dedup against everything already interactive (curated + foreground Pleiades
+      // + vici), by pleiades id. Site-shape the thin records so showPanel can render
+      // them, and precompute the normalized name so search doesn't re-normalize 25k
+      // strings per keystroke.
+      const existing = new Set(SITES.map(x => x.pleiades).filter(Boolean));
+      _coverageData = [];
+      for (const r of raw) {
+        if (r.pleiades && existing.has(r.pleiades)) continue;
+        r.id = 'cov-' + r.pleiades;
+        r.modern = '';
+        r.desc = '';
+        r.rome_days = 0;
+        r.coverage = true;
+        if (photos[r.pleiades]) r.photo = photos[r.pleiades];
+        r._n = normalizeSearchText(r.name);
+        _coverageData.push(r);
+      }
+      _coverageState = 'ready';
+      // Re-run the in-flight query so coverage hits appear now that we have them.
+      const input = document.getElementById('site-search-input');
+      if (input && input.value.trim()) updateSearchResults(input.value);
+      // If the slider is already on "Documented", paint the dots now (Phase B).
+      renderCoverageDots();
+      if (typeof syncDetailUI === 'function') syncDetailUI();
+    });
   };
   s.onerror = () => { _coverageState = 'error'; };
   document.head.appendChild(s);

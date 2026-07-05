@@ -1125,9 +1125,15 @@ const VIA_BLURB = "What's VIA? It overlays the ancient Roman world on today's ma
 function viciSized(url, w) {
   return url.replace(/\/cover\/w\d+xh\d+\//, `/cover/w${w}xh${w}/`);
 }
-function setHeroPhoto(hero, heroIcon, url, grad) {
-  const thumb = viciSized(url, 48);
-  const full  = viciSized(url, 800);
+// Wikimedia Commons Special:FilePath redirects to a correctly-sized thumbnail
+// when given a `width` query param — used by site.photo (Wikidata-sourced
+// hero photos), the non-vici counterpart to viciSized.
+function commonsSized(url, w) {
+  return `${url}${url.includes('?') ? '&' : '?'}width=${w}`;
+}
+function setHeroPhoto(hero, heroIcon, url, grad, sizeFn = viciSized) {
+  const thumb = sizeFn(url, 48);
+  const full  = sizeFn(url, 800);
   hero.style.background  = `${grad}, url("${thumb}") center/cover no-repeat`;
   heroIcon.style.opacity = '0';
   const img = new Image();
@@ -1187,6 +1193,14 @@ function showPanel(site) {
       'linear-gradient(180deg, rgba(17,10,0,0.05) 0%, rgba(17,10,0,0.85) 100%)');
     const by = site.vici.creator ? `© ${site.vici.creator}` : 'vici.org';
     heroCredit.textContent = `${by}${site.vici.license ? ' · ' + site.vici.license : ''} · via vici.org`;
+    heroCredit.style.display = '';
+  } else if (site.photo && site.photo.url) {
+    // Generic hero photo, sourced independent of vici.org (e.g. Wikidata P18 /
+    // Wikimedia Commons) — same visual treatment, credited to its own source.
+    setHeroPhoto(hero, heroIcon, site.photo.url,
+      'linear-gradient(180deg, rgba(17,10,0,0.05) 0%, rgba(17,10,0,0.85) 100%)', commonsSized);
+    const by = site.photo.credit ? `© ${site.photo.credit}` : (site.photo.via || 'Wikimedia Commons');
+    heroCredit.textContent = `${by}${site.photo.license ? ' · ' + site.photo.license : ''} · via ${site.photo.via || 'Wikimedia Commons'}`;
     heroCredit.style.display = '';
   } else {
     hero.style.background = `radial-gradient(ellipse at center, ${color}18 0%, #110a00 70%)`;

@@ -352,6 +352,114 @@ const SITES_CURATED = [
     quest:"photo",
     desc:"A great Greek colony and intellectual center — birthplace of Eratosthenes (who calculated the Earth's circumference) and Callimachus. Capital of Cyrenaica under Rome. The sanctuary of Apollo, agora, and vast necropolis spread across a dramatic highland landscape. Severely damaged in the Jewish revolt of 115–117 AD and never fully recovered." },
 
+  // ── AQUEDUCT-BACKLOG PROMOTIONS ──────────────────────────
+  // Surfaced by cross-referencing Wikipedia's "List of aqueducts in the Roman
+  // Empire" against the coverage-tier long tail (js/sites-coverage.js):
+  // coordinate-verified matches that already had a thin Pleiades stub in VIA
+  // plus a real, freely-licensed Commons photo, promoted here to full curated
+  // sites. Photos sourced via Wikidata P18 (site.photo — see js/app.js
+  // setHeroPhoto/commonsSized), same visual treatment as the vici.org hero.
+
+  { id:"saldae", name:"Saldae", modern:"Béjaïa, Algeria", type:"port",
+    lat:36.7409, lng:5.058, period:"1st c. AD – present", pleiades:"305142",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Ruines%20romaines%20Thihnayin.jpg", credit:"Hakim1065", license:"CC BY-SA 4.0" },
+    desc:"A Roman colonia on the Numidian coast, Saldae anchored grain and olive-oil exports from the fertile Kabylie hinterland. Its aqueduct, fed from springs in the hills above the modern city, still threads through the landscape in ruined arcades. The city later gave its name to medieval Bugia — Europe's main source of beeswax candles, and where a young Leonardo Fibonacci first learned Arabic numerals." },
+
+  { id:"philippopolis", name:"Philippopolis", modern:"Plovdiv, Bulgaria", type:"city",
+    lat:42.1456, lng:24.7495, period:"4th c. BC – present", pleiades:"216927",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Wodo.jpg", credit:"Super mystere", license:"Public domain" },
+    desc:"Refounded by Philip II of Macedon and later capital of the Roman province of Thracia, Philippopolis grew into one of the wealthiest cities of the Balkans. Its Roman theater — carved into the saddle between two hills — remains in active use for performances two thousand years on, alongside a stadium, forum, and a still-standing aqueduct that once carried water miles across the plain." },
+
+  { id:"salona", name:"Salona", modern:"Solin, Croatia", type:"capital",
+    lat:43.5396, lng:16.4834, period:"2nd c. BC – 7th c. AD", pleiades:"197488",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Split-Diokletian-Aqueduct-17.jpg", credit:"SchiDD", license:"CC BY-SA 4.0" },
+    desc:"Capital of the Roman province of Dalmatia, Salona's amphitheater once seated 15,000. Emperor Diocletian, born nearby, built his vast retirement palace at neighboring Spalatum (Split) after abdicating in 305 AD — the only Roman emperor to willingly give up power. Salona's aqueduct, theater, and early Christian basilicas survive amid the ruins." },
+
+  { id:"kition", name:"Kition", modern:"Larnaca, Cyprus", type:"port",
+    lat:34.9212, lng:33.632, period:"13th c. BC – present", pleiades:"707534",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Larnaca%2001-2017%20img25%20Kamares%20Aqueduct.jpg", credit:"A.Savin", license:"FAL" },
+    desc:"A Phoenician foundation on Cyprus's south coast, Kition was the birthplace of Zeno, founder of Stoic philosophy. Under Rome it remained a working port city; its Roman-era Kamares aqueduct still marches across the modern city on dozens of arches, built to carry water miles from mountain springs." },
+
+  { id:"ledroi", name:"Ledroi", modern:"Nicosia, Cyprus", type:"city",
+    lat:35.1572, lng:33.3473, period:"1st c. AD – Byzantine", pleiades:"707558",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Nicosia%2001-2017%20img04%20aqueduct.jpg", credit:"A.Savin", license:"FAL" },
+    desc:"A modest Roman-period town on the site of modern Nicosia, known to ancient sources as Ledroi. Little survives of the classical town beneath the modern Cypriot capital, but fragments of the aqueduct that once supplied it can still be traced across the plain." },
+
+  { id:"barbegal", name:"Barbegal", modern:"Fontvieille, France", type:"city",
+    lat:43.704, lng:4.7214, period:"2nd c. AD – 3rd c. AD", pleiades:"148012",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Barbegal%20aqueduct%2001.jpg", credit:"maarjaara", license:"CC BY 2.0" },
+    desc:"A short walk from Arelate, Barbegal was home to one of the most extraordinary industrial complexes of the Roman world: sixteen water-wheels arranged in two parallel rows down a hillside, powered by a dedicated aqueduct and capable of grinding enough flour to feed the entire city of Arles. It may be the largest concentration of mechanical power built anywhere before the Industrial Revolution." },
+
+  { id:"gier", name:"Aqueduct of the Gier", modern:"near Lyon, France", type:"city",
+    lat:45.7218, lng:4.7604, period:"2nd c. AD – 3rd c. AD", pleiades:"812127749",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Aqueducchapo01.JPG", license:"CC BY-SA 3.0" },
+    desc:"One of four aqueducts feeding Lugdunum, the 85km Aqueduct of the Gier is best known for its inverted siphon at Beaunant — a valley crossing using dozens of parallel lead pipes to carry water under enormous pressure, one of the most sophisticated hydraulic engineering feats of the Roman world." },
+
+  { id:"luynes", name:"Aqueduct of Luynes", modern:"Luynes, France", type:"city",
+    lat:47.3903, lng:0.5879, period:"1st c. AD – 3rd c. AD", pleiades:"140446",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Luynes%20(France)%20Roman%20Aqueduct.jpg", credit:"Claip", license:"CC BY-SA 3.0" },
+    desc:"A striking double-tiered arcade of the Roman aqueduct that once supplied Caesarodunum (modern Tours), the surviving arches at Luynes march across the Loire valley in a rare and beautifully preserved stretch of Gallo-Roman engineering." },
+
+  { id:"pontdugard", name:"Pont du Gard", modern:"Vers-Pont-du-Gard, France", type:"city",
+    lat:43.9473, lng:4.5353, period:"1st c. AD – 6th c. AD", pleiades:"149496",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Pont%20du%20Gard%20BLS.jpg", credit:"Benh LIEU SONG", license:"CC BY-SA 3.0" },
+    desc:"The most famous aqueduct bridge to survive from antiquity, the Pont du Gard carried water 50km to Nemausus (Nîmes) across the Gardon valley on three tiers of arches rising 49 meters — the tallest bridge the Romans ever built. Its precision stonework, laid without mortar, remains breathtakingly intact after two thousand years." },
+
+  { id:"eifel_aqueduct", name:"Görresburg", modern:"Nettersheim, Germany", type:"city",
+    lat:50.4875, lng:6.6255, period:"1st c. AD – 3rd c. AD", pleiades:"109013",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Eifelwasserleitung05.jpg", credit:"Putput", license:"CC BY-SA 3.0" },
+    desc:"Görresburg marks one of the spring sources of the Eifel Aqueduct, the longest continuous Roman aqueduct ever built — nearly 95km of channel carrying water to Colonia Claudia Ara Agrippinensium (Cologne). Its conduit, lined with a distinctive mineral-rich limescale prized as a decorative stone (\"Eifel marble\"), can still be traced through the forests of the Eifel hills." },
+
+  { id:"sumelocenna", name:"Sumelocenna", modern:"Rottenburg am Neckar, Germany", type:"city",
+    lat:48.4776, lng:8.9371, period:"1st c. AD – 3rd c. AD", pleiades:"118950",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/2015-10-24%20sumelocenna%20aquaeductus.jpg", credit:"Phg-0x2a", license:"CC BY-SA 4.0" },
+    desc:"A Roman vicus on the Neckar frontier, Sumelocenna grew up around a river crossing and market. Its aqueduct and the remains of baths and a forum have been excavated beneath modern Rottenburg, giving a rare window into everyday provincial life along Rome's German frontier." },
+
+  { id:"neapolis_macedonia", name:"Neapolis", modern:"Kavala, Greece", type:"port",
+    lat:40.9343, lng:24.414, period:"7th c. BC – present", pleiades:"501523",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Kavala-Aqueduct.jpg", credit:"Edal Anton Lefterov", license:"CC BY-SA 4.0" },
+    desc:"Not to be confused with its Italian namesake, this Neapolis was the port of Philippi and, according to Acts of the Apostles, the first place in Europe where Paul the Apostle set foot. A station on the Via Egnatia, it prospered as the gateway between Asia Minor and Macedonia; an aqueduct — rebuilt in Ottoman times on Roman foundations — still strides across modern Kavala's skyline." },
+
+  { id:"solomonspools", name:"Solomon's Pools", modern:"Al Khader, West Bank", type:"city",
+    lat:31.6887, lng:35.1702, period:"1st c. BC – Ottoman period", pleiades:"212723843",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Gush%20Etzion%20Well's%20Aqueduct.jpg", credit:"Djampa", license:"CC BY-SA 4.0" },
+    desc:"Despite the name, these three vast stepped reservoirs date to the Herodian and Roman periods, not to Solomon — built to gather spring water and feed it north to Jerusalem via a low-level aqueduct nearly 40km long, one of the most ambitious water projects in the Roman Near East." },
+
+  { id:"qumran", name:"Qumran", modern:"Qumran, West Bank", type:"city",
+    lat:31.7418, lng:35.4594, period:"2nd c. BC – AD 68", pleiades:"688011",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Qumran,%20Dead%20Sea,%20Palestine%2049.jpg", credit:"Hoshvilim", license:"CC BY-SA 4.0" },
+    desc:"Overlooking the Dead Sea, Qumran is world-famous as the site where the Dead Sea Scrolls were discovered in nearby caves in 1947 — the oldest surviving manuscripts of the Hebrew Bible. The settlement's elaborate system of cisterns and channels, fed by a stone aqueduct that captured seasonal flash floods from the cliffs above, sustained the community many scholars identify as the Essenes." },
+
+  { id:"thermae_himeraeae", name:"Thermae Himeraeae", modern:"Termini Imerese, Sicily, Italy", type:"port",
+    lat:37.9852, lng:13.6963, period:"4th c. BC – present", pleiades:"462513",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Termini%20Imerese%20aquaduct.jpg", credit:"Rjdeadly", license:"CC BY-SA 3.0" },
+    desc:"Founded by Carthage after the destruction of nearby Himera in 409 BC, Thermae Himeraeae took its name from the therapeutic hot springs still used today. Under Rome it became a modest but prosperous spa town on Sicily's north coast, its aqueduct carrying water down from the hills to feed the baths that gave the city its name." },
+
+  { id:"segovia", name:"Segovia", modern:"Segovia, Spain", type:"city",
+    lat:40.9492, lng:-4.1193, period:"1st c. AD – present", pleiades:"236658",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/AcueductoSegovia%20edit1.jpg", credit:"Manuel González Olaechea y Franco", license:"CC BY-SA 3.0" },
+    desc:"Segovia's granite aqueduct is one of the best-preserved in the Roman world — 28km of channel culminating in a double tier of arches through the town center, standing an astonishing 28 meters high at its tallest, built entirely without mortar. It carried water into the 20th century, nearly two thousand years after it was built." },
+
+  { id:"aspendos", name:"Aspendos", modern:"Belkıs, Antalya, Turkey", type:"city",
+    lat:36.9404, lng:31.1697, period:"5th c. BC – present", pleiades:"638776",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Aqueduct%20of%20Aspendos%2001.jpg", credit:"Bernard Gagnon", license:"CC BY-SA 3.0" },
+    desc:"One of the great cities of Pamphylia, Aspendos boasts the best-preserved Roman theater anywhere in the world, still used for performances today. Its aqueduct is equally remarkable: two towering stone siphon structures at either end of the valley, built to force water uphill using pressure alone — a rare surviving example of Roman inverted-siphon engineering at full scale." },
+
+  { id:"phaselis", name:"Phaselis", modern:"Tekirova, Antalya, Turkey", type:"port",
+    lat:36.5235, lng:30.5522, period:"7th c. BC – Byzantine", pleiades:"639051",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Phaselis%20axb02.jpg", credit:"Alexander Buschorn", license:"CC BY-SA 3.0" },
+    desc:"A Rhodian colony with three natural harbors on the Lycian coast, Phaselis was a key stop on Alexander the Great's march through Anatolia, who wintered here in 333 BC. Under Rome it thrived as a trading port; its aqueduct, baths, and monumental street between the harbors survive amid pine forest running down to the sea." },
+
+  { id:"side", name:"Side", modern:"Side, Antalya, Turkey", type:"port",
+    lat:36.7684, lng:31.3922, period:"7th c. BC – Byzantine", pleiades:"639105",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Side.Great%20Gate(02).jpg", license:"CC BY-SA 3.0" },
+    desc:"A major port of Pamphylia founded by Greek colonists who, according to ancient tradition, spoke a language unlike any other in the region, Side grew into one of the wealthiest maritime cities under Rome. Its theater is among the largest in Asia Minor, and the columns of a harborside Temple of Apollo — dramatically lit at night — form one of the most photographed ruins on Turkey's coast." },
+
+  { id:"perge", name:"Perge", modern:"Aksu, Antalya, Turkey", type:"city",
+    lat:36.9645, lng:30.8533, period:"2nd mill. BC – Byzantine", pleiades:"639048",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Perge%20city%20overview.jpg", credit:"Saffron Blaze", license:"CC BY-SA 3.0" },
+    desc:"Birthplace of the mathematician Apollonius of Perga, who codified the study of conic sections, Perge was one of the leading cities of Roman Pamphylia. Its colonnaded main street channels water down its center from a monumental nymphaeum at the city's northern gate, past a stadium, baths, and one of the best-preserved city gates of the ancient world." },
+
 ];
 
 

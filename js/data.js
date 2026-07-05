@@ -60,7 +60,7 @@ const SITES_CURATED = [
 
   { id:"paestum", name:"Paestum", modern:"Paestum, Italy", type:"city", omnesviae:"https://omnesviae.org/#TPPlace1480",
     lat:40.4218, lng:15.0042, period:"7th c. BC – Medieval", pleiades:"442733", rome_days:6,
-    quest:"photo",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/View%20of%20Paestum%20with%20dji.jpg", credit:"PaestumPaestum", license:"CC BY-SA 4.0" },
     desc:"Three Greek temples standing in near-perfect condition in a coastal plain south of Naples — among the best-preserved Greek temples anywhere in the world. The Temple of Neptune (actually Hera) is particularly magnificent. The site museum holds the unique Tomb of the Diver, with its extraordinary painted ceiling." },
 
   { id:"brundisium", name:"Brundisium", modern:"Brindisi, Italy", type:"port", omnesviae:"https://omnesviae.org/#TPPlace1375",
@@ -93,7 +93,7 @@ const SITES_CURATED = [
 
   { id:"agrigentum", name:"Agrigentum", modern:"Agrigento, Sicily, Italy", type:"city", livius:"https://www.livius.org/articles/place/acragas-agrigento/", omnesviae:"https://omnesviae.org/#TPPlace1507",
     lat:37.3083, lng:13.5899, period:"6th c. BC – present", pleiades:"462086", rome_days:14,
-    quest:"photo",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Agrigento%204m1.jpg", credit:"jschoenhofer", license:"CC BY-SA 2.0" },
     desc:"The Valley of the Temples at Agrigentum contains seven Greek temples in various states of preservation, including the magnificent Temple of Concordia — one of the best-preserved Doric temples in the world. Pindar called Agrigentum 'the finest city of mortals'. The Roman novelist Pirandello was born here." },
 
   // ── GAUL & HISPANIA ──────────────────────────────────────
@@ -120,7 +120,7 @@ const SITES_CURATED = [
 
   { id:"augustodunum", name:"Augustodunum", modern:"Autun, France", type:"city", omnesviae:"https://omnesviae.org/#TPPlace658",
     lat:46.9521, lng:4.2992, period:"15 BC – present", pleiades:"177460", rome_days:18,
-    quest:"photo",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Autun%20theatre%202.jpg", credit:"Christophe.Finot", license:"CC BY-SA 1.0" },
     desc:"Founded by Augustus to replace the nearby Gallic capital of Bibracte, Augustodunum was planned as a showpiece of Roman urbanism in Gaul. Two Roman gates — the Porte d'Arroux and Porte Saint-André — still stand to nearly full height, among the best-preserved city gates in the Roman world." },
 
   { id:"burdigala", name:"Burdigala", modern:"Bordeaux, France", type:"city", omnesviae:"https://omnesviae.org/#TPPlace697",
@@ -220,7 +220,7 @@ const SITES_CURATED = [
 
   { id:"delphi", name:"Delphi", modern:"Delphi, Greece", type:"city", livius:"https://www.livius.org/articles/place/delphi/",
     lat:38.4824, lng:22.5010, period:"8th c. BC – 4th c. AD", pleiades:"540726", rome_days:25,
-    quest:"photo",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Delfi%20Apollons%20tempel.jpg", credit:"Helen Simonsson", license:"CC BY-SA 3.0" },
     desc:"The navel of the world according to Greek belief, Delphi was the most sacred oracle site in the ancient Mediterranean. Roman emperors consulted the oracle — and plundered its treasuries. The Sacred Way, the Temple of Apollo, the theater, and the stadium climb up the dramatic mountain slope above the Gulf of Corinth." },
 
   { id:"thessalonica", name:"Thessalonica", modern:"Thessaloniki, Greece", type:"city", livius:"https://www.livius.org/articles/place/thessaloniki/", omnesviae:"https://omnesviae.org/#TPPlace1836",
@@ -248,7 +248,7 @@ const SITES_CURATED = [
 
   { id:"smyrna", name:"Smyrna", modern:"İzmir, Turkey", type:"city", livius:"https://www.livius.org/articles/place/smyrna-izmir/", omnesviae:"https://omnesviae.org/#TPPlace2190",
     lat:38.4189, lng:27.1403, period:"11th c. BC – present", pleiades:"550771", rome_days:25,
-    quest:"photo",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Izmir016.jpg", credit:"Georges Jansoone JoJan", license:"Public domain" },
     desc:"One of the great cities of Roman Asia, Smyrna competed fiercely with Ephesus and Pergamon for the title of 'First City of Asia'. The bishop Polycarp was martyred here in 155 AD. Little of the ancient city survives beneath modern İzmir, but the Agora — recently re-excavated — is exceptional." },
 
   { id:"ancyra", name:"Ancyra", modern:"Ankara, Turkey", type:"capital", livius:"https://www.livius.org/articles/place/ancyra-ankara/", omnesviae:"https://omnesviae.org/#TPPlace2139",
@@ -272,8 +272,8 @@ const SITES_CURATED = [
 
   { id:"temple_allat", name:"Temple of Al-Lāt", modern:"Palmyra (Tadmur), Syria", type:"city",
     lat:34.5519, lng:38.2642, period:"1st c. BC – 3rd c. AD", pleiades:"215749623", rome_days:40,
-    quest:"photo",
-    desc:"A temple dedicated to the pre-Islamic Arabian goddess Al-Lāt within the sanctuary of Palmyra, syncretized with Athena under Roman rule. A magnificent lion sculpture guarding the temple was destroyed by ISIS in 2015. The Pleiades record notes no portrait photograph exists in any scholarly database — this is an open quest." },
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Palmira%20Tempio%20di%20Allat%20Atena%20-%20GAR%20-%207-01.jpg", credit:"Gianfranco Gazzetti", license:"CC BY-SA 4.0" },
+    desc:"A temple dedicated to the pre-Islamic Arabian goddess Al-Lāt within the sanctuary of Palmyra, syncretized with Athena under Roman rule. A magnificent lion sculpture guarding the temple was destroyed by ISIS in 2015." },
 
   { id:"dura_europos", name:"Dura-Europos", modern:"Deir ez-Zor, Syria", type:"fortress", livius:"https://www.livius.org/articles/place/dura-europos/",
     lat:34.7492, lng:40.7278, period:"3rd c. BC – AD 256", pleiades:"893990", rome_days:42,
@@ -314,7 +314,7 @@ const SITES_CURATED = [
 
   { id:"thugga", name:"Thugga", modern:"Dougga, Tunisia", type:"city",
     lat:36.4220, lng:9.2194, period:"4th c. BC – Byzantine", pleiades:"315223", rome_days:8,
-    quest:"photo",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Dougga%2C%20Beja.jpg", credit:"Emna Trabelsi", license:"CC BY-SA 3.0" },
     desc:"The best-preserved Roman small town in North Africa and a UNESCO World Heritage Site. Thugga's hilltop setting, its remarkably complete Capitol temple, theater, forum, baths, and Libyan-Punic mausoleum give a vivid picture of Roman provincial life. Less visited than it deserves — which makes it all the more atmospheric." },
 
   { id:"thysdrus", name:"Thysdrus", modern:"El Djem, Tunisia", type:"city", livius:"https://www.livius.org/articles/place/thysdrus/",
@@ -339,7 +339,7 @@ const SITES_CURATED = [
   { id:"caesarea_maur", name:"Caesarea Mauretaniae", modern:"Cherchell, Algeria", type:"capital", livius:"https://www.livius.org/articles/place/iol-caesarea/", omnesviae:"https://omnesviae.org/#OVPlace506",
     lat:36.5908, lng:2.2086, period:"3rd c. BC – Arab conquest", pleiades:"295276", rome_days:12,
     rome_mode:"sea",
-    quest:"photo",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Argel%203.jpg", credit:"LBM1948", license:"CC BY-SA 4.0" },
     desc:"Capital of Mauretania Caesariensis, named for Augustus Caesar by King Juba II — a Numidian prince educated in Rome who married Cleopatra Selene, daughter of Antony and Cleopatra. Juba transformed the city into a showcase of Hellenistic art. The local museum holds exceptional Roman sculptures and mosaics, including a stunning portrait of Cleopatra Selene herself." },
 
   { id:"volubilis", name:"Volubilis", modern:"Volubilis, Morocco", type:"city", livius:"https://www.livius.org/articles/place/volubilis/", omnesviae:"https://omnesviae.org/#OVPlace500",
@@ -349,7 +349,7 @@ const SITES_CURATED = [
   { id:"cyrene", name:"Cyrene", modern:"Shahhat, Libya", type:"city", livius:"https://www.livius.org/articles/place/cyrene/", omnesviae:"https://omnesviae.org/#TPPlace347",
     lat:32.8236, lng:21.8569, period:"631 BC – Arab conquest", pleiades:"373778", rome_days:15,
     rome_mode:"sea",
-    quest:"photo",
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/CireneTermeTraiano.jpg", credit:"MM", license:"Public domain" },
     desc:"A great Greek colony and intellectual center — birthplace of Eratosthenes (who calculated the Earth's circumference) and Callimachus. Capital of Cyrenaica under Rome. The sanctuary of Apollo, agora, and vast necropolis spread across a dramatic highland landscape. Severely damaged in the Jewish revolt of 115–117 AD and never fully recovered." },
 
   // ── AQUEDUCT-BACKLOG PROMOTIONS ──────────────────────────

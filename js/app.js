@@ -26,8 +26,8 @@ const QUEST = {
     shape: 'circle',
     icon:  '📷',
     label: 'Photo Quest · Open',
-    text:  'This place has no portrait photo in the scholarly record. Be the traveler who closes the gap.',
-    pitch: 'No one has ever submitted a portrait photograph of this place to humanity’s authoritative atlas of the ancient world. You can change that.',
+    text:  'No photo is linked to this place’s Wikidata record — the cross-reference Pleiades relies on. Be the traveler who closes the gap.',
+    pitch: 'This isn’t a Pleiades photo field — Pleiades doesn’t have one. VIA checks whether the Wikidata item Pleiades cross-references has an image on file, and this one doesn’t. A photo of the place may already exist online; if so, add it to Wikimedia Commons and set it as that item’s image, and the record catches up automatically.',
     cta:   'Take this Quest →',
   },
   location: {
@@ -3632,8 +3632,8 @@ try {
 } catch {}
 
 // ── QUEST MODAL + FILTER ─────────────────────────────────
-// The signature feature: surface "Pleiades has no portrait photo here"
-// (and the other quest tiers) as an open call to travelers.
+// The signature feature: surface "no image on the Wikidata record Pleiades
+// cross-references" (and the other quest tiers) as an open call to travelers.
 
 function openQuestModal() {
   if (!currentPanelSite || !currentPanelSite.quest) return;
@@ -3814,7 +3814,7 @@ const TIER_INFO = {
   photo: {
     label: 'Photo Quest',
     color: QUEST.photo.color,
-    blurb: 'No portrait photo exists in the scholarly record. Visit one and photograph it to close the gap.',
+    blurb: 'No image is linked to the Wikidata record Pleiades cross-references — even if photos of the place exist elsewhere. Add one to Wikimedia Commons/Wikidata to close the gap.',
   },
   location: {
     label: 'Location Quest',

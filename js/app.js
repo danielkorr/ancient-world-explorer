@@ -1276,6 +1276,16 @@ function showPanel(site) {
       <span class="p-btn-ext" aria-hidden="true">↗</span>
     </a>` : '';
 
+  // Livius.org — Jona Lendering's narrative encyclopedia. Hand-curated per
+  // curated site (site.livius, data.js) since there's no id to join against;
+  // ~58 of the 74 curated sites have a matching article.
+  const liviusBtn = site.livius ? `
+    <a href="${site.livius}" onclick="saveReturnState()" class="p-btn p-btn-livius">
+      <span class="p-btn-icon">📖</span>
+      <div><div class="p-btn-main">Livius.org</div><div class="p-btn-sub">History &amp; context, in plain English</div></div>
+      <span class="p-btn-ext" aria-hidden="true">↗</span>
+    </a>` : '';
+
   // "Email this quest" — only on quest sites. A mailto: link (NOT the OS share
   // sheet) so it opens the default mail app with a real Subject + body prefilled.
   // Same payload as the quest-modal email button (one helper, can't drift).
@@ -1313,7 +1323,7 @@ function showPanel(site) {
       <span class="p-btn-icon">📜</span>
       <div><div class="p-btn-main">Pleiades Gazetteer</div><div class="p-btn-sub">The authoritative scholarly place record</div></div>
       <span class="p-btn-ext" aria-hidden="true">↗</span>
-    </a>${viciBtn}${emailBtn}
+    </a>${liviusBtn}${viciBtn}${emailBtn}
   `;
 
   // Pleiades Linked Data Sidebar — scholarly cross-references for this place.

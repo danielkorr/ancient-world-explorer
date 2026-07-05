@@ -1310,6 +1310,7 @@ function showPanel(site) {
       <div><div class="p-btn-main">OmnesViae</div><div class="p-btn-sub">See it on the ancient Roman road map</div></div>
       <span class="p-btn-ext" aria-hidden="true">↗</span>
     </a>` : '';
+  if (site.omnesviae && COARSE_POINTER) maybeHintOmnesviae();
 
   // "Email this quest" — only on quest sites. A mailto: link (NOT the OS share
   // sheet) so it opens the default mail app with a real Subject + body prefilled.
@@ -2416,6 +2417,29 @@ function maybeHintCoverage() {
   if (!el || !t || !b) return;
   t.textContent = 'Documented places';
   b.textContent = 'These faint dots are documented places from the Pleiades gazetteer — tap one to open it. Drag Detail to “+ Documented” to keep them on.';
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 6500);
+}
+
+// One-time nudge the first time a mobile visitor sees an OmnesViae button.
+// Their route-planner page overlays a fixed-width form on top of the map with
+// no responsive collapse — on a narrow screen the map (and the place you were
+// sent to) is hidden behind it, and the only way to reveal it is tapping a
+// tiny, unlabeled drag-handle bar (dragging it just triggers pull-to-refresh).
+// Shown once ever, before they tap away, so they know what to do when it happens.
+let _omnesviaeHintShown = false;
+function maybeHintOmnesviae() {
+  if (_omnesviaeHintShown) return;
+  _omnesviaeHintShown = true;   // once per session regardless of storage availability
+  try { if (localStorage.getItem('via.omnesviaeHinted') === '1') return; } catch (e) {}
+  try { localStorage.setItem('via.omnesviaeHinted', '1'); } catch (e) {}
+  const el = document.getElementById('legend-toast');
+  const t  = document.getElementById('legend-toast-title');
+  const b  = document.getElementById('legend-toast-body');
+  if (!el || !t || !b) return;
+  t.textContent = 'Heads up: OmnesViae';
+  b.textContent = 'Their page opens with a form covering the map. Tap (don’t drag) the small bar at its top to reveal the map underneath.';
   el.classList.add('show');
   clearTimeout(_toastTimer);
   _toastTimer = setTimeout(() => el.classList.remove('show'), 6500);

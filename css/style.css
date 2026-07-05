@@ -2236,6 +2236,28 @@ path.leaflet-interactive { outline: none !important; }
     border-radius: 2px;
     margin: 10px auto 0;
   }
+
+  /* On desktop the OS scrollbar itself signals there's more of the welcome
+     card below the fold; mobile browsers overlay/auto-hide theirs, so nothing
+     hints the card scrolls. A sticky fade pinned to the bottom of the visible
+     area does the same job with no JS: as the last flow child, it's held at
+     bottom:0 (overlapping the last ~32px of text) for every scroll position
+     except the true end, where it settles into normal flow and stops
+     overlaying anything — i.e. it disappears exactly when there's nothing
+     left to scroll to. (The equivalent background-attachment:local trick was
+     tried first and is a documented no-op in WebKit/Safari — verified dead
+     on-device here — so this uses position:sticky instead, which Safari
+     supports correctly.) */
+  #welcome-card::after {
+    content: '';
+    display: block;
+    position: sticky;
+    bottom: 0;
+    height: 32px;
+    margin-top: -32px;
+    background: linear-gradient(rgba(10,5,0,0), var(--ink-panel) 85%);
+    pointer-events: none;
+  }
 }
 
 /* ════════════════════════════════

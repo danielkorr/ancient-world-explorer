@@ -46,7 +46,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=124">
+  <link rel="stylesheet" href="css/style.css?v=125">
 </head>
 <body>
 
@@ -79,6 +79,18 @@
       <span id="profile-pill-label">Sign in</span>
     </button>
   </div>
+</div>
+
+<!-- Mode tabs: the top-level experience switch (Roman explorer vs Alexander
+     campaign) over one shared map/auth. setMode swaps content + chrome by driving
+     layerState. Colorblind-safe: the active tab reads by gold luminance, not hue. -->
+<div id="mode-tabs" data-testid="mode-tabs" role="tablist" aria-label="Choose an experience">
+  <button class="mode-tab active" id="mode-roman" data-mode="roman" data-testid="mode-roman" role="tab" aria-selected="true" onclick="setMode('roman')">
+    <span class="mode-tab-glyph" aria-hidden="true">🏛️</span><span class="mode-tab-label">Roman Sites &amp; Roads</span>
+  </button>
+  <button class="mode-tab" id="mode-alexander" data-mode="alexander" data-testid="mode-alexander" role="tab" aria-selected="false" onclick="setMode('alexander')">
+    <span class="mode-tab-glyph" aria-hidden="true">A</span><span class="mode-tab-label">Alexander&rsquo;s Campaign</span>
+  </button>
 </div>
 
 <div id="era-toggle-wrap">
@@ -274,6 +286,7 @@
   <!-- Master layer toggles — mobile only (folded in from the bottom-control chips
        so the dock's KEY panel owns layer on/off). Hidden on desktop, where the
        #bottom-controls chips remain the layer switches. Sync'd by toggleLayer. -->
+  <div id="roman-legend">
   <div class="legend-hint legend-layers-hint">Layers</div>
   <div class="legend-row legend-layer-row active" id="legend-roads-toggle" data-testid="roads-layer-row" data-layer="roads" role="button" tabindex="0" onclick="toggleLayer('roads')"><div class="legend-line solid"></div>Roman Roads</div>
   <div class="legend-row legend-layer-row active" id="legend-sites-toggle" data-testid="sites-layer-row" data-layer="sites" role="button" tabindex="0" onclick="toggleLayer('sites')"><div class="legend-dot" style="background:var(--gold)"></div>Sites &amp; Cities</div>
@@ -289,6 +302,24 @@
   <div class="legend-row" data-testid="road-certainty-filter" data-cert="c" role="button" tabindex="0" onclick="toggleCert('c')"><div class="legend-line solid"></div>Certain</div>
   <div class="legend-row" data-testid="road-certainty-filter" data-cert="j" role="button" tabindex="0" onclick="toggleCert('j')"><div class="legend-line dashed"></div>Conjectured</div>
   <div class="legend-row" data-testid="road-certainty-filter" data-cert="h" role="button" tabindex="0" onclick="toggleCert('h')"><div class="legend-line dotted"></div>Hypothetical</div>
+  </div><!-- /#roman-legend -->
+  <!-- Campaign legend — shown only in Alexander mode (body.mode-alexander). Phase is
+       carried by the NUMBER + label as the primary channels; the color tint is
+       secondary, so it stays legible without relying on hue. -->
+  <div id="campaign-legend" data-testid="campaign-legend">
+    <div class="legend-hint">Campaign · phases</div>
+    <div class="legend-row phase-row"><span class="phase-num" style="--pc:#8f6f3f">1</span>Macedon <span class="phase-yrs">356–334 BC</span></div>
+    <div class="legend-row phase-row"><span class="phase-num" style="--pc:#7b6fb3">2</span>Asia Minor <span class="phase-yrs">334–333 BC</span></div>
+    <div class="legend-row phase-row"><span class="phase-num" style="--pc:#3f8f88">3</span>Levant &amp; Egypt <span class="phase-yrs">333–331 BC</span></div>
+    <div class="legend-row phase-row"><span class="phase-num" style="--pc:#b07848">4</span>Persian Core <span class="phase-yrs">331–330 BC</span></div>
+    <div class="legend-row phase-row"><span class="phase-num" style="--pc:#5e8b4f">5</span>East &amp; India <span class="phase-yrs">329–326 BC</span></div>
+    <div class="legend-row phase-row"><span class="phase-num" style="--pc:#8c5b5b">6</span>Return &amp; Death <span class="phase-yrs">325–323 BC</span></div>
+    <div class="legend-sep"></div>
+    <div class="legend-hint">Route · certainty</div>
+    <div class="legend-row"><div class="legend-line alexander solid"></div>Attested</div>
+    <div class="legend-row"><div class="legend-line alexander dashed"></div>Reconstructed</div>
+    <div class="legend-row"><div class="legend-line alexander dotted"></div>Uncertain</div>
+  </div>
 </div>
 
 <!-- Mobile-only: collapses the legend behind a chip so it stops eating the map.
@@ -428,7 +459,7 @@
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
 <script src="js/basemap.js?v=106"></script>
-<script src="js/app.js?v=124"></script>
+<script src="js/app.js?v=125"></script>
 
 </body>
 </html>

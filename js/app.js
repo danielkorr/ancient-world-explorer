@@ -214,6 +214,13 @@ const QA = /[?&]qa=1/.test(location.search);
 
 let currentEra = 'ancient';
 
+// Top-level experience mode. 'roman' = Sites/Roads/coverage; 'alexander' = the
+// campaign. One shared map/auth/panel; setMode (below) swaps content + chrome by
+// driving layerState — the lever nearly everything already keys on. Declared here
+// so mode-gates in coverage/tap/hover resolvers (which run only after boot) can
+// read it safely.
+let appMode = 'roman';
+
 // L.LayerGroup has no bringToFront. Re-add each group in stacking order
 // (bottom to top) to put them above any tile layer just inserted under
 // them. Itiner-e baseline first, named roads next, sites on top.
@@ -1251,6 +1258,10 @@ if (COARSE_POINTER) {
       closePanel();
       return;
     }
+
+    // Roads/coverage are Roman-mode only. In Alexander mode this overlay handler
+    // does nothing further — stops resolve via the map-level click handler.
+    if (appMode !== 'roman') return;
 
     const px = t ? t.clientX : 0, py = t ? t.clientY : 0;
     const now = Date.now();
@@ -2516,6 +2527,7 @@ const COVERAGE_DOT_STYLE = {
 // "Documented" (past the floor zoom), OR you've zoomed in deep enough that
 // committing to an area auto-reveals it (Phase C). Drives the lazy load too.
 function coverageWanted() {
+  if (appMode !== 'roman') return false;   // coverage is a Roman-mode concept
   if (_coverageState === 'error') return false;
   const z = map.getZoom();
   return (detailLevel >= 3 && z >= MIN_COVERAGE_ZOOM) || (z >= AUTO_REVEAL_ZOOM);
@@ -3388,12 +3400,14 @@ map.on('click', (e) => {
     cancelRoutePick();
     return;
   }
-  const seg = findNearestItinere(e.latlng, e.containerPoint);
-  if (seg) { showSegmentPanel(seg.meta, seg.ll, [seg.id]); return; }
-  const cov = findNearestCoverage(e.latlng, e.containerPoint);  // only resolves when dots show
-  if (cov) { focusCoverage(cov); return; }
-  const pin = nearestPinnedCoverage(e.latlng, e.containerPoint);  // reopen a searched place's panel
-  if (pin) { focusCoverage(pin); return; }
+  if (appMode === 'roman') {   // Roman roads/coverage don't resolve in Alexander mode
+    const seg = findNearestItinere(e.latlng, e.containerPoint);
+    if (seg) { showSegmentPanel(seg.meta, seg.ll, [seg.id]); return; }
+    const cov = findNearestCoverage(e.latlng, e.containerPoint);  // only resolves when dots show
+    if (cov) { focusCoverage(cov); return; }
+    const pin = nearestPinnedCoverage(e.latlng, e.containerPoint);  // reopen a searched place's panel
+    if (pin) { focusCoverage(pin); return; }
+  }
   if (document.getElementById('info-panel').classList.contains('open')) closePanel();
 });
 
@@ -3453,6 +3467,7 @@ if (!COARSE_POINTER) {
     }
   };
   map.on('mousemove', (e) => {
+    if (appMode !== 'roman') { hide(); return; }   // no road/coverage hover in Alexander mode
     _lastMove = e;
     // Any motion hides the current label and restarts the dwell clock — the label
     // is for a settled cursor, not a moving one, so a sweep across the map shows
@@ -3499,6 +3514,58 @@ function setEra(era) {
     if (!map.hasLayer(modernLayer))         map.addLayer(modernLayer);
   }
   updateBasemaps();  // re-apply zoom-staged opacity + satellite reveal for the new era
+  raiseOverlays();
+}
+
+// ── MODE SWITCH (top-level experience) ───────────────────
+// Mirrors setEra's "swap the whole view" shape, but swaps CONTENT (which dataset
+// is live) + CHROME (which controls/legend show) instead of tile layers. Drives
+// layerState — the lever almost everything keys on — then re-applies through the
+// EXISTING render paths (contents-mutation, mobile-safe). No new rendering.
+// Chrome show/hide is CSS-driven off body.mode-alexander (see style.css).
+function setMode(mode) {
+  if (mode === appMode) return;
+  appMode = mode;
+
+  document.querySelectorAll('.mode-tab').forEach(t => {
+    const on = t.dataset.mode === mode;
+    t.classList.toggle('active', on);
+    t.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+  document.body.classList.toggle('mode-alexander', mode === 'alexander');
+  document.body.classList.toggle('mode-roman',     mode === 'roman');
+
+  if (document.getElementById('info-panel').classList.contains('open')) closePanel();
+  clearRoute();   // a drawn ORBIS journey shouldn't linger across a mode switch
+
+  if (mode === 'alexander') {
+    // Roman datasets off. Roads are canvas/SVG (safe to add/remove); sites &
+    // coverage go through their contents-mutation refreshers (the marker landmine).
+    for (const g of [itinereRoadsGroup, roadsGroup]) if (g && map.hasLayer(g)) map.removeLayer(g);
+    layerState.roads = false; layerState.sites = false; layerState.alexander = true;
+    refreshVisibleMarkers();   // empties site clusters (sites off)
+    renderCoverageDots();      // returns early now (coverageWanted false off-mode)
+    refreshAlexanderLayer();   // paint the campaign
+    fitAlexanderBoundsOnce();
+  } else {
+    layerState.alexander = false; layerState.roads = true; layerState.sites = true;
+    for (const g of [itinereRoadsGroup, roadsGroup]) if (g && !map.hasLayer(g)) map.addLayer(g);
+    refreshAlexanderLayer();   // clears the campaign (alexander false)
+    hiddenTiers.clear();       // restore the full Roman sites layer (master-switch semantics)
+    syncFilterUI();
+    refreshVisibleMarkers();
+    renderCoverageDots();
+  }
+
+  // Reflect the forced layer state onto the Roman chips + legend master rows
+  // (hidden while in Alexander mode, but correct when we return).
+  for (const k of ['roads', 'sites']) {
+    const b = document.getElementById('btn-' + k);
+    if (b) b.classList.toggle('active', !!layerState[k]);
+    const lr = document.getElementById('legend-' + k + '-toggle');
+    if (lr) lr.classList.toggle('active', !!layerState[k]);
+  }
+  decorateRoadsLegend();
   raiseOverlays();
 }
 

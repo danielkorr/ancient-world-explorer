@@ -210,20 +210,31 @@ Whatever we pick must be verified on the **WebKit + touch harness** (`tests/webk
 - **F6/F7 (schema drift, phase filter) — UNCHANGED**; the phase filter naturally becomes
   the campaign legend rows (§4).
 
-## 10. Proposed build sequence (when we move to code)
+## 10. Build sequence — progress
 
-1. Merge `main` into the branch (chosen: merge, not rebase — no force-push of shared
-   history). Resolve the `?v=` token conflict and re-verify the `toggleLayer` `else if`.
-2. `appMode` + `setMode` + the tab bar (desktop first), driving `layerState`. No new
-   rendering — reuse `refreshVisibleMarkers`/`refreshAlexanderLayer`.
-3. Chrome swap (§4) incl. the campaign/phase legend with numeric indices.
-4. Close the four gaps (§5): tap/hover mode-gates, mode-scoped search, panel hygiene,
-   `?mode=` boot param.
-5. Cross-mode link chips (§6).
-6. Mobile mode strip (§8) + WebKit-touch verification.
-7. Source-curation pass on the data (review F3), separate commit, human approval.
-8. Harnesses (`run-journeys` + `webkit-touch`), cache-bust `?v=`, then the merge-to-main
-   decision (yours).
+1. ✅ **DONE** (`6acd777`) — Merged `main` in (not rebased). Conflicts resolved (both
+   Alexander + Names buttons; 4-key `layerState`; `toggleLayer` chain intact). Harness green.
+2. ✅ **DONE** (`25e20ce`) — `appMode` + `setMode` + tab bar (desktop centered / mobile
+   strip), driving `layerState`; reuses existing render paths.
+3. ✅ **DONE** (`25e20ce`) — Chrome swap (§4) incl. campaign/phase legend with numeric
+   indices (colorblind-safe).
+4. ✅ **DONE** (tap/hover/coverage gates in `25e20ce`; search + `?mode=` in `ddb2b0d`) —
+   the four §5 gaps closed.
+5. ✅ **DONE** (`f2ea3af`) — Bidirectional cross-mode link chips (§6); 19/32 stops twin.
+6. ✅ **DONE** — Mobile strip verified at 375px (both modes); WebKit-touch harness green
+   (Roman tap path intact after the touch-handler mode-gate).
+7. ⏳ **PENDING — needs Dano's approval.** Source-curation pass on `js/alexander.js`
+   (review F3): inherit Pleiades ids from the 19 twinned sites; Livius for battles.
+   Separate data commit. *This also sharpens the cross-mode join (currently proximity,
+   e.g. Babylon→Ištar Gate; Pleiades ids would make it exact.)*
+8. ⏳ **PENDING — Dano's call.** Final harnesses, then the merge-to-main decision.
 
-*Check-in/quest-for-Alexander (open Q #4) is deliberately out of this sequence unless you
-elevate it now.*
+**Verification done headless:** mode switch (32 stops/12 routes paint, chrome swaps,
+74 sites repaint on return); mode-scoped search + `?mode=alexander` deep-link; bidirectional
+cross-mode chips (Babylon↔Ištar Gate, Persepolis↔Persepolis); `run-journeys` green ×4;
+`webkit-touch` green; mobile 375px both modes. **Not yet done:** real-device iPhone pass;
+an Alexander-stop *tap* on the real touch engine (resolves via the reliable `map.on('click')`
+path, but unverified on WebKit-touch specifically).
+
+*Check-in/quest-for-Alexander (open Q #4) remains deliberately out of scope — see
+[[project-alexander-mode-quest-ready]].*

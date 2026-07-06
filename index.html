@@ -46,7 +46,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=106">
+  <link rel="stylesheet" href="css/style.css?v=124">
 </head>
 <body>
 
@@ -55,8 +55,8 @@
 
 <!-- Top Bar -->
 <div id="topbar" data-testid="main-nav">
-  <div id="app-brand" onclick="openWelcome()" role="button" tabindex="0" title="About VIA">
-    <h1 id="app-title">VIA</h1>
+  <div id="app-brand" onclick="openWelcome()" role="button" tabindex="0" title="About VIA — what this is & where the data comes from">
+    <h1 id="app-title">VIA<span id="brand-info" aria-hidden="true">ⓘ</span></h1>
     <div id="app-subtitle">Ancient World Explorer</div>
   </div>
   <div id="topbar-search" data-testid="site-search">
@@ -109,6 +109,12 @@
         </div>
       </div>
       <p class="welcome-kicker">Learn history. Help write it.</p>
+      <div class="welcome-sources">
+        <div class="welcome-sources-title">Plan a Roman journey</div>
+        <p>Tap any place, then tap a second — VIA traces the route a Roman traveller would have taken and tells you how many days it took, in road, river, and sea. The travel model is <strong>ORBIS</strong>, Stanford's geospatial reconstruction of the Roman world.</p>
+        <div class="welcome-sources-title">Built on the scholarly record</div>
+        <p><strong>Pleiades</strong> for places, <strong>Itiner-e</strong> for the road network, <strong>ORBIS</strong> for travel — the same open gazetteers historians use. VIA just puts them on one map.</p>
+      </div>
     </div>
     <button class="auth-primary" onclick="closeWelcome()">Begin Exploring</button>
   </div>
@@ -191,6 +197,9 @@
   <button class="ctrl-btn" id="btn-alexander" data-testid="alexander-layer-button" onclick="toggleLayer('alexander')">
     <span class="ctrl-icon" aria-hidden="true">A</span><div class="swatch-campaign"></div><span class="ctrl-label">Alexander</span>
   </button>
+  <button class="ctrl-btn" id="btn-names" data-testid="names-filter-button" onclick="toggleLayer('names')" title="Show ancient + modern place names on the map">
+    <span class="ctrl-icon" aria-hidden="true">🏷️</span><div class="swatch-name">Aa</div><span class="ctrl-label">Names</span>
+  </button>
   <div class="detail-control" id="detail-control" data-testid="detail-filter-control" aria-label="Map detail">
     <div class="detail-head">
       <span class="detail-title">Detail</span>
@@ -198,6 +207,18 @@
     </div>
     <input id="detail-slider" data-testid="detail-filter-slider" type="range" min="0" max="3" step="1" value="0" aria-label="Map detail">
   </div>
+</div>
+
+<!-- Empire inset — a fixed locator map (desktop only). Shows the DARE atlas at
+     empire scale; a gold rectangle tracks the main map's viewport so you always
+     know which corner of the Roman world you're looking at. Click to fly there.
+     app.js (`buildEmpireInset`) builds the inner Leaflet map + viewport rect. -->
+<div id="empire-inset" class="collapsed" data-testid="empire-inset">
+  <div id="empire-inset-head">
+    <span id="empire-inset-title">The Empire</span>
+    <button id="empire-inset-toggle" type="button" aria-label="Expand the empire inset" title="Show locator map">▸</button>
+  </div>
+  <div id="empire-inset-map"></div>
 </div>
 
 <!-- Mobile dock: one slim persistent bottom bar holding a search field, a
@@ -322,6 +343,8 @@
     <div class="p-rule"></div>
     <div id="panel-period"></div>
     <div id="panel-desc"></div>
+    <!-- Live Pleiades enrichment — description/names fetched on panel open -->
+    <div id="pleiades-detail-card"></div>
     <div id="segment-evidence"></div>
 
     <!-- Check-in row -->
@@ -332,6 +355,10 @@
 
     <!-- Places along this stretch (road-segment panels only) -->
     <div id="segment-nearby"></div>
+
+    <!-- Pleiades places linked to this road by Itiner-e (road-segment panels only,
+         lazy-loaded from js/roads-itinere-pleiades.js on first road tap) -->
+    <div id="segment-pleiades"></div>
 
     <!-- ORBIS Travel Time Card -->
     <div id="orbis-card">
@@ -356,10 +383,31 @@
   </div>
 </div>
 
+<!-- Journey routing (ORBIS) — hint banner shown while picking a destination,
+     and the days/km/denarii result card. Populated by app.js. -->
+<div id="route-hint" role="status">
+  <div id="route-hint-body">
+    <span id="route-hint-text"></span>
+    <span id="route-hint-sub"></span>
+  </div>
+  <button type="button" onclick="cancelRoutePick()" aria-label="Cancel route">✕</button>
+</div>
+<div id="route-readout" role="status">
+  <button type="button" id="route-readout-close" onclick="clearRoute()" aria-label="Clear route">✕</button>
+  <div id="route-readout-route"></div>
+  <div id="route-readout-stats"></div>
+  <!-- Fastest / Shortest / Cheapest cost-basis toggle (populated by app.js). -->
+  <div id="route-readout-toggle" role="group" aria-label="Optimize route by"></div>
+  <div id="route-readout-detail"></div>
+</div>
+
 <!-- Data + App. ?v= must match the value on css/style.css above — bump both
      together each deploy to force fresh assets past the cache. -->
 <script src="js/config.js?v=106"></script>
 <script src="js/orbis-days.js?v=106"></script>
+<!-- Client-side ORBIS routing logic (small). The heavy graph it reads
+     (js/orbis-graph.js) is LAZY-loaded by app.js on first route request. -->
+<script src="js/orbis-route.js?v=121"></script>
 <script src="js/sites-pleiades.js?v=106"></script>
 <script src="js/sites-vici.js?v=106"></script>
 <script src="js/vici-links.js?v=106"></script>
@@ -371,7 +419,7 @@
      normal (non-QA) path — ordering is preserved. -->
 <script>
   if (!/[?&]qa=1/.test(location.search)) {
-    document.write('<scr' + 'ipt src="js/roads-itinere.js?v=106"><\/scr' + 'ipt>');
+    document.write('<scr' + 'ipt src="js/roads-itinere.js?v=119"><\/scr' + 'ipt>');
   }
 </script>
 <script src="js/data.js?v=106"></script>
@@ -380,7 +428,7 @@
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
 <script src="js/basemap.js?v=106"></script>
-<script src="js/app.js?v=106"></script>
+<script src="js/app.js?v=124"></script>
 
 </body>
 </html>

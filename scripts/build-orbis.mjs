@@ -24,6 +24,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT  = path.resolve(__dirname, '..');
 const CACHE = path.join(ROOT, '.cache', 'orbis');
 const OUT   = path.join(ROOT, 'js', 'orbis-days.js');
+const OUT_GRAPH = path.join(ROOT, 'js', 'orbis-graph.js');
 
 const REFRESH = process.argv.includes('--refresh');
 const ROME_NODE_ID = 50327;
@@ -161,6 +162,12 @@ function mode(edgeType) {
   return 'mixed';
 }
 
+// Numeric code for the coarse mode, so orbis-graph.js can store one byte-ish
+// int per edge instead of a string. Order is the contract with the runtime
+// (js/orbis-route.js MODE_LABELS must match this order).
+const MODE_ORDER = ['road', 'sea', 'river', 'ferry', 'mixed'];
+const modeCode = edgeType => MODE_ORDER.indexOf(mode(edgeType));
+
 // ── MAIN ──────────────────────────────────────────────────
 
 async function main() {
@@ -220,6 +227,47 @@ async function main() {
 
   await writeFile(OUT, emit(byPleiades, nodeRows));
   console.log(`✓ wrote ${path.relative(ROOT, OUT)} (${nodeRows.length} nodes)`);
+
+  // ── FULL GRAPH (for client-side arbitrary origin→destination routing) ──
+  // Emit every node (with a Pleiades id where sites.csv provides one) and every
+  // edge with all three weights (km/days/expense) + a coarse mode code. This is
+  // the raw ORBIS network, NOT a Rome-rooted result — js/orbis-route.js runs
+  // Dijkstra over it in the browser.
+  const pidByNode = new Map();
+  for (const s of sites) {
+    const nid = Number(s.id);
+    const pid = String(s.pleiades || '').trim().replace(/\/+$/, '');
+    if (Number.isFinite(nid) && pid) pidByNode.set(nid, pid);
+  }
+  const graphNodes = [];
+  for (const n of nodes) {
+    const id = Number(n.id);
+    const lat = Number(n.y), lng = Number(n.x);
+    if (!Number.isFinite(id) || !Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+    graphNodes.push({
+      id,
+      lat: Number(lat.toFixed(4)),
+      lng: Number(lng.toFixed(4)),
+      label: String(n.label || ''),
+      rank: Number(n.rank) || 0,
+      pleiades: pidByNode.get(id) || null,
+    });
+  }
+  const graphEdges = [];
+  for (const e of edges) {
+    const s = Number(e.source), t = Number(e.target);
+    const km = Number(e.km), days = Number(e.days), exp = Number(e.expense);
+    if (!Number.isFinite(s) || !Number.isFinite(t) || !Number.isFinite(days)) continue;
+    graphEdges.push([
+      s, t,
+      Number.isFinite(km) ? Number(km.toFixed(2)) : 0,
+      Number(days.toFixed(3)),
+      Number.isFinite(exp) ? Number(exp.toFixed(2)) : 0,
+      modeCode(e.type),
+    ]);
+  }
+  await writeFile(OUT_GRAPH, emitGraph(graphNodes, graphEdges));
+  console.log(`✓ wrote ${path.relative(ROOT, OUT_GRAPH)} (${graphNodes.length} nodes, ${graphEdges.length} edges)`);
 }
 
 function emit(byPleiades, nodes) {
@@ -247,6 +295,43 @@ function emit(byPleiades, nodes) {
     '',
     'const ORBIS_NODES = [',
     ...nodeLines,
+    '];',
+    '',
+  ].join('\n');
+}
+
+function emitGraph(nodes, edges) {
+  const nodeLines = nodes.map(n =>
+    `  { id:${n.id}, lat:${n.lat}, lng:${n.lng}, rank:${n.rank}, pleiades:${n.pleiades ? JSON.stringify(n.pleiades) : 'null'}, label:${JSON.stringify(n.label)} },`);
+  const edgeLines = edges.map(e => `  [${e.join(',')}],`);
+  return [
+    '// ═══════════════════════════════════════════════════════════',
+    '//  VIA — Ancient World Explorer',
+    '//  orbis-graph.js — auto-generated from the ORBIS network',
+    '//',
+    '//  DO NOT EDIT BY HAND. Regenerate with:',
+    '//    node scripts/build-orbis.mjs',
+    '//',
+    '//  The full ORBIS graph (nodes + weighted edges) for client-side',
+    '//  arbitrary origin→destination routing (js/orbis-route.js). LAZY-LOADED',
+    '//  by app.js (ensureOrbisGraphLoaded) — NOT in index.html cold start.',
+    '//',
+    '//  ORBIS_GRAPH_NODES  [{ id, lat, lng, rank, pleiades, label }]',
+    '//  ORBIS_GRAPH_EDGES  [source, target, km, days, expense, modeCode]',
+    '//    modeCode: 0 road · 1 sea · 2 river · 3 ferry · 4 mixed',
+    '//    (edges are UNDIRECTED — emitted once, both directions at runtime)',
+    '//',
+    '//  Source: https://github.com/sfsheath/gorbit (mirror of Stanford ORBIS)',
+    `//  Generated: ${new Date().toISOString()}`,
+    `//  Nodes: ${nodes.length} · Edges: ${edges.length}`,
+    '// ═══════════════════════════════════════════════════════════',
+    '',
+    'window.ORBIS_GRAPH_NODES = [',
+    ...nodeLines,
+    '];',
+    '',
+    'window.ORBIS_GRAPH_EDGES = [',
+    ...edgeLines,
     '];',
     '',
   ].join('\n');

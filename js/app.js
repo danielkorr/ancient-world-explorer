@@ -252,6 +252,11 @@ const itinereRoadsGroup = L.layerGroup().addTo(map);
 const roadsGroup        = L.layerGroup().addTo(map);
 const alexanderRouteGroup = L.layerGroup().addTo(map);
 const alexanderStopsGroup = L.layerGroup().addTo(map);
+// ORBIS journey route overlay — a planned A→B path drawn on top of everything.
+// Permanently on the map (mobile-safe: mutate CONTENTS, never add/remove the
+// group — see the LayerGroup landmine in CLAUDE.md); wired in the JOURNEY
+// ROUTING section below.
+const routeGroup        = L.layerGroup().addTo(map);
 // Selection highlight for a searched road. Lives above roadsGroup, permanently
 // on the map (mobile-safe: we mutate its CONTENTS, never add/remove the group —
 // see the LayerGroup landmine in CLAUDE.md). Persists after the panel is
@@ -305,7 +310,7 @@ if (!QA && typeof ROADS_ITINERE !== 'undefined') {
     }
     // `pl` ref lets the certainty filter show/hide this segment by mutating the
     // group's contents (mobile-safe), never toggling group membership.
-    itinereSegs.push({ ll: latlngs, meta, pl, minLat, maxLat, minLng, maxLng });
+    itinereSegs.push({ ll: latlngs, meta, id: seg.id, pl, minLat, maxLat, minLng, maxLng });
   }
   // CC BY 4.0 attribution — required by the dataset license.
   map.attributionControl.addAttribution(
@@ -459,7 +464,7 @@ const ROAD_FILL_WEIGHT   = 2;            // toned down from 3 — slimmer saffro
 // coincide. Returns true if a panel was opened.
 function openRoadPanelAt(latlng, curatedRoad) {
   const seg = latlng && findNearestItinere(latlng, map.latLngToContainerPoint(latlng));
-  if (seg) { showSegmentPanel(seg.meta, seg.ll); return true; }
+  if (seg) { showSegmentPanel(seg.meta, seg.ll, [seg.id]); return true; }
   if (curatedRoad) {
     const rll = curatedRoad.coords.map(c => [c[1], c[0]]);
     showSegmentPanel({ name: curatedRoad.name, main: 1, desc: curatedRoad.desc }, rll);
@@ -494,8 +499,11 @@ ROADS.forEach(road => {
   const hit = L.polyline(latlngs, {
     color: '#000', weight: 22, opacity: 0, lineCap: 'round', lineJoin: 'round',
   })
+   // Hover shows just the road NAME — a compact one-line label, not a paragraph.
+   // The full desc + date live in the road panel that a click opens (and used to
+   // make this hover box 3 lines tall, which overlapped the cursor readout).
    .bindTooltip(
-     `<b style="color:#d4a853">${road.name}</b><br>${road.desc}<br><span style="opacity:.55">Est. ${road.built}</span>`,
+     `<b style="color:#d4a853">${road.name}</b>`,
      { className:'road-tip', sticky:true }
    )
    .on('click', function (e) {
@@ -829,9 +837,14 @@ const CLUSTER_COLOR = {
 function clusterOpts(kind) {
   return {
     maxClusterRadius: 56,             // px; aggressive enough to clear small screens
-    spiderfyOnMaxZoom: true,          // fan out the last few coincident sites
+    // Both native click behaviours are OFF — we drive cluster clicks ourselves
+    // (zoomIntoCluster) on BOTH desktop (clusterclick) and touch (the touchend
+    // delegation). markercluster's own zoomToBounds fits the bounding BOX, whose
+    // centre is the midpoint of the extremes; a cluster with one far-flung member
+    // then drops you between them and strands the dense members at the corner.
+    spiderfyOnMaxZoom: false,
     showCoverageOnHover: false,       // no hover on touch; avoids stray polygons
-    zoomToBoundsOnClick: true,        // desktop: tap a cluster -> zoom to members
+    zoomToBoundsOnClick: false,
     chunkedLoading: true,             // don't stall the main thread on the dense set
     spiderfyDistanceMultiplier: 1.6,  // wider fan for fat-finger taps
     iconCreateFunction: cluster => L.divIcon({
@@ -843,6 +856,29 @@ function clusterOpts(kind) {
 }
 const siteClusters = {};
 TIER_KINDS.forEach(k => { siteClusters[k] = L.markerClusterGroup(clusterOpts(k)); map.addLayer(siteClusters[k]); });
+
+// Cluster click/tap action, shared by desktop and touch. Zoom in CENTRED on the
+// cluster centre and zoom in a GENTLE, fixed amount — a predictable drill-in, not
+// a teleport. Fitting the members' bounds was wrong both ways: fitting ALL of them
+// strands the dense pair at the edge when one member is far off (the "3" west of
+// Italy is Cumae + Baiae + Paestum, Paestum 91km south); fitting only the dense
+// knot over-zoomed to street level and dropped you in "nowheresville" with no
+// context. Instead step in two zoom levels centred on the cluster, so you stay
+// oriented and the cluster visibly splits (the "3" becomes a "2" + a separated
+// member near the centre); click again to go deeper. Coincident members / max
+// zoom spiderfy instead.
+function zoomIntoCluster(cluster) {
+  if (!cluster || typeof cluster.getLatLng !== 'function') return;
+  const b = cluster.getBounds && cluster.getBounds();
+  const atMax = map.getZoom() >= map.getMaxZoom();
+  const coincident = b && b.isValid() && b.getNorthEast().equals(b.getSouthWest());
+  if ((atMax || coincident) && typeof cluster.spiderfy === 'function') { cluster.spiderfy(); return; }
+  const z = Math.min(map.getZoom() + 2, map.getMaxZoom());
+  map.setView(cluster.getLatLng(), z, { animate: true });
+}
+// Desktop drives this off the synthesized clusterclick (touch can't — handled in
+// the touchend delegation instead).
+TIER_KINDS.forEach(k => siteClusters[k].on('clusterclick', e => zoomIntoCluster(e.layer)));
 
 // Master marker lists. allMarkers = every marker (icon-refresh, touch lookup);
 // markersByTier = the source-of-truth per category so filters are pure
@@ -1001,6 +1037,102 @@ SITES.forEach(site => {
   allMarkers.push(marker);
 });
 
+// ── DUAL-NAME LABELS ─────────────────────────────────────
+// OrganicMaps-style "local + alternate" naming, our own slant: the ancient name
+// over the modern one (Londinium / London). Off by default (the "Names" chip).
+// Permanent Leaflet tooltips, but gated three ways so they never become soup:
+//   • the Names layer must be on,
+//   • zoom must be deep enough that markers have declustered (MIN_LABEL_ZOOM),
+//   • the marker must be individually visible (not folded into a cluster and
+//     actually in its tier group at the current detail level).
+let labelsOn = false;
+const MIN_LABEL_ZOOM = 7;
+
+function escLabel(s) {
+  return String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+}
+function nameLabelHtml(site) {
+  const modern = site.modern && site.modern !== site.name
+    ? `<span class="vnl-modern">${escLabel(site.modern)}</span>` : '';
+  return `<span class="vnl-ancient">${escLabel(site.name)}</span>${modern}`;
+}
+function refreshNameLabels() {
+  const show = labelsOn && map.getZoom() >= MIN_LABEL_ZOOM;
+  for (const m of allMarkers) {
+    let want = false;
+    if (show) {
+      const grp = siteClusters[m._site.quest || 'documented'];
+      // hasLayer → marker is in its tier group at this detail level;
+      // getVisibleParent === m → it's standing alone, not inside a cluster.
+      want = grp && map.hasLayer(grp) && grp.hasLayer(m) && grp.getVisibleParent(m) === m;
+    }
+    if (want) {
+      if (!m.getTooltip()) {
+        m.bindTooltip(nameLabelHtml(m._site), {
+          permanent: true, direction: 'right', offset: [10, 0],
+          className: 'via-name-label', interactive: false,
+        });
+      }
+      m.openTooltip();
+    } else if (m.getTooltip()) {
+      m.unbindTooltip();
+    }
+  }
+}
+// Re-evaluate on every view change (declustering happens on both) and whenever
+// the marker set itself changes (detail slider / tier filters call this too).
+map.on('zoomend moveend', refreshNameLabels);
+
+// ── EMPIRE INSET ─────────────────────────────────────────
+// A fixed locator map (desktop only — CSS hides #empire-inset on mobile). Shows
+// the DARE atlas at empire scale with a keyless sepia CARTO floor underneath (so
+// it never goes blank where DARE 404s, same floor logic as the main map). A gold
+// rectangle tracks the main map's viewport; clicking flies the main map there.
+// Its own fresh tile-layer instances — a Leaflet TileLayer belongs to one map.
+let empireInset = null;
+function buildEmpireInset() {
+  const host = document.getElementById('empire-inset-map');
+  if (!host || empireInset) return;
+  const insetBase = L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', { maxZoom: 11 });
+  const insetDare = L.tileLayer(
+    'https://dh.gu.se/tiles/imperium/{z}/{x}/{y}.png', { maxNativeZoom: 11, maxZoom: 11 });
+  const insetMap = L.map(host, {
+    center: [40, 19], zoom: 4, zoomControl: false, attributionControl: false,
+    dragging: false, scrollWheelZoom: false, doubleClickZoom: false,
+    boxZoom: false, keyboard: false, touchZoom: false, tap: false,
+    inertia: false, fadeAnimation: false, layers: [insetBase, insetDare],
+  });
+  // Viewport rectangle — non-interactive so clicks fall through to the map.
+  const rect = L.rectangle(map.getBounds(), {
+    color: '#d4a853', weight: 1.5, fillColor: '#d4a853', fillOpacity: 0.14,
+    interactive: false,
+  }).addTo(insetMap);
+  const syncRect = () => rect.setBounds(map.getBounds());
+  map.on('move zoom', syncRect);
+  // Click anywhere on the inset → fly the main map to that point (keep its zoom).
+  insetMap.on('click', e => map.flyTo(e.latlng, map.getZoom()));
+  empireInset = { map: insetMap, rect };
+
+  // Collapse / expand. Collapsed = header pill only; invalidate size on expand so
+  // tiles lay out correctly after being display:none.
+  const toggle = document.getElementById('empire-inset-toggle');
+  const wrap = document.getElementById('empire-inset');
+  if (toggle && wrap) {
+    toggle.addEventListener('click', () => {
+      const collapsed = wrap.classList.toggle('collapsed');
+      toggle.textContent = collapsed ? '▸' : '▾';
+      toggle.setAttribute('aria-label', collapsed ? 'Expand the empire inset' : 'Collapse the empire inset');
+      if (!collapsed) setTimeout(() => insetMap.invalidateSize(), 0);
+    });
+  }
+  // The host can be sized 0 at boot (just-laid-out flex/grid); settle it once.
+  setTimeout(() => insetMap.invalidateSize(), 0);
+}
+// Skip in QA mode — deterministic fixture keeps chrome minimal and avoids extra
+// tile fetches that slow the headless journeys.
+if (!QA) buildEmpireInset();
+
 // iOS Safari does NOT synthesize a `click` from a tap on a Leaflet divIcon — the
 // ?debug=1 overlay confirmed `touchstart on [DIV]` with no click ever firing, so
 // marker.on('click') (which Leaflet drives off the synthesized click) never runs.
@@ -1022,21 +1154,46 @@ if (COARSE_POINTER) {
   }, { passive: true });
   markerPane.addEventListener('touchend', e => {
     const t = e.changedTouches && e.changedTouches[0];
+    if (!t) return;
     // Ignore drags — only a near-stationary touch counts as a tap.
-    if (_tStart && t && (Math.abs(t.clientX - _tStart.x) > 12 || Math.abs(t.clientY - _tStart.y) > 12)) return;
-    const iconEl = e.target.closest && e.target.closest('.leaflet-marker-icon');
-    if (!iconEl) return;
-    // A cluster bubble: drill in toward it. markercluster's zoomToBoundsOnClick
-    // relies on a click iOS never synthesizes, so we zoom ourselves — repeated
-    // taps split the cluster and eventually spiderfy the last coincident sites.
-    if (iconEl.querySelector && iconEl.querySelector('.via-cluster')) {
+    if (_tStart && (Math.abs(t.clientX - _tStart.x) > 12 || Math.abs(t.clientY - _tStart.y) > 12)) return;
+
+    // CLUSTER WINS ON OVERLAP. A finger covers ~44px, so a lone marker (e.g.
+    // Puteoli, documented tier) can sit on top of a cluster bubble from a
+    // DIFFERENT tier (the Cumae+Baiae photo "2"). Trusting e.target meant tapping
+    // the marker's side of the cluster opened that marker's panel instead of
+    // zooming. So GEOMETRICALLY hit-test every visible cluster icon against the
+    // touch point — the cluster wins wherever the finger lands inside its bubble —
+    // and run markercluster's own zoom-or-spiderfy (the click path iOS never
+    // synthesizes) to spread the pile apart.
+    const cx = t.clientX, cy = t.clientY;
+    let cluster = null, bestD = Infinity;
+    for (const k of TIER_KINDS) {
+      const fg = siteClusters[k] && siteClusters[k]._featureGroup;
+      if (!fg) continue;
+      for (const l of fg.getLayers()) {
+        if (!l._icon || typeof l.getChildCount !== 'function') continue;   // L.MarkerCluster only
+        const r = l._icon.getBoundingClientRect();
+        if (cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom) {
+          // Several tier clusters can overlap under one finger; pick the one whose
+          // bubble centre is nearest the touch (the one actually aimed at), not the
+          // first tier in iteration order.
+          const dx = (r.left + r.right) / 2 - cx, dy = (r.top + r.bottom) / 2 - cy;
+          const d = dx * dx + dy * dy;
+          if (d < bestD) { bestD = d; cluster = l; }
+        }
+      }
+    }
+    if (cluster) {
       e.preventDefault();
-      let ll; try { ll = map.mouseEventToLatLng(t); } catch (_) {}
-      if (ll) map.setView(ll, Math.min(map.getZoom() + 2, map.getMaxZoom()), { animate: true });
+      zoomIntoCluster(cluster);   // same centred zoom/spiderfy the desktop click uses
       return;
     }
+
     // An individual marker (rendered un-clustered): open its panel. Markers live
     // in cluster groups now, so match against the master list, not a single group.
+    const iconEl = e.target.closest && e.target.closest('.leaflet-marker-icon');
+    if (!iconEl) return;
     let hit = null;
     for (const m of allMarkers) { if (m._icon === iconEl) { hit = m; break; } }
     if (!hit) return;
@@ -1147,7 +1304,7 @@ if (COARSE_POINTER) {
         // desktop click path uses.
         if (ll) openRoadPanelAt(ll, road._curatedRoad);
       } else if (seg) {
-        showSegmentPanel(seg.meta, seg.ll);
+        showSegmentPanel(seg.meta, seg.ll, [seg.id]);
       } else if (cov) {
         focusCoverage(cov);
       } else if (pin) {
@@ -1187,6 +1344,13 @@ function setHeroPhoto(hero, heroIcon, url, grad) {
 }
 
 function showPanel(site) {
+  // Journey routing: if a route is armed, the next place the user opens (marker,
+  // cluster, or coverage — all funnel here) is the DESTINATION, not a panel to
+  // show. Complete the route instead of rendering the panel.
+  if (routePicking && routeOrigin && site && site.id !== routeOrigin.id) {
+    completeRoute(site);
+    return;
+  }
   hideLegendToast();
   closeDockPanels();      // the detail card is the one open surface now
   // A pending close-pulse is a one-shot tied to the site just focused via search.
@@ -1209,6 +1373,8 @@ function showPanel(site) {
   document.getElementById('segment-evidence').style.display = 'none';
   const _segNear = document.getElementById('segment-nearby');
   if (_segNear) _segNear.style.display = 'none';
+  const _segPl = document.getElementById('segment-pleiades');
+  if (_segPl) { _segPl.style.display = 'none'; _segPl.innerHTML = ''; }
 
   // Hero. Any site with a vici.org photo shows it as the hero with a credit/
   // license caption (the "imagery exists in the wild" made literal); elevation
@@ -1335,6 +1501,10 @@ function showPanel(site) {
   // site + home view first, so the Back reload drops you right where you were
   // instead of a cold start. The ↗ signals the button leaves VIA.
   document.getElementById('panel-actions').innerHTML = `
+    <button type="button" onclick="armRouteFromCurrent()" class="p-btn p-btn-route">
+      <span class="p-btn-icon">🧭</span>
+      <div><div class="p-btn-main">Plan a route from here</div><div class="p-btn-sub">Trace an ORBIS journey to another place</div></div>
+    </button>
     <a href="${gmUrl}" onclick="saveReturnState()" class="p-btn p-btn-maps">
       <span class="p-btn-icon">🗺️</span>
       <div><div class="p-btn-main">Google Maps</div><div class="p-btn-sub">Modern streets, places &amp; directions</div></div>
@@ -1354,6 +1524,20 @@ function showPanel(site) {
 
   // Pleiades Linked Data Sidebar — scholarly cross-references for this place.
   renderLinkedData(site);
+
+  // Live Pleiades enrichment — descriptive prose + alternate names pulled from
+  // the CORS-open Pleiades JSON API at open time (Path A, zero bundle cost).
+  // Render now with a shimmer, fill when it resolves. A per-open token guards
+  // against the user tapping a different place mid-fetch; failure leaves the
+  // panel exactly as it is today.
+  renderPleiadesDetailLoading(site);
+  const _plToken = ++panelOpenToken;
+  if (site.pleiades) {
+    fetchPleiadesDetail(site.pleiades).then(data => {
+      if (_plToken !== panelOpenToken) return;   // panel changed under us
+      applyPleiadesDetail(site, data);
+    });
+  }
 
   // Remember where the map was the first time the panel opens, so closing it
   // returns you whence you came instead of stranding you at the last offset
@@ -1504,6 +1688,192 @@ function renderLinkedData(site) {
     `<div class="ld-head"><span class="ld-head-icon">🔎</span>Primary sources &amp; evidence` +
     `<span class="ld-sub">via Pleiades · ${n} dataset${n > 1 ? 's' : ''}</span></div>` +
     `<div class="ld-sources">${sources}</div>`;
+}
+
+// ── Live Pleiades enrichment (#pleiades-detail-card) ──────────────────────
+// Coverage/thin panels — and, more quietly, curated ones — pull descriptive
+// prose + alternate names straight from the Pleiades JSON API at open time. The
+// API is CORS-open (access-control-allow-origin: *), so the browser fetches it
+// directly; NOTHING is baked into our static bundles (Path A — zero payload
+// growth). Cached per-id (the promise is cached, deduping repeat + concurrent
+// opens; sessionStorage mirrors the slim result for instant re-opens). On any
+// failure we resolve to null and the panel keeps exactly its existing content
+// (honest-thin note for coverage, curated desc for foreground). Pleiades text
+// is CC BY 3.0 — the card renders a credit line from the record's own rights.
+const _pleiadesDetailCache = new Map();
+
+// Strip HTML tags then decode entities (textarea trick — treats content as text,
+// so no scripts run and no resources load, unlike innerHTML on a live element).
+function stripHtmlToText(html) {
+  const noTags = String(html == null ? '' : html).replace(/<[^>]*>/g, ' ');
+  const ta = document.createElement('textarea');
+  ta.innerHTML = noTags;
+  return ta.value.replace(/\s+/g, ' ').trim();
+}
+
+// Derive a modern-place name from the Barrington Atlas note. The `details` field
+// reads "The Barrington Atlas Directory notes: <modern>, <alt>…". We take the
+// primary (first) reflex and reject it when it's just the ancient name repeated
+// (e.g. "Garian") or a bare descriptor — comparing against the site's own name +
+// alternates. Returns '' when there's no trustworthy modern reflex.
+function deriveModernName(detailsText, title, names) {
+  const m = /Barrington Atlas Directory notes:\s*(.+)$/i.exec(detailsText || '');
+  if (!m) return '';
+  const norm = s => String(s || '').toLowerCase().normalize('NFKD')
+    .replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
+  const skip = new Set([norm(title), ...names.map(n => norm(n.label))]);
+  let cand = m[1].split(',')[0].replace(/\s*\([^)]*\)\s*$/, '').replace(/[.\s]+$/, '').trim();
+  if (!cand || cand.length > 40) return '';
+  // "Ancient/Modern" notes (e.g. "Roma/Rome"): keep the first sub-part that
+  // isn't just the ancient name; if every part is the ancient name, reject.
+  const parts = cand.split('/').map(s => s.trim()).filter(Boolean);
+  cand = parts.find(p => !skip.has(norm(p))) || '';
+  return cand;
+}
+
+// Reduce the ~27 KB raw record to the handful of fields the panel shows.
+function slimPleiades(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const names = [];
+  const seen = new Set();
+  for (const n of (raw.names || [])) {
+    const label = (n.romanized || n.attested || '').trim();
+    if (!label) continue;
+    const key = label.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    names.push({ label, lang: (n.language || '').trim() });
+    if (names.length >= 8) break;
+  }
+  // Pleiades `subject` mixes human tags ("extant remains", "UWHS") with machine
+  // tags ("dare:major=1"). Keep only the human-readable ones.
+  const subjects = (raw.subject || [])
+    .filter(s => typeof s === 'string' && !s.includes('=') && !/^dare:/i.test(s))
+    .slice(0, 6);
+  const creators = (raw.creators || []).map(c => (c && c.name) || c).filter(Boolean);
+  const details = stripHtmlToText(raw.details);
+  return {
+    description: (raw.description || '').trim(),
+    details,
+    modern:      deriveModernName(details, raw.title, names),
+    names,
+    subjects,
+    rights:      (raw.rights || '').trim(),
+    creators,
+  };
+}
+
+function fetchPleiadesDetail(pleiadesId) {
+  const id = String(pleiadesId || '');
+  if (!id) return Promise.resolve(null);
+  if (_pleiadesDetailCache.has(id)) return _pleiadesDetailCache.get(id);
+
+  const p = (async () => {
+    try {
+      const cached = sessionStorage.getItem('via.pl.' + id);
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 6000);
+    try {
+      const res = await fetch(`https://pleiades.stoa.org/places/${id}/json`, { signal: ctrl.signal });
+      if (!res.ok) return null;
+      const slim = slimPleiades(await res.json());
+      try { sessionStorage.setItem('via.pl.' + id, JSON.stringify(slim)); } catch {}
+      return slim;
+    } catch {
+      return null;
+    } finally {
+      clearTimeout(timer);
+    }
+  })();
+
+  _pleiadesDetailCache.set(id, p);
+  // Don't cache a transient failure for the whole session — let a later open retry.
+  p.then(v => { if (!v) _pleiadesDetailCache.delete(id); });
+  return p;
+}
+
+// Quiet shimmer while the fetch is in flight, so the panel isn't visibly empty.
+function renderPleiadesDetailLoading(site) {
+  const el = document.getElementById('pleiades-detail-card');
+  if (!el) return;
+  el.innerHTML = site && site.pleiades
+    ? '<div class="pl-loading" aria-hidden="true"><span></span><span></span><span></span></div>'
+    : '';
+}
+
+// Fill #pleiades-detail-card (and, for coverage places, the main #panel-desc)
+// from a slim Pleiades record. Mirrors renderLinkedData's <details> idiom so the
+// two cards read as siblings. Colorblind-safe: no color-only signals.
+function applyPleiadesDetail(site, data) {
+  const el = document.getElementById('pleiades-detail-card');
+  if (!el) return;
+  if (!data) { el.innerHTML = ''; return; }
+
+  // Coverage places carry no curated prose — promote the Pleiades description
+  // into the main body, replacing the honest-thin placeholder. Foreground sites
+  // keep their curated desc; their Pleiades text (if any) rides in the card.
+  const descEl = document.getElementById('panel-desc');
+  if (site.coverage && descEl && data.description) {
+    descEl.textContent = data.description;
+  }
+
+  // Fill a blank modern-place name from the Barrington note (coverage records
+  // ship with modern:''). Never overrides a name the record already has. Cache
+  // it onto the record so a re-open shows it instantly, and update both the
+  // panel line and the hero line that showPanel populates from site.modern.
+  if (!site.modern && data.modern) {
+    site.modern = data.modern;
+    const pm = document.getElementById('panel-modern-name');
+    const hm = document.getElementById('hero-modern');
+    if (pm) pm.textContent = data.modern;
+    if (hm) hm.textContent = data.modern;
+  }
+
+  const rows = [];
+
+  // "Also known as" — alternate/ancient names (the scholar's hook).
+  if (data.names.length) {
+    const items = data.names.map(n => {
+      const lang = n.lang ? ` <span class="pl-lang">(${escapeHtml(n.lang)})</span>` : '';
+      return `<li>${escapeHtml(n.label)}${lang}</li>`;
+    }).join('');
+    rows.push(
+      `<details class="ld-src pl-src"><summary>` +
+      `<span class="ld-star" aria-hidden="true">✎</span>` +
+      `<span class="ld-label">Also known as</span>` +
+      `<span class="ld-n">${data.names.length}</span></summary>` +
+      `<ul class="ld-links pl-list">${items}</ul></details>`
+    );
+  }
+
+  // "Notes" — the Barrington Atlas directory note / details prose. For coverage
+  // places whose description we just promoted, skip if it's the same text.
+  if (data.details && data.details !== data.description) {
+    rows.push(
+      `<details class="ld-src pl-src"><summary>` +
+      `<span class="ld-star" aria-hidden="true">§</span>` +
+      `<span class="ld-label">Notes</span></summary>` +
+      `<div class="pl-notes">${escapeHtml(data.details)}</div></details>`
+    );
+  }
+
+  // Subjects — small human-readable tags.
+  const tags = data.subjects.length
+    ? `<div class="pl-tags">${data.subjects.map(s => `<span class="pl-tag">${escapeHtml(s)}</span>`).join('')}</div>`
+    : '';
+
+  if (!rows.length && !tags) { el.innerHTML = ''; return; }
+
+  // Attribution — Pleiades text is CC BY 3.0 (record carries its own rights).
+  const by = data.creators.length ? data.creators.slice(0, 3).join(', ') : 'Pleiades contributors';
+  const credit = `<div class="pl-credit">Text: ${escapeHtml(by)} · Pleiades · CC BY</div>`;
+
+  el.innerHTML =
+    `<div class="ld-head"><span class="ld-head-icon">📖</span>From Pleiades` +
+    `<span class="ld-sub">the scholarly record</span></div>` +
+    `<div class="ld-sources">${rows.join('')}</div>${tags}${credit}`;
 }
 
 function siteSearchEntries(site) {
@@ -1754,6 +2124,347 @@ function ensureCoverageLoaded() {
   document.head.appendChild(s);
 }
 
+// ── ITINER-E PLEIADES ASSOCIATIONS (lazy) ────────────────
+// The Pleiades places Itiner-e links to each road segment live in a ~1 MB sibling
+// file, loaded on first road tap (NOT at cold start). `_roadPPState` mirrors the
+// coverage lazy-load: idle → loading → ready/error. On load we re-render the open
+// road panel so the places appear without a second tap.
+let _roadPPState = 'idle';
+let _lastSegmentArgs = null;   // { segIds } of the open road panel, for re-render on lazy load
+function ensureRoadPleiadesLoaded() {
+  if (QA || _roadPPState !== 'idle') return;
+  _roadPPState = 'loading';
+  const s = document.createElement('script');
+  s.src = 'js/roads-itinere-pleiades.js?v=' + BUILD;
+  s.async = true;
+  s.onload = () => {
+    _roadPPState = 'ready';
+    // Re-render if a road panel is still open so its Pleiades places paint now.
+    if (currentPanelKind === 'segment' && _lastSegmentArgs) {
+      renderSegmentPleiades(_lastSegmentArgs.segIds);
+    }
+  };
+  s.onerror = () => { _roadPPState = 'error'; };
+  document.head.appendChild(s);
+}
+
+// Resolve a list of segment ids to their unique Pleiades places (deduped across
+// the road's segments), each as { pid, name, type, lat, lng }. Returns [] until
+// the lazy file is ready.
+function itinerePlaces(segIds) {
+  if (_roadPPState !== 'ready' || !window.ROADS_ITINERE_PP || !window.ROADS_ITINERE_PP_PLACES) return [];
+  const PP = window.ROADS_ITINERE_PP, TBL = window.ROADS_ITINERE_PP_PLACES;
+  const seen = new Set(), out = [];
+  for (const id of (segIds || [])) {
+    const idxs = PP[id];
+    if (!idxs) continue;
+    for (const i of idxs) {
+      const p = TBL[i];
+      if (!p || seen.has(p[0])) continue;
+      seen.add(p[0]);
+      out.push({ pid: p[0], name: p[1], type: p[2], lng: p[3], lat: p[4] });
+    }
+  }
+  return out;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  ORBIS JOURNEY ROUTING (lean route lookup, v1)
+//
+//  Client-side Dijkstra over the full ORBIS graph (js/orbis-graph.js,
+//  LAZY-LOADED here) via window.ORBIS_ROUTE (js/orbis-route.js). Lets you pick
+//  any open place as an origin, then tap a second place; we snap both onto the
+//  nearest ORBIS nodes, route between them, draw the path, and show a compact
+//  days/km/denarii readout.
+//
+//  HONEST SCOPE: the ORBIS/gorbit weights are a single frozen parameterization
+//  (summer, civilian, fastest by time). No month or transport-mode dimension
+//  exists in this data — this is a route LOOKUP, not a seasonal simulator.
+// ══════════════════════════════════════════════════════════════
+
+let _orbisGraphPromise = null;      // lazy-load the ~140 KB graph once
+let routeOrigin  = null;            // site armed as the journey origin
+let routePicking = false;           // true while awaiting a destination tap
+let routeBasis   = 'days';          // 'days'|'km'|'expense' — fastest/shortest/cheapest (v2 toggle)
+let _activeRoute = null;            // { origin, dest, a, b } of the drawn route, for re-routing on toggle
+
+// The three cost bases the toggle exposes. `stat` is which readout figure this
+// basis optimizes (so we can emphasize it), `label` the button text.
+const ROUTE_BASES = [
+  { key: 'days',    label: 'Fastest',  stat: 'days' },
+  { key: 'km',      label: 'Shortest', stat: 'km' },
+  { key: 'expense', label: 'Cheapest', stat: 'expense' },
+];
+
+// Inject js/orbis-graph.js on first use (mirrors ensureCoverageLoaded). Resolves
+// true once window.ORBIS_ROUTE can route. Kept out of index.html cold start.
+function ensureOrbisGraphLoaded() {
+  if (_orbisGraphPromise) return _orbisGraphPromise;
+  if (window.ORBIS_ROUTE && window.ORBIS_ROUTE.ready()) {
+    _orbisGraphPromise = Promise.resolve(true);
+    return _orbisGraphPromise;
+  }
+  _orbisGraphPromise = new Promise((resolve) => {
+    const s = document.createElement('script');
+    s.src = 'js/orbis-graph.js?v=' + BUILD;   // same cache token as the app
+    s.async = true;
+    s.onload  = () => resolve(!!(window.ORBIS_ROUTE && window.ORBIS_ROUTE.ready()));
+    s.onerror = () => resolve(false);
+    document.head.appendChild(s);
+  });
+  return _orbisGraphPromise;
+}
+
+// Arm route mode from the currently open panel's place. Warms the graph while
+// the user picks, closes the panel so the map is tappable, and shows a hint.
+// routeOrigin/routePicking are module state — closePanel does NOT clear them.
+function armRouteFromCurrent() {
+  const site = currentPanelSite;
+  if (!site || typeof site.lat !== 'number') return;
+  ensureOrbisGraphLoaded();
+  clearRoute();
+  routeOrigin  = site;
+  routePicking = true;
+  closePanel();
+  showRouteHint(site);
+}
+
+// Complete a route: destination is any place the user taps next (a site or a
+// coverage place — both funnel through showPanel, which calls this). Snaps both
+// endpoints to ORBIS nodes, routes, draws, and shows the readout.
+async function completeRoute(dest) {
+  const origin = routeOrigin;
+  routePicking = false;
+  hideRouteHint();
+  if (!origin || !dest) return;
+  const ok = await ensureOrbisGraphLoaded();
+  const R = window.ORBIS_ROUTE;
+  if (!ok || !R || !R.ready()) { showRouteReadoutError('Routing data could not load.'); return; }
+  const a = R.snapToNode(origin.lat, origin.lng);
+  const b = R.snapToNode(dest.lat, dest.lng);
+  if (!a || !b) { showRouteReadoutError('No ORBIS network node is near one of these places.'); return; }
+  if (a.node.id === b.node.id) { showRouteReadoutError('Both places snap to the same ORBIS node — pick somewhere farther.'); return; }
+  const r = R.route(a.node.id, b.node.id, routeBasis);
+  if (!r) { showRouteReadoutError('No ORBIS route connects these two places.'); return; }
+  _activeRoute = { origin, dest, a, b };
+  drawRoute(r, origin, dest);
+  showRouteReadout(origin, dest, r, a, b);
+}
+
+// Re-route the SAME endpoints under a different cost basis (the fastest/
+// shortest/cheapest toggle). Redraws + updates the readout in place.
+function setRouteBasis(basis) {
+  if (!_activeRoute || !ROUTE_BASES.some(b => b.key === basis)) return;
+  routeBasis = basis;
+  const R = window.ORBIS_ROUTE;
+  if (!R || !R.ready()) return;
+  const { origin, dest, a, b } = _activeRoute;
+  const r = R.route(a.node.id, b.node.id, basis);
+  if (!r) { showRouteReadoutError('No route for that option.'); return; }
+  drawRoute(r, origin, dest);
+  showRouteReadout(origin, dest, r, a, b);
+}
+
+// Draw the route: an indigo line (white casing beneath for contrast on any
+// basemap — indigo is colorblind-safe, unlike the map's red/green quest hues)
+// through the ORBIS node coords, plus dotted "access" legs from each real place
+// to its snapped node, and endpoint rings. Fits the map to the whole journey.
+function drawRoute(r, origin, dest) {
+  routeGroup.clearLayers();   // just the old geometry — NOT clearRoute() (that
+                              // nulls _activeRoute, which the basis toggle needs)
+  const pts = r.nodes.map(n => [n.lat, n.lng]);
+  if (pts.length < 2) return;
+  L.polyline(pts, { color: '#ffffff', weight: 8, opacity: 0.9,  lineJoin: 'round', lineCap: 'round' }).addTo(routeGroup);
+  L.polyline(pts, { color: '#4f46e5', weight: 4, opacity: 0.95, lineJoin: 'round', lineCap: 'round' }).addTo(routeGroup);
+  // Dotted legs bridging the real place to its snapped ORBIS node (honest about
+  // the snap — the network doesn't have a node at every place).
+  const dashOpt = { color: '#4f46e5', weight: 2, opacity: 0.6, dashArray: '2 6' };
+  L.polyline([[origin.lat, origin.lng], pts[0]], dashOpt).addTo(routeGroup);
+  L.polyline([pts[pts.length - 1], [dest.lat, dest.lng]], dashOpt).addTo(routeGroup);
+  // Endpoints: hollow ring = start, filled = finish.
+  L.circleMarker([origin.lat, origin.lng], { radius: 6, color: '#4f46e5', weight: 3, fillColor: '#ffffff', fillOpacity: 1 }).addTo(routeGroup);
+  L.circleMarker([dest.lat, dest.lng],     { radius: 6, color: '#4f46e5', weight: 3, fillColor: '#4f46e5', fillOpacity: 1 }).addTo(routeGroup);
+  const b = L.latLngBounds([[origin.lat, origin.lng], [dest.lat, dest.lng], ...pts]);
+  map.fitBounds(b.pad(0.18), { animate: true });
+}
+
+// Erase any drawn route + hide the readout. Safe to call anytime.
+// (routeBasis persists as a user preference across journeys; only the drawn
+// route's endpoints are forgotten.)
+function clearRoute() {
+  routeGroup.clearLayers();
+  _activeRoute = null;
+  const rr = document.getElementById('route-readout');
+  if (rr) rr.classList.remove('show');
+}
+
+// Cancel an armed pick (e.g. user tapped empty map) without drawing anything.
+function cancelRoutePick() {
+  routePicking = false;
+  routeOrigin  = null;
+  hideRouteHint();
+}
+
+// Summarize the coarse leg modes of a route, e.g. "road · sea".
+function routeModeSummary(r) {
+  const L2 = window.ORBIS_ROUTE ? window.ORBIS_ROUTE.MODE_LABELS : [];
+  const order = [], seen = new Set();
+  for (const m of (r.legs || [])) {
+    const label = L2[m] || 'mixed';
+    if (!seen.has(label)) { seen.add(label); order.push(label); }
+  }
+  return order.join(' · ');
+}
+
+// ── route hint banner (shown while awaiting the destination tap) ──
+function showRouteHint(origin) {
+  const el = document.getElementById('route-hint');
+  if (!el) return;
+  el.querySelector('#route-hint-text').textContent =
+    'Journey from ' + (origin.name || 'here') + ' — tap another place for the route';
+  // One-time primer explaining what the journey tool actually is (ORBIS), shown
+  // only on the user's first route so it never nags. Mirrors maybeHintCoverage.
+  const sub = el.querySelector('#route-hint-sub');
+  if (sub) {
+    let primed = true;
+    try { primed = localStorage.getItem('via.journeyPrimed') === '1'; } catch (e) {}
+    if (!primed) {
+      sub.textContent = 'Times & cost come from ORBIS — Stanford’s model of real Roman travel by road, river and sea.';
+      try { localStorage.setItem('via.journeyPrimed', '1'); } catch (e) {}
+    } else {
+      sub.textContent = '';
+    }
+  }
+  el.classList.add('show');
+}
+function hideRouteHint() {
+  const el = document.getElementById('route-hint');
+  if (el) el.classList.remove('show');
+}
+
+// ── route readout (the days/km/denarii result card + basis toggle) ──
+const ROUTE_BASIS_DESC = {
+  days:    'fastest by time',
+  km:      'shortest by distance',
+  expense: 'cheapest by cost',
+};
+
+function showRouteReadout(origin, dest, r, a, b) {
+  const el = document.getElementById('route-readout');
+  if (!el) return;
+  const basis = r.basis || 'days';
+  const days = r.totalDays < 1 ? '<1' : String(Math.round(r.totalDays));
+  const km   = Math.round(r.totalKm).toLocaleString();
+  const den  = r.totalExpense < 1 ? '<1' : String(Math.round(r.totalExpense));
+  const modes = routeModeSummary(r);
+  // Note the snap distance honestly when either endpoint is far from its node.
+  const snapNote = (a.distKm > 20 || b.distKm > 20)
+    ? ' · snapped to nearest ORBIS node' : '';
+
+  el.querySelector('#route-readout-route').textContent =
+    (origin.name || 'Origin') + ' → ' + (dest.name || 'Destination');
+
+  // Stats — emphasize the figure the active basis optimizes (.on).
+  const stat = (b2, html) => `<span class="rstat${basis === b2 ? ' on' : ''}">${html}</span>`;
+  el.querySelector('#route-readout-stats').innerHTML =
+    stat('days',    '<b>' + days + '</b> day' + (days === '1' ? '' : 's')) + ' · ' +
+    stat('km',      '<b>' + km + '</b> km') + ' · ' +
+    stat('expense', '<b>' + den + '</b> denarii');
+
+  // Fastest/Shortest/Cheapest segmented toggle.
+  el.querySelector('#route-readout-toggle').innerHTML = ROUTE_BASES.map(bb =>
+    `<button type="button" class="rtoggle-btn${basis === bb.key ? ' on' : ''}"` +
+    ` onclick="setRouteBasis('${bb.key}')" aria-pressed="${basis === bb.key}">${bb.label}</button>`
+  ).join('');
+
+  el.querySelector('#route-readout-detail').textContent =
+    (modes ? 'via ' + modes + ' · ' : '') +
+    'ORBIS network · summer · civilian · ' + (ROUTE_BASIS_DESC[basis] || 'fastest by time') + snapNote;
+  el.classList.add('show');
+}
+function showRouteReadoutError(msg) {
+  clearRoute();
+  const el = document.getElementById('route-readout');
+  if (!el) return;
+  el.querySelector('#route-readout-route').textContent = 'Route unavailable';
+  el.querySelector('#route-readout-stats').innerHTML = '';
+  el.querySelector('#route-readout-toggle').innerHTML = '';
+  el.querySelector('#route-readout-detail').textContent = msg;
+  el.classList.add('show');
+}
+
+// Memoized pleiades-id → catalogued site, so a road's Pleiades place can jump
+// straight to a rich VIA panel when we already have that site (else it links out).
+let _siteByPidCache = null;
+function siteByPid(pid) {
+  if (!_siteByPidCache) {
+    _siteByPidCache = new Map();
+    for (const s of SITES) if (s.pleiades) _siteByPidCache.set(String(s.pleiades), s);
+  }
+  return _siteByPidCache.get(String(pid)) || null;
+}
+
+// Render the "Pleiades places on this road" section of a road-segment panel.
+// Rows that match a catalogued VIA site jump to that site's panel; the rest link
+// out to the Pleiades gazetteer. Hidden entirely for curated roads / no places.
+const SEG_PLEIADES_CAP = 14;
+function renderSegmentPleiades(segIds) {
+  const el = document.getElementById('segment-pleiades');
+  if (!el) return;
+  if (!segIds || !segIds.length) { el.style.display = 'none'; el.innerHTML = ''; return; }
+
+  const places = itinerePlaces(segIds);
+  if (!places.length) {
+    // Distinguish "still loading" from "genuinely none" so it never reads broken.
+    if (_roadPPState === 'idle' || _roadPPState === 'loading') {
+      el.innerHTML = '<div class="seg-near-label">Pleiades places on this road</div>' +
+                     '<div class="seg-pl-loading">Loading linked places…</div>';
+      el.style.display = 'block';
+    } else {
+      el.style.display = 'none'; el.innerHTML = '';
+    }
+    return;
+  }
+
+  places.sort((a, b) => a.name.localeCompare(b.name));
+  el.innerHTML = '';
+  const label = document.createElement('div');
+  label.className = 'seg-near-label';
+  label.textContent = 'Pleiades places on this road';
+  el.appendChild(label);
+
+  for (const p of places.slice(0, SEG_PLEIADES_CAP)) {
+    const site = siteByPid(p.pid);
+    const row = document.createElement(site ? 'button' : 'a');
+    row.className = 'seg-pl-row';
+    if (site) {
+      row.type = 'button';
+      row.addEventListener('click', (e) => { e.stopPropagation(); showPanel(site); });
+    } else {
+      row.href = 'https://pleiades.stoa.org/places/' + p.pid;
+      row.target = '_blank';
+      row.rel = 'noopener';
+    }
+    const name = document.createElement('span');
+    name.className = 'seg-pl-name';
+    name.textContent = p.name || ('Pleiades ' + p.pid);
+    const meta = document.createElement('span');
+    meta.className = 'seg-pl-meta';
+    meta.textContent = site ? 'In VIA →' : (p.type || 'Pleiades') + ' ↗';
+    row.append(name, meta);
+    el.appendChild(row);
+  }
+
+  const extra = places.length - SEG_PLEIADES_CAP;
+  if (extra > 0) {
+    const more = document.createElement('div');
+    more.className = 'seg-pl-more';
+    more.textContent = `+${extra} more linked place${extra === 1 ? '' : 's'}`;
+    el.appendChild(more);
+  }
+  el.style.display = 'block';
+}
+
 const COVERAGE_SEARCH_LIMIT = 6;
 function searchCoverage(query) {
   if (_coverageState !== 'ready' || !_coverageData) return [];
@@ -1990,7 +2701,10 @@ function focusItinere(entry) {
   }
   const all = highlightItinere(entry);
   const meta = entry.meta ? { ...entry.meta, name: entry.name } : { name: entry.name };
-  showSegmentPanel(meta, all);
+  // A named road is many segments; deep-link uses the first, Pleiades places union
+  // across all of them.
+  const segIds = (entry.segs || []).map(s => s.id).filter(x => x != null);
+  showSegmentPanel(meta, all, segIds);
   // The road is the star — drop the return-view snapshot so closePanel keeps the
   // framing + highlight instead of flying back to the pre-search view.
   panelReturnView = null;
@@ -2419,7 +3133,14 @@ function nearestSitesToSegment(ll, maxKm = 10, limit = 5) {
 // No per-segment URI exists in the static dump, so the external link points at the
 // Itiner-e atlas rather than a deep segment link. `latlngs` (the segment geometry)
 // drives the "Places along this stretch" bridge.
-function showSegmentPanel(meta, latlngs) {
+// segIds: the Itiner-e route-segment id(s) behind this panel. A tap resolves to
+// one exact segment ([id]); a named-road search passes all its segments' ids (the
+// deep-link uses the first, Pleiades places union across them). Curated roads (the
+// hand-drawn 14) have no Itiner-e id → segIds omitted, link falls back to the atlas
+// home, no Pleiades section.
+function showSegmentPanel(meta, latlngs, segIds) {
+  segIds = (segIds || []).filter(x => x != null);
+  _lastSegmentArgs = { segIds };
   hideLegendToast();
   closeDockPanels();      // the detail card is the one open surface now
 
@@ -2524,6 +3245,8 @@ function showSegmentPanel(meta, latlngs) {
   document.getElementById('quest-progress').style.display = 'none';
   document.getElementById('checkin-row').style.display    = 'none';
   document.getElementById('linked-data-card').innerHTML   = '';  // site-only
+  document.getElementById('pleiades-detail-card').innerHTML = ''; // site-only
+  panelOpenToken++;  // invalidate any in-flight site Pleiades fetch
 
   // Places along this stretch — the roads↔sites bridge. Each row jumps to that
   // site's panel. Photo thumb when the site has a vici image. The catalogue is
@@ -2592,12 +3315,27 @@ function showSegmentPanel(meta, latlngs) {
   }
 
   // Itiner-e atlas (opens a new tab) + the email-this-quest action when relevant.
+  // When we know the exact route-segment id, deep-link straight to that segment's
+  // page (…/route-segment/<id>) instead of the atlas home — the whole point of the
+  // export rebuild. Curated roads with no id keep the generic home link.
+  const itUrl = segIds.length
+    ? `https://itiner-e.org/route-segment/${segIds[0]}`
+    : 'https://itiner-e.org';
+  const itSub = segIds.length
+    ? 'This exact segment on Itiner-e · CC BY 4.0'
+    : 'Scholarly Roman road dataset · CC BY 4.0';
   document.getElementById('panel-actions').innerHTML = `
-    <a href="https://itiner-e.org" target="_blank" rel="noopener" class="p-btn p-btn-gold">
+    <a href="${itUrl}" target="_blank" rel="noopener" class="p-btn p-btn-gold">
       <span class="p-btn-icon">🗺️</span>
-      <div><div class="p-btn-main">Itiner-e Atlas</div><div class="p-btn-sub">Scholarly Roman road dataset · CC BY 4.0</div></div>
+      <div><div class="p-btn-main">Itiner-e Atlas</div><div class="p-btn-sub">${itSub}</div></div>
       <span class="p-btn-ext" aria-hidden="true">↗</span>
     </a>${emailBtn}`;
+
+  // Pleiades places Itiner-e links to this road. Lazy-load the companion file on
+  // first road tap; renderSegmentPleiades re-runs from ensureRoadPleiadesLoaded's
+  // onload once it's ready.
+  if (segIds.length) ensureRoadPleiadesLoaded();
+  renderSegmentPleiades(segIds);
 
   const panel = document.getElementById('info-panel');
   panel.classList.remove('alexander-panel');
@@ -2639,8 +3377,19 @@ map.on('click', (e) => {
   closeDockPanels();      // a tap on the open map dismisses any dock popover
   const alex = findNearestAlexanderStop(e.latlng, e.containerPoint);
   if (alex) { showAlexanderPanel(alex._alexanderStop, alex); return; }
+  // Journey routing: while awaiting a destination, a coverage place completes
+  // the route (funnels through focusCoverage→showPanel); a tap on empty map or a
+  // road cancels the pick. (Marker taps never reach this handler — Leaflet stops
+  // their propagation — so they complete the route via showPanel directly.)
+  if (routePicking) {
+    const cov = findNearestCoverage(e.latlng, e.containerPoint) ||
+                nearestPinnedCoverage(e.latlng, e.containerPoint);
+    if (cov) { focusCoverage(cov); return; }
+    cancelRoutePick();
+    return;
+  }
   const seg = findNearestItinere(e.latlng, e.containerPoint);
-  if (seg) { showSegmentPanel(seg.meta, seg.ll); return; }
+  if (seg) { showSegmentPanel(seg.meta, seg.ll, [seg.id]); return; }
   const cov = findNearestCoverage(e.latlng, e.containerPoint);  // only resolves when dots show
   if (cov) { focusCoverage(cov); return; }
   const pin = nearestPinnedCoverage(e.latlng, e.containerPoint);  // reopen a searched place's panel
@@ -2672,35 +3421,59 @@ if (!COARSE_POINTER) {
     mapEl.style.cursor = on ? 'pointer' : '';   // '' reverts to Leaflet's grab
   };
   const hide = () => { readout.classList.remove('show'); setClickable(false); };
+  // The name label is DWELL-gated and uses a much tighter catch than the click.
+  // With ~15k dense Itiner-e segments a 28px catch means the cursor is "near a
+  // road" almost everywhere, so a move-driven label became constant soup that
+  // buried any search (the reported bug: a road tag popped up at nearly every
+  // point, often unrelated to where the user was looking). Now the label only
+  // resolves after the cursor SETTLES (>~220ms still) and only within ~12px — so
+  // scanning/panning the map is silent, and the name appears only when you park
+  // on a line. The pointer cursor still tracks the full click catch in real time
+  // (cheap, subtle affordance — it's just a hand, not a floating label).
+  const LABEL_THRESH = 12, DWELL_MS = 220;
+  let _dwellTimer = 0;
+  const showLabelFor = (ev) => {
+    const seg = findNearestItinere(ev.latlng, ev.containerPoint, LABEL_THRESH);
+    let name = seg && seg.meta && seg.meta.name;
+    if (!name) {   // no named road within the tight catch → nearest coverage dot
+      const cov = findNearestCoverage(ev.latlng, ev.containerPoint);
+      if (cov) name = cov.name;
+    }
+    // Don't stack the cursor readout on top of a curated-road tooltip — that
+    // tooltip already names the road under the cursor, so the readout would be
+    // a redundant second label overlapping the first.
+    const roadTipOpen = !!document.querySelector('.leaflet-tooltip.road-tip');
+    if (name && !roadTipOpen) {
+      readout.textContent = name;
+      readout.style.left = (ev.originalEvent.clientX + 14) + 'px';
+      readout.style.top  = (ev.originalEvent.clientY + 16) + 'px';
+      readout.classList.add('show');
+    } else {
+      readout.classList.remove('show');
+    }
+  };
   map.on('mousemove', (e) => {
     _lastMove = e;
+    // Any motion hides the current label and restarts the dwell clock — the label
+    // is for a settled cursor, not a moving one, so a sweep across the map shows
+    // nothing until the cursor actually stops.
+    readout.classList.remove('show');
+    if (_dwellTimer) clearTimeout(_dwellTimer);
+    _dwellTimer = setTimeout(() => { if (_lastMove) showLabelFor(_lastMove); }, DWELL_MS);
     if (_hoverRaf) return;
     _hoverRaf = requestAnimationFrame(() => {
       _hoverRaf = 0;
       const ev = _lastMove;
       if (!ev) return;
-      const seg = findNearestItinere(ev.latlng, ev.containerPoint);
-      let name = seg && seg.meta && seg.meta.name;
-      // A click resolves on any nearby segment (even unnamed), a coverage dot, or
-      // a pinned search result — track that for the cursor, the name for the label.
-      let clickable = !!seg;
-      if (!name) {   // no named road nearer → name the nearest coverage dot, if any show
-        const cov = findNearestCoverage(ev.latlng, ev.containerPoint);
-        if (cov) { name = cov.name; clickable = true; }
-      }
+      // Clickability (the pointer cursor) tracks the full click catch in real time:
+      // any nearby segment (even unnamed), a coverage dot, or a pinned search result.
+      let clickable = !!findNearestItinere(ev.latlng, ev.containerPoint);
+      if (!clickable && findNearestCoverage(ev.latlng, ev.containerPoint)) clickable = true;
       if (!clickable && nearestPinnedCoverage(ev.latlng, ev.containerPoint)) clickable = true;
       setClickable(clickable);
-      if (name) {
-        readout.textContent = name;
-        readout.style.left = (ev.originalEvent.clientX + 14) + 'px';
-        readout.style.top  = (ev.originalEvent.clientY + 16) + 'px';
-        readout.classList.add('show');
-      } else {
-        readout.classList.remove('show');
-      }
     });
   });
-  map.on('mouseout', hide);
+  map.on('mouseout', () => { if (_dwellTimer) clearTimeout(_dwellTimer); hide(); });
 }
 
 // ── ERA TOGGLE ───────────────────────────────────────────
@@ -2708,6 +3481,7 @@ if (!COARSE_POINTER) {
 function setEra(era) {
   if (era === currentEra) return;
   currentEra = era;
+  clearRoute();   // a drawn journey shouldn't linger across an era swap
   document.getElementById('btn-ancient').classList.toggle('active', era === 'ancient');
   document.getElementById('btn-modern').classList.toggle('active',  era === 'modern');
 
@@ -2730,7 +3504,7 @@ function setEra(era) {
 
 // ── LAYER TOGGLES ────────────────────────────────────────
 
-const layerState = { roads:true, sites:true, alexander:false };
+const layerState = { roads:true, sites:true, alexander:false, names:false };
 
 function toggleLayer(which) {
   dismissMobileGuide(true);
@@ -2740,6 +3514,14 @@ function toggleLayer(which) {
   // Keep the dock KEY panel's folded-in master row in lockstep with the chip.
   const lrow = document.getElementById('legend-' + which + '-toggle');
   if (lrow) lrow.classList.toggle('active', layerState[which]);
+  if (which === 'names') {
+    // Dual-name labels (ancient · modern) painted beside each visible site.
+    // Pure label layer — touches no marker group, so it's immune to the mobile
+    // add/remove repaint bug. Cluster + zoom gating lives in refreshNameLabels.
+    labelsOn = layerState.names;
+    refreshNameLabels();
+    return;
+  }
   if (which === 'roads') {
     // The "roads" toggle covers both the curated named roads and the Itiner-e
     // baseline — the user thinks of them as one concept.
@@ -2794,6 +3576,7 @@ let currentPanelSite = null;
 let currentPanelKind = null;  // 'site' | 'segment' — what the info panel is showing
 let currentSegmentMeta = null; // the Itiner-e meta backing a 'segment' panel
 let panelReturnView  = null;  // {center, zoom} captured when the panel opens
+let panelOpenToken   = 0;     // bumped each panel open; guards async Pleiades fetch races
 // True when the road mini-banner (curated-road tooltip) was opened by a TAP —
 // the only case that needs clearing on card close. On desktop the tooltip is
 // hover-managed (closes on mouseout), and a TAP never sets this, so closePanel
@@ -3252,6 +4035,9 @@ function refreshVisibleMarkers() {
     const subset = markersByTier[tier].filter(m => siteVisibleAtLevel(m._site, detailLevel));
     if (subset.length) siteClusters[tier].addLayers(subset);
   });
+  // The visible marker set just changed (slider / tier filter / sites toggle);
+  // keep the dual-name labels matched to it. No-op when the Names layer is off.
+  if (typeof refreshNameLabels === 'function') refreshNameLabels();
 }
 
 // Reflect the active tier set onto the legend rows (and dim the rest).
@@ -3290,7 +4076,7 @@ function syncDetailUI() {
     if (_coverageState === 'idle' || _coverageState === 'loading') text = '+ Documented · loading…';
     else if (_coverageState === 'error') text = '+ Documented · unavailable';
     else if (map.getZoom() < MIN_COVERAGE_ZOOM) text = '+ Documented · zoom in to reveal';
-    else text = `+ Documented · ${(_coverageData ? _coverageData.length : 0).toLocaleString()} places`;
+    else text = `+ Documented · ${(_coverageData ? _coverageData.length : 0).toLocaleString()}`;
   } else if (stats.level === 1) {
     // "Quests": the count that matters is the quest tally (the game layer).
     text = `Quests · ${stats.questCount.toLocaleString()} quests`;

@@ -28,6 +28,11 @@ const SITES_CURATED = [
     lat:41.9630, lng:12.7983, period:"7th c. BC – present", pleiades:"423081", rome_days:1,
     desc:"A hillside resort town beloved by the Roman aristocracy, Tibur is most famous for Hadrian's Villa — the largest and most opulent imperial residence ever built, covering 120 hectares with replicas of monuments from across the empire. The circular Temple of Vesta on its cliff above the waterfall is one of antiquity's most photographed images." },
 
+  { id:"antium", name:"Antium", modern:"Anzio, Italy", type:"city",
+    lat:41.4479, lng:12.629, period:"7th c. BC – 6th c. AD", pleiades:"422837", rome_days:1,
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Teatro%20anzio%20orchestra.JPG", credit:"Jacopo Cherzad", license:"Public domain" },
+    desc:"A Latin coastal town later held by the Volsci before Rome subdued it in 338 BC — the captured warships' prows (rostra) taken here gave their name to the speakers' platform in the Roman Forum. Antium became a favored imperial retreat: Emperor Nero was born here in AD 37 and later expanded it with a grand villa and artificial harbor. The Apollo Belvedere and Borghese Gladiator were both unearthed among its ruins." },
+
   { id:"pompeii", name:"Pompeii", modern:"Pompeii, Italy", type:"city", livius:"https://www.livius.org/articles/place/pompeii/", omnesviae:"https://omnesviae.org/#TPPlace1476",
     lat:40.7506, lng:14.4868, period:"7th c. BC – AD 79", pleiades:"433032", rome_days:4,
     desc:"Frozen the instant Vesuvius erupted on 24 August AD 79, Pompeii is Rome's most complete time capsule. Streets, bakeries, thermopolia, baths, brothels, temples — even graffiti on the walls and food left on stovetops — survive under the ash. Over a third of the city remains unexcavated." },
@@ -38,8 +43,8 @@ const SITES_CURATED = [
 
   { id:"baiae", name:"Baiae", modern:"Bacoli, Italy", type:"city", omnesviae:"https://omnesviae.org/#TPPlace1472",
     lat:40.8426, lng:14.0733, period:"2nd c. BC – 8th c. AD", pleiades:"432649", rome_days:5,
-    quest:"photo",
-    desc:"The most fashionable seaside resort in the Roman world, Baiae attracted emperors and aristocrats seeking pleasure, hot springs, and debauchery. Julius Caesar, Augustus, Nero, and Hadrian all kept villas here. Much of ancient Baiae has sunk beneath the Bay of Naples due to volcanic activity — its ruins are now explored by divers." },
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Tempio%20di%20Venere%20(Baia)%201.JPG", credit:"Mentnafunangann", license:"CC BY-SA 3.0" },
+    desc:"The most fashionable seaside resort in the Roman world, Baiae attracted emperors and aristocrats seeking pleasure, hot springs, and debauchery. Julius Caesar, Augustus, Nero, and Hadrian all kept villas here. In AD 59, Nero staged a banquet at Baiae before orchestrating the murder of his own mother, Agrippina the Younger, one of antiquity's most notorious matricides (Tacitus, Annals 14). Much of ancient Baiae has sunk beneath the Bay of Naples due to volcanic activity — its ruins are now explored by divers." },
 
   { id:"puteoli", name:"Puteoli", modern:"Pozzuoli, Italy", type:"port", omnesviae:"https://omnesviae.org/#TPPlace1473",
     lat:40.8264, lng:14.1204, period:"6th c. BC – present", pleiades:"432812", rome_days:5,

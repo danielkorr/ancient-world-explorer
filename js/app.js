@@ -2081,6 +2081,16 @@ function alexanderSearchMeta(stop) {
   return bits.join(' · ');
 }
 
+// Reveal a campaign stop from search or a cross-mode link: switch into Alexander
+// mode if needed, zoom in from whole-campaign scale, then open its panel (which
+// pans with the panel offset).
+function focusAlexander(stop) {
+  if (appMode !== 'alexander') setMode('alexander');
+  if (map.getZoom() < 6) map.setView([stop.lat, stop.lng], 6, { animate: false });
+  const layer = alexanderStopLayers.find(x => x._alexanderStop === stop);
+  showAlexanderPanel(stop, layer);
+}
+
 function itinereSearchMeta(entry) {
   const ci = entry.meta && CERT_INFO[entry.meta.cert];
   const bits = [];
@@ -2637,6 +2647,10 @@ function maybeHintCoverage() {
 // labeled groups after the curated content, with a few reserved slots so they
 // always surface even when curated sites fill the list.
 function searchAll(query) {
+  // Search is mode-scoped: in Alexander mode you're searching the campaign, not
+  // the Roman gazetteer. (Cross-mode discovery still happens via the panel's
+  // cross-link chip, not the result list.)
+  if (appMode === 'alexander') return searchAlexander(query).slice(0, SEARCH_LIMIT);
   const siteHits = searchSites(query).map(h => ({ ...h, kind: 'site' }));
   const roadHits = searchRoads(query);
   const primary = [...siteHits, ...roadHits].sort((a, b) => a.score - b.score);
@@ -2879,7 +2893,7 @@ function renderSearchResults(results, query) {
   if (!results.length) {
     list.innerHTML = '<div class="site-search-empty">No matching site, road, or location.</div>';
   } else {
-    const labels = { site: 'Sites', location: 'Locations', context: 'Context', road: 'Roads', itinere: 'Itiner-e roads', coverage: 'More places · Pleiades' };
+    const labels = { site: 'Sites', location: 'Locations', context: 'Context', road: 'Roads', itinere: 'Itiner-e roads', coverage: 'More places · Pleiades', alexander: 'Alexander campaign' };
     let html = '';
     let lastBucket = null;
     results.forEach((hit, index) => {
@@ -2887,6 +2901,7 @@ function renderSearchResults(results, query) {
       if (hit.kind === 'road') { name = hit.road.name; meta = roadSearchMeta(hit.road); }
       else if (hit.kind === 'itinere') { name = hit.itinere.name; meta = itinereSearchMeta(hit.itinere); }
       else if (hit.kind === 'coverage') { name = hit.coverage.name; meta = coverageSearchMeta(hit.coverage); }
+      else if (hit.kind === 'alexander') { name = hit.alexander.name; meta = alexanderSearchMeta(hit.alexander); }
       else { name = hit.site.name; meta = siteSearchMeta(hit.site); }
       if (hit.bucket !== lastBucket) {
         html += `<div class="site-search-group-label">${labels[hit.bucket] || 'Matches'}</div>`;
@@ -2934,6 +2949,12 @@ function selectSearchResult(index) {
     if (input) input.value = hit.coverage.name;
     closeSearchResults();
     focusCoverage(hit.coverage);
+    return true;
+  }
+  if (hit.kind === 'alexander') {
+    if (input) input.value = hit.alexander.name;
+    closeSearchResults();
+    focusAlexander(hit.alexander);
     return true;
   }
   if (input) input.value = hit.site.name;
@@ -4522,6 +4543,33 @@ if (_brandEl) {
   try {
     const u = new URL(location.href);
     u.searchParams.delete('site');
+    history.replaceState(null, '', u.toString());
+  } catch (e) {}
+})();
+
+// ── Deep-link: ?mode=alexander (optionally &alexander=<stop-id>) ──
+// Mirrors the ?signin / ?site idiom: read once at boot, apply, normalize the URL
+// so a shared link opens the campaign (or a specific stop) instead of a cold map.
+(function openSharedMode() {
+  let mode = null, stopId = null;
+  try {
+    const u = new URL(location.href);
+    mode = u.searchParams.get('mode');
+    stopId = u.searchParams.get('alexander');
+  } catch (e) {}
+  if (mode !== 'alexander') return;
+  const wm = document.getElementById('welcome-modal');
+  if (wm) wm.classList.remove('open');           // don't stack over the shared campaign
+  dismissMobileGuide(false);
+  setMode('alexander');
+  if (stopId && typeof ALEXANDER_STOPS !== 'undefined') {
+    const stop = ALEXANDER_STOPS.find(s => s.id === stopId);
+    if (stop) focusAlexander(stop);
+  }
+  try {
+    const u = new URL(location.href);
+    u.searchParams.delete('mode');
+    u.searchParams.delete('alexander');
     history.replaceState(null, '', u.toString());
   } catch (e) {}
 })();

@@ -1593,6 +1593,14 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   background:rgba(99,102,241,0.1); border-color:rgba(99,102,241,0.3); color:#a5b4fc; }
 .p-btn-route:hover { background:rgba(99,102,241,0.2); border-color:rgba(99,102,241,0.5); }
 
+/* Cross-mode link — INTERNAL action (no ↗) that hops between the Roman and
+   Alexander views of one place. Campaign purple so it reads distinct from the
+   external-link buttons and the indigo route button; colorblind-safe. */
+.p-btn-cross { width:100%; text-align:left; font-family:inherit;
+  background:rgba(143,124,195,0.12); border-color:rgba(143,124,195,0.34); color:#c3b3e8; }
+.p-btn-cross:hover { background:rgba(143,124,195,0.22); border-color:rgba(143,124,195,0.55); }
+.p-btn-cross .p-btn-icon { font-family:'Cinzel', serif; font-weight:700; }
+
 .p-btn-icon { font-size: 19px; flex-shrink: 0; }
 .p-btn-main { font-weight: 500; }
 .p-btn-sub  { font-size: 10px; opacity: 0.55; margin-top: 1px; }

@@ -708,6 +708,14 @@ function showAlexanderPanel(stop, layer) {
   }
 
   const actions = [];
+  const twinSite = alexanderTwinSite(stop);
+  if (twinSite) {
+    actions.push(`
+      <button type="button" class="p-btn p-btn-cross" onclick="crossToRoman('${escapeHtml(twinSite.id)}')">
+        <span class="p-btn-icon">🏛️</span>
+        <div><div class="p-btn-main">See in Roman Sites</div><div class="p-btn-sub">${escapeHtml(twinSite.name)}</div></div>
+      </button>`);
+  }
   if (stop.links && stop.links.length) {
     for (const link of stop.links) {
       actions.push(`
@@ -1511,7 +1519,15 @@ function showPanel(site) {
   // including mobile — returns you to VIA. saveReturnState() stashes the open
   // site + home view first, so the Back reload drops you right where you were
   // instead of a cold start. The ↗ signals the button leaves VIA.
+  // Cross-mode chip: this Roman place is also a stop on Alexander's campaign.
+  const twinStop = siteTwinAlexanderStop(site);
+  const alexBtn = twinStop ? `
+    <button type="button" class="p-btn p-btn-cross" onclick="crossToAlexander('${escapeHtml(twinStop.id)}')">
+      <span class="p-btn-icon">A</span>
+      <div><div class="p-btn-main">Alexander was here</div><div class="p-btn-sub">${escapeHtml(twinStop.year_label || '')} · ${escapeHtml(twinStop.name)}</div></div>
+    </button>` : '';
   document.getElementById('panel-actions').innerHTML = `
+    ${alexBtn}
     <button type="button" onclick="armRouteFromCurrent()" class="p-btn p-btn-route">
       <span class="p-btn-icon">🧭</span>
       <div><div class="p-btn-main">Plan a route from here</div><div class="p-btn-sub">Trace an ORBIS journey to another place</div></div>
@@ -1556,6 +1572,7 @@ function showPanel(site) {
   // panel is still up must not overwrite the original "home" view.
   const panel = document.getElementById('info-panel');
   panel.classList.remove('segment-panel');
+  panel.classList.remove('alexander-panel');   // guard: no campaign framing bleed into a site panel
   if (!panel.classList.contains('open')) {
     panelReturnView = { center: map.getCenter(), zoom: map.getZoom() };
   }
@@ -2089,6 +2106,50 @@ function focusAlexander(stop) {
   if (map.getZoom() < 6) map.setView([stop.lat, stop.lng], 6, { animate: false });
   const layer = alexanderStopLayers.find(x => x._alexanderStop === stop);
   showAlexanderPanel(stop, layer);
+}
+
+// ── CROSS-MODE LINKS ──────────────────────────────────────
+// 17 campaign stops coincide with catalogued VIA sites (Babylon is both a Roman
+// place and Alexander's death-place). The panel chip lets you hop between the two
+// views of one place — the dual-audience join. Match by Pleiades id when present,
+// else by proximity (Chebyshev ≤ ~0.1° ≈ 10 km).
+const CROSS_TWIN_DEG = 0.1;
+function alexanderTwinSite(stop) {
+  if (!stop || typeof SITES === 'undefined') return null;
+  if (stop.pleiades) {
+    const byPid = SITES.find(s => String(s.pleiades) === String(stop.pleiades));
+    if (byPid) return byPid;
+  }
+  let best = null, bestD = Infinity;
+  for (const s of SITES) {
+    const d = Math.max(Math.abs(s.lat - stop.lat), Math.abs(s.lng - stop.lng));
+    if (d < bestD) { bestD = d; best = s; }
+  }
+  return (best && bestD <= CROSS_TWIN_DEG) ? best : null;
+}
+function siteTwinAlexanderStop(site) {
+  if (!site || typeof ALEXANDER_STOPS === 'undefined') return null;
+  if (site.pleiades) {
+    const byPid = ALEXANDER_STOPS.find(st => st.pleiades && String(st.pleiades) === String(site.pleiades));
+    if (byPid) return byPid;
+  }
+  let best = null, bestD = Infinity;
+  for (const st of ALEXANDER_STOPS) {
+    const d = Math.max(Math.abs(site.lat - st.lat), Math.abs(site.lng - st.lng));
+    if (d < bestD) { bestD = d; best = st; }
+  }
+  return (best && bestD <= CROSS_TWIN_DEG) ? best : null;
+}
+function crossToRoman(siteId) {
+  const site = (typeof SITES !== 'undefined') && SITES.find(s => s.id === siteId);
+  if (!site) return;
+  if (appMode !== 'roman') setMode('roman');
+  if (map.getZoom() < 8) map.setView([site.lat, site.lng], 8, { animate: false });
+  focusSite(site, { pulse: true });
+}
+function crossToAlexander(stopId) {
+  const stop = (typeof ALEXANDER_STOPS !== 'undefined') && ALEXANDER_STOPS.find(s => s.id === stopId);
+  if (stop) focusAlexander(stop);   // focusAlexander handles the mode switch
 }
 
 function itinereSearchMeta(entry) {

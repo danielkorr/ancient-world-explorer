@@ -378,7 +378,11 @@ function findNearestItinere(latlng, cp, threshPx) {
       prev = cur;
     }
   }
-  return best;
+  // Spread into a fresh object (never mutate the shared itinereSegs record) so
+  // callers that need to arbitrate against findNearestCoverage's own distance
+  // (a road and a coverage dot converge at every road-junction town — see
+  // findNearestCoverage) can compare _dist without an extra lookup pass.
+  return best ? { ...best, _dist: bestD } : null;
 }
 
 // ── ROADS CERTAINTY FILTER ───────────────────────────────
@@ -453,6 +457,7 @@ const ROAD_CASING_COLOR = '#1a0e00';     // deep umber — dark enough vs both s
 const ROAD_CASING_WEIGHT = 4.5;          // toned down from 6 — less overwhelming on first load
 const ROAD_FILL_COLOR    = '#ffd66b';     // bright saffron — high luminance vs casing
 const ROAD_FILL_WEIGHT   = 2;            // toned down from 3 — slimmer saffron core
+const ROAD_HIT_WEIGHT    = 22;           // invisible tap strip width, shared with the click handler below
 
 // Open the road-segment panel for a tap/click at `latlng`: the nearest Itiner-e
 // segment wins; otherwise fall back to the curated road's own rich copy. The
@@ -495,7 +500,7 @@ ROADS.forEach(road => {
   // why road names vanished on mobile). This wide transparent stroke makes the road
   // tappable, and `click` opens the name on a phone while hover still works on desktop.
   const hit = L.polyline(latlngs, {
-    color: '#000', weight: 22, opacity: 0, lineCap: 'round', lineJoin: 'round',
+    color: '#000', weight: ROAD_HIT_WEIGHT, opacity: 0, lineCap: 'round', lineJoin: 'round',
   })
    // Hover shows just the road NAME — a compact one-line label, not a paragraph.
    // The full desc + date live in the road panel that a click opens (and used to
@@ -505,6 +510,18 @@ ROADS.forEach(road => {
      { className:'road-tip', sticky:true }
    )
    .on('click', function (e) {
+     // This invisible strip is intentionally fat (a 2px road needs a real hit
+     // target) — but that fatness is exactly what swallows the tap of any town
+     // sitting right on the road it was named for (a coverage dot is a canvas
+     // point with no DOM hit of its own, so it never gets a chance to compete
+     // once this real DOM element has already caught the click). A coverage
+     // dot at least as close as this strip's own half-width wins instead.
+     const cov = findNearestCoverage(e.latlng, e.containerPoint);
+     if (cov && cov._dist <= ROAD_HIT_WEIGHT / 2) {
+       L.DomEvent.stopPropagation(e);
+       focusCoverage(cov);
+       return;
+     }
      // Desktop: open the name tooltip AND the segment panel, then stop the event
      // so the map-level click doesn't re-resolve (and possibly close) the panel.
      // Mobile routes curated-road taps through the overlayPane touchend handler,
@@ -1070,12 +1087,23 @@ if (COARSE_POINTER) {
     // nearby Itiner-e CANVAS segment (the ~14,800 secondaries are non-DOM canvas
     // paths iOS won't synthesize a click for). Resolve which one this tap hits now.
     const pathEl = e.target.closest && e.target.closest('path');
-    let road = null;
-    if (pathEl) roadsGroup.eachLayer(l => { if (l._path === pathEl && l.getTooltip && l.getTooltip()) road = l; });
+    let roadHit = null;
+    if (pathEl) roadsGroup.eachLayer(l => { if (l._path === pathEl && l.getTooltip && l.getTooltip()) roadHit = l; });
     const cp  = ll ? map.latLngToContainerPoint(ll) : null;
-    const seg = (!road && ll) ? findNearestItinere(ll, cp) : null;
-    // A documented-coverage dot, but only when no road won and the dots are showing.
-    const cov = (!road && !seg && ll) ? findNearestCoverage(ll, cp) : null;
+    // A coverage dot at least as close as the road hit-strip's own half-width
+    // wins even over a literal DOM hit on the curated road (a canvas coverage
+    // dot has no DOM element of its own to compete with the road's fat invisible
+    // tap strip) — same Parma-on-the-Via-Aemilia problem as the desktop click
+    // handler (ROADS.forEach above) and the map-level click handler below.
+    const covRaw = ll ? findNearestCoverage(ll, cp) : null;
+    const road = (roadHit && covRaw && covRaw._dist <= ROAD_HIT_WEIGHT / 2) ? null : roadHit;
+    // Below curated-road-or-not, a nearby Itiner-e segment and a nearby coverage
+    // dot are both just nearest-neighbor guesses — comparing _dist picks
+    // whichever is actually closer instead of always favoring the segment.
+    const segRaw = (!road && ll) ? findNearestItinere(ll, cp) : null;
+    const segWins = segRaw && (!covRaw || segRaw._dist <= covRaw._dist);
+    const seg = (!road && segWins) ? segRaw : null;
+    const cov = (!road && !segWins && covRaw) ? covRaw : null;
     // …or the searched place's pin (reopen its panel even when dots aren't showing).
     const pin = (!road && !seg && !cov && ll) ? nearestPinnedCoverage(ll, cp) : null;
 
@@ -2399,7 +2427,9 @@ function findNearestCoverage(latlng, cp, threshPx) {
     const d = Math.hypot(cp.x - p.x, cp.y - p.y);
     if (d < bestD) { bestD = d; best = r; }
   }
-  return best;
+  // See findNearestItinere's matching comment: a fresh object (not the shared
+  // _coverageData record) carrying _dist so callers can arbitrate road-vs-dot.
+  return best ? { ...best, _dist: bestD } : null;
 }
 
 // One-time nudge the first time coverage dots ever paint — so an auto-reveal
@@ -3193,11 +3223,21 @@ function saveReturnState() {
   } catch (e) {}
 }
 
-// Map click: an Itiner-e road segment near the tap wins (open its panel);
-// otherwise a click on the empty map closes any open panel. This single handler
-// covers desktop clicks AND mobile taps — map-level click fires reliably on iOS
-// for taps on the canvas/background (it already drove panel-close on mobile),
-// unlike the layer-level clicks that forced the marker/road touch delegation.
+// Map click: the CLOSER of a nearby Itiner-e road segment or a coverage dot
+// wins (open its panel); otherwise a click on the empty map closes any open
+// panel. This single handler covers desktop clicks AND mobile taps — map-level
+// click fires reliably on iOS for taps on the canvas/background (it already
+// drove panel-close on mobile), unlike the layer-level clicks that forced the
+// marker/road touch delegation.
+//
+// Roads and coverage dots are both canvas paths resolved by nearest-neighbor,
+// not real hit-tests, so at a road-junction town (a site sitting right where
+// several roads cross — e.g. Parma on the Via Aemilia) a road segment is
+// ALWAYS within its own catch radius. Unconditionally preferring roads made
+// those towns permanently unreachable: no matter how precisely you clicked,
+// the road won every time and the site panel could never open. Comparing
+// _dist (both finders now return it) picks whichever is actually nearer to
+// the click instead of whichever was checked first.
 map.on('click', (e) => {
   closeDockPanels();      // a tap on the open map dismisses any dock popover
   // Journey routing: while awaiting a destination, a coverage place completes
@@ -3212,8 +3252,8 @@ map.on('click', (e) => {
     return;
   }
   const seg = findNearestItinere(e.latlng, e.containerPoint);
-  if (seg) { showSegmentPanel(seg.meta, seg.ll, [seg.id]); return; }
   const cov = findNearestCoverage(e.latlng, e.containerPoint);  // only resolves when dots show
+  if (seg && (!cov || seg._dist <= cov._dist)) { showSegmentPanel(seg.meta, seg.ll, [seg.id]); return; }
   if (cov) { focusCoverage(cov); return; }
   const pin = nearestPinnedCoverage(e.latlng, e.containerPoint);  // reopen a searched place's panel
   if (pin) { focusCoverage(pin); return; }

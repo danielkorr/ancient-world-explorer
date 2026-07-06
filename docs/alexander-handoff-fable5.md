@@ -78,72 +78,65 @@ Work top to bottom. Each item is a deliverable: a written finding with file:line
 and a recommendation. Check the box and add a one-line verdict as you go.
 
 ### A. Spec-vs-reality gap
-- [ ] Read `docs/v2-spec-alexander-layer.md` against `js/alexander.js` and `js/app.js`.
+- [x] Read `docs/v2-spec-alexander-layer.md` against `js/alexander.js` and `js/app.js`.
       For each v0.1 **acceptance criterion**, mark met / not-met / partial with evidence.
-- [ ] List every stop whose `certainty` ≠ `secure` that is **missing** a `source_note`.
-- [ ] List every stop missing a live source **link** (Step 5 gap). Recommend a link
-      target per stop (Pleiades where a `pleiades` id maps cleanly; else Livius /
-      Encyclopaedia Iranica / World History Encyclopedia, per the spec's source policy).
-- [ ] Confirm the ~10 `ALEXANDER_ROUTES` are not over-claimed: each `reconstructed`/
-      `uncertain` route must have a `source_note` that says it's a narrative connector,
-      not a surveyed road.
+      → Most met; **search criterion FAILS** (dead code, F1) and **source buttons FAIL** (F3).
+- [x] List every stop whose `certainty` ≠ `secure` that is **missing** a `source_note`.
+      → **None missing**: 11/11 non-secure stops have honest notes.
+- [x] List every stop missing a live source **link** (Step 5 gap). → **All 32** (zero
+      `links:` arrays); fix process in review F3 (inherit Pleiades ids from the 17
+      overlapping VIA sites; Livius for battles/marches).
+- [x] Confirm the ~10 `ALEXANDER_ROUTES` are not over-claimed. → **Confirmed**: 12/12
+      routes have notes, none claims `attested`.
 
 ### B. Historical / scholarly accuracy audit (highest scholar-value)
-- [ ] Spot-check coordinates on all 32 stops (obvious errors, transposed lat/lng, wrong
-      modern place). Note: stop records use `lat`/`lng` fields; **route `coords` are
-      `[lng, lat]`** — flag any route point that looks lat/lng-swapped.
-- [ ] Scrutinize the **disputed battlefields/routes** the spec calls out: Issus/Pinarus,
-      Gaugamela, Persian Gate, Hydaspes, Gedrosia. Are coordinates and `certainty`
-      labels defensible? Is uncertainty represented honestly?
-- [ ] Check chronology: `year` ordering, `year_label` correctness, phase boundaries
-      (does each stop's `phase` match its date and the phase's `years` range?).
-- [ ] Sanity-check `ancient_sources` tags (e.g. is `Arrian 1.11` the right citation for
-      the Hellespont crossing?). Flag anything you cannot corroborate — do not invent
-      citations.
+- [x] Spot-check coordinates on all 32 stops. → **PASS**: all match standard
+      identifications; no lat/lng transposition in stops or route coords.
+- [x] Scrutinize the **disputed battlefields/routes**. → **PASS**: Issus, Gaugamela,
+      Persian Gate, Hydaspes, Gedrosia all carry defensible coords, correct certainty
+      tiers, and honest notes.
+- [x] Check chronology. → **PASS**: array in campaign order, phases match year ranges;
+      two defensible-choice remarks (Alexandria 332/331, Sogdian Rock 328/327) in review.
+- [x] Sanity-check `ancient_sources` tags. → **PASS**: every Arrian/Diodorus/Plutarch
+      citation checks out against the source structure; nothing uncorroborated.
 
 ### C. Open questions — adjudicate (give a recommendation, not a survey)
 The spec ends with 5 open questions. Answer each with a recommended default:
-- [ ] Q1: Alexander default off always, or a `?layer=alexander` share param?
-- [ ] Q2: Support `?alexander=gaugamela` deep-link restoration (mirroring the existing
-      `via.return` / site-restore pattern in `app.js`)?
-- [ ] Q3: Cross-link overlapping Roman sites ↔ Alexander stops in the panel (e.g.
-      Babylon appears in both models)?
-- [ ] Q4: Show a visible "approximate" badge on disputed markers, or panel-only?
-- [ ] Q5: Phase filtering in the existing Key panel vs a dedicated campaign strip?
+- [x] Q1 → Default off; **add `?layer=alexander`** (mirrors existing param patterns).
+- [x] Q2 → Yes, **v0.2**; ride the `via.return` restore machinery. Not merge-blocking.
+- [x] Q3 → **Yes, and it's load-bearing**: 17 stops are occluded by site markers (F2);
+      the cross-link chip is the fix, not a nice-to-have.
+- [x] Q4 → **Panel-only** for v0.1; 5px markers can't carry a legible badge.
+- [x] Q5 → **Existing Key panel**, rows visible only when the layer is on.
 
 ### D. Colorblind-safety check (hard constraint)
-- [ ] Verify phase distinction survives with color removed: is each phase separable by
-      **text label + marker/dash treatment**, not hue alone? Inspect the phase palette in
-      `js/alexander.js` (`ALEXANDER_PHASES[*].color`) and the wireframe swatches.
-- [ ] Verify route `certainty` reads via **dash pattern** (solid/dashed/dotted) as the
-      primary channel, matching VIA's existing Itiner-e grammar — not color.
+- [x] Verify phase distinction survives with color removed. → **PARTIAL FAIL (F5)**:
+      on-map markers encode phase by fill hue only, and the palette pairs green against
+      three brown-reds. Panel text carries phase correctly. Recommendation: accept
+      panel-text as the channel for v0.1 (record the decision), numeric badge with v0.2.
+- [x] Verify route `certainty` reads via **dash pattern**. → **PASS**: solid/dashed/
+      dotted is the primary channel, matching the Itiner-e grammar.
 
 ### E. Reusability / architecture (don't over-abstract, judge the seams)
-- [ ] The spec's v0.4 goal is a generalized `CAMPAIGN_LAYERS` model (Hannibal, Caesar…).
-      The spec says **do not abstract early.** Judge whether the current
-      `showAlexanderPanel` / `findNearestAlexanderStop` / `searchAlexander` /
-      `toggleLayer('alexander')` seams sit in the *right place* to generalize later, or
-      whether anything hard-codes "alexander" in a way that will hurt. Recommend seam
-      moves only, not a premature abstraction.
-- [ ] Confirm `toggleLayer('alexander')` only shows/hides Alexander groups and does not
-      mutate site tiers, road certainty filters, or quest progress (spec invariant).
+- [x] Judge the seams for a future `CAMPAIGN_LAYERS` model. → **Sound**: everything is
+      data-driven off `ALEXANDER_*` globals; hard-codings are shallow/rename-level. The
+      one seam to watch is the `map.on('click')` resolution order — registry later.
+- [x] Confirm `toggleLayer('alexander')` isolation. → **Confirmed**: only
+      `refreshAlexanderLayer` + `fitAlexanderBoundsOnce`; tiers/filters/quests untouched.
 
 ### F. Merge-readiness (point to existing notes, don't rediscover)
-- [ ] Read the **"Alexander module"** section of `docs/SESSION-CHECKPOINT.md` — the 4
-      merge-integration risks are already documented (index.html `?v=` token conflict;
-      the lone `alexander.js` script tag; the `toggleLayer` `else if` restructure;
-      staleness → rebase `main` first). Confirm they still hold and add any you find.
-- [ ] Note that the branch is behind `main` (linked-data, map polish, topbar, cache
-      bumps). Recommend rebase-vs-merge and the `?v=` bump strategy, but **do not perform
-      the merge** — that's a human decision.
+- [x] Confirm the 4 documented risks. → **All still hold** (branch pins `?v=106` incl.
+      the `alexander.js` tag; `main` at `v116` — token conflict guaranteed). Added: the
+      `map.on('click')` and search-dispatcher areas evolved on `main` — rebase first,
+      write the F1 fix against main's current code.
+- [x] Rebase-vs-merge recommendation. → **Rebase onto `main`**, fix F1/F2/F4 + F3
+      curation, run both harnesses, bump `?v=`, then merge — merge not performed.
 
 ### G. Deliverable
-- [ ] Write findings back into this file (append a "## Fable 5 findings" section) or a
-      sibling `docs/alexander-review-fable5.md`. Order by severity. For each: file:line,
-      the issue, the fix, and a confidence rating.
-- [ ] Do **not** commit corrections to `js/alexander.js` in the same pass as the review —
-      propose them; let Dano approve. (Data edits are fine to *draft*; keep them separate
-      from the analysis so the audit trail stays clean.)
+- [x] Findings written to **`docs/alexander-review-fable5.md`** — 8 findings ordered by
+      severity (2 HIGH, 3 MEDIUM, 2 LOW, 1 INFO), each with file:line, fix, confidence,
+      plus the full accuracy-audit record and a recommended order of work.
+- [x] No corrections committed to `js/alexander.js` — all data fixes proposed only.
 
 ---
 

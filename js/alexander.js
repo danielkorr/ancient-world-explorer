@@ -45,6 +45,8 @@ const ALEXANDER_PHASES = {
 const ALEXANDER_STOPS = [
   {
     id: 'pella',
+    pleiades: 491687,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/491687' }],
     name: 'Pella',
     modern: 'Pella, Greece',
     lat: 40.761,
@@ -77,6 +79,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'amphipolis',
+    pleiades: 501347,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/501347' }],
     name: 'Amphipolis',
     modern: 'Amfipoli, Greece',
     lat: 40.823,
@@ -93,6 +97,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'hellespont-crossing',
+    pleiades: 501434,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/501434' }],
     name: 'Hellespont Crossing',
     modern: 'Dardanelles, Turkey',
     lat: 40.205,
@@ -109,6 +115,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'ilion',
+    pleiades: 550595,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/550595' }],
     name: 'Ilion / Troy',
     modern: 'Hisarlik, Turkey',
     lat: 39.957,
@@ -141,6 +149,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'sardis',
+    pleiades: 550867,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/550867' }],
     name: 'Sardis',
     modern: 'Sart, Turkey',
     lat: 38.488,
@@ -157,6 +167,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'miletus',
+    pleiades: 599799,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/599799' }],
     name: 'Miletus',
     modern: 'Balat, Turkey',
     lat: 37.530,
@@ -173,6 +185,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'halicarnassus',
+    pleiades: 461581651,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/461581651' }],
     name: 'Halicarnassus',
     modern: 'Bodrum, Turkey',
     lat: 37.038,
@@ -189,6 +203,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'gordium',
+    pleiades: 609393,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/609393' }],
     name: 'Gordium',
     modern: 'Yassihoyuk, Turkey',
     lat: 39.654,
@@ -205,6 +221,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'tarsus',
+    pleiades: 648789,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/648789' }],
     name: 'Tarsus',
     modern: 'Tarsus, Turkey',
     lat: 36.917,
@@ -237,6 +255,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'tyre',
+    pleiades: 678437,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/678437' }],
     name: 'Tyre',
     modern: 'Sour, Lebanon',
     lat: 33.270,
@@ -253,6 +273,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'gaza',
+    pleiades: 687902,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/687902' }],
     name: 'Gaza',
     modern: 'Gaza',
     lat: 31.505,
@@ -269,6 +291,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'memphis',
+    pleiades: 736963,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/736963' }],
     name: 'Memphis',
     modern: 'Mit Rahina, Egypt',
     lat: 29.849,
@@ -285,6 +309,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'alexandria-egypt',
+    pleiades: 727070,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/727070' }],
     name: 'Alexandria',
     modern: 'Alexandria, Egypt',
     lat: 31.200,
@@ -301,6 +327,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'siwa',
+    pleiades: 716520,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/716520' }],
     name: 'Siwa Oasis',
     modern: 'Siwa, Egypt',
     lat: 29.204,
@@ -333,6 +361,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'babylon-entry',
+    pleiades: 653377582,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/653377582' }],
     name: 'Babylon',
     modern: 'Hillah, Iraq',
     lat: 32.542,
@@ -349,6 +379,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'susa',
+    pleiades: 912936,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/912936' }],
     name: 'Susa',
     modern: 'Shush, Iran',
     lat: 32.189,
@@ -381,6 +413,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'persepolis',
+    pleiades: 922695,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/922695' }],
     name: 'Persepolis',
     modern: 'Marvdasht, Iran',
     lat: 29.935,
@@ -397,6 +431,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'ecbatana',
+    pleiades: 903021,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/903021' }],
     name: 'Ecbatana',
     modern: 'Hamadan, Iran',
     lat: 34.799,
@@ -413,6 +449,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'bactra',
+    pleiades: 961886,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/961886' }],
     name: 'Bactra',
     modern: 'Balkh, Afghanistan',
     lat: 36.758,
@@ -445,6 +483,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'taxila',
+    pleiades: 60083,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/60083' }],
     name: 'Taxila',
     modern: 'Taxila, Pakistan',
     lat: 33.746,
@@ -509,6 +549,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'pasargadae',
+    pleiades: 922693,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/922693' }],
     name: 'Pasargadae',
     modern: 'near Saadat Shahr, Iran',
     lat: 30.194,
@@ -541,6 +583,8 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'babylon-death',
+    pleiades: 653377582,
+    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/653377582' }],
     name: 'Babylon - Death of Alexander',
     modern: 'Hillah, Iraq',
     lat: 32.542,

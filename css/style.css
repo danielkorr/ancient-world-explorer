@@ -373,9 +373,13 @@ body.mode-alexander #campaign-legend { display: block; }
   margin-top: 1px;
   text-transform: none;
 }
-/* Clear-highlights control — appears only when something is lit. */
+/* Clear-highlights control. Kept permanently in the layout (visibility toggled,
+   not display) so lighting the first phase doesn't reflow the panel and shove the
+   rows out from under the cursor — it only becomes visible/clickable when
+   something is lit. */
 .legend-clear {
-  display: none;
+  display: block;
+  visibility: hidden;
   width: 100%;
   margin-top: 6px;
   padding: 5px 8px;
@@ -389,7 +393,7 @@ body.mode-alexander #campaign-legend { display: block; }
   cursor: pointer;
   transition: background .15s;
 }
-.legend-clear.show { display: block; }
+.legend-clear.show { visibility: visible; }
 .legend-clear:hover { background: rgba(212,168,83,0.2); }
 
 /* Search/focus BEACON on a campaign stop — a persistent bright dot + an

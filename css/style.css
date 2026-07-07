@@ -352,6 +352,58 @@ body.mode-alexander #campaign-legend { display: block; }
   letter-spacing: 0.3px;
 }
 
+/* Interactive campaign legend — rows are tap-to-spotlight filters. */
+#campaign-legend .phase-row,
+#campaign-legend .cert-row { cursor: pointer; border-radius: 5px; transition: background .15s; }
+#campaign-legend .phase-row:hover,
+#campaign-legend .cert-row:hover { background: rgba(240,230,211,0.06); }
+/* Selected row: bright gold rail + faint fill — the ROW's own colorblind-safe
+   "this is the one lit on the map" cue (luminance, not hue). */
+#campaign-legend .phase-row.active,
+#campaign-legend .cert-row.active {
+  background: rgba(212,168,83,0.16);
+  box-shadow: inset 3px 0 0 var(--gold, #d4a853);
+}
+#campaign-legend .phase-row.active .phase-num { box-shadow: 0 0 0 2px var(--gold, #d4a853); }
+.legend-sub {
+  display: block;
+  font-size: 8.5px;
+  letter-spacing: 0.4px;
+  color: rgba(184,170,145,0.7);
+  margin-top: 1px;
+  text-transform: none;
+}
+
+/* Search/focus BEACON on a campaign stop — a persistent bright dot + an
+   expanding white ring. Pure luminance + motion, so a searched place is findable
+   regardless of colour vision. Rendered via a divIcon marker (iconSize 0,0), so
+   both children centre on the map point. */
+.alex-beacon { background: none; border: none; }
+.alex-beacon-dot {
+  position: absolute;
+  width: 12px; height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 8px 2px rgba(255,255,255,0.9);
+  pointer-events: none;
+}
+.alex-beacon-ring {
+  position: absolute;
+  width: 20px; height: 20px;
+  margin: -10px 0 0 -10px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 0 12px 3px rgba(255,255,255,0.75);
+  animation: alexBeaconPulse 1.15s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes alexBeaconPulse {
+  0%   { transform: scale(0.4); opacity: 1; }
+  75%  { transform: scale(2.7); opacity: 0.06; }
+  100% { transform: scale(2.7); opacity: 0; }
+}
+
 /* Mobile: slim full-width mode strip under the topbar (v2 §8 option A). */
 @media (max-width: 640px) {
   #mode-tabs {

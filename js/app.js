@@ -258,7 +258,14 @@ const itinereRenderer = L.canvas({ padding: 0.2 });
 const itinereRoadsGroup = L.layerGroup().addTo(map);
 const roadsGroup        = L.layerGroup().addTo(map);
 const alexanderRouteGroup = L.layerGroup().addTo(map);
+// Spotlight halos (bright luminance rings under spotlit stops/routes) render
+// above the routes but below the stops. The search beacon renders on top of
+// everything. Both stay permanently on the map (mobile landmine); only contents
+// change. This is the colorblind-first channel for the campaign: motion +
+// luminance + size, never hue — the same idea as the Roman road search-glow.
+const alexanderHighlightGroup = L.layerGroup().addTo(map);
 const alexanderStopsGroup = L.layerGroup().addTo(map);
+const alexanderBeaconGroup = L.layerGroup().addTo(map);
 // ORBIS journey route overlay — a planned A→B path drawn on top of everything.
 // Permanently on the map (mobile-safe: mutate CONTENTS, never add/remove the
 // group — see the LayerGroup landmine in CLAUDE.md); wired in the JOURNEY
@@ -538,6 +545,11 @@ const ALEXANDER_ROUTE_STYLE = {
   reconstructed: { color: '#9f8bd0', weight: 2.5, opacity: 0.74, dashArray: '7,6' },
   uncertain:     { color: '#8a7aa8', weight: 2.2, opacity: 0.66, dashArray: '1,7' },
 };
+
+// Legend spotlight: which phase or route-certainty the user has lit up on the
+// map. `null` = nothing selected (everything at base style). Mutually exclusive:
+// selecting a phase clears a cert selection and vice versa.
+let alexSpotlight = null;   // { kind:'phase'|'cert', key:'macedon'|'uncertain'|… }
 const ALEXANDER_DEFAULT_STYLE = ALEXANDER_ROUTE_STYLE.reconstructed;
 
 const alexanderStopLayers = [];
@@ -573,11 +585,16 @@ function setActiveAlexanderLayer(layer) {
   }
 }
 
+const alexanderRouteLayers = [];
 function refreshAlexanderLayer() {
   alexanderRouteGroup.clearLayers();
   alexanderStopsGroup.clearLayers();
+  alexanderHighlightGroup.clearLayers();
+  alexanderBeaconGroup.clearLayers();
   alexanderStopLayers.length = 0;
+  alexanderRouteLayers.length = 0;
   activeAlexanderLayer = null;
+  alexSpotlight = null;   // a fresh paint clears any legend spotlight
 
   if (!layerState.alexander || typeof ALEXANDER_STOPS === 'undefined') return;
 
@@ -585,7 +602,7 @@ function refreshAlexanderLayer() {
     for (const route of ALEXANDER_ROUTES) {
       if (!route.coords || route.coords.length < 2) continue;
       const st = ALEXANDER_ROUTE_STYLE[route.certainty] || ALEXANDER_DEFAULT_STYLE;
-      L.polyline(route.coords.map(c => [c[1], c[0]]), {
+      const poly = L.polyline(route.coords.map(c => [c[1], c[0]]), {
         color: st.color,
         weight: st.weight,
         opacity: st.opacity,
@@ -594,6 +611,9 @@ function refreshAlexanderLayer() {
         lineJoin: 'round',
         interactive: false,
       }).addTo(alexanderRouteGroup);
+      poly._alexRoute = route;
+      poly._alexBaseStyle = st;
+      alexanderRouteLayers.push(poly);
     }
   }
 
@@ -607,6 +627,7 @@ function refreshAlexanderLayer() {
     layer._alexanderStop = stop;
     alexanderStopLayers.push(layer);
   }
+  applyAlexanderSpotlight();   // sync base styles + clear any stale legend-row .active
 }
 
 function fitAlexanderBoundsOnce() {
@@ -617,6 +638,90 @@ function fitAlexanderBoundsOnce() {
   if (!pts.length) return;
   alexanderHasAutoFit = true;
   requestAnimationFrame(() => map.fitBounds(L.latLngBounds(pts), { padding: [36, 36] }));
+}
+
+// ── CAMPAIGN SPOTLIGHT (colorblind-first) ────────────────
+// One idea, three uses: a search BEACON on the focused stop, and two legend
+// FILTERS (phase / route-certainty) that light a category up on the map. Every
+// channel is one a red-green-colorblind user can read — motion (pulse), luminance
+// (bright white), size (enlarge), isolation (dim the rest) — never hue. Mirrors
+// the Roman road search-glow idea for the campaign.
+
+// A bright pulsing beacon at a stop (persistent dot + expanding ring), so a
+// searched/linked place announces itself even when its dot's colour is invisible.
+function dropAlexanderBeacon(stop) {
+  alexanderBeaconGroup.clearLayers();
+  if (!stop || typeof stop.lat !== 'number') return;
+  const icon = L.divIcon({
+    className: 'alex-beacon',
+    html: '<div class="alex-beacon-ring"></div><div class="alex-beacon-dot"></div>',
+    iconSize: [0, 0],
+  });
+  L.marker([stop.lat, stop.lng], { icon, interactive: false, keyboard: false, zIndexOffset: 1200 })
+    .addTo(alexanderBeaconGroup);
+}
+function clearAlexanderBeacon() { alexanderBeaconGroup.clearLayers(); }
+
+const ALEX_LIT_LINE = '#f4ead2';   // bright cream — high luminance for lit routes
+function alexStopSpotStyle(stop, state) {
+  const base = alexanderStopStyle(stop, false);
+  if (state === 'lit') return { ...base, radius: 8, color: '#ffffff', weight: 3, fillOpacity: 1, opacity: 1 };
+  if (state === 'dim') return { ...base, radius: 4, opacity: 0.26, fillOpacity: 0.26 };
+  return base;
+}
+
+// Repaint stops + routes for the current alexSpotlight (or reset to base when null).
+function applyAlexanderSpotlight() {
+  alexanderHighlightGroup.clearLayers();
+
+  document.querySelectorAll('#campaign-legend .phase-row').forEach(r => {
+    r.classList.toggle('active', !!alexSpotlight && alexSpotlight.kind === 'phase' && r.dataset.phase === alexSpotlight.key);
+  });
+  document.querySelectorAll('#campaign-legend .cert-row').forEach(r => {
+    r.classList.toggle('active', !!alexSpotlight && alexSpotlight.kind === 'cert' && r.dataset.cert === alexSpotlight.key);
+  });
+
+  const resetRoute = (p) => {
+    const st = p._alexBaseStyle;
+    p.setStyle({ color: st.color, weight: st.weight, opacity: st.opacity });
+  };
+
+  if (!alexSpotlight) {
+    for (const l of alexanderStopLayers) if (l.setStyle) l.setStyle(alexStopSpotStyle(l._alexanderStop, 'base'));
+    for (const p of alexanderRouteLayers) if (p.setStyle) resetRoute(p);
+    return;
+  }
+
+  if (alexSpotlight.kind === 'phase') {
+    const key = alexSpotlight.key;
+    for (const l of alexanderStopLayers) {
+      const lit = l._alexanderStop && l._alexanderStop.phase === key;
+      if (l.setStyle) l.setStyle(alexStopSpotStyle(l._alexanderStop, lit ? 'lit' : 'dim'));
+      if (lit) L.circleMarker(l.getLatLng(), { radius: 15, weight: 0, fillColor: '#ffffff', fillOpacity: 0.16, interactive: false, pane: 'markerPane' }).addTo(alexanderHighlightGroup);
+    }
+    for (const p of alexanderRouteLayers) {
+      const st = p._alexBaseStyle;
+      const lit = p._alexRoute && p._alexRoute.phase === key;
+      p.setStyle(lit ? { color: ALEX_LIT_LINE, weight: st.weight + 2.2, opacity: 0.98 } : { color: st.color, weight: st.weight, opacity: 0.1 });
+    }
+  } else if (alexSpotlight.kind === 'cert') {
+    const key = alexSpotlight.key;
+    for (const l of alexanderStopLayers) if (l.setStyle) l.setStyle(alexStopSpotStyle(l._alexanderStop, 'dim'));
+    for (const p of alexanderRouteLayers) {
+      const st = p._alexBaseStyle;
+      const match = p._alexRoute && p._alexRoute.certainty === key;
+      p.setStyle(match ? { color: ALEX_LIT_LINE, weight: st.weight + 2.4, opacity: 0.98 } : { color: st.color, weight: st.weight, opacity: 0.08 });
+    }
+  }
+}
+
+function toggleAlexPhase(key) {
+  alexSpotlight = (alexSpotlight && alexSpotlight.kind === 'phase' && alexSpotlight.key === key) ? null : { kind: 'phase', key };
+  applyAlexanderSpotlight();
+}
+function toggleAlexCert(key) {
+  alexSpotlight = (alexSpotlight && alexSpotlight.kind === 'cert' && alexSpotlight.key === key) ? null : { kind: 'cert', key };
+  applyAlexanderSpotlight();
 }
 
 function findNearestAlexanderStop(latlng, containerPoint) {
@@ -738,6 +843,7 @@ function showAlexanderPanel(stop, layer) {
   panel.classList.add('open');
   dismissMobileGuide(true);
   panToWithPanelOffset([stop.lat, stop.lng]);
+  dropAlexanderBeacon(stop);   // pulsing beacon so the stop is findable, colour-blind or not
 }
 
 // ── SITE MARKERS ─────────────────────────────────────────
@@ -1619,6 +1725,7 @@ function closePanel() {
   panel.classList.remove('segment-panel');
   panel.classList.remove('alexander-panel');
   setActiveAlexanderLayer(null);
+  clearAlexanderBeacon();
   if (activeMarker) {
     activeMarker.setIcon(makeIcon(activeMarker._site, false));
     activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);

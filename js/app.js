@@ -800,11 +800,25 @@ function showAlexanderPanel(stop, layer) {
   document.getElementById('quest-progress').style.display = 'none';
   document.getElementById('checkin-row').style.display = 'none';
   document.getElementById('panel-quest-banner').className = '';
-  // Site-only enrichment cards — must be wiped or the previously-viewed Roman
-  // site's Pleiades data (names, notes, tags) bleeds into this stop's panel.
+  // Linked-data card is keyed to the Roman SITES collection (stops aren't in it)
+  // — always wipe it, or the previously-viewed site's cross-references linger.
   document.getElementById('linked-data-card').innerHTML = '';
-  document.getElementById('pleiades-detail-card').innerHTML = '';
-  panelOpenToken++;  // invalidate any in-flight site Pleiades fetch
+
+  // Live Pleiades enrichment for stops that carry a pleiades id — the same
+  // token-guarded fetch showPanel uses, so a stop surfaces its OWN scholarly
+  // record (alternate names, notes, subject tags) rather than the last site's.
+  // renderPleiadesDetailLoading blanks the card when the stop has no id, which
+  // also clears any leftover site enrichment; the token bump cancels an
+  // in-flight site fetch so it can't repaint the card after we've moved on.
+  renderPleiadesDetailLoading(stop);
+  const _plToken = ++panelOpenToken;
+  if (stop.pleiades) {
+    fetchPleiadesDetail(stop.pleiades).then(data => {
+      if (_plToken !== panelOpenToken) return;   // panel changed under us
+      applyPleiadesDetail(stop, data);
+    });
+  }
+
   const nearbyEl = document.getElementById('segment-nearby');
   if (nearbyEl) nearbyEl.style.display = 'none';
 

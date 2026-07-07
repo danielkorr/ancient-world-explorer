@@ -546,10 +546,12 @@ const ALEXANDER_ROUTE_STYLE = {
   uncertain:     { color: '#8a7aa8', weight: 2.2, opacity: 0.66, dashArray: '1,7' },
 };
 
-// Legend spotlight: which phase or route-certainty the user has lit up on the
-// map. `null` = nothing selected (everything at base style). Mutually exclusive:
-// selecting a phase clears a cert selection and vice versa.
-let alexSpotlight = null;   // { kind:'phase'|'cert', key:'macedon'|'uncertain'|… }
+// Legend spotlight: independent on/off toggles. Each phase and each route-certainty
+// is its own switch — light up any combination; empty sets = base state (everything
+// shown normally). A stop is lit if its phase is on; a route is lit if its phase OR
+// its certainty is on; anything not lit dims once ANY switch is on.
+const alexLitPhases = new Set();   // phase keys currently spotlit
+const alexLitCerts  = new Set();   // route-certainty keys currently spotlit
 const ALEXANDER_DEFAULT_STYLE = ALEXANDER_ROUTE_STYLE.reconstructed;
 
 const alexanderStopLayers = [];
@@ -594,7 +596,8 @@ function refreshAlexanderLayer() {
   alexanderStopLayers.length = 0;
   alexanderRouteLayers.length = 0;
   activeAlexanderLayer = null;
-  alexSpotlight = null;   // a fresh paint clears any legend spotlight
+  alexLitPhases.clear();   // a fresh paint clears any legend spotlight
+  alexLitCerts.clear();
 
   if (!layerState.alexander || typeof ALEXANDER_STOPS === 'undefined') return;
 
@@ -670,59 +673,48 @@ function alexStopSpotStyle(stop, state) {
   return base;
 }
 
-// Repaint stops + routes for the current alexSpotlight (or reset to base when null).
+// Repaint stops + routes for the current lit sets (base state when both empty).
 function applyAlexanderSpotlight() {
   alexanderHighlightGroup.clearLayers();
 
   document.querySelectorAll('#campaign-legend .phase-row').forEach(r => {
-    r.classList.toggle('active', !!alexSpotlight && alexSpotlight.kind === 'phase' && r.dataset.phase === alexSpotlight.key);
+    r.classList.toggle('active', alexLitPhases.has(r.dataset.phase));
   });
   document.querySelectorAll('#campaign-legend .cert-row').forEach(r => {
-    r.classList.toggle('active', !!alexSpotlight && alexSpotlight.kind === 'cert' && r.dataset.cert === alexSpotlight.key);
+    r.classList.toggle('active', alexLitCerts.has(r.dataset.cert));
   });
 
-  const resetRoute = (p) => {
-    const st = p._alexBaseStyle;
-    p.setStyle({ color: st.color, weight: st.weight, opacity: st.opacity });
-  };
+  const anyOn = alexLitPhases.size > 0 || alexLitCerts.size > 0;
+  const clearBtn = document.getElementById('campaign-clear');
+  if (clearBtn) clearBtn.classList.toggle('show', anyOn);
 
-  if (!alexSpotlight) {
-    for (const l of alexanderStopLayers) if (l.setStyle) l.setStyle(alexStopSpotStyle(l._alexanderStop, 'base'));
-    for (const p of alexanderRouteLayers) if (p.setStyle) resetRoute(p);
-    return;
+  for (const l of alexanderStopLayers) {
+    if (!l.setStyle) continue;
+    const lit = l._alexanderStop && alexLitPhases.has(l._alexanderStop.phase);
+    l.setStyle(alexStopSpotStyle(l._alexanderStop, !anyOn ? 'base' : (lit ? 'lit' : 'dim')));
+    if (lit) L.circleMarker(l.getLatLng(), { radius: 15, weight: 0, fillColor: '#ffffff', fillOpacity: 0.16, interactive: false, pane: 'markerPane' }).addTo(alexanderHighlightGroup);
   }
 
-  if (alexSpotlight.kind === 'phase') {
-    const key = alexSpotlight.key;
-    for (const l of alexanderStopLayers) {
-      const lit = l._alexanderStop && l._alexanderStop.phase === key;
-      if (l.setStyle) l.setStyle(alexStopSpotStyle(l._alexanderStop, lit ? 'lit' : 'dim'));
-      if (lit) L.circleMarker(l.getLatLng(), { radius: 15, weight: 0, fillColor: '#ffffff', fillOpacity: 0.16, interactive: false, pane: 'markerPane' }).addTo(alexanderHighlightGroup);
-    }
-    for (const p of alexanderRouteLayers) {
-      const st = p._alexBaseStyle;
-      const lit = p._alexRoute && p._alexRoute.phase === key;
-      p.setStyle(lit ? { color: ALEX_LIT_LINE, weight: st.weight + 2.2, opacity: 0.98 } : { color: st.color, weight: st.weight, opacity: 0.1 });
-    }
-  } else if (alexSpotlight.kind === 'cert') {
-    const key = alexSpotlight.key;
-    for (const l of alexanderStopLayers) if (l.setStyle) l.setStyle(alexStopSpotStyle(l._alexanderStop, 'dim'));
-    for (const p of alexanderRouteLayers) {
-      const st = p._alexBaseStyle;
-      const match = p._alexRoute && p._alexRoute.certainty === key;
-      p.setStyle(match ? { color: ALEX_LIT_LINE, weight: st.weight + 2.4, opacity: 0.98 } : { color: st.color, weight: st.weight, opacity: 0.08 });
-    }
+  for (const p of alexanderRouteLayers) {
+    if (!p.setStyle) continue;
+    const st = p._alexBaseStyle;
+    const r = p._alexRoute;
+    const lit = r && (alexLitPhases.has(r.phase) || alexLitCerts.has(r.certainty));
+    if (!anyOn) p.setStyle({ color: st.color, weight: st.weight, opacity: st.opacity });
+    else if (lit) p.setStyle({ color: ALEX_LIT_LINE, weight: st.weight + 2.2, opacity: 0.98 });
+    else p.setStyle({ color: st.color, weight: st.weight, opacity: 0.09 });
   }
 }
 
 function toggleAlexPhase(key) {
-  alexSpotlight = (alexSpotlight && alexSpotlight.kind === 'phase' && alexSpotlight.key === key) ? null : { kind: 'phase', key };
+  alexLitPhases.has(key) ? alexLitPhases.delete(key) : alexLitPhases.add(key);
   applyAlexanderSpotlight();
 }
 function toggleAlexCert(key) {
-  alexSpotlight = (alexSpotlight && alexSpotlight.kind === 'cert' && alexSpotlight.key === key) ? null : { kind: 'cert', key };
+  alexLitCerts.has(key) ? alexLitCerts.delete(key) : alexLitCerts.add(key);
   applyAlexanderSpotlight();
 }
+function clearAlexSpotlight() { alexLitPhases.clear(); alexLitCerts.clear(); applyAlexanderSpotlight(); }
 
 function findNearestAlexanderStop(latlng, containerPoint) {
   if (!layerState.alexander || !alexanderStopLayers.length) return null;

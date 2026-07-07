@@ -46,7 +46,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=128">
+  <link rel="stylesheet" href="css/style.css?v=129">
 </head>
 <body>
 
@@ -307,7 +307,7 @@
        carried by the NUMBER + label as the primary channels; the color tint is
        secondary, so it stays legible without relying on hue. -->
   <div id="campaign-legend" data-testid="campaign-legend">
-    <div class="legend-hint">Campaign · phases<span class="legend-sub">tap to light up on map</span></div>
+    <div class="legend-hint">Campaign · phases<span class="legend-sub">tap any to light up · combine freely</span></div>
     <div class="legend-row phase-row" data-phase="macedon"     role="button" tabindex="0" onclick="toggleAlexPhase('macedon')"><span class="phase-num" style="--pc:#8f6f3f">1</span>Macedon <span class="phase-yrs">356–334 BC</span></div>
     <div class="legend-row phase-row" data-phase="anatolia"    role="button" tabindex="0" onclick="toggleAlexPhase('anatolia')"><span class="phase-num" style="--pc:#7b6fb3">2</span>Asia Minor <span class="phase-yrs">334–333 BC</span></div>
     <div class="legend-row phase-row" data-phase="levantEgypt" role="button" tabindex="0" onclick="toggleAlexPhase('levantEgypt')"><span class="phase-num" style="--pc:#3f8f88">3</span>Levant &amp; Egypt <span class="phase-yrs">333–331 BC</span></div>
@@ -315,10 +315,11 @@
     <div class="legend-row phase-row" data-phase="eastIndia"   role="button" tabindex="0" onclick="toggleAlexPhase('eastIndia')"><span class="phase-num" style="--pc:#5e8b4f">5</span>East &amp; India <span class="phase-yrs">329–326 BC</span></div>
     <div class="legend-row phase-row" data-phase="returnDeath" role="button" tabindex="0" onclick="toggleAlexPhase('returnDeath')"><span class="phase-num" style="--pc:#8c5b5b">6</span>Return &amp; Death <span class="phase-yrs">325–323 BC</span></div>
     <div class="legend-sep"></div>
-    <div class="legend-hint">Route · certainty<span class="legend-sub">tap to light up on map</span></div>
+    <div class="legend-hint">Route · certainty<span class="legend-sub">tap any to light up</span></div>
     <div class="legend-row cert-row" data-cert="attested"      role="button" tabindex="0" onclick="toggleAlexCert('attested')"><div class="legend-line alexander solid"></div>Attested</div>
     <div class="legend-row cert-row" data-cert="reconstructed" role="button" tabindex="0" onclick="toggleAlexCert('reconstructed')"><div class="legend-line alexander dashed"></div>Reconstructed</div>
     <div class="legend-row cert-row" data-cert="uncertain"     role="button" tabindex="0" onclick="toggleAlexCert('uncertain')"><div class="legend-line alexander dotted"></div>Uncertain</div>
+    <button type="button" id="campaign-clear" class="legend-clear" onclick="clearAlexSpotlight()">✕ Clear highlights</button>
   </div>
 </div>
 
@@ -459,7 +460,7 @@
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
 <script src="js/basemap.js?v=106"></script>
-<script src="js/app.js?v=128"></script>
+<script src="js/app.js?v=129"></script>
 
 </body>
 </html>

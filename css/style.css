@@ -373,6 +373,24 @@ body.mode-alexander #campaign-legend { display: block; }
   margin-top: 1px;
   text-transform: none;
 }
+/* Clear-highlights control — appears only when something is lit. */
+.legend-clear {
+  display: none;
+  width: 100%;
+  margin-top: 6px;
+  padding: 5px 8px;
+  background: rgba(212,168,83,0.1);
+  border: 1px solid rgba(212,168,83,0.3);
+  border-radius: 5px;
+  color: var(--gold, #d4a853);
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.legend-clear.show { display: block; }
+.legend-clear:hover { background: rgba(212,168,83,0.2); }
 
 /* Search/focus BEACON on a campaign stop — a persistent bright dot + an
    expanding white ring. Pure luminance + motion, so a searched place is findable

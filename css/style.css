@@ -318,11 +318,14 @@ body {
 /* ── MODE CHROME SWAP ── */
 /* The Alexander chip/legend-row is redundant with the tab — hide it always. */
 #btn-alexander, #legend-alexander-toggle { display: none !important; }
-/* Alexander mode hides Roman-only controls + the Roman legend block. */
+/* Alexander mode hides Roman-only controls + the Roman legend block. The Detail
+   slider (site-density curation) is a Roman concept with no campaign meaning —
+   hide both the control and its mobile dock button. */
 body.mode-alexander #btn-roads,
 body.mode-alexander #btn-sites,
 body.mode-alexander #btn-names,
 body.mode-alexander #detail-control,
+body.mode-alexander #dock-curation,
 body.mode-alexander #roman-legend { display: none; }
 /* Campaign legend: hidden by default, shown only in Alexander mode. */
 #campaign-legend { display: none; }

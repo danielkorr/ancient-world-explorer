@@ -721,12 +721,18 @@ function applyAlexanderSpotlight() {
 function toggleAlexPhase(key) {
   alexLitPhases.has(key) ? alexLitPhases.delete(key) : alexLitPhases.add(key);
   applyAlexanderSpotlight();
+  if (typeof closeMobileLegend === 'function') closeMobileLegend();   // reveal the map on mobile
 }
 function toggleAlexCert(key) {
   alexLitCerts.has(key) ? alexLitCerts.delete(key) : alexLitCerts.add(key);
   applyAlexanderSpotlight();
+  if (typeof closeMobileLegend === 'function') closeMobileLegend();
 }
-function clearAlexSpotlight() { alexLitPhases.clear(); alexLitCerts.clear(); applyAlexanderSpotlight(); }
+function clearAlexSpotlight() {
+  alexLitPhases.clear(); alexLitCerts.clear();
+  applyAlexanderSpotlight();
+  if (typeof closeMobileLegend === 'function') closeMobileLegend();
+}
 
 function findNearestAlexanderStop(latlng, containerPoint) {
   if (!layerState.alexander || !alexanderStopLayers.length) return null;
@@ -3729,6 +3735,7 @@ function setMode(mode) {
   document.body.classList.toggle('mode-roman',     mode === 'roman');
 
   if (document.getElementById('info-panel').classList.contains('open')) closePanel();
+  if (typeof closeDockPanels === 'function') closeDockPanels();   // drop any open dock popover (Detail/Search)
   clearRoute();   // a drawn ORBIS journey shouldn't linger across a mode switch
 
   if (mode === 'alexander') {
@@ -4418,6 +4425,20 @@ function toggleLegend() {
   const open = lg.classList.toggle('mobile-open');
   const fab = document.getElementById('legend-fab');
   if (fab) fab.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+
+// Dismiss the mobile Key sheet (no-op on desktop, where the legend is always
+// open). Used after a campaign spotlight toggle so the sheet stops covering the
+// map — you see the effect immediately; selections persist, so reopen Key to add
+// more.
+function closeMobileLegend() {
+  const lg = document.getElementById('quest-legend');
+  if (!lg || !lg.classList.contains('mobile-open')) return;
+  lg.classList.remove('mobile-open');
+  document.body.classList.remove('dock-key-open');
+  const fab = document.getElementById('legend-fab');
+  if (fab) fab.setAttribute('aria-expanded', 'false');
+  if (typeof syncDockButtons === 'function') syncDockButtons();
 }
 document.addEventListener('click', (e) => {
   const lg = document.getElementById('quest-legend');

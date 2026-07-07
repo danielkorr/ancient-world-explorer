@@ -169,7 +169,10 @@ const ALEXANDER_STOPS = [
   {
     id: 'miletus',
     pleiades: 599799,
-    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/599799' }],
+    links: [
+      { label: 'Pleiades', url: 'https://pleiades.stoa.org/places/599799' },
+      { label: 'Livius', url: 'https://www.livius.org/articles/person/alexander-the-great/alexander-2.3/' },
+    ],
     name: 'Miletus',
     modern: 'Balat, Turkey',
     lat: 37.530,
@@ -187,7 +190,10 @@ const ALEXANDER_STOPS = [
   {
     id: 'halicarnassus',
     pleiades: 461581651,
-    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/461581651' }],
+    links: [
+      { label: 'Pleiades', url: 'https://pleiades.stoa.org/places/461581651' },
+      { label: 'Livius', url: 'https://www.livius.org/articles/battle/halicarnassus-334-bce/' },
+    ],
     name: 'Halicarnassus',
     modern: 'Bodrum, Turkey',
     lat: 37.038,
@@ -258,7 +264,10 @@ const ALEXANDER_STOPS = [
   {
     id: 'tyre',
     pleiades: 678437,
-    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/678437' }],
+    links: [
+      { label: 'Pleiades', url: 'https://pleiades.stoa.org/places/678437' },
+      { label: 'Livius', url: 'https://www.livius.org/articles/battle/tyre-332-bce/' },
+    ],
     name: 'Tyre',
     modern: 'Sour, Lebanon',
     lat: 33.270,
@@ -276,7 +285,10 @@ const ALEXANDER_STOPS = [
   {
     id: 'gaza',
     pleiades: 687902,
-    links: [{ label: 'Pleiades', url: 'https://pleiades.stoa.org/places/687902' }],
+    links: [
+      { label: 'Pleiades', url: 'https://pleiades.stoa.org/places/687902' },
+      { label: 'Livius', url: 'https://www.livius.org/articles/person/alexander-the-great/alexander-2.7/' },
+    ],
     name: 'Gaza',
     modern: 'Gaza',
     lat: 31.505,
@@ -471,6 +483,7 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'sogdian-rock',
+    links: [{ label: 'Livius', url: 'https://www.livius.org/sources/content/arrian/anabasis/alexander-captures-the-sogdian-rock/' }],
     name: 'Sogdian Rock',
     modern: 'Sogdiana, Uzbekistan/Tajikistan region',
     lat: 38.55,

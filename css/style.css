@@ -2668,3 +2668,10 @@ path.leaflet-interactive { outline: none !important; }
   /* Keep the map full-bleed on phones — the inset is a desktop affordance. */
   #empire-inset { display: none; }
 }
+/* Also hide it on any touch device regardless of orientation — a phone in
+   LANDSCAPE is wider than 640px and would otherwise fall back to the desktop
+   layout and re-show the inset (the reported "messy in landscape" clutter). A
+   coarse primary pointer = phone/tablet; touch-laptops (fine primary) keep it. */
+@media (pointer: coarse) {
+  #empire-inset { display: none !important; }
+}

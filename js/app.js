@@ -1259,7 +1259,26 @@ function buildEmpireInset() {
   }
   // The host can be sized 0 at boot (just-laid-out flex/grid); settle it once.
   setTimeout(() => insetMap.invalidateSize(), 0);
+  updateEmpireInset();   // frame + label for the current mode
 }
+
+// The inset auto-follows the active mode: Roman empire scale + "The Roman Empire"
+// in Roman mode, Alexander's campaign extent + "The Alexandrian Empire" in
+// campaign mode. Fixed views (not fitBounds) so they're correct even while the
+// inset is collapsed (its map host is display:none then). Desktop-only — the inset
+// is hidden on touch devices — but the label still updates harmlessly.
+function updateEmpireInset() {
+  if (!empireInset) return;
+  const title = document.getElementById('empire-inset-title');
+  if (appMode === 'alexander') {
+    if (title) title.textContent = 'The Alexandrian Empire';
+    empireInset.map.setView([34, 48], 3);   // Greece → the Indus, campaign extent
+  } else {
+    if (title) title.textContent = 'The Roman Empire';
+    empireInset.map.setView([40, 19], 4);    // Mediterranean empire scale
+  }
+}
+
 // Skip in QA mode — deterministic fixture keeps chrome minimal and avoids extra
 // tile fetches that slow the headless journeys.
 if (!QA) buildEmpireInset();
@@ -3767,6 +3786,7 @@ function setMode(mode) {
   }
   decorateRoadsLegend();
   raiseOverlays();
+  if (typeof updateEmpireInset === 'function') updateEmpireInset();   // relabel + reframe the locator
 }
 
 // ── LAYER TOGGLES ────────────────────────────────────────

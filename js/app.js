@@ -718,14 +718,46 @@ function applyAlexanderSpotlight() {
   }
 }
 
+// A spotlight you can't see is no spotlight: after lighting a phase/certainty,
+// bring the map to the union of what was lit (stops + route vertices), so a user
+// parked over India who lights "Macedon" is actually taken to Greece. Accounts
+// for the info panel / mobile sheet so the region isn't hidden under chrome.
+// No-op when nothing is lit — toggling the last switch off leaves your view put.
+function fitAlexanderSpotlight() {
+  const pts = [];
+  for (const l of alexanderStopLayers) {
+    const s = l._alexanderStop;
+    if (s && alexLitPhases.has(s.phase)) pts.push([s.lat, s.lng]);
+  }
+  if (typeof ALEXANDER_ROUTES !== 'undefined') {
+    for (const route of ALEXANDER_ROUTES) {
+      if (!route.coords) continue;
+      if (alexLitPhases.has(route.phase) || alexLitCerts.has(route.certainty)) {
+        for (const c of route.coords) pts.push([c[1], c[0]]);
+      }
+    }
+  }
+  if (!pts.length) return;
+  const bounds = L.latLngBounds(pts);
+  const panelEl = document.getElementById('info-panel');
+  const panelOpen = panelEl && panelEl.classList.contains('open');
+  const isMobile = window.innerWidth <= 640;
+  let tl = [50, 60], br = [50, 60];
+  if (panelOpen && !isMobile) br = [(panelEl.offsetWidth || 360) + 40, 60];
+  else if (panelOpen && isMobile) br = [50, (panelEl.offsetHeight || 300) + 40];
+  map.flyToBounds(bounds, { paddingTopLeft: tl, paddingBottomRight: br, maxZoom: 7, duration: 0.85 });
+}
+
 function toggleAlexPhase(key) {
   alexLitPhases.has(key) ? alexLitPhases.delete(key) : alexLitPhases.add(key);
   applyAlexanderSpotlight();
+  fitAlexanderSpotlight();   // take the user to the newly lit region
   if (typeof closeMobileLegend === 'function') closeMobileLegend();   // reveal the map on mobile
 }
 function toggleAlexCert(key) {
   alexLitCerts.has(key) ? alexLitCerts.delete(key) : alexLitCerts.add(key);
   applyAlexanderSpotlight();
+  fitAlexanderSpotlight();
   if (typeof closeMobileLegend === 'function') closeMobileLegend();
 }
 function clearAlexSpotlight() {
@@ -1169,6 +1201,7 @@ SITES.forEach(site => {
     // pan animation — that churn was eating the next click and blocking the
     // double-click-to-zoom. Panel's already showing this site; do nothing.
     if (activeMarker === this) return;
+    clearSiteSearchInput();   // moved on to another site — drop the stale query
     setActiveMarker(this);
     showPanel(this._site);
   });
@@ -1386,6 +1419,7 @@ if (COARSE_POINTER) {
     if (_lastMarkerTap) clearTimeout(_lastMarkerTap.timer);   // a pending open on another marker — last tap wins
     const openTimer = setTimeout(() => {
       _lastMarkerTap = null;
+      clearSiteSearchInput();   // moved on to another site — drop the stale query
       setActiveMarker(hit);
       showPanel(hit._site);
     }, MARKER_DBLTAP_MS);
@@ -3184,6 +3218,17 @@ function updateSearchResults(query) {
   renderSearchResults(searchAll(query), query);
 }
 
+// Wipe the search box + close its dropdown. Called when the user opens a DIFFERENT
+// place by tapping the map directly (marker / stop / road), so a stale query like
+// "Patala" doesn't linger over an unrelated panel. Search-result selection sets
+// input.value on purpose and never routes through these tap handlers, so the term
+// you actually searched still shows for the place you landed on.
+function clearSiteSearchInput() {
+  const input = document.getElementById('site-search-input');
+  if (input && input.value) input.value = '';
+  if (typeof closeSearchResults === 'function') closeSearchResults();
+}
+
 function bindSiteSearch() {
   const wrap = document.getElementById('topbar-search');
   const input = document.getElementById('site-search-input');
@@ -3624,6 +3669,7 @@ function saveReturnState() {
 // unlike the layer-level clicks that forced the marker/road touch delegation.
 map.on('click', (e) => {
   closeDockPanels();      // a tap on the open map dismisses any dock popover
+  clearSiteSearchInput(); // a direct map tap supersedes any lingering search query
   const alex = findNearestAlexanderStop(e.latlng, e.containerPoint);
   if (alex) { showAlexanderPanel(alex._alexanderStop, alex); return; }
   // Journey routing: while awaiting a destination, a coverage place completes

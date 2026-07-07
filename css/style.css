@@ -1087,6 +1087,38 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 .welcome-sources p { font-size: 12.5px; margin: 0; color: var(--text-body); }
 .welcome-sources strong { color: rgba(240,230,211,0.98); }
 
+/* "Two ways in" — the mode explainer at the top of the welcome modal. */
+.welcome-modes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 14px 0;
+}
+.welcome-mode {
+  padding: 11px 13px;
+  border: 1px solid rgba(212,168,83,0.22);
+  border-radius: 8px;
+  background: rgba(212,168,83,0.05);
+}
+.welcome-mode-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 5px;
+}
+.welcome-mode p { font-size: 12.5px; margin: 0; color: var(--text-body); }
+.welcome-mode em { color: rgba(240,230,211,0.95); font-style: italic; }
+.welcome-mode-glyph { font-size: 15px; line-height: 1; }
+.welcome-mode-glyph.alex {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  color: #c3b3e8;   /* campaign purple, matches the mode tab + cross-link chip */
+}
+
 /* Brand is a button that reopens the welcome modal. */
 #app-brand {
   cursor: pointer;

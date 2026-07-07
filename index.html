@@ -46,7 +46,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=133">
+  <link rel="stylesheet" href="css/style.css?v=134">
 </head>
 <body>
 
@@ -110,8 +110,21 @@
     <h2 class="auth-title">Welcome to VIA</h2>
     <div class="welcome-tagline">Ancient World Explorer</div>
     <div id="welcome-body">
-      <p>Two thousand years of Roman roads, cities, and ruins — laid over the world as it stands today. Explore where the empire reached.</p>
-      <p>Then contribute to the historical record. Many of these sites and cities are still missing details in the scholarly gazetteer — help fill the gaps by sharing your photos, location, and comments. Be a part of it.</p>
+      <p>Two thousand years of the ancient world, laid over the map as it stands today. VIA opens two ways in — switch between them anytime with the tabs at the top.</p>
+
+      <div class="welcome-modes">
+        <div class="welcome-mode">
+          <div class="welcome-mode-name"><span class="welcome-mode-glyph">🏛️</span>Roman Sites &amp; Roads</div>
+          <p>Where the empire reached — roads, cities, and ruins on the modern map. Many places carry an open <em>quest</em>: a gap in the scholarly record you can help close with a photo, a location, or a note.</p>
+        </div>
+        <div class="welcome-mode">
+          <div class="welcome-mode-name"><span class="welcome-mode-glyph alex">A</span>Alexander&rsquo;s Campaign</div>
+          <p>Follow a single lifetime across the ancient world — from Pella to the Hyphasis and back to Babylon, some 20,000&nbsp;km in ten years. Each stop is a turning point: a battle, a siege, a founded city — and, marked honestly, the places even scholars still dispute.</p>
+        </div>
+      </div>
+
+      <p>Contribute to the record as you go. Sign in to check in at the places you reach and help fill the gaps. Be a part of it.</p>
+
       <div class="welcome-quest-preview">
         <div class="welcome-quest-title">Quests are open gaps</div>
         <div class="welcome-quest-grid">
@@ -124,6 +137,8 @@
       <div class="welcome-sources">
         <div class="welcome-sources-title">Plan a Roman journey</div>
         <p>Tap any place, then tap a second — VIA traces the route a Roman traveller would have taken and tells you how many days it took, in road, river, and sea. The travel model is <strong>ORBIS</strong>, Stanford's geospatial reconstruction of the Roman world.</p>
+        <div class="welcome-sources-title">Trace Alexander's route</div>
+        <p>The campaign is hand-curated from the ancient historians — <strong>Arrian</strong>, <strong>Plutarch</strong>, <strong>Diodorus</strong> — with each stop anchored to a <strong>Pleiades</strong> place. Where a battlefield or march is disputed, VIA says so rather than feign certainty.</p>
         <div class="welcome-sources-title">Built on the scholarly record</div>
         <p><strong>Pleiades</strong> for places, <strong>Itiner-e</strong> for the road network, <strong>ORBIS</strong> for travel — the same open gazetteers historians use. VIA just puts them on one map.</p>
       </div>
@@ -460,7 +475,7 @@
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
 <script src="js/basemap.js?v=106"></script>
-<script src="js/app.js?v=133"></script>
+<script src="js/app.js?v=134"></script>
 
 </body>
 </html>

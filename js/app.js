@@ -800,6 +800,11 @@ function showAlexanderPanel(stop, layer) {
   document.getElementById('quest-progress').style.display = 'none';
   document.getElementById('checkin-row').style.display = 'none';
   document.getElementById('panel-quest-banner').className = '';
+  // Site-only enrichment cards — must be wiped or the previously-viewed Roman
+  // site's Pleiades data (names, notes, tags) bleeds into this stop's panel.
+  document.getElementById('linked-data-card').innerHTML = '';
+  document.getElementById('pleiades-detail-card').innerHTML = '';
+  panelOpenToken++;  // invalidate any in-flight site Pleiades fetch
   const nearbyEl = document.getElementById('segment-nearby');
   if (nearbyEl) nearbyEl.style.display = 'none';
 

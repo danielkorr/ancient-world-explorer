@@ -700,9 +700,21 @@ function applyAlexanderSpotlight() {
     const st = p._alexBaseStyle;
     const r = p._alexRoute;
     const lit = r && (alexLitPhases.has(r.phase) || alexLitCerts.has(r.certainty));
-    if (!anyOn) p.setStyle({ color: st.color, weight: st.weight, opacity: st.opacity });
-    else if (lit) p.setStyle({ color: ALEX_LIT_LINE, weight: st.weight + 2.2, opacity: 0.98 });
-    else p.setStyle({ color: st.color, weight: st.weight, opacity: 0.09 });
+    if (!anyOn) {
+      p.setStyle({ color: st.color, weight: st.weight, opacity: st.opacity });
+    } else if (lit) {
+      // Dotted/dashed routes are nearly invisible when merely recoloured, so a lit
+      // route is redrawn on top as a SOLID line with a white glow halo — pure
+      // luminance, so it pops even for the faint eastern/return segments. The
+      // textured base is hidden beneath it; the dash still conveys certainty in the
+      // legend + unlit state.
+      p.setStyle({ opacity: 0 });
+      const ll = p.getLatLngs();
+      L.polyline(ll, { color: '#ffffff', weight: st.weight + 8, opacity: 0.35, lineCap: 'round', lineJoin: 'round', interactive: false }).addTo(alexanderHighlightGroup);
+      L.polyline(ll, { color: ALEX_LIT_LINE, weight: st.weight + 3, opacity: 1, lineCap: 'round', lineJoin: 'round', interactive: false }).addTo(alexanderHighlightGroup);
+    } else {
+      p.setStyle({ color: st.color, weight: st.weight, opacity: 0.09 });
+    }
   }
 }
 

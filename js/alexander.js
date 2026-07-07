@@ -133,6 +133,7 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'granicus',
+    links: [{ label: 'Livius', url: 'https://www.livius.org/articles/battle/granicus/' }],
     name: 'Granicus River',
     modern: 'Biga River, Turkey',
     lat: 40.263,
@@ -239,6 +240,7 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'issus',
+    links: [{ label: 'Livius', url: 'https://www.livius.org/articles/battle/issus/' }],
     name: 'Issus',
     modern: 'near Dörtyol, Turkey',
     lat: 36.86,
@@ -345,6 +347,7 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'gaugamela',
+    links: [{ label: 'Livius', url: 'https://www.livius.org/articles/battle/gaugamela-331-bce/' }],
     name: 'Gaugamela',
     modern: 'near Mosul, Iraq',
     lat: 36.360,
@@ -397,6 +400,7 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'persian-gate',
+    links: [{ label: 'Livius', url: 'https://www.livius.org/articles/battle/persian-gate-330-bce/' }],
     name: 'Persian Gate',
     modern: 'Zagros Mountains, Iran',
     lat: 30.72,
@@ -501,6 +505,7 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'hydaspes',
+    links: [{ label: 'Livius', url: 'https://www.livius.org/articles/battle/hydaspes/' }],
     name: 'Hydaspes',
     modern: 'Jhelum River, Pakistan',
     lat: 32.93,

@@ -26,6 +26,7 @@ committed. All sources are slow-moving academic datasets, so regeneration is an
 | 5 | `js/sites-linked-data.js` | `build-linked-data.mjs` | `regen:linked-data` | pleiades.datasets sidebar | ✅ cold start |
 | 6 | `js/orbis-days.js` + `js/orbis-graph.js` | `build-orbis.mjs` | `regen:orbis` | ORBIS network (gorbit mirror) | ✅ (graph lazy) |
 | 7 | `js/roads-itinere.js` + `js/roads-itinere-pleiades.js` | `build-roads.mjs` | `regen:roads` | Itiner-e live export | ✅ (pp lazy) |
+| 8 | `js/alexander-photos.js` | `build-alexander-photos.mjs` | `regen:alex-photos` | Wikidata P18 → Wikimedia Commons | ✅ cold start |
 | — | `js/sites-enrichment.json` | `build-enrichment.mjs` | — | Pleiades + Wikidata + Commons | ⚠️ **NOT wired** (spike) |
 
 `#8 build-enrichment.mjs` is an experimental v2 spike; its output is **not loaded by

@@ -811,10 +811,24 @@ function showAlexanderPanel(stop, layer) {
     heroCredit.id = 'hero-credit';
     hero.appendChild(heroCredit);
   }
-  hero.style.background = `radial-gradient(ellipse at center, ${color}22 0%, #110a00 70%)`;
   heroIcon.textContent = 'A';
-  heroIcon.style.opacity = '';
-  heroCredit.style.display = 'none';
+  // Hero photo from the scholarly record (Wikidata P18 → Wikimedia Commons,
+  // baked by build-alexander-photos.mjs with attribution). Falls back to the
+  // phase-tinted gradient + "A" glyph for stops with no image (battlefields,
+  // thin places). setHeroPhoto's vici transform-rewrite no-ops on Commons URLs.
+  const photo = (typeof window !== 'undefined' && window.ALEXANDER_PHOTOS && stop.pleiades)
+    ? window.ALEXANDER_PHOTOS[stop.pleiades] : null;
+  if (photo && photo.thumb) {
+    setHeroPhoto(hero, heroIcon, photo.thumb,
+      'linear-gradient(180deg, rgba(17,10,0,0.05) 0%, rgba(17,10,0,0.85) 100%)');
+    const by = photo.credit || 'Wikimedia Commons';
+    heroCredit.textContent = `${by}${photo.license ? ' · ' + photo.license : ''} · via Wikimedia Commons`;
+    heroCredit.style.display = '';
+  } else {
+    hero.style.background = `radial-gradient(ellipse at center, ${color}22 0%, #110a00 70%)`;
+    heroIcon.style.opacity = '';
+    heroCredit.style.display = 'none';
+  }
   document.getElementById('hero-coords').textContent = stop.year_label || '';
   document.getElementById('hero-modern').textContent = (phase && phase.label) ? phase.label : 'Alexander campaign';
 

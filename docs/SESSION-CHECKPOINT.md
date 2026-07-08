@@ -113,6 +113,28 @@ stays focused. Pushed to origin (tracking set).
 4. **Staleness.** Best to `git rebase main` (or merge main in) on the branch BEFORE
    resuming, to pull in road polish/topbar/cache bumps and shrink the eventual diff.
 
+**Pre-merge gate — run this BEFORE merging `alexander-module` → `main`** (do NOT merge
+until the image work has settled and all four pass; capture evidence for anything visual):
+1. **Diff skim.** `git diff main...alexander-module --stat` then read the full diff of
+   any shared/hot files (`app.js`, `index.html`, `css/style.css`, the `*-photos.js`
+   data + their build scripts). Confirm no stray debug code, no half-finished Codex
+   image work, and that every touched CSS/JS asset got its `?v=N` bumped (app.js/style.css
+   kept matched). Codex edits in parallel — reconcile cache tokens so nothing collides.
+2. **Deterministic regression.** `bash tests/run-journeys.sh` (Chromium, `?qa=1` fixture
+   + `window.VIA` drive/assert). Must be green — this is the desktop-behavior net.
+3. **Touch path.** `node tests/webkit-touch/test.mjs` (real WebKit + iPhone touchscreen).
+   REQUIRED whenever marker/road/coverage taps or the `COARSE_POINTER` branch changed —
+   e.g. the persistent-Alexander-beacon close behavior. Chromium/`browse` can't reach it.
+4. **Mobile eyeball (ground truth).** On a real iPhone Safari, walk BOTH tabs: hero
+   photos load with correct credit/license captions and legible framing; the river/battle
+   `photo_caption` labels read right; tap a stop/site → close via map tap → the selection
+   stays findable (Alexander beacon persists, Roman marker identifiable); Clear dismisses.
+   Headless verification is NOT a substitute for this pass on the heavy map.
+
+Merge mechanics: prefer rebasing the branch onto `main` first (risk #4) so the merge is
+clean, then a fast-forward / no-op merge. Deploy = push `main` (Pages); confirm with
+`git log --oneline -1` before calling it shipped.
+
 **Not to be confused with:** the OneDrive "Cowork" density folder — that was an
 *old-architecture* fork that bulk-injected ~900 Pleiades places into a monolithic
 `data.js`; it was rejected (would regress the build-split site, and those places already

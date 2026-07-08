@@ -10,12 +10,35 @@ window.ALEXANDER_PHOTOS = {
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Hazara-Region_in_Pakistan_von_James_Abbott.jpg"
   },
+  "59837": {
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Jhelum_River-Pakistan.jpg/960px-Jhelum_River-Pakistan.jpg",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Jhelum_River-Pakistan.jpg",
+    "credit": "Myasinilyas",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Jhelum_River-Pakistan.jpg"
+  },
+  "59839": {
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Beasmanikant.jpg/960px-Beasmanikant.jpg",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/7/75/Beasmanikant.jpg",
+    "credit": "Achiwiki356 at English Wikipedia",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Beasmanikant.jpg"
+  },
   "59915": {
     "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Sherdor_madrasah_3.jpg/960px-Sherdor_madrasah_3.jpg",
     "full": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Sherdor_madrasah_3.jpg",
     "credit": "Adam Harangozó",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Sherdor_madrasah_3.jpg"
+  },
+  "59987": {
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Indus_River_Delta.jpg",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Indus_River_Delta.jpg",
+    "credit": "NASA",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Indus_River_Delta.jpg",
+    "position": "center 50%",
+    "caption": "Pictured: Indus delta; Patala location approximate"
   },
   "60083": {
     "thumb": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Double-Headed_Eagle_Stupa_at_Sirkap_08.jpg",
@@ -116,11 +139,12 @@ window.ALEXANDER_PHOTOS = {
     "source": "https://commons.wikimedia.org/wiki/File:SiwaAghurmiTemple.jpg"
   },
   "727070": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/AlexandriaSkyline.jpg/960px-AlexandriaSkyline.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/4/48/AlexandriaSkyline.jpg",
-    "credit": "ASaber91",
-    "license": "CC BY-SA 4.0",
-    "source": "https://commons.wikimedia.org/wiki/File:AlexandriaSkyline.jpg"
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Alexandrie_Th%C3%A9%C3%A2tre_romain_2.jpg/960px-Alexandrie_Th%C3%A9%C3%A2tre_romain_2.jpg",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/d/db/Alexandrie_Th%C3%A9%C3%A2tre_romain_2.jpg",
+    "credit": "Codex",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Alexandrie_Th%C3%A9%C3%A2tre_romain_2.jpg",
+    "position": "center 45%"
   },
   "736963": {
     "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Memphis%2C_Ramses_II%2C_Ancient_Egypt.jpg/960px-Memphis%2C_Ramses_II%2C_Ancient_Egypt.jpg",
@@ -144,18 +168,29 @@ window.ALEXANDER_PHOTOS = {
     "source": "https://commons.wikimedia.org/wiki/File:The_Apadana,_a_large_hypostyle_room_of_36_columns_in_the_Palace_of_Darius,_Susa,_capital_of_Elam_and_of_the_Achaemenid_Empire,_Iran_(46950284624).jpg"
   },
   "922693": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Pasargadae%2C_Marv_Dasht%2C_near_Shiraz_-_4-8-2013.jpg/960px-Pasargadae%2C_Marv_Dasht%2C_near_Shiraz_-_4-8-2013.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Pasargadae%2C_Marv_Dasht%2C_near_Shiraz_-_4-8-2013.jpg",
-    "credit": "Soheil Callage",
-    "license": "CC BY-SA 4.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Pasargadae,_Marv_Dasht,_near_Shiraz_-_4-8-2013.jpg"
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/a/a8/Cyrus_tomb.jpg",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/a/a8/Cyrus_tomb.jpg",
+    "credit": "Behrad18n",
+    "license": "Copyrighted free use",
+    "source": "https://commons.wikimedia.org/wiki/File:Cyrus_tomb.jpg",
+    "position": "center 42%"
   },
   "922695": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/3/39/Gate_of_All_Nations%2C_Persepolis.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/3/39/Gate_of_All_Nations%2C_Persepolis.jpg",
-    "credit": "Alborzagros",
-    "license": "CC BY-SA 3.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Gate_of_All_Nations,_Persepolis.jpg"
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/%D9%BE%D8%A7%D9%86%D9%88%D8%B1%D8%A7%D9%85%D8%A7_%D8%B1%D9%88%D8%B2_%D8%AA%D8%AE%D8%AA_%D8%AC%D9%85%D8%B4%DB%8C%D8%AF.jpg/960px-%D9%BE%D8%A7%D9%86%D9%88%D8%B1%D8%A7%D9%85%D8%A7_%D8%B1%D9%88%D8%B2_%D8%AA%D8%AE%D8%AA_%D8%AC%D9%85%D8%B4%DB%8C%D8%AF.jpg",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/7/7b/%D9%BE%D8%A7%D9%86%D9%88%D8%B1%D8%A7%D9%85%D8%A7_%D8%B1%D9%88%D8%B2_%D8%AA%D8%AE%D8%AA_%D8%AC%D9%85%D8%B4%DB%8C%D8%AF.jpg",
+    "credit": "Hamidhassas",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:%D9%BE%D8%A7%D9%86%D9%88%D8%B1%D8%A7%D9%85%D8%A7_%D8%B1%D9%88%D8%B2_%D8%AA%D8%AE%D8%AA_%D8%AC%D9%85%D8%B4%DB%8C%D8%AF.jpg",
+    "position": "center 55%"
+  },
+  "961886": {
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Green_Mosque%2C_Balkh.jpg/960px-Green_Mosque%2C_Balkh.jpg",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Green_Mosque%2C_Balkh.jpg",
+    "credit": "AhmadElhan",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Green_Mosque,_Balkh.jpg",
+    "position": "center 48%",
+    "caption": "Pictured: later ruins at Balkh/Bactra"
   },
   "461581651": {
     "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/The_ruins_of_the_Mausoleum_at_Halicarnassus.jpg/960px-The_ruins_of_the_Mausoleum_at_Halicarnassus.jpg",
@@ -170,5 +205,32 @@ window.ALEXANDER_PHOTOS = {
     "credit": "Rictor Norton",
     "license": "CC BY 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:Ishtar_Gate_at_Berlin_Museum.jpg"
+  },
+  "sogdian-rock": {
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Vista_de_les_muntanyes_al_sud_de_Mazori_Sharif_%28Panjakent%2C_Sughd%2C_Tajikistan%29.jpg/960px-Vista_de_les_muntanyes_al_sud_de_Mazori_Sharif_%28Panjakent%2C_Sughd%2C_Tajikistan%29.jpg",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Vista_de_les_muntanyes_al_sud_de_Mazori_Sharif_%28Panjakent%2C_Sughd%2C_Tajikistan%29.jpg",
+    "credit": "Sorneguer",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Vista_de_les_muntanyes_al_sud_de_Mazori_Sharif_(Panjakent,_Sughd,_Tajikistan).jpg",
+    "position": "center 52%",
+    "caption": "Pictured: Sughd mountain landscape; exact site disputed"
+  },
+  "gedrosian-route": {
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Baluchistan_Canyons.jpg/960px-Baluchistan_Canyons.jpg",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/8/81/Baluchistan_Canyons.jpg",
+    "credit": "Uzair189",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Baluchistan_Canyons.jpg",
+    "position": "center 48%",
+    "caption": "Pictured: Makran/Balochistan landscape; route generalized"
+  },
+  "opis": {
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/160731-D-PB383-021_Tigris_River_flows_through_Baghdad%2C_July_2016.JPG/960px-160731-D-PB383-021_Tigris_River_flows_through_Baghdad%2C_July_2016.JPG",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/f/fe/160731-D-PB383-021_Tigris_River_flows_through_Baghdad%2C_July_2016.JPG",
+    "credit": "DoD photo by Navy Petty Officer 2nd Class Dominique A. Pineiro",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:160731-D-PB383-021_Tigris_River_flows_through_Baghdad,_July_2016.JPG",
+    "position": "center 52%",
+    "caption": "Pictured: Tigris near Baghdad; Opis location uncertain"
   }
 };

@@ -762,6 +762,10 @@ function toggleAlexCert(key) {
 }
 function clearAlexSpotlight() {
   alexLitPhases.clear(); alexLitCerts.clear();
+  // Also dismiss the persistent per-stop mark (beacon + lit stop) that now
+  // survives closePanel — this is its explicit off-switch.
+  setActiveAlexanderLayer(null);
+  clearAlexanderBeacon();
   applyAlexanderSpotlight();
   if (typeof closeMobileLegend === 'function') closeMobileLegend();
 }
@@ -811,23 +815,41 @@ function showAlexanderPanel(stop, layer) {
     heroCredit.id = 'hero-credit';
     hero.appendChild(heroCredit);
   }
+  let heroCaption = document.getElementById('hero-caption');
+  if (!heroCaption) {
+    heroCaption = document.createElement('div');
+    heroCaption.id = 'hero-caption';
+    hero.appendChild(heroCaption);
+  }
   heroIcon.textContent = 'A';
   // Hero photo from the scholarly record (Wikidata P18 → Wikimedia Commons,
   // baked by build-alexander-photos.mjs with attribution). Falls back to the
   // phase-tinted gradient + "A" glyph for stops with no image (battlefields,
   // thin places). setHeroPhoto's vici transform-rewrite no-ops on Commons URLs.
-  const photo = (typeof window !== 'undefined' && window.ALEXANDER_PHOTOS && stop.pleiades)
-    ? window.ALEXANDER_PHOTOS[stop.pleiades] : null;
+  const photo = (typeof window !== 'undefined' && window.ALEXANDER_PHOTOS)
+    ? (stop.pleiades && window.ALEXANDER_PHOTOS[stop.pleiades]) || window.ALEXANDER_PHOTOS[stop.id]
+    : null;
   if (photo && photo.thumb) {
     setHeroPhoto(hero, heroIcon, photo.thumb,
-      'linear-gradient(180deg, rgba(17,10,0,0.05) 0%, rgba(17,10,0,0.85) 100%)');
+      'linear-gradient(180deg, rgba(17,10,0,0.05) 0%, rgba(17,10,0,0.85) 100%)',
+      photo.position || 'center');
     const by = photo.credit || 'Wikimedia Commons';
     heroCredit.textContent = `${by}${photo.license ? ' · ' + photo.license : ''} · via Wikimedia Commons`;
     heroCredit.style.display = '';
+    // Some stops are river/event markers whose P18 depicts the river, not the
+    // site — label it honestly so the photo isn't read as a battlefield scene.
+    const caption = photo.caption || stop.photo_caption;
+    if (caption) {
+      heroCaption.textContent = caption;
+      heroCaption.style.display = '';
+    } else {
+      heroCaption.style.display = 'none';
+    }
   } else {
     hero.style.background = `radial-gradient(ellipse at center, ${color}22 0%, #110a00 70%)`;
     heroIcon.style.opacity = '';
     heroCredit.style.display = 'none';
+    heroCaption.style.display = 'none';
   }
   document.getElementById('hero-coords').textContent = stop.year_label || '';
   document.getElementById('hero-modern').textContent = (phase && phase.label) ? phase.label : 'Alexander campaign';
@@ -1552,16 +1574,46 @@ const VIA_BLURB = "What's VIA? It overlays the ancient Roman world on today's ma
 function viciSized(url, w) {
   return url.replace(/\/cover\/w\d+xh\d+\//, `/cover/w${w}xh${w}/`);
 }
-function setHeroPhoto(hero, heroIcon, url, grad) {
+function setHeroPhoto(hero, heroIcon, url, grad, position = 'center') {
   const thumb = viciSized(url, 48);
   const full  = viciSized(url, 800);
-  hero.style.background  = `${grad}, url("${thumb}") center/cover no-repeat`;
+  hero.style.background  = `${grad}, url("${thumb}") ${position}/cover no-repeat`;
   heroIcon.style.opacity = '0';
   const img = new Image();
   img.onload = () => {
-    hero.style.background = `${grad}, url("${full}") center/cover no-repeat`;
+    hero.style.background = `${grad}, url("${full}") ${position}/cover no-repeat`;
   };
   img.src = full;
+}
+
+function romanSitePhoto(site) {
+  return (typeof window !== 'undefined' && window.SITE_PHOTOS && site && site.pleiades)
+    ? window.SITE_PHOTOS[site.pleiades] : null;
+}
+
+function applyRomanSiteHero(hero, heroIcon, heroCredit, site, color) {
+  const photo = romanSitePhoto(site);
+  if (photo && photo.thumb) {
+    setHeroPhoto(hero, heroIcon, photo.thumb,
+      'linear-gradient(180deg, rgba(17,10,0,0.05) 0%, rgba(17,10,0,0.85) 100%)',
+      photo.position || 'center');
+    const by = photo.credit || 'Wikimedia Commons';
+    heroCredit.textContent = `${by}${photo.license ? ' · ' + photo.license : ''} · via Wikimedia Commons`;
+    heroCredit.style.display = '';
+    return true;
+  }
+  if (site.vici && site.vici.image) {
+    setHeroPhoto(hero, heroIcon, site.vici.image,
+      'linear-gradient(180deg, rgba(17,10,0,0.05) 0%, rgba(17,10,0,0.85) 100%)');
+    const by = site.vici.creator ? `© ${site.vici.creator}` : 'vici.org';
+    heroCredit.textContent = `${by}${site.vici.license ? ' · ' + site.vici.license : ''} · via vici.org`;
+    heroCredit.style.display = '';
+    return true;
+  }
+  hero.style.background = `radial-gradient(ellipse at center, ${color}18 0%, #110a00 70%)`;
+  heroIcon.style.opacity = '';
+  heroCredit.style.display = 'none';
+  return false;
 }
 
 function showPanel(site) {
@@ -1609,18 +1661,8 @@ function showPanel(site) {
     heroCredit.id = 'hero-credit';
     hero.appendChild(heroCredit);
   }
-  if (site.vici && site.vici.image) {
-    setHeroPhoto(hero, heroIcon, site.vici.image,
-      'linear-gradient(180deg, rgba(17,10,0,0.05) 0%, rgba(17,10,0,0.85) 100%)');
-    const by = site.vici.creator ? `© ${site.vici.creator}` : 'vici.org';
-    heroCredit.textContent = `${by}${site.vici.license ? ' · ' + site.vici.license : ''} · via vici.org`;
-    heroCredit.style.display = '';
-  } else {
-    hero.style.background = `radial-gradient(ellipse at center, ${color}18 0%, #110a00 70%)`;
-    heroIcon.style.opacity = '';
-    heroCredit.style.display = 'none';
-  }
   heroIcon.textContent = tc.icon;
+  applyRomanSiteHero(hero, heroIcon, heroCredit, site, color);
   document.getElementById('hero-coords').textContent =
     `${Math.abs(site.lat).toFixed(4)}°${site.lat>=0?'N':'S'}  ${Math.abs(site.lng).toFixed(4)}°${site.lng>=0?'E':'W'}`;
   document.getElementById('hero-modern').textContent = site.modern;
@@ -1817,11 +1859,22 @@ function panToWithPanelOffset(latlng, zoom) {
 function closePanel() {
   const panel = document.getElementById('info-panel');
   const pulseSiteIdAfterClose = pendingClosePulseSiteId;
+  // An Alexander stop renders DIM (r=4, ~26% opacity) when unselected, so on
+  // mobile — where the panel covers the map — tearing down the beacon AND
+  // un-lighting the stop on close left the just-viewed stop unfindable the
+  // instant you dismissed the panel ("tap the map. Gone!"). Keep the beacon +
+  // lit stop as a persistent "you viewed this" mark. It's replaced when another
+  // stop is picked (dropAlexanderBeacon clears first), cleared on mode switch
+  // (refreshAlexanderLayer), and dismissable via the legend Clear button
+  // (clearAlexSpotlight). Non-Alexander closes still tear down normally.
+  const keepAlexanderMark = currentPanelKind === 'alexander';
   panel.classList.remove('open');
   panel.classList.remove('segment-panel');
   panel.classList.remove('alexander-panel');
-  setActiveAlexanderLayer(null);
-  clearAlexanderBeacon();
+  if (!keepAlexanderMark) {
+    setActiveAlexanderLayer(null);
+    clearAlexanderBeacon();
+  }
   if (activeMarker) {
     activeMarker.setIcon(makeIcon(activeMarker._site, false));
     activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
@@ -3482,14 +3535,23 @@ function showSegmentPanel(meta, latlngs, segIds) {
   let heroPhoto = null;
   if (latlngs) {
     const cands = nearestSitesToSegment(latlngs, 80, 12);
-    heroPhoto = cands.find(x => x.site && x.site.vici && x.site.vici.image) || null;
+    heroPhoto = cands.find(x => x.site && (romanSitePhoto(x.site) || (x.site.vici && x.site.vici.image))) || null;
   }
   if (heroPhoto) {
+    const p = romanSitePhoto(heroPhoto.site);
     const v = heroPhoto.site.vici;
-    setHeroPhoto(hero, heroIcon, v.image,
-      'linear-gradient(180deg, rgba(17,10,0,0.05) 0%, rgba(17,10,0,0.88) 100%)');
-    const by = v.creator ? `© ${v.creator}` : 'vici.org';
-    heroCredit.textContent = `${heroPhoto.site.name} · ${by}${v.license ? ' · ' + v.license : ''} · via vici.org`;
+    if (p && p.thumb) {
+      setHeroPhoto(hero, heroIcon, p.thumb,
+        'linear-gradient(180deg, rgba(17,10,0,0.05) 0%, rgba(17,10,0,0.88) 100%)',
+        p.position || 'center');
+      const by = p.credit || 'Wikimedia Commons';
+      heroCredit.textContent = `${heroPhoto.site.name} · ${by}${p.license ? ' · ' + p.license : ''} · via Wikimedia Commons`;
+    } else {
+      setHeroPhoto(hero, heroIcon, v.image,
+        'linear-gradient(180deg, rgba(17,10,0,0.05) 0%, rgba(17,10,0,0.88) 100%)');
+      const by = v.creator ? `© ${v.creator}` : 'vici.org';
+      heroCredit.textContent = `${heroPhoto.site.name} · ${by}${v.license ? ' · ' + v.license : ''} · via vici.org`;
+    }
     heroCredit.style.display = '';
   } else {
     hero.style.background = `radial-gradient(ellipse at center, ${col}18 0%, #110a00 70%)`;
@@ -3581,7 +3643,8 @@ function showSegmentPanel(meta, latlngs, segIds) {
       for (const { site, km } of list) {
         const row = document.createElement('button');
         row.className = 'seg-near-row';
-        const photo = site.vici && site.vici.image;
+        const sitePhoto = romanSitePhoto(site);
+        const photo = sitePhoto ? sitePhoto.thumb : (site.vici && site.vici.image);
         const thumb = document.createElement('span');
         thumb.className = 'seg-near-thumb' + (photo ? '' : ' empty');
         if (photo) thumb.style.backgroundImage = `url("${photo}")`;

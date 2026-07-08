@@ -6,6 +6,7 @@
     "test:webkit": "node tests/webkit-touch/test.mjs",
 
     "regen:photos": "node scripts/detect-pleiades-photos.mjs",
+    "regen:site-photos": "node scripts/build-site-photos.mjs",
     "regen:vici-sites": "node --max-old-space-size=4096 scripts/build-elevation-worklist.mjs --emit-sites",
     "regen:sites": "node scripts/build-sites.mjs",
     "regen:vici-links": "node scripts/build-vici-links.mjs",

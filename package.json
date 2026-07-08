@@ -14,9 +14,10 @@
     "regen:orbis": "node scripts/build-orbis.mjs",
     "regen:roads": "node scripts/build-roads.mjs",
     "regen:alex-photos": "node scripts/build-alexander-photos.mjs",
+    "regen:coverage-photos": "node scripts/build-coverage-photos.mjs",
 
     "regen:sites-all": "npm run regen:photos && npm run regen:vici-sites && npm run regen:sites && npm run regen:vici-links && npm run regen:linked-data",
-    "regen:all": "npm run regen:sites-all && npm run regen:orbis && npm run regen:roads"
+    "regen:all": "npm run regen:sites-all && npm run regen:orbis && npm run regen:roads && npm run regen:coverage-photos"
   },
   "devDependencies": {
     "playwright": "^1.49.0"

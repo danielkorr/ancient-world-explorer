@@ -27,6 +27,7 @@ committed. All sources are slow-moving academic datasets, so regeneration is an
 | 6 | `js/orbis-days.js` + `js/orbis-graph.js` | `build-orbis.mjs` | `regen:orbis` | ORBIS network (gorbit mirror) | ✅ (graph lazy) |
 | 7 | `js/roads-itinere.js` + `js/roads-itinere-pleiades.js` | `build-roads.mjs` | `regen:roads` | Itiner-e live export | ✅ (pp lazy) |
 | 8 | `js/alexander-photos.js` | `build-alexander-photos.mjs` | `regen:alex-photos` | Wikidata P18 → Wikimedia Commons | ✅ cold start |
+| 9 | `js/coverage-photos.json` | `build-coverage-photos.mjs` | `regen:coverage-photos` | Wikidata P1584→P18 (bulk) | ✅ (coverage lazy) |
 | — | `js/sites-enrichment.json` | `build-enrichment.mjs` | — | Pleiades + Wikidata + Commons | ⚠️ **NOT wired** (spike) |
 
 `#8 build-enrichment.mjs` is an experimental v2 spike; its output is **not loaded by
@@ -47,14 +48,19 @@ build-linked-data (5)            [reads data.js + sites-pleiades.js (3) + sites-
 
 build-orbis (6)                  independent
 build-roads (7)                  independent
+
+build-coverage-photos (8)        [reads js/sites-coverage.js, emitted by 3 — run 8 after 3]
 ```
 
-Two hard ordering rules:
+Three hard ordering rules:
 1. **`build-linked-data` runs last** in the site pipeline — it scrapes foreground
    Pleiades ids out of `data.js`, `sites-pleiades.js`, and `sites-vici.js`, so those
    must already be current.
 2. **`detect-pleiades-photos` before `build-sites`** if you want fresh photo-quest
    signal (otherwise the cached JSON wins, which is usually fine).
+3. **`build-coverage-photos` after `build-sites`** — it reads the freshly generated
+   `sites-coverage.js` for the Pleiades ids to look up; a stale coverage file just
+   means the photo lookup is built against last run's site list.
 
 `build-orbis` and `build-roads` touch none of the above — run them anytime.
 
@@ -124,9 +130,16 @@ node scripts/build-linked-data.mjs --sample 8
 | Roads | [Itiner-e](https://itiner-e.org) live export | **CC BY 4.0** |
 | Sites / coverage | [Pleiades](https://pleiades.stoa.org) CSV dump | CC BY (Pleiades) |
 | Photo signal | Wikidata **P18** | CC0 (data) |
+| Coverage-tier photos | Wikidata **P1584→P18** + Wikimedia Commons | per-image (Commons license/credit stored per entry) |
 | vici sites / links | [vici.org](https://vici.org) dump | **CC BY-SA 3.0** images / CC0 metadata |
 | Linked-data sidebar | `pleiades.datasets` (ISAW) | per-source |
 | ORBIS days | [ORBIS](https://orbis.stanford.edu) via gorbit mirror | per ORBIS |
+
+**Coverage-tier photos are a "looks related" signal, not a scholarly one** — unlike
+`detect-pleiades-photos` (which feeds the quest system and needs to be right),
+`build-coverage-photos` only needs the photo to be plausibly of the right place; a
+light Wikidata P31 blacklist (rivers, seas, ethnic groups, provinces, etc.) is the
+only filter. Don't repurpose its output for anything that needs precision.
 
 Attribution obligations (CC BY / CC BY-SA) are honored at runtime via the map
 `attributionControl`. Don't drop them. vici photos are **ShareAlike** — reference

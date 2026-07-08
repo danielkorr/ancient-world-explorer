@@ -1736,6 +1736,10 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 .p-btn-gold:hover  { background:rgba(212,168,83,0.17); }
 .p-btn-vici  { background:rgba(150,110,200,0.07); border-color:rgba(150,110,200,0.22); color:#b394e0; }
 .p-btn-vici:hover  { background:rgba(150,110,200,0.15); border-color:rgba(150,110,200,0.45); }
+.p-btn-livius { background:rgba(200,130,70,0.07); border-color:rgba(200,130,70,0.22); color:#d99f6e; }
+.p-btn-livius:hover { background:rgba(200,130,70,0.15); border-color:rgba(200,130,70,0.45); }
+.p-btn-omnesviae { background:rgba(190,70,60,0.07); border-color:rgba(190,70,60,0.22); color:#e08578; }
+.p-btn-omnesviae:hover { background:rgba(190,70,60,0.15); border-color:rgba(190,70,60,0.45); }
 .p-btn-email { background:rgba(240,230,211,0.06); border-color:rgba(240,230,211,0.22); color:#e8dcc2; }
 .p-btn-email:hover { background:rgba(240,230,211,0.13); border-color:rgba(240,230,211,0.45); }
 
@@ -2515,6 +2519,28 @@ path.leaflet-interactive { outline: none !important; }
     background: rgba(212,168,83,0.25);
     border-radius: 2px;
     margin: 10px auto 0;
+  }
+
+  /* On desktop the OS scrollbar itself signals there's more of the welcome
+     card below the fold; mobile browsers overlay/auto-hide theirs, so nothing
+     hints the card scrolls. A sticky fade pinned to the bottom of the visible
+     area does the same job with no JS: as the last flow child, it's held at
+     bottom:0 (overlapping the last ~32px of text) for every scroll position
+     except the true end, where it settles into normal flow and stops
+     overlaying anything — i.e. it disappears exactly when there's nothing
+     left to scroll to. (The equivalent background-attachment:local trick was
+     tried first and is a documented no-op in WebKit/Safari — verified dead
+     on-device here — so this uses position:sticky instead, which Safari
+     supports correctly.) */
+  #welcome-card::after {
+    content: '';
+    display: block;
+    position: sticky;
+    bottom: 0;
+    height: 32px;
+    margin-top: -32px;
+    background: linear-gradient(rgba(10,5,0,0), var(--ink-panel) 85%);
+    pointer-events: none;
   }
 }
 

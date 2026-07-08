@@ -26,8 +26,8 @@ const QUEST = {
     shape: 'circle',
     icon:  '📷',
     label: 'Photo Quest · Open',
-    text:  'This place has no portrait photo in the scholarly record. Be the traveler who closes the gap.',
-    pitch: 'No one has ever submitted a portrait photograph of this place to humanity’s authoritative atlas of the ancient world. You can change that.',
+    text:  'No photo is linked to this place’s Wikidata record — the cross-reference Pleiades relies on. Be the traveler who closes the gap.',
+    pitch: 'This isn’t a Pleiades photo field — Pleiades doesn’t have one. VIA checks whether the Wikidata item Pleiades cross-references has an image on file, and this one doesn’t. A photo of the place may already exist online; if so, add it to Wikimedia Commons and set it as that item’s image, and the record catches up automatically.',
     cta:   'Take this Quest →',
   },
   location: {
@@ -394,7 +394,11 @@ function findNearestItinere(latlng, cp, threshPx) {
       prev = cur;
     }
   }
-  return best;
+  // Spread into a fresh object (never mutate the shared itinereSegs record) so
+  // callers that need to arbitrate against findNearestCoverage's own distance
+  // (a road and a coverage dot converge at every road-junction town — see
+  // findNearestCoverage) can compare _dist without an extra lookup pass.
+  return best ? { ...best, _dist: bestD } : null;
 }
 
 // ── ROADS CERTAINTY FILTER ───────────────────────────────
@@ -469,6 +473,7 @@ const ROAD_CASING_COLOR = '#1a0e00';     // deep umber — dark enough vs both s
 const ROAD_CASING_WEIGHT = 4.5;          // toned down from 6 — less overwhelming on first load
 const ROAD_FILL_COLOR    = '#ffd66b';     // bright saffron — high luminance vs casing
 const ROAD_FILL_WEIGHT   = 2;            // toned down from 3 — slimmer saffron core
+const ROAD_HIT_WEIGHT    = 22;           // invisible tap strip width, shared with the click handler below
 
 // Open the road-segment panel for a tap/click at `latlng`: the nearest Itiner-e
 // segment wins; otherwise fall back to the curated road's own rich copy. The
@@ -511,7 +516,7 @@ ROADS.forEach(road => {
   // why road names vanished on mobile). This wide transparent stroke makes the road
   // tappable, and `click` opens the name on a phone while hover still works on desktop.
   const hit = L.polyline(latlngs, {
-    color: '#000', weight: 22, opacity: 0, lineCap: 'round', lineJoin: 'round',
+    color: '#000', weight: ROAD_HIT_WEIGHT, opacity: 0, lineCap: 'round', lineJoin: 'round',
   })
    // Hover shows just the road NAME — a compact one-line label, not a paragraph.
    // The full desc + date live in the road panel that a click opens (and used to
@@ -521,6 +526,18 @@ ROADS.forEach(road => {
      { className:'road-tip', sticky:true }
    )
    .on('click', function (e) {
+     // This invisible strip is intentionally fat (a 2px road needs a real hit
+     // target) — but that fatness is exactly what swallows the tap of any town
+     // sitting right on the road it was named for (a coverage dot is a canvas
+     // point with no DOM hit of its own, so it never gets a chance to compete
+     // once this real DOM element has already caught the click). A coverage
+     // dot at least as close as this strip's own half-width wins instead.
+     const cov = findNearestCoverage(e.latlng, e.containerPoint);
+     if (cov && cov._dist <= ROAD_HIT_WEIGHT / 2) {
+       L.DomEvent.stopPropagation(e);
+       focusCoverage(cov);
+       return;
+     }
      // Desktop: open the name tooltip AND the segment panel, then stop the event
      // so the map-level click doesn't re-resolve (and possibly close) the panel.
      // Mobile routes curated-road taps through the overlayPane touchend handler,
@@ -1519,12 +1536,23 @@ if (COARSE_POINTER) {
     // nearby Itiner-e CANVAS segment (the ~14,800 secondaries are non-DOM canvas
     // paths iOS won't synthesize a click for). Resolve which one this tap hits now.
     const pathEl = e.target.closest && e.target.closest('path');
-    let road = null;
-    if (pathEl) roadsGroup.eachLayer(l => { if (l._path === pathEl && l.getTooltip && l.getTooltip()) road = l; });
+    let roadHit = null;
+    if (pathEl) roadsGroup.eachLayer(l => { if (l._path === pathEl && l.getTooltip && l.getTooltip()) roadHit = l; });
     const cp  = ll ? map.latLngToContainerPoint(ll) : null;
-    const seg = (!road && ll) ? findNearestItinere(ll, cp) : null;
-    // A documented-coverage dot, but only when no road won and the dots are showing.
-    const cov = (!road && !seg && ll) ? findNearestCoverage(ll, cp) : null;
+    // A coverage dot at least as close as the road hit-strip's own half-width
+    // wins even over a literal DOM hit on the curated road (a canvas coverage
+    // dot has no DOM element of its own to compete with the road's fat invisible
+    // tap strip) — same Parma-on-the-Via-Aemilia problem as the desktop click
+    // handler (ROADS.forEach above) and the map-level click handler below.
+    const covRaw = ll ? findNearestCoverage(ll, cp) : null;
+    const road = (roadHit && covRaw && covRaw._dist <= ROAD_HIT_WEIGHT / 2) ? null : roadHit;
+    // Below curated-road-or-not, a nearby Itiner-e segment and a nearby coverage
+    // dot are both just nearest-neighbor guesses — comparing _dist picks
+    // whichever is actually closer instead of always favoring the segment.
+    const segRaw = (!road && ll) ? findNearestItinere(ll, cp) : null;
+    const segWins = segRaw && (!covRaw || segRaw._dist <= covRaw._dist);
+    const seg = (!road && segWins) ? segRaw : null;
+    const cov = (!road && !segWins && covRaw) ? covRaw : null;
     // …or the searched place's pin (reopen its panel even when dots aren't showing).
     const pin = (!road && !seg && !cov && ll) ? nearestPinnedCoverage(ll, cp) : null;
 
@@ -1574,9 +1602,15 @@ const VIA_BLURB = "What's VIA? It overlays the ancient Roman world on today's ma
 function viciSized(url, w) {
   return url.replace(/\/cover\/w\d+xh\d+\//, `/cover/w${w}xh${w}/`);
 }
-function setHeroPhoto(hero, heroIcon, url, grad, position = 'center') {
-  const thumb = viciSized(url, 48);
-  const full  = viciSized(url, 800);
+// Wikimedia Commons Special:FilePath redirects to a correctly-sized thumbnail
+// when given a `width` query param — used by site.photo (Wikidata-sourced
+// hero photos), the non-vici counterpart to viciSized.
+function commonsSized(url, w) {
+  return `${url}${url.includes('?') ? '&' : '?'}width=${w}`;
+}
+function setHeroPhoto(hero, heroIcon, url, grad, position = 'center', sizeFn = viciSized) {
+  const thumb = sizeFn(url, 48);
+  const full  = sizeFn(url, 800);
   hero.style.background  = `${grad}, url("${thumb}") ${position}/cover no-repeat`;
   heroIcon.style.opacity = '0';
   const img = new Image();
@@ -1607,6 +1641,17 @@ function applyRomanSiteHero(hero, heroIcon, heroCredit, site, color) {
       'linear-gradient(180deg, rgba(17,10,0,0.05) 0%, rgba(17,10,0,0.85) 100%)');
     const by = site.vici.creator ? `© ${site.vici.creator}` : 'vici.org';
     heroCredit.textContent = `${by}${site.vici.license ? ' · ' + site.vici.license : ''} · via vici.org`;
+    heroCredit.style.display = '';
+    return true;
+  }
+  // Coverage long-tail hero (build-coverage-photos.mjs, Wikidata P18 → Commons):
+  // a `photo` object stamped onto lazy coverage records in ensureCoverageLoaded.
+  if (site.photo && site.photo.url) {
+    setHeroPhoto(hero, heroIcon, site.photo.url,
+      'linear-gradient(180deg, rgba(17,10,0,0.05) 0%, rgba(17,10,0,0.85) 100%)',
+      site.photo.position || 'center', commonsSized);
+    const by = site.photo.credit ? `© ${site.photo.credit}` : (site.photo.via || 'Wikimedia Commons');
+    heroCredit.textContent = `${by}${site.photo.license ? ' · ' + site.photo.license : ''} · via ${site.photo.via || 'Wikimedia Commons'}`;
     heroCredit.style.display = '';
     return true;
   }
@@ -1745,6 +1790,28 @@ function showPanel(site) {
       <span class="p-btn-ext" aria-hidden="true">↗</span>
     </a>` : '';
 
+  // Livius.org — Jona Lendering's narrative encyclopedia. Hand-curated per
+  // curated site (site.livius, data.js) since there's no id to join against;
+  // ~58 of the 74 curated sites have a matching article.
+  const liviusBtn = site.livius ? `
+    <a href="${site.livius}" onclick="saveReturnState()" class="p-btn p-btn-livius">
+      <span class="p-btn-icon">📖</span>
+      <div><div class="p-btn-main">Livius.org</div><div class="p-btn-sub">History &amp; context, in plain English</div></div>
+      <span class="p-btn-ext" aria-hidden="true">↗</span>
+    </a>` : '';
+
+  // OmnesViae — schematic Tabula Peutingeriana + Antonine Itinerary reconstruction.
+  // Hand-curated per curated site (site.omnesviae, data.js): their /api/labels
+  // search has no CORS and no Pleiades id to join against, so ids were resolved
+  // by hand and spot-verified; ~65 of the 74 curated sites have a match.
+  const omnesviaeBtn = site.omnesviae ? `
+    <a href="${site.omnesviae}" onclick="saveReturnState()" class="p-btn p-btn-omnesviae">
+      <span class="p-btn-icon">🛣️</span>
+      <div><div class="p-btn-main">OmnesViae</div><div class="p-btn-sub">See it on the ancient Roman road map</div></div>
+      <span class="p-btn-ext" aria-hidden="true">↗</span>
+    </a>` : '';
+  if (site.omnesviae && COARSE_POINTER) maybeHintOmnesviae();
+
   // "Email this quest" — only on quest sites. A mailto: link (NOT the OS share
   // sheet) so it opens the default mail app with a real Subject + body prefilled.
   // Same payload as the quest-modal email button (one helper, can't drift).
@@ -1790,7 +1857,7 @@ function showPanel(site) {
       <span class="p-btn-icon">📜</span>
       <div><div class="p-btn-main">Pleiades Gazetteer</div><div class="p-btn-sub">The authoritative scholarly place record</div></div>
       <span class="p-btn-ext" aria-hidden="true">↗</span>
-    </a>${viciBtn}${emailBtn}
+    </a>${liviusBtn}${omnesviaeBtn}${viciBtn}${emailBtn}
   `;
 
   // Pleiades Linked Data Sidebar — scholarly cross-references for this place.
@@ -2429,34 +2496,46 @@ let _coverageVisibleCount = 0; // dots painted in the last render — drives the
 function ensureCoverageLoaded() {
   if (QA || _coverageState !== 'idle') return;   // QA stays light; load once
   _coverageState = 'loading';
+
+  // Cosmetic hero photos for the coverage long tail (build-coverage-photos.mjs,
+  // Wikidata P1584->P18, "looks related" bar not a scholarly-precision one).
+  // Fetched in parallel with the script tag; a failure here just means coverage
+  // panels stay honest-thin, never blocks the coverage data itself from loading.
+  const photoPromise = fetch('js/coverage-photos.json?v=' + BUILD)
+    .then(r => r.ok ? r.json() : {})
+    .catch(() => ({}));
+
   const s = document.createElement('script');
   s.src = 'js/sites-coverage.js?v=' + BUILD;     // same cache token as the app
   s.async = true;
   s.onload = () => {
     const raw = (typeof window.SITES_COVERAGE !== 'undefined') ? window.SITES_COVERAGE : [];
-    // Dedup against everything already interactive (curated + foreground Pleiades
-    // + vici), by pleiades id. Site-shape the thin records so showPanel can render
-    // them, and precompute the normalized name so search doesn't re-normalize 25k
-    // strings per keystroke.
-    const existing = new Set(SITES.map(x => x.pleiades).filter(Boolean));
-    _coverageData = [];
-    for (const r of raw) {
-      if (r.pleiades && existing.has(r.pleiades)) continue;
-      r.id = 'cov-' + r.pleiades;
-      r.modern = '';
-      r.desc = '';
-      r.rome_days = 0;
-      r.coverage = true;
-      r._n = normalizeSearchText(r.name);
-      _coverageData.push(r);
-    }
-    _coverageState = 'ready';
-    // Re-run the in-flight query so coverage hits appear now that we have them.
-    const input = document.getElementById('site-search-input');
-    if (input && input.value.trim()) updateSearchResults(input.value);
-    // If the slider is already on "Documented", paint the dots now (Phase B).
-    renderCoverageDots();
-    if (typeof syncDetailUI === 'function') syncDetailUI();
+    photoPromise.then((photos) => {
+      // Dedup against everything already interactive (curated + foreground Pleiades
+      // + vici), by pleiades id. Site-shape the thin records so showPanel can render
+      // them, and precompute the normalized name so search doesn't re-normalize 25k
+      // strings per keystroke.
+      const existing = new Set(SITES.map(x => x.pleiades).filter(Boolean));
+      _coverageData = [];
+      for (const r of raw) {
+        if (r.pleiades && existing.has(r.pleiades)) continue;
+        r.id = 'cov-' + r.pleiades;
+        r.modern = '';
+        r.desc = '';
+        r.rome_days = 0;
+        r.coverage = true;
+        if (photos[r.pleiades]) r.photo = photos[r.pleiades];
+        r._n = normalizeSearchText(r.name);
+        _coverageData.push(r);
+      }
+      _coverageState = 'ready';
+      // Re-run the in-flight query so coverage hits appear now that we have them.
+      const input = document.getElementById('site-search-input');
+      if (input && input.value.trim()) updateSearchResults(input.value);
+      // If the slider is already on "Documented", paint the dots now (Phase B).
+      renderCoverageDots();
+      if (typeof syncDetailUI === 'function') syncDetailUI();
+    });
   };
   s.onerror = () => { _coverageState = 'error'; };
   document.head.appendChild(s);
@@ -2935,7 +3014,9 @@ function findNearestCoverage(latlng, cp, threshPx) {
     const d = Math.hypot(cp.x - p.x, cp.y - p.y);
     if (d < bestD) { bestD = d; best = r; }
   }
-  return best;
+  // See findNearestItinere's matching comment: a fresh object (not the shared
+  // _coverageData record) carrying _dist so callers can arbitrate road-vs-dot.
+  return best ? { ...best, _dist: bestD } : null;
 }
 
 // One-time nudge the first time coverage dots ever paint — so an auto-reveal
@@ -2953,6 +3034,29 @@ function maybeHintCoverage() {
   if (!el || !t || !b) return;
   t.textContent = 'Documented places';
   b.textContent = 'These faint dots are documented places from the Pleiades gazetteer — tap one to open it. Drag Detail to “+ Documented” to keep them on.';
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 6500);
+}
+
+// One-time nudge the first time a mobile visitor sees an OmnesViae button.
+// Their route-planner page overlays a fixed-width form on top of the map with
+// no responsive collapse — on a narrow screen the map (and the place you were
+// sent to) is hidden behind it, and the only way to reveal it is tapping a
+// tiny, unlabeled drag-handle bar (dragging it just triggers pull-to-refresh).
+// Shown once ever, before they tap away, so they know what to do when it happens.
+let _omnesviaeHintShown = false;
+function maybeHintOmnesviae() {
+  if (_omnesviaeHintShown) return;
+  _omnesviaeHintShown = true;   // once per session regardless of storage availability
+  try { if (localStorage.getItem('via.omnesviaeHinted') === '1') return; } catch (e) {}
+  try { localStorage.setItem('via.omnesviaeHinted', '1'); } catch (e) {}
+  const el = document.getElementById('legend-toast');
+  const t  = document.getElementById('legend-toast-title');
+  const b  = document.getElementById('legend-toast-body');
+  if (!el || !t || !b) return;
+  t.textContent = 'Heads up: OmnesViae';
+  b.textContent = 'Their page opens with a form covering the map. Tap (don’t drag) the small bar at its top to reveal the map underneath.';
   el.classList.add('show');
   clearTimeout(_toastTimer);
   _toastTimer = setTimeout(() => el.classList.remove('show'), 6500);
@@ -3739,11 +3843,21 @@ function saveReturnState() {
   } catch (e) {}
 }
 
-// Map click: an Itiner-e road segment near the tap wins (open its panel);
-// otherwise a click on the empty map closes any open panel. This single handler
-// covers desktop clicks AND mobile taps — map-level click fires reliably on iOS
-// for taps on the canvas/background (it already drove panel-close on mobile),
-// unlike the layer-level clicks that forced the marker/road touch delegation.
+// Map click: the CLOSER of a nearby Itiner-e road segment or a coverage dot
+// wins (open its panel); otherwise a click on the empty map closes any open
+// panel. This single handler covers desktop clicks AND mobile taps — map-level
+// click fires reliably on iOS for taps on the canvas/background (it already
+// drove panel-close on mobile), unlike the layer-level clicks that forced the
+// marker/road touch delegation.
+//
+// Roads and coverage dots are both canvas paths resolved by nearest-neighbor,
+// not real hit-tests, so at a road-junction town (a site sitting right where
+// several roads cross — e.g. Parma on the Via Aemilia) a road segment is
+// ALWAYS within its own catch radius. Unconditionally preferring roads made
+// those towns permanently unreachable: no matter how precisely you clicked,
+// the road won every time and the site panel could never open. Comparing
+// _dist (both finders now return it) picks whichever is actually nearer to
+// the click instead of whichever was checked first.
 map.on('click', (e) => {
   closeDockPanels();      // a tap on the open map dismisses any dock popover
   clearSiteSearchInput(); // a direct map tap supersedes any lingering search query
@@ -3761,9 +3875,12 @@ map.on('click', (e) => {
     return;
   }
   if (appMode === 'roman') {   // Roman roads/coverage don't resolve in Alexander mode
+    // Compare _dist so whichever is actually nearer wins (see note above): at a
+    // junction town a road is always within its own radius, which used to make
+    // the site unreachable no matter how precisely you clicked.
     const seg = findNearestItinere(e.latlng, e.containerPoint);
-    if (seg) { showSegmentPanel(seg.meta, seg.ll, [seg.id]); return; }
     const cov = findNearestCoverage(e.latlng, e.containerPoint);  // only resolves when dots show
+    if (seg && (!cov || seg._dist <= cov._dist)) { showSegmentPanel(seg.meta, seg.ll, [seg.id]); return; }
     if (cov) { focusCoverage(cov); return; }
     const pin = nearestPinnedCoverage(e.latlng, e.containerPoint);  // reopen a searched place's panel
     if (pin) { focusCoverage(pin); return; }
@@ -4241,8 +4358,8 @@ try {
 } catch {}
 
 // ── QUEST MODAL + FILTER ─────────────────────────────────
-// The signature feature: surface "Pleiades has no portrait photo here"
-// (and the other quest tiers) as an open call to travelers.
+// The signature feature: surface "no image on the Wikidata record Pleiades
+// cross-references" (and the other quest tiers) as an open call to travelers.
 
 function openQuestModal() {
   if (!currentPanelSite || !currentPanelSite.quest) return;
@@ -4423,7 +4540,7 @@ const TIER_INFO = {
   photo: {
     label: 'Photo Quest',
     color: QUEST.photo.color,
-    blurb: 'No portrait photo exists in the scholarly record. Visit one and photograph it to close the gap.',
+    blurb: 'No image is linked to the Wikidata record Pleiades cross-references — even if photos of the place exist elsewhere. Add one to Wikimedia Commons/Wikidata to close the gap.',
   },
   location: {
     label: 'Location Quest',

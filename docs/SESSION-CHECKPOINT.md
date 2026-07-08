@@ -1,14 +1,20 @@
-# VIA — Session checkpoint (updated 2026-06-29)
+# VIA — Session checkpoint (updated 2026-07-08)
 
 ## Status at a glance
-- **`main`** — clean, current, everything below shipped & live on GitHub Pages.
-  Cache tokens: `app.js` / `style.css` = **v116**, `sites-linked-data.js` = **v107**
-  (the data files config/orbis/pleiades/vici still ride **v106**, unchanged).
-- **`alexander-module`** — new feature branch (origin-tracked), the Alexander
-  campaign layer isolated off `main`. Not deployed. See its section below. ⏭ resume there.
-- HEADs: `main` = `8fc27a8`, `alexander-module` = `bcea734`
-  (branch now **~10 commits behind** `main`: linked-data + map polish + topbar + the
-  v109–v115 map-features / declutter / cluster-tap / chrome work below).
+- **`main`** — clean, live on GitHub Pages. HEAD `a37389c`. Since the older "shipped"
+  list below it has also shipped: client-side **ORBIS journey routing** + fastest /
+  shortest / cheapest toggle, **road-panel deep-links** to exact Itiner-e segments +
+  their Pleiades places, **live Pleiades enrichment** for thin/coverage places,
+  Barrington-note modern-name backfill, the **data-regen playbook + `/regen-data` skill**,
+  and a journey-primer / brand-affordance UI pass.
+- **`alexander-module`** — active feature branch, **27 commits ahead of `main`, 0 behind**
+  (merge-base = `main@a37389c`). `main` is fully contained in the branch, so merging is a
+  clean **fast-forward** — the old `index.html` version-token conflict risks are GONE.
+  HEAD `7e9a94d`. Not yet deployed. Holds the whole Alexander campaign MODE plus Codex's
+  Rome hero-photo layer. ⏭ resume here.
+- **Cache tokens (branch `index.html`):** `app.js` **v142**, `style.css` **v137**,
+  `alexander.js` **v111**, `alexander-photos.js` **v4**, `site-photos.js` **v1**,
+  `sites-linked-data.js` **v107**; `data.js` / `auth.js` / `basemap.js` still **v106**.
 
 ---
 
@@ -81,37 +87,42 @@
 
 ---
 
-## Alexander module — branch `alexander-module` ⏭ RESUME HERE for that work
+## Alexander module — branch `alexander-module` ⏭ RESUME HERE
 
-In-progress campaign-route layer, deliberately isolated off `main` so the live site
-stays focused. Pushed to origin (tracking set).
+The Alexander campaign, built as a top-level **MODE over the shared map/engine** (not a
+bolt-on layer) — a tab that swaps content + chrome via `setMode`. Isolated off `main`
+until the image work settles, then fast-forward-merge. **27 commits ahead / 0 behind**
+`main` (HEAD `7e9a94d`), ~5,600-line diff across 16 files. Origin-tracked.
 
-**What's on the branch** (commit `bcea734`, branched from `main @ 988705b`):
-- `js/alexander.js` (`ALEXANDER_STOPS` data), `docs/v2-spec-alexander-layer.md`,
-  `docs/alexander-wireframes.html`.
-- `app.js`: `alexanderRouteGroup`/`StopsGroup`, route+stop rendering, phase styling,
-  `showAlexanderPanel`, `findNearestAlexanderStop`, `searchAlexander`, `layerState`
-  + `toggleLayer('alexander')`, map-click resolution, panel-class reset.
-- `index.html`: Alexander layer button + legend row + `alexander.js` script tag.
-- `css`: `.swatch-campaign`, `.legend-line.alexander`, `#info-panel.alexander-panel`.
+**What's on the branch:**
+- **Mode scaffold** — `#mode-tabs` (Roman ↔ Alexander), `setMode` content/chrome swap,
+  mode-scoped search, `?mode=alexander` deep-link, bidirectional cross-mode link chips.
+  Shipped read-only on purpose (check-ins deferred by design — see
+  [[project-alexander-mode-quest-ready]]).
+- **Campaign data** — `js/alexander.js` (`ALEXANDER_STOPS` + `ALEXANDER_ROUTES`, ~30
+  curated stops with Pleiades ids, Livius links, campaign phases); specs + wireframes in
+  `docs/v2-spec-alexander-layer.md`, `docs/v2-alexander-mode-architecture.md`,
+  `docs/alexander-wireframes.html`, plus the Fable-5 handoff/review docs.
+- **Rendering** — route + stop groups on the shared canvas, phase styling,
+  `showAlexanderPanel`, `findNearestAlexanderStop`, and a colorblind-first spotlight
+  system (search **beacon** + legend phase/certainty **filters**, dual-tone so it reads
+  under red-green vision); empire inset that follows the active mode (hidden on touch).
+- **Hero photos (BOTH tabs)** — `js/alexander-photos.js` + `scripts/build-alexander-photos.mjs`
+  (Pleiades → Wikidata P18 → Commons, per-file attribution); Codex's `js/site-photos.js`
+  + `scripts/build-site-photos.mjs` (`SITE_PHOTOS`) do the same for Roman panels.
+- **Recent UX fixes (this session, `cea2274`):** Hydaspes/Hyphasis river hero photos via
+  their true Pleiades **river** ids (59837 Jhelum, 59839 Beas — NOT the conflated Sutlej
+  60110); an honest "Pictured: the … river" caption (`#hero-caption`) so a river photo on
+  a battle marker isn't misread; and a **persistent Alexander beacon + lit stop after the
+  panel closes** — unselected stops render dim/near-invisible, so on mobile (panel covers
+  the map) the selection used to vanish on the map-tap that dismissed the panel. Now it
+  persists, is replaced on reselect, cleared on mode switch, dismissable via legend Clear.
 
-**Behind `main` by 2 commits** it doesn't have: `515ac15` (cache v107) and `bdd57c3`
-(topbar fix v108). It DOES include the map-polish (`988705b` was its branch point).
-
-**Integration risks when merging back into `main` (read before merging):**
-1. **`index.html` version-token conflict.** Branch still has `app.js`/`style.css`
-   `?v=106` (+ `alexander.js?v=106`); `main` moved them to `v108`. A merge WILL
-   conflict on those `<script>`/`<link>` token lines. Resolve = take `main`'s `v108`
-   for app/css, then bump again to bust cache, and re-add the `alexander.js` tag at the
-   same version.
-2. **`alexander.js` script tag lives only on the branch** — confirm it survives the
-   merge (it's the one new asset main has never seen).
-3. **`toggleLayer` restructure.** The branch changed the curated-roads `} else {` into
-   `} else if (which === 'sites')` to add an `alexander` branch. Merge against main's
-   current `app.js` and verify that chain is intact (no keyword-collision; it's the one
-   Alexander change with no "alexander" string in it).
-4. **Staleness.** Best to `git rebase main` (or merge main in) on the branch BEFORE
-   resuming, to pull in road polish/topbar/cache bumps and shrink the eventual diff.
+**Merging is now a fast-forward.** `main` is fully contained in the branch, so the
+earlier `index.html` token conflicts / `toggleLayer` restructure / staleness risks no
+longer apply — do NOT re-plan around them. Just run the pre-merge gate below, FF-merge,
+push. (Codex edits this branch in parallel on image work — reconcile before merging;
+see [[feedback-codex-concurrent-git-status]].)
 
 **Pre-merge gate — run this BEFORE merging `alexander-module` → `main`** (do NOT merge
 until the image work has settled and all four pass; capture evidence for anything visual):
@@ -145,8 +156,9 @@ exist in the coverage layer). Alexander is unrelated new work.
 ## Standing project rules (full detail in `CLAUDE.md` / `AGENTS.md`)
 - No ES modules — plain global `<script>` tags. No build / package manager / test
   runner (the dev-only `package.json` exists solely to pin Playwright for webkit-touch).
-- **Bump `?v=N` on every CSS/JS change** so mobile Safari refetches. Currently **v116**
-  (app/css). Keep `app.js` and `style.css` matched.
+- **Bump `?v=N` on every CSS/JS change** so mobile Safari refetches. On `alexander-module`
+  currently `app.js` **v142** / `style.css` **v137** (they've drifted — bump the one you
+  touch; bump both together when a change spans both).
 - Don't hand-edit generated files: `js/roads-itinere.js`, `js/sites-pleiades.js`,
   `js/sites-coverage.js`, `js/sites-vici.js`, `js/sites-linked-data.js`, `js/orbis-days.js`,
   `js/pleiades-photos.json`. Don't touch Supabase auth (`js/auth.js`, ES256 wedge).

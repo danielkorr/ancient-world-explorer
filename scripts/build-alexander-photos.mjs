@@ -45,34 +45,52 @@ const PINNED_FILES = {
   // when a direct, licensed, historically relevant image exists but is absent
   // from Wikidata P18, or when P18 is a poor narrow-hero choice. Keep these
   // corrections here so js/alexander-photos.js remains generated.
+  'aegae': 'Detail of fresco depicting Alexander the Great.jpg',
+  'granicus': 'Battle of the Granicus.jpg',
+  'issus': 'Alexander (Battle of Issus) Mosaic.jpg',
   '727070': 'Alexandrie_Théâtre_romain_2.jpg',
   '961886': 'Green Mosque, Balkh.jpg',
   '922693': 'Cyrus_tomb.jpg',
   '922695': 'پانوراما روز تخت جمشید.jpg',
   'persian-gate': '2persian gate wall.JPG',
+  '687902': 'Southern Palestine. Gaza, from the west. LOC matpc.01376.jpg',
+  'gaugamela': 'Battle of Gaugamela DVIDS171952.jpg',
   'sogdian-rock': 'Vista de les muntanyes al sud de Mazori Sharif (Panjakent, Sughd, Tajikistan).jpg',
   '59987': 'Indus River Delta.jpg',
   'gedrosian-route': 'Baluchistan Canyons.jpg',
   'opis': '160731-D-PB383-021 Tigris River flows through Baghdad, July 2016.JPG',
 };
 const PINNED_POSITION = {
+  'aegae': 'center 40%',
+  'granicus': 'center 50%',
+  'issus': 'center 45%',
   '727070': 'center 45%',
   '961886': 'center 48%',
   '922693': 'center 42%',
   '922695': 'center 55%',
   'persian-gate': 'center 50%',
+  '687902': 'center 50%',
+  'gaugamela': 'center 50%',
   'sogdian-rock': 'center 52%',
   '59987': 'center 50%',
   'gedrosian-route': 'center 48%',
   'opis': 'center 52%',
 };
 const PINNED_CAPTION = {
+  'aegae': 'Pictured: Alexander fresco detail from the tomb of Philip II at Aigai/Vergina',
+  'granicus': 'Pictured: later artistic depiction of the Battle of the Granicus',
+  'issus': 'Pictured: Alexander Mosaic, Roman copy of a Hellenistic battle scene',
   '961886': 'Pictured: later ruins at Balkh/Bactra',
   'persian-gate': 'Pictured: Persian Gate pass; battlefield marker is approximate',
+  '687902': 'Pictured: Gaza from the west, Matson Collection, 1900',
+  'gaugamela': 'Pictured: modern Gaugamela landscape; battlefield identification is approximate',
   'sogdian-rock': 'Pictured: Sughd mountain landscape; exact site disputed',
   '59987': 'Pictured: Indus delta; Patala location approximate',
   'gedrosian-route': 'Pictured: Makran/Balochistan landscape; route generalized',
   'opis': 'Pictured: Tigris near Baghdad; Opis location uncertain',
+};
+const PINNED_CREDIT = {
+  'aegae': 'Unknown artist',
 };
 
 async function exists(p) { try { await stat(p); return true; } catch { return false; } }
@@ -230,6 +248,7 @@ async function main() {
     const ci = file && info[file];
     if (ci && ci.thumb) {
       outObj[s.key] = { thumb: ci.thumb, full: ci.full, credit: ci.credit, license: ci.license, source: ci.source };
+      if (PINNED_CREDIT[s.key]) outObj[s.key].credit = PINNED_CREDIT[s.key];
       if (PINNED_POSITION[s.key]) outObj[s.key].position = PINNED_POSITION[s.key];
       if (PINNED_CAPTION[s.key]) outObj[s.key].caption = PINNED_CAPTION[s.key];
       ok++;

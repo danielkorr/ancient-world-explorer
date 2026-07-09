@@ -131,6 +131,15 @@ window.ALEXANDER_PHOTOS = {
     "license": "CC BY 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Columns_at_Al_Mina_site,_Tyre,_Lebanon.jpg"
   },
+  "687902": {
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Southern_Palestine._Gaza%2C_from_the_west._LOC_matpc.01376.jpg/960px-Southern_Palestine._Gaza%2C_from_the_west._LOC_matpc.01376.jpg",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Southern_Palestine._Gaza%2C_from_the_west._LOC_matpc.01376.jpg",
+    "credit": "Matson Collection",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Southern_Palestine._Gaza,_from_the_west._LOC_matpc.01376.jpg",
+    "position": "center 50%",
+    "caption": "Pictured: Gaza from the west, Matson Collection, 1900"
+  },
   "716520": {
     "thumb": "https://upload.wikimedia.org/wikipedia/commons/5/58/SiwaAghurmiTemple.jpg",
     "full": "https://upload.wikimedia.org/wikipedia/commons/5/58/SiwaAghurmiTemple.jpg",
@@ -205,6 +214,42 @@ window.ALEXANDER_PHOTOS = {
     "credit": "Rictor Norton",
     "license": "CC BY 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:Ishtar_Gate_at_Berlin_Museum.jpg"
+  },
+  "aegae": {
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/1/14/Detail_of_fresco_depicting_Alexander_the_Great.jpg",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/1/14/Detail_of_fresco_depicting_Alexander_the_Great.jpg",
+    "credit": "Unknown artist",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Detail_of_fresco_depicting_Alexander_the_Great.jpg",
+    "position": "center 40%",
+    "caption": "Pictured: Alexander fresco detail from the tomb of Philip II at Aigai/Vergina"
+  },
+  "granicus": {
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Battle_of_the_Granicus.jpg/960px-Battle_of_the_Granicus.jpg",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/3/34/Battle_of_the_Granicus.jpg",
+    "credit": "Charles Le Brun (design)",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Battle_of_the_Granicus.jpg",
+    "position": "center 50%",
+    "caption": "Pictured: later artistic depiction of the Battle of the Granicus"
+  },
+  "issus": {
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Alexander_%28Battle_of_Issus%29_Mosaic.jpg/960px-Alexander_%28Battle_of_Issus%29_Mosaic.jpg",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Alexander_%28Battle_of_Issus%29_Mosaic.jpg",
+    "credit": "Wikimedia Commons",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Alexander_(Battle_of_Issus)_Mosaic.jpg",
+    "position": "center 45%",
+    "caption": "Pictured: Alexander Mosaic, Roman copy of a Hellenistic battle scene"
+  },
+  "gaugamela": {
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Battle_of_Gaugamela_DVIDS171952.jpg/960px-Battle_of_Gaugamela_DVIDS171952.jpg",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Battle_of_Gaugamela_DVIDS171952.jpg",
+    "credit": "Spc. Daniel Nelson",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Battle_of_Gaugamela_DVIDS171952.jpg",
+    "position": "center 50%",
+    "caption": "Pictured: modern Gaugamela landscape; battlefield identification is approximate"
   },
   "persian-gate": {
     "thumb": "https://upload.wikimedia.org/wikipedia/commons/f/f6/2persian_gate_wall.JPG",

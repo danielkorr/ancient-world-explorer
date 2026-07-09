@@ -1372,11 +1372,9 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   font-size: 24px;
   flex-shrink: 0;
   filter: drop-shadow(0 0 6px rgba(224,122,58,0.55));
-  animation: questIconPulse 2.6s ease-in-out infinite;
-}
-@keyframes questIconPulse {
-  0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.08); }
+  /* Icon pulse removed: it was redundant with the banner-background pulse
+     (#panel-quest-banner.visible) — two ambient loops on one open panel. The
+     drop-shadow keeps the icon prominent without the extra motion. */
 }
 
 .quest-banner-body { flex: 1; }
@@ -2781,4 +2779,19 @@ path.leaflet-interactive { outline: none !important; }
    coarse primary pointer = phone/tablet; touch-laptops (fine primary) keep it. */
 @media (pointer: coarse) {
   #empire-inset { display: none !important; }
+}
+
+/* ── REDUCED MOTION ──────────────────────────────────────────────────────
+   Respect the OS "reduce motion" setting. Kill the ambient/infinite pulses
+   (they loop forever on an idle map/panel), but keep layout intact and keep
+   short bounded feedback usable. The quest-ring pulse is the eye-drawing cue
+   for actionable quests — under reduced-motion we drop the MOTION channel but
+   the marker's shape + color (colorblind-safe) still identify the tier, so no
+   information is lost. Loading dots are slowed, not killed: they signal work. */
+@media (prefers-reduced-motion: reduce) {
+  .quest-ring,
+  .alex-beacon-ring,
+  .quest-banner-icon,
+  #panel-quest-banner.visible { animation: none !important; }
+  .pl-loading span { animation-duration: 2s !important; }
 }

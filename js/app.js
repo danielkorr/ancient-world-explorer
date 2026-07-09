@@ -667,12 +667,36 @@ function refreshAlexanderLayer() {
 
 function fitAlexanderBoundsOnce() {
   if (alexanderHasAutoFit || typeof ALEXANDER_STOPS === 'undefined') return;
+  fitAlexanderBounds();
+  alexanderHasAutoFit = true;
+}
+
+function fitAlexanderBounds() {
+  if (typeof ALEXANDER_STOPS === 'undefined') return;
   const pts = ALEXANDER_STOPS
     .filter(s => typeof s.lat === 'number' && typeof s.lng === 'number')
     .map(s => [s.lat, s.lng]);
   if (!pts.length) return;
-  alexanderHasAutoFit = true;
   requestAnimationFrame(() => map.fitBounds(L.latLngBounds(pts), { padding: [36, 36] }));
+}
+
+function fitRomanModeView() {
+  const pts = [];
+  if (typeof SITES !== 'undefined') {
+    for (const site of SITES) {
+      if (typeof site.lat === 'number' && typeof site.lng === 'number') pts.push([site.lat, site.lng]);
+    }
+  }
+  if (!pts.length) {
+    requestAnimationFrame(() => map.setView([38.5, 17.0], 5));
+    return;
+  }
+  const isMobile = window.innerWidth <= 640;
+  requestAnimationFrame(() => map.fitBounds(L.latLngBounds(pts), {
+    paddingTopLeft: [36, 36],
+    paddingBottomRight: isMobile ? [36, 96] : [36, 36],
+    maxZoom: 5,
+  }));
 }
 
 // ── CAMPAIGN SPOTLIGHT (colorblind-first) ────────────────
@@ -4039,7 +4063,7 @@ function setMode(mode) {
     refreshVisibleMarkers();   // empties site clusters (sites off)
     renderCoverageDots();      // returns early now (coverageWanted false off-mode)
     refreshAlexanderLayer();   // paint the campaign
-    fitAlexanderBoundsOnce();
+    fitAlexanderBounds();
   } else {
     layerState.alexander = false; layerState.roads = true; layerState.sites = true;
     for (const g of [itinereRoadsGroup, roadsGroup]) if (g && !map.hasLayer(g)) map.addLayer(g);
@@ -4048,6 +4072,7 @@ function setMode(mode) {
     syncFilterUI();
     refreshVisibleMarkers();
     renderCoverageDots();
+    fitRomanModeView();
   }
 
   // Reflect the forced layer state onto the Roman chips + legend master rows

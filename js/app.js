@@ -4626,9 +4626,14 @@ function syncDetailUI() {
   } else if (stats.level === 1) {
     // "Quests": the count that matters is the quest tally (the game layer).
     text = `Quests · ${stats.questCount.toLocaleString()} quests`;
+  } else if (stats.level === 0) {
+    // Landing state: a first-timer sees only the ~95 highlights and can't tell
+    // the slider reveals more. Lead with the drag affordance instead of a count
+    // (the count returns the moment they move it); this is the at-rest cue.
+    text = `${stats.label} · drag for more`;
   } else {
-    // "Highlights" (0) and "All sites" (2) count SITES, not quests, so the
-    // number visibly moves between stops instead of repeating the quest tally.
+    // "All sites" (2) counts SITES, not quests, so the number visibly moves
+    // between stops instead of repeating the quest tally.
     text = `${stats.label} · ${stats.siteCount.toLocaleString()} sites`;
   }
   slider.setAttribute('aria-valuetext', text);

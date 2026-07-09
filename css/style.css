@@ -22,6 +22,21 @@
   --quest-location: #2b8cde;
   --quest-text:     #b15ad6;
   --panel-width: 380px;
+
+  /* ── TYPE SCALE ──────────────────────────────────────────────────────
+     One documented ramp. Every `font-size` references a token below — no
+     raw px in declarations (grep guard in the Rams refine). Steps are keyed
+     to their pixel value for self-documentation. The four former half-pixel
+     orphans (8.5/10.5/11.5/12.5) were snapped to the nearest whole step
+     (sub-0.5px, imperceptible). Rough usage: 8–10 map micro-labels &
+     captions · 11–13 UI/body text · 14–19 subheads/labels · 20+ modal &
+     hero display glyphs. (Aggressive display-size consolidation was left
+     for a designer pass — these steps are documented, not yet merged.) */
+  --fs-8: 8px;   --fs-9: 9px;   --fs-10: 10px; --fs-11: 11px; --fs-12: 12px;
+  --fs-13: 13px; --fs-14: 14px; --fs-15: 15px; --fs-16: 16px; --fs-17: 17px;
+  --fs-18: 18px; --fs-19: 19px; --fs-20: 20px; --fs-22: 22px; --fs-23: 23px;
+  --fs-24: 24px; --fs-26: 26px; --fs-28: 28px; --fs-34: 34px; --fs-38: 38px;
+  --fs-40: 40px; --fs-42: 42px; --fs-44: 44px;
 }
 
 body {
@@ -88,7 +103,7 @@ body {
 
 #app-title {
   font-family: 'Cinzel', serif;
-  font-size: 22px;
+  font-size: var(--fs-22);
   font-weight: 700;
   letter-spacing: 6px;
   color: var(--gold);
@@ -97,7 +112,7 @@ body {
 }
 
 #app-subtitle {
-  font-size: 11px;
+  font-size: var(--fs-11);
   letter-spacing: 3px;
   color: rgba(212,168,83,0.72);
   text-transform: uppercase;
@@ -122,7 +137,7 @@ body {
   background: rgba(10,5,0,0.9);
   color: var(--parchment);
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-size: var(--fs-14);
   outline: none;
   box-shadow: 0 10px 24px rgba(0,0,0,0.2);
 }
@@ -152,7 +167,7 @@ body {
 .site-search-group-label {
   padding: 10px 14px 6px;
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: var(--fs-9);
   letter-spacing: 1.6px;
   text-transform: uppercase;
   color: rgba(212,168,83,0.68);
@@ -184,14 +199,14 @@ body {
 
 .site-search-name {
   font-family: 'Cinzel', serif;
-  font-size: 12px;
+  font-size: var(--fs-12);
   letter-spacing: 1.2px;
   text-transform: uppercase;
   color: var(--parchment);
 }
 
 .site-search-meta {
-  font-size: 12px;
+  font-size: var(--fs-12);
   line-height: 1.4;
   color: var(--text-body);
 }
@@ -202,7 +217,7 @@ body {
 
 .site-search-empty {
   padding: 13px 14px;
-  font-size: 12px;
+  font-size: var(--fs-12);
   color: var(--text-muted);
 }
 
@@ -228,7 +243,7 @@ body {
   border-radius: 4px;
   padding: 3px 8px;
   font-family: 'Cinzel', serif;
-  font-size: 11px;
+  font-size: var(--fs-11);
   letter-spacing: 0.5px;
   white-space: nowrap;
   max-width: 280px;
@@ -257,7 +272,7 @@ body {
   border: none;
   cursor: pointer;
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: var(--fs-10);
   letter-spacing: 2px;
   font-weight: 600;
   transition: all 0.3s;
@@ -297,7 +312,7 @@ body {
   background: transparent;
   color: rgba(212,168,83,0.82);
   font-family: 'Cinzel', serif;
-  font-size: 11px;
+  font-size: var(--fs-11);
   letter-spacing: 1.5px;
   font-weight: 600;
   padding: 7px 16px;
@@ -312,7 +327,7 @@ body {
   background: linear-gradient(135deg, var(--gold), #b8893a);
   box-shadow: 0 2px 10px rgba(212,168,83,0.3);
 }
-.mode-tab-glyph { font-size: 13px; line-height: 1; }
+.mode-tab-glyph { font-size: var(--fs-13); line-height: 1; }
 #mode-alexander .mode-tab-glyph { font-family: 'Cinzel', serif; font-weight: 700; }
 
 /* ── MODE CHROME SWAP ── */
@@ -342,7 +357,7 @@ body.mode-alexander #campaign-legend { display: block; }
   align-items: center;
   justify-content: center;
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: var(--fs-10);
   font-weight: 700;
   color: var(--parchment, #f2eadb);
   background: var(--pc, #8f7cc3);
@@ -351,7 +366,7 @@ body.mode-alexander #campaign-legend { display: block; }
 .phase-yrs {
   margin-left: auto;
   color: var(--text-muted, #b8aa91);
-  font-size: 10px;
+  font-size: var(--fs-10);
   letter-spacing: 0.3px;
 }
 
@@ -370,7 +385,7 @@ body.mode-alexander #campaign-legend { display: block; }
 #campaign-legend .phase-row.active .phase-num { box-shadow: 0 0 0 2px var(--gold, #d4a853); }
 .legend-sub {
   display: block;
-  font-size: 8.5px;
+  font-size: var(--fs-8);
   letter-spacing: 0.4px;
   color: rgba(184,170,145,0.7);
   margin-top: 1px;
@@ -391,7 +406,7 @@ body.mode-alexander #campaign-legend { display: block; }
   border-radius: 5px;
   color: var(--gold, #d4a853);
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: var(--fs-10);
   letter-spacing: 0.5px;
   cursor: pointer;
   transition: background .15s;
@@ -453,7 +468,7 @@ body.mode-alexander #campaign-legend { display: block; }
   .mode-tab {
     flex: 1 1 0;
     justify-content: center;
-    font-size: 10px;
+    font-size: var(--fs-10);
     letter-spacing: 0.8px;
     padding: 7px 8px;
   }
@@ -477,7 +492,7 @@ body.mode-alexander #campaign-legend { display: block; }
   border-radius: 30px;
   padding: 7px 16px 7px 11px;
   font-family: 'Cinzel', serif;
-  font-size: 11px;
+  font-size: var(--fs-11);
   letter-spacing: 2px;
   font-weight: 600;
   cursor: pointer;
@@ -496,7 +511,7 @@ body.mode-alexander #campaign-legend { display: block; }
   width: 24px; height: 24px;
   border-radius: 50%;
   background: rgba(212,168,83,0.18);
-  font-size: 12px;
+  font-size: var(--fs-12);
   color: var(--gold);
 }
 #profile-pill.signed-in #profile-pill-glyph {
@@ -539,7 +554,7 @@ body.mode-alexander #campaign-legend { display: block; }
   border: 1px solid rgba(212,168,83,0.3);
   color: var(--gold);
   cursor: pointer;
-  font-size: 16px;
+  font-size: var(--fs-16);
   line-height: 1;
   border-radius: 50%;
 }
@@ -547,13 +562,13 @@ body.mode-alexander #campaign-legend { display: block; }
 
 .auth-title {
   font-family: 'Cinzel', serif;
-  font-size: 18px;
+  font-size: var(--fs-18);
   letter-spacing: 3px;
   color: var(--gold);
   margin-bottom: 8px;
 }
 .auth-sub {
-  font-size: 12px;
+  font-size: var(--fs-12);
   color: var(--text-body);
   line-height: 1.5;
   margin-bottom: 18px;
@@ -566,7 +581,7 @@ body.mode-alexander #campaign-legend { display: block; }
   color: var(--parchment);
   padding: 11px 14px;
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-size: var(--fs-14);
   border-radius: 4px;
   margin-bottom: 12px;
   outline: none;
@@ -574,7 +589,7 @@ body.mode-alexander #campaign-legend { display: block; }
 #auth-email-input:focus { border-color: var(--gold-dim); background: rgba(212,168,83,0.1); }
 
 #auth-error {
-  font-size: 12px;
+  font-size: var(--fs-12);
   color: var(--quest-location);
   margin-bottom: 10px;
   min-height: 16px;
@@ -588,7 +603,7 @@ body.mode-alexander #campaign-legend { display: block; }
   border-radius: 4px;
   cursor: pointer;
   font-family: 'Cinzel', serif;
-  font-size: 11px;
+  font-size: var(--fs-11);
   letter-spacing: 3px;
   font-weight: 600;
   transition: all 0.2s;
@@ -608,7 +623,7 @@ body.mode-alexander #campaign-legend { display: block; }
 .auth-tertiary {
   background: transparent;
   color: var(--text-body);
-  font-size: 12px;
+  font-size: var(--fs-12);
   letter-spacing: 2px;
   padding: 11px;
   margin-top: 4px;
@@ -631,7 +646,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 #auth-modal[data-state="import"]     #auth-import     { display: block; }
 
 .auth-glyph-large {
-  font-size: 40px;
+  font-size: var(--fs-40);
   color: var(--gold);
   text-align: center;
   margin-bottom: 14px;
@@ -649,7 +664,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 #quest-progress.visible { display: block; }
 #qp-label {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: var(--fs-10);
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--text-body);
@@ -685,7 +700,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   gap: 8px;
 }
 #checkin-stats {
-  font-size: 11px;
+  font-size: var(--fs-11);
   color: var(--text-muted);
   letter-spacing: 1px;
 }
@@ -696,7 +711,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   background: rgba(212,168,83,0.06);
   color: var(--gold);
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: var(--fs-10);
   letter-spacing: 2px;
   font-weight: 600;
   border-radius: 3px;
@@ -727,7 +742,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   color: rgba(240,230,211,0.92);
   padding: 9px 15px;
   border-radius: 7px;
-  font-size: 12px;
+  font-size: var(--fs-12);
   letter-spacing: 1.5px;
   text-transform: uppercase;
   cursor: pointer;
@@ -791,7 +806,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   flex-direction: column;
   align-items: flex-start;
   gap: 2px;
-  font-size: 9px;
+  font-size: var(--fs-9);
   letter-spacing: 1.5px;
   text-transform: uppercase;
 }
@@ -799,7 +814,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 #detail-readout {
   color: var(--text-body);
   font-family: 'Inter', sans-serif;
-  font-size: 10px;
+  font-size: var(--fs-10);
   letter-spacing: 0.2px;
   text-transform: none;
   white-space: nowrap;
@@ -885,7 +900,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
    static key. */
 .legend-hint {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: var(--fs-9);
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: rgba(212,168,83,0.7);
@@ -896,7 +911,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   display: flex;
   align-items: center;
   gap: 9px;
-  font-size: 11px;
+  font-size: var(--fs-11);
   letter-spacing: 1px;
   text-transform: uppercase;
   color: rgba(240,230,211,0.9);
@@ -928,7 +943,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 .legend-count {
   margin-left: auto;
   padding-left: 12px;
-  font-size: 10px;
+  font-size: var(--fs-10);
   color: rgba(212,168,83,0.85);
   font-variant-numeric: tabular-nums;
 }
@@ -950,7 +965,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   background: transparent;
   color: rgba(212,168,83,0.95);
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: var(--fs-10);
   line-height: 1;
   cursor: pointer;
   vertical-align: middle;
@@ -977,14 +992,14 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 #legend-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 #legend-toast-title {
   font-family: 'Cinzel', serif;
-  font-size: 12px;
+  font-size: var(--fs-12);
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--gold);
   margin-bottom: 5px;
 }
 #legend-toast-body {
-  font-size: 12.5px;
+  font-size: var(--fs-12);
   line-height: 1.45;
   color: rgba(240,230,211,0.92);
 }
@@ -1015,7 +1030,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   text-align: center;
 }
 .welcome-glyph {
-  font-size: 38px;
+  font-size: var(--fs-38);
   color: var(--gold);
   margin-bottom: 12px;
   text-shadow: 0 0 18px rgba(212,168,83,0.4);
@@ -1023,7 +1038,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 #welcome-card .auth-title { text-align: center; }
 .welcome-tagline {
   font-family: 'Cinzel', serif;
-  font-size: 11px;
+  font-size: var(--fs-11);
   letter-spacing: 3px;
   color: var(--gold-dim);
   text-transform: uppercase;
@@ -1034,7 +1049,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   margin-bottom: 22px;
 }
 #welcome-body p {
-  font-size: 13px;
+  font-size: var(--fs-13);
   line-height: 1.6;
   color: var(--text-body);
   margin: 0 0 12px;
@@ -1048,7 +1063,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 }
 .welcome-quest-title {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: var(--fs-10);
   letter-spacing: 1.7px;
   text-transform: uppercase;
   color: var(--quest-photo);
@@ -1070,13 +1085,13 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   border-radius: 5px;
   color: rgba(240,230,211,0.9);
   background: rgba(8,4,0,0.24);
-  font-size: 11px;
+  font-size: var(--fs-11);
   line-height: 1.25;
   text-align: center;
 }
 #welcome-body .welcome-kicker {
   font-family: 'Cinzel', serif;
-  font-size: 13px;
+  font-size: var(--fs-13);
   letter-spacing: 1px;
   color: var(--gold);
   text-align: center;
@@ -1089,14 +1104,14 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 }
 .welcome-sources-title {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: var(--fs-10);
   letter-spacing: 1.7px;
   text-transform: uppercase;
   color: var(--gold);
   margin-bottom: 7px;
 }
 .welcome-sources-title:not(:first-child) { margin-top: 15px; }
-.welcome-sources p { font-size: 12.5px; margin: 0; color: var(--text-body); }
+.welcome-sources p { font-size: var(--fs-12); margin: 0; color: var(--text-body); }
 .welcome-sources strong { color: rgba(240,230,211,0.98); }
 
 /* "Two ways in" — the mode explainer at the top of the welcome modal. */
@@ -1117,14 +1132,14 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   align-items: center;
   gap: 8px;
   font-family: 'Cinzel', serif;
-  font-size: 13px;
+  font-size: var(--fs-13);
   font-weight: 600;
   color: var(--gold);
   margin-bottom: 5px;
 }
-.welcome-mode p { font-size: 12.5px; margin: 0; color: var(--text-body); }
+.welcome-mode p { font-size: var(--fs-12); margin: 0; color: var(--text-body); }
 .welcome-mode em { color: rgba(240,230,211,0.95); font-style: italic; }
-.welcome-mode-glyph { font-size: 15px; line-height: 1; }
+.welcome-mode-glyph { font-size: var(--fs-15); line-height: 1; }
 .welcome-mode-glyph.alex {
   font-family: 'Cinzel', serif;
   font-weight: 700;
@@ -1196,7 +1211,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 .li-dot.triangle { border-radius: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
 .li-title {
   font-family: 'Cinzel', serif;
-  font-size: 13px;
+  font-size: var(--fs-13);
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--gold);
@@ -1205,8 +1220,8 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   align-items: baseline;
   gap: 8px;
 }
-.li-count { font-size: 10px; color: rgba(212,168,83,0.7); font-variant-numeric: tabular-nums; }
-.li-blurb { font-size: 12.5px; line-height: 1.5; color: var(--text-body); }
+.li-count { font-size: var(--fs-10); color: rgba(212,168,83,0.7); font-variant-numeric: tabular-nums; }
+.li-blurb { font-size: var(--fs-12); line-height: 1.5; color: var(--text-body); }
 
 .legend-dot {
   width: 10px; height: 10px;
@@ -1264,7 +1279,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 
 #info-panel.alexander-panel #hero-icon {
   font-family: 'Cinzel', serif;
-  font-size: 42px;
+  font-size: var(--fs-42);
   font-weight: 700;
   color: rgba(240,230,211,0.92);
 }
@@ -1283,17 +1298,17 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 }
 
 #hero-inner { text-align: center; }
-#hero-icon  { font-size: 34px; margin-bottom: 8px; }
+#hero-icon  { font-size: var(--fs-34); margin-bottom: 8px; }
 
 #hero-coords {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: var(--fs-10);
   letter-spacing: 2px;
   color: rgba(212,168,83,0.4);
 }
 
 #hero-modern {
-  font-size: 10px;
+  font-size: var(--fs-10);
   letter-spacing: 1px;
   color: rgba(240,230,211,0.2);
   margin-top: 5px;
@@ -1307,7 +1322,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   left: 10px;
   right: 18px;
   max-width: calc(100% - 28px);
-  font-size: 9px;
+  font-size: var(--fs-9);
   letter-spacing: 0.5px;
   color: rgba(240,230,211,0.7);
   text-align: left;
@@ -1325,7 +1340,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   left: 10px;
   right: 18px;
   max-width: calc(100% - 28px);
-  font-size: 10px;
+  font-size: var(--fs-10);
   font-style: italic;
   letter-spacing: 0.3px;
   color: rgba(240,230,211,0.92);
@@ -1342,7 +1357,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
     left: 14px;
     right: 54px;
     bottom: 20px;
-    font-size: 9px;
+    font-size: var(--fs-9);
   }
 }
 
@@ -1353,7 +1368,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   gap: 12px;
   padding: 14px 16px;
   border-bottom: 1px solid var(--border);
-  font-size: 11px;
+  font-size: var(--fs-11);
   line-height: 1.5;
   position: relative;
   overflow: hidden;
@@ -1369,7 +1384,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 }
 
 .quest-banner-icon {
-  font-size: 24px;
+  font-size: var(--fs-24);
   flex-shrink: 0;
   filter: drop-shadow(0 0 6px rgba(224,122,58,0.55));
   /* Icon pulse removed: it was redundant with the banner-background pulse
@@ -1381,14 +1396,14 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 
 .quest-banner-title {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: var(--fs-10);
   letter-spacing: 2.5px;
   text-transform: uppercase;
   margin-bottom: 3px;
   font-weight: 700;
 }
 
-.quest-banner-text { font-size: 12px; color: var(--text-body); margin-bottom: 8px; }
+.quest-banner-text { font-size: var(--fs-12); color: var(--text-body); margin-bottom: 8px; }
 
 .quest-banner-cta {
   background: transparent;
@@ -1397,7 +1412,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   padding: 6px 12px;
   border-radius: 3px;
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: var(--fs-10);
   letter-spacing: 1.8px;
   font-weight: 600;
   cursor: pointer;
@@ -1439,7 +1454,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 }
 
 .quest-glyph-large {
-  font-size: 44px;
+  font-size: var(--fs-44);
   text-align: center;
   margin-bottom: 10px;
   filter: drop-shadow(0 0 12px rgba(224,122,58,0.5));
@@ -1455,7 +1470,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   counter-increment: quest-step;
   padding: 12px 0 12px 38px;
   position: relative;
-  font-size: 13px;
+  font-size: var(--fs-13);
   color: var(--text-body);
   border-top: 1px solid rgba(212,168,83,0.12);
   line-height: 1.5;
@@ -1470,7 +1485,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   background: rgba(212,168,83,0.12);
   color: var(--gold);
   font-family: 'Cinzel', serif;
-  font-size: 12px;
+  font-size: var(--fs-12);
   font-weight: 700;
   border-radius: 50%;
   display: flex;
@@ -1484,7 +1499,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   padding: 1px 6px;
   border-radius: 3px;
   font-family: 'Inter', monospace;
-  font-size: 12px;
+  font-size: var(--fs-12);
 }
 
 #panel-close {
@@ -1496,7 +1511,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   width: 30px; height: 30px;
   border-radius: 50%;
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--fs-14);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1517,7 +1532,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 
 .p-badge {
   display: inline-block;
-  font-size: 9px;
+  font-size: var(--fs-9);
   letter-spacing: 2px;
   text-transform: uppercase;
   font-weight: 600;
@@ -1529,7 +1544,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 
 #panel-name {
   font-family: 'Cinzel', serif;
-  font-size: 26px;
+  font-size: var(--fs-26);
   font-weight: 700;
   color: var(--parchment);
   line-height: 1.15;
@@ -1537,7 +1552,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 }
 
 #panel-modern-name {
-  font-size: 12px;
+  font-size: var(--fs-12);
   color: rgba(240,230,211,0.38);
   font-style: italic;
   margin-bottom: 16px;
@@ -1553,13 +1568,13 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: var(--fs-12);
   color: var(--text-muted);
   margin-bottom: 14px;
 }
 
 #panel-desc {
-  font-size: 13px;
+  font-size: var(--fs-13);
   line-height: 1.78;
   color: var(--text-body);
   margin-bottom: 18px;
@@ -1573,7 +1588,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   gap: 10px;
   padding: 7px 0;
   border-top: 1px solid rgba(212,168,83,0.1);
-  font-size: 11.5px;
+  font-size: var(--fs-11);
   line-height: 1.35;
 }
 .seg-evidence-row:first-child { border-top: none; padding-top: 0; }
@@ -1582,7 +1597,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   color: rgba(212,168,83,0.68);
   letter-spacing: 1px;
   text-transform: uppercase;
-  font-size: 9px;
+  font-size: var(--fs-9);
 }
 .seg-evidence-row strong {
   color: var(--text-body);
@@ -1590,7 +1605,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 }
 .seg-near-label {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: var(--fs-10);
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: rgba(212,168,83,0.75);
@@ -1622,18 +1637,18 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: var(--fs-14);
 }
 .seg-near-thumb.empty { background: rgba(212,168,83,0.1); }
-.seg-near-name { flex: 1; font-size: 12.5px; color: var(--text-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.seg-near-name { flex: 1; font-size: var(--fs-12); color: var(--text-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .seg-near-km {
-  font-size: 11px;
+  font-size: var(--fs-11);
   color: rgba(212,168,83,0.85);
   font-variant-numeric: tabular-nums;
   flex-shrink: 0;
 }
 .seg-near-empty {
-  font-size: 12.5px;
+  font-size: var(--fs-12);
   color: var(--text-muted);
   font-style: italic;
   padding: 2px 0 2px;
@@ -1657,10 +1672,10 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   transition: background 0.15s, border-color 0.15s;
 }
 .seg-pl-row:hover { background: rgba(212,168,83,0.12); border-color: rgba(212,168,83,0.4); }
-.seg-pl-name { flex: 1; font-size: 12.5px; color: var(--text-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.seg-pl-meta { font-size: 10.5px; color: rgba(212,168,83,0.85); flex-shrink: 0; letter-spacing: 0.3px; }
-.seg-pl-more { font-size: 11.5px; color: var(--text-muted); font-style: italic; padding: 2px 0 0; }
-.seg-pl-loading { font-size: 12.5px; color: var(--text-muted); font-style: italic; padding: 4px 0; }
+.seg-pl-name { flex: 1; font-size: var(--fs-12); color: var(--text-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.seg-pl-meta { font-size: var(--fs-10); color: rgba(212,168,83,0.85); flex-shrink: 0; letter-spacing: 0.3px; }
+.seg-pl-more { font-size: var(--fs-11); color: var(--text-muted); font-style: italic; padding: 2px 0 0; }
+.seg-pl-loading { font-size: var(--fs-12); color: var(--text-muted); font-style: italic; padding: 4px 0; }
 
 /* ORBIS card */
 #orbis-card {
@@ -1676,7 +1691,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 
 #orbis-label {
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: var(--fs-8);
   letter-spacing: 2.5px;
   text-transform: uppercase;
   color: rgba(212,168,83,0.5);
@@ -1691,7 +1706,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 
 #orbis-days {
   font-family: 'Cinzel', serif;
-  font-size: 28px;
+  font-size: var(--fs-28);
   font-weight: 700;
   color: var(--gold);
   line-height: 1;
@@ -1699,12 +1714,12 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 }
 
 #orbis-unit {
-  font-size: 12px;
+  font-size: var(--fs-12);
   color: var(--text-muted);
 }
 
 #orbis-detail {
-  font-size: 10px;
+  font-size: var(--fs-10);
   color: rgba(240,230,211,0.35);
   margin-top: 5px;
   letter-spacing: 0.5px;
@@ -1720,7 +1735,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   padding: 11px 14px;
   border-radius: 8px;
   text-decoration: none;
-  font-size: 12px;
+  font-size: var(--fs-12);
   transition: all 0.2s;
   border: 1px solid;
   cursor: pointer;
@@ -1756,9 +1771,9 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 .p-btn-cross:hover { background:rgba(143,124,195,0.22); border-color:rgba(143,124,195,0.55); }
 .p-btn-cross .p-btn-icon { font-family:'Cinzel', serif; font-weight:700; }
 
-.p-btn-icon { font-size: 19px; flex-shrink: 0; }
+.p-btn-icon { font-size: var(--fs-19); flex-shrink: 0; }
 .p-btn-main { font-weight: 500; }
-.p-btn-sub  { font-size: 10px; opacity: 0.55; margin-top: 1px; }
+.p-btn-sub  { font-size: var(--fs-10); opacity: 0.55; margin-top: 1px; }
 
 /* ── JOURNEY ROUTING overlays ── */
 /* Hint banner: shown while awaiting the destination tap. Top-centered pill. */
@@ -1768,22 +1783,22 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   display: flex; align-items: center; gap: 10px;
   padding: 9px 15px; border-radius: 999px;
   background: rgba(30,27,60,0.94); border: 1px solid rgba(99,102,241,0.5);
-  color: #e6e4f5; font-size: 12.5px; box-shadow: 0 6px 22px rgba(0,0,0,0.4);
+  color: #e6e4f5; font-size: var(--fs-12); box-shadow: 0 6px 22px rgba(0,0,0,0.4);
   opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s;
 }
 #route-hint.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
-#route-hint::before { content: "🧭"; font-size: 15px; flex-shrink: 0; }
+#route-hint::before { content: "🧭"; font-size: var(--fs-15); flex-shrink: 0; }
 #route-hint-body { flex: 1; display: flex; flex-direction: column; gap: 2px; }
 #route-hint-text { display: block; }
 /* One-time primer: what ORBIS is, shown only on the first journey. Hidden until
    JS fills it in (empty = display:none via :empty). */
 #route-hint-sub {
-  font-size: 10.5px; line-height: 1.35; color: rgba(196,193,224,0.82);
+  font-size: var(--fs-10); line-height: 1.35; color: rgba(196,193,224,0.82);
 }
 #route-hint-sub:empty { display: none; }
 #route-hint button {
   flex-shrink: 0; background: none; border: none; color: #a5b4fc;
-  font-size: 16px; line-height: 1; cursor: pointer; padding: 2px 4px;
+  font-size: var(--fs-16); line-height: 1; cursor: pointer; padding: 2px 4px;
 }
 
 /* Result card: days/km/denarii readout. Bottom-centered, above the mobile
@@ -1800,21 +1815,21 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 #route-readout-close {
   position: absolute; top: 8px; right: 10px;
   background: none; border: none; color: #a5b4fc;
-  font-size: 17px; line-height: 1; cursor: pointer; padding: 3px 5px;
+  font-size: var(--fs-17); line-height: 1; cursor: pointer; padding: 3px 5px;
 }
-#route-readout-route  { font-size: 12px; font-weight: 600; color: #a5b4fc; padding-right: 22px; }
-#route-readout-stats  { font-size: 17px; margin-top: 4px; letter-spacing: 0.2px; }
+#route-readout-route  { font-size: var(--fs-12); font-weight: 600; color: #a5b4fc; padding-right: 22px; }
+#route-readout-stats  { font-size: var(--fs-17); margin-top: 4px; letter-spacing: 0.2px; }
 #route-readout-stats b { color: #c7d2fe; }
 /* The figure the active basis optimizes gets a subtle underline + full-strength
    text (the rest dim slightly) so the toggle's effect is legible at a glance. */
 #route-readout-stats .rstat { opacity: 0.5; transition: opacity 0.15s; }
 #route-readout-stats .rstat.on { opacity: 1; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.7); text-underline-offset: 3px; }
-#route-readout-detail { font-size: 10.5px; opacity: 0.62; margin-top: 5px; line-height: 1.35; }
+#route-readout-detail { font-size: var(--fs-10); opacity: 0.62; margin-top: 5px; line-height: 1.35; }
 
 /* Fastest / Shortest / Cheapest segmented toggle. */
 #route-readout-toggle { display: flex; gap: 0; margin-top: 9px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(99,102,241,0.35); }
 .rtoggle-btn {
-  flex: 1; padding: 6px 4px; font-family: inherit; font-size: 11px; font-weight: 500;
+  flex: 1; padding: 6px 4px; font-family: inherit; font-size: var(--fs-11); font-weight: 500;
   background: transparent; border: none; border-right: 1px solid rgba(99,102,241,0.25);
   color: #b9b7d6; cursor: pointer; transition: background 0.15s, color 0.15s;
 }
@@ -1828,7 +1843,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   margin-left: auto;
   flex-shrink: 0;
   align-self: flex-start;
-  font-size: 16px;
+  font-size: var(--fs-16);
   font-weight: 600;
   line-height: 1;
   opacity: 0.7;
@@ -1889,7 +1904,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   border-radius: 50%;
   font-family: 'Cinzel', serif;
   font-weight: 600;
-  font-size: 13px;
+  font-size: var(--fs-13);
   color: #1a0e00;
   border: 2px solid rgba(255,255,255,0.55);
   box-shadow: 0 2px 10px rgba(0,0,0,0.45);
@@ -1921,7 +1936,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 .leaflet-control-attribution {
   background: rgba(10,5,0,0.65) !important;
   color: rgba(240,230,211,0.25) !important;
-  font-size: 9px !important;
+  font-size: var(--fs-9) !important;
 }
 .leaflet-control-attribution a { color: rgba(212,168,83,0.4) !important; }
 
@@ -1945,7 +1960,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   border-radius: 11px;
   color: var(--gold);
   font-family: 'Cinzel', serif;
-  font-size: 19px;
+  font-size: var(--fs-19);
   line-height: 1;
   cursor: pointer;
 }
@@ -1965,7 +1980,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   border-radius: 12px;
   box-shadow: 0 18px 44px rgba(0,0,0,0.5);
   color: rgba(240,230,211,0.9);
-  font-size: 12px;
+  font-size: var(--fs-12);
   line-height: 1.55;
 }
 #attrib-popover.open { display: block; }
@@ -1976,7 +1991,7 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   border: 1px solid rgba(212,168,83,0.3) !important;
   color: var(--parchment) !important;
   font-family: 'Inter', sans-serif !important;
-  font-size: 12px !important;
+  font-size: var(--fs-12) !important;
   padding: 8px 12px !important;
   border-radius: 6px !important;
   box-shadow: none !important;
@@ -1999,7 +2014,7 @@ path.leaflet-interactive { outline: none !important; }
   #topbar         {
     padding: calc(10px + env(safe-area-inset-top, 0px)) 14px 30px;
   }
-  #app-title      { font-size: 18px; letter-spacing: 4px; }
+  #app-title      { font-size: var(--fs-18); letter-spacing: 4px; }
   /* Hidden on mobile: at 375px the subtitle collides with the centered era toggle
      (verified). Desktop shows it; mobile keeps the brand compact. */
   #app-subtitle   { display: none; }
@@ -2026,7 +2041,7 @@ path.leaflet-interactive { outline: none !important; }
   }
   #site-search-input {
     height: 46px;
-    font-size: 14px;
+    font-size: var(--fs-14);
   }
   #site-search-results {
     position: static;
@@ -2064,7 +2079,7 @@ path.leaflet-interactive { outline: none !important; }
     border-radius: 999px;
     color: rgba(240,230,211,0.92);
     font-family: 'Cinzel', serif;
-    font-size: 11px;
+    font-size: var(--fs-11);
     letter-spacing: 1.4px;
     text-transform: uppercase;
     cursor: pointer;
@@ -2090,12 +2105,12 @@ path.leaflet-interactive { outline: none !important; }
   }
   .dock-search-field svg { color: rgba(212,168,83,0.7); flex: 0 0 auto; }
   .dock-search-placeholder {
-    font-size: 13px;
+    font-size: var(--fs-13);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .dock-btn-icon { font-size: 15px; line-height: 1; }
+  .dock-btn-icon { font-size: var(--fs-15); line-height: 1; }
   .dock-btn-label { line-height: 1; }
 
   /* Scrim — only behind the search overlay. */
@@ -2132,7 +2147,7 @@ path.leaflet-interactive { outline: none !important; }
   }
   #dock-search-title {
     font-family: 'Cinzel', serif;
-    font-size: 10px;
+    font-size: var(--fs-10);
     letter-spacing: 1.8px;
     text-transform: uppercase;
     color: rgba(212,168,83,0.7);
@@ -2142,7 +2157,7 @@ path.leaflet-interactive { outline: none !important; }
     border: 0;
     color: var(--gold);
     font-family: 'Inter', sans-serif;
-    font-size: 13px;
+    font-size: var(--fs-13);
     cursor: pointer;
     padding: 4px 6px;
   }
@@ -2168,7 +2183,7 @@ path.leaflet-interactive { outline: none !important; }
     height: 26px;
     min-height: 26px;
     padding: 0 13px;
-    font-size: 9px;
+    font-size: var(--fs-9);
     letter-spacing: 1.5px;
   }
   /* Drop the bright glow — the fill alone marks the active era; no shouting. */
@@ -2218,11 +2233,11 @@ path.leaflet-interactive { outline: none !important; }
   }
   body.dock-curation-open .detail-control { display: flex; }
   .detail-head {
-    font-size: 9px;
+    font-size: var(--fs-9);
     letter-spacing: 1.3px;
   }
   #detail-readout {
-    font-size: 11px;
+    font-size: var(--fs-11);
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -2253,7 +2268,7 @@ path.leaflet-interactive { outline: none !important; }
     width: 40px !important;
     height: 34px !important;
     line-height: 34px !important;
-    font-size: 20px !important;
+    font-size: var(--fs-20) !important;
     background: rgba(8,4,0,0.92) !important;
     color: var(--gold) !important;
     border: 1px solid rgba(212,168,83,0.34) !important;
@@ -2273,7 +2288,7 @@ path.leaflet-interactive { outline: none !important; }
     display: flex;
     width: 34px;
     height: 34px;
-    font-size: 15px;
+    font-size: var(--fs-15);
     border-radius: 11px;
     /* Calm the once-loud full-gold border down to the shared utility material —
        attribution is the least-important control, it shouldn't shout. */
@@ -2302,7 +2317,7 @@ path.leaflet-interactive { outline: none !important; }
     border: 1px solid rgba(212,168,83,0.34);
     color: rgba(240,230,211,0.7);
     font-family: 'Cinzel', serif;
-    font-size: 8px;
+    font-size: var(--fs-8);
     letter-spacing: 1px;
     text-align: center;
     box-shadow: 0 6px 16px rgba(0,0,0,0.2);
@@ -2333,14 +2348,14 @@ path.leaflet-interactive { outline: none !important; }
   #mobile-guide-title {
     font-family: 'Cinzel', serif;
     color: var(--gold);
-    font-size: 11px;
+    font-size: var(--fs-11);
     letter-spacing: 1.6px;
     text-transform: uppercase;
     margin-bottom: 4px;
   }
   #mobile-guide-body {
     color: rgba(240,230,211,0.9);
-    font-size: 12.5px;
+    font-size: var(--fs-12);
     line-height: 1.42;
   }
   #mobile-guide-close {
@@ -2351,7 +2366,7 @@ path.leaflet-interactive { outline: none !important; }
     border-radius: 50%;
     background: rgba(212,168,83,0.07);
     color: rgba(212,168,83,0.75);
-    font-size: 17px;
+    font-size: var(--fs-17);
     line-height: 1;
     cursor: pointer;
   }
@@ -2372,10 +2387,10 @@ path.leaflet-interactive { outline: none !important; }
     overflow-y: auto;
   }
   #quest-legend.mobile-open { display: flex; }
-  .legend-hint { font-size: 8px; }
-  .legend-row { font-size: 11px; letter-spacing: 0.5px; padding: 3px 0; }
+  .legend-hint { font-size: var(--fs-8); }
+  .legend-row { font-size: var(--fs-11); letter-spacing: 0.5px; padding: 3px 0; }
   .legend-dot { width: 9px; height: 9px; }
-  .legend-count { font-size: 9px; padding-left: 10px; }
+  .legend-count { font-size: var(--fs-9); padding-left: 10px; }
 
   /* Folded-in master layer toggles (mobile only). active = layer on (gold via
      .legend-row.active); off = dimmed. */
@@ -2425,13 +2440,13 @@ path.leaflet-interactive { outline: none !important; }
   #panel-hero { height: 82px; }
   #hero-inner { padding: 0 58px 0 22px; text-align: left; width: 100%; }
   #hero-icon  { display: none; }
-  #hero-coords { font-size: 9px; letter-spacing: 1.6px; color: rgba(212,168,83,0.62); }
-  #hero-modern { font-size: 11px; color: rgba(240,230,211,0.55); }
+  #hero-coords { font-size: var(--fs-9); letter-spacing: 1.6px; color: rgba(212,168,83,0.62); }
+  #hero-modern { font-size: var(--fs-11); color: rgba(240,230,211,0.55); }
   #hero-credit {
     left: 14px;
     right: 54px;
     bottom: 7px;
-    font-size: 8px;
+    font-size: var(--fs-8);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2443,21 +2458,21 @@ path.leaflet-interactive { outline: none !important; }
     line-height: 1.35;
     align-items: flex-start;
   }
-  .quest-banner-icon { font-size: 20px; }
-  .quest-banner-title { font-size: 9px; letter-spacing: 1.9px; }
+  .quest-banner-icon { font-size: var(--fs-20); }
+  .quest-banner-title { font-size: var(--fs-9); letter-spacing: 1.9px; }
   .quest-banner-text {
-    font-size: 11.5px;
+    font-size: var(--fs-11);
     margin-bottom: 7px;
   }
   .quest-banner-cta {
     padding: 6px 10px;
-    font-size: 9px;
+    font-size: var(--fs-9);
     letter-spacing: 1.4px;
   }
 
   #panel-body { padding: 16px 20px 34px; }
   .p-badge { margin-bottom: 7px; }
-  #panel-name { font-size: 24px; margin-bottom: 4px; }
+  #panel-name { font-size: var(--fs-24); margin-bottom: 4px; }
   #panel-modern-name { margin-bottom: 12px; }
   .p-rule { margin: 12px 0; }
   #panel-period { margin-bottom: 11px; }
@@ -2476,7 +2491,7 @@ path.leaflet-interactive { outline: none !important; }
   #checkin-btn { padding: 11px; }
 
   #info-panel.segment-panel #panel-hero { height: 66px; }
-  #info-panel.segment-panel #panel-name { font-size: 23px; }
+  #info-panel.segment-panel #panel-name { font-size: var(--fs-23); }
   #info-panel.segment-panel #panel-modern-name { margin-bottom: 10px; }
   #info-panel.segment-panel #panel-period { margin-bottom: 9px; }
   #info-panel.segment-panel #panel-desc {
@@ -2500,14 +2515,14 @@ path.leaflet-interactive { outline: none !important; }
   .auth-close {
     top: 12px; right: 12px;
     width: 40px; height: 40px;
-    font-size: 19px;
+    font-size: var(--fs-19);
   }
   #panel-close {
     top: 14px; right: 14px;
     width: 40px; height: 40px;
-    font-size: 18px;
+    font-size: var(--fs-18);
   }
-  .auth-tertiary { font-size: 13px; padding: 13px; }
+  .auth-tertiary { font-size: var(--fs-13); padding: 13px; }
 
   /* Drag handle for bottom sheet */
   #info-panel::before {
@@ -2547,7 +2562,7 @@ path.leaflet-interactive { outline: none !important; }
    ════════════════════════════════ */
 @media (min-width: 641px) and (max-width: 900px) {
   :root { --panel-width: 340px; }
-  #panel-name { font-size: 22px; }
+  #panel-name { font-size: var(--fs-22); }
 }
 
 /* ════════════════════════════════
@@ -2567,16 +2582,16 @@ path.leaflet-interactive { outline: none !important; }
   align-items: baseline;
   gap: 8px;
   font-family: 'Cinzel', serif;
-  font-size: 13px;
+  font-size: var(--fs-13);
   font-weight: 600;
   letter-spacing: 0.02em;
   color: var(--gold);
 }
-.ld-head-icon { font-size: 12px; }
+.ld-head-icon { font-size: var(--fs-12); }
 .ld-sub {
   margin-left: auto;
   font-family: 'Inter', sans-serif;
-  font-size: 11px;
+  font-size: var(--fs-11);
   font-weight: 400;
   color: var(--text-muted);
 }
@@ -2590,16 +2605,16 @@ path.leaflet-interactive { outline: none !important; }
   gap: 8px;
   padding: 7px 8px;
   border-radius: 6px;
-  font-size: 13px;
+  font-size: var(--fs-13);
   color: var(--text-body);
   transition: background 0.12s ease;
 }
 .ld-src > summary::-webkit-details-marker { display: none; }
 .ld-src > summary:hover { background: var(--gold-faint); }
-.ld-star { width: 14px; text-align: center; color: var(--gold); font-size: 12px; }
+.ld-star { width: 14px; text-align: center; color: var(--gold); font-size: var(--fs-12); }
 .ld-label { flex: 1; }
 .ld-n {
-  font-size: 11px;
+  font-size: var(--fs-11);
   color: var(--text-muted);
   background: rgba(240,230,211,0.06);
   border-radius: 10px;
@@ -2620,14 +2635,14 @@ path.leaflet-interactive { outline: none !important; }
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 12.5px;
+  font-size: var(--fs-12);
   color: var(--text-body);
   text-decoration: none;
   line-height: 1.35;
 }
 .ld-links a:hover { color: var(--gold); text-decoration: underline; }
-.ld-links .p-btn-ext { font-size: 10px; opacity: 0.6; }
-.ld-more { font-size: 11.5px; color: var(--text-muted); font-style: italic; }
+.ld-links .p-btn-ext { font-size: var(--fs-10); opacity: 0.6; }
+.ld-more { font-size: var(--fs-11); color: var(--text-muted); font-style: italic; }
 
 /* ════════════════════════════════
    LIVE PLEIADES ENRICHMENT  (#pleiades-detail-card)
@@ -2642,24 +2657,24 @@ path.leaflet-interactive { outline: none !important; }
   border-top: 1px solid var(--border);
 }
 .pl-src[open] > summary { color: var(--gold); }
-.pl-list li { font-size: 12.5px; color: var(--text-body); line-height: 1.4; list-style: disc; margin-left: 4px; }
-.pl-lang { color: var(--text-muted); font-size: 11px; }
+.pl-list li { font-size: var(--fs-12); color: var(--text-body); line-height: 1.4; list-style: disc; margin-left: 4px; }
+.pl-lang { color: var(--text-muted); font-size: var(--fs-11); }
 .pl-notes {
   padding: 2px 8px 6px 30px;
-  font-size: 12.5px;
+  font-size: var(--fs-12);
   line-height: 1.5;
   color: var(--text-body);
 }
 .pl-tags { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 5px; }
 .pl-tag {
-  font-size: 10.5px;
+  font-size: var(--fs-10);
   color: var(--text-muted);
   background: rgba(240,230,211,0.06);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 2px 8px;
 }
-.pl-credit { margin-top: 10px; font-size: 10.5px; color: var(--text-muted); font-style: italic; }
+.pl-credit { margin-top: 10px; font-size: var(--fs-10); color: var(--text-muted); font-style: italic; }
 .pl-loading { display: flex; gap: 5px; padding: 12px 2px 4px; }
 .pl-loading span {
   width: 7px; height: 7px; border-radius: 50%;
@@ -2678,7 +2693,7 @@ path.leaflet-interactive { outline: none !important; }
   /* Boxed so it reads as a legend KEY (a type specimen), not as text that runs
      into the adjacent "Names" caps — "Aa NAMES" was misread as one word "AA". */
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: var(--fs-10);
   font-weight: 700;
   line-height: 1;
   color: var(--gold);
@@ -2702,7 +2717,7 @@ path.leaflet-interactive { outline: none !important; }
 .via-name-label .vnl-ancient {
   display: block;
   font-family: 'Cinzel', serif;
-  font-size: 12px;
+  font-size: var(--fs-12);
   font-weight: 600;
   letter-spacing: 0.3px;
   color: var(--gold);
@@ -2711,7 +2726,7 @@ path.leaflet-interactive { outline: none !important; }
 .via-name-label .vnl-modern {
   display: block;
   font-family: 'Inter', sans-serif;
-  font-size: 10.5px;
+  font-size: var(--fs-10);
   font-weight: 300;
   color: var(--parchment);
   opacity: 0.78;
@@ -2744,7 +2759,7 @@ path.leaflet-interactive { outline: none !important; }
 }
 #empire-inset-title {
   font-family: 'Cinzel', serif;
-  font-size: 10.5px;
+  font-size: var(--fs-10);
   font-weight: 600;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -2754,7 +2769,7 @@ path.leaflet-interactive { outline: none !important; }
   background: none;
   border: none;
   color: var(--gold);
-  font-size: 13px;
+  font-size: var(--fs-13);
   line-height: 1;
   cursor: pointer;
   padding: 2px 4px;

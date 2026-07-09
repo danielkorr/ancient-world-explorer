@@ -2519,13 +2519,17 @@ function siteTwinAlexanderStop(site) {
 function crossToRoman(siteId) {
   const site = (typeof SITES !== 'undefined') && SITES.find(s => s.id === siteId);
   if (!site) return;
-  if (appMode !== 'roman') setMode('roman');
-  if (map.getZoom() < 8) map.setView([site.lat, site.lng], 8, { animate: false });
+  if (appMode !== 'roman') setMode('roman', { preserveView: true });
+  map.setView([site.lat, site.lng], Math.max(map.getZoom(), 8), { animate: false });
   focusSite(site, { pulse: true });
 }
 function crossToAlexander(stopId) {
   const stop = (typeof ALEXANDER_STOPS !== 'undefined') && ALEXANDER_STOPS.find(s => s.id === stopId);
-  if (stop) focusAlexander(stop);   // focusAlexander handles the mode switch
+  if (!stop) return;
+  if (appMode !== 'alexander') setMode('alexander', { preserveView: true });
+  map.setView([stop.lat, stop.lng], Math.max(map.getZoom(), 6), { animate: false });
+  const layer = alexanderStopLayers.find(x => x._alexanderStop === stop);
+  showAlexanderPanel(stop, layer);
 }
 
 function itinereSearchMeta(entry) {
@@ -4053,8 +4057,9 @@ function setEra(era) {
 // layerState — the lever almost everything keys on — then re-applies through the
 // EXISTING render paths (contents-mutation, mobile-safe). No new rendering.
 // Chrome show/hide is CSS-driven off body.mode-alexander (see style.css).
-function setMode(mode) {
+function setMode(mode, opts = {}) {
   if (mode === appMode) return;
+  const preserveView = !!opts.preserveView;
   appMode = mode;
 
   document.querySelectorAll('.mode-tab').forEach(t => {
@@ -4065,7 +4070,10 @@ function setMode(mode) {
   document.body.classList.toggle('mode-alexander', mode === 'alexander');
   document.body.classList.toggle('mode-roman',     mode === 'roman');
 
-  if (document.getElementById('info-panel').classList.contains('open')) closePanel();
+  if (document.getElementById('info-panel').classList.contains('open')) {
+    if (preserveView) panelReturnView = null;
+    closePanel();
+  }
   if (typeof closeDockPanels === 'function') closeDockPanels();   // drop any open dock popover (Detail/Search)
   clearRoute();   // a drawn ORBIS journey shouldn't linger across a mode switch
 
@@ -4077,7 +4085,7 @@ function setMode(mode) {
     refreshVisibleMarkers();   // empties site clusters (sites off)
     renderCoverageDots();      // returns early now (coverageWanted false off-mode)
     refreshAlexanderLayer();   // paint the campaign
-    fitAlexanderBounds();
+    if (!preserveView) fitAlexanderBounds();
   } else {
     layerState.alexander = false; layerState.roads = true; layerState.sites = true;
     for (const g of [itinereRoadsGroup, roadsGroup]) if (g && !map.hasLayer(g)) map.addLayer(g);
@@ -4086,7 +4094,7 @@ function setMode(mode) {
     syncFilterUI();
     refreshVisibleMarkers();
     renderCoverageDots();
-    fitRomanModeView();
+    if (!preserveView) fitRomanModeView();
   }
 
   // Reflect the forced layer state onto the Roman chips + legend master rows

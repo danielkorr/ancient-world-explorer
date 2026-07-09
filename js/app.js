@@ -589,6 +589,7 @@ const ALEXANDER_DEFAULT_STYLE = ALEXANDER_ROUTE_STYLE.reconstructed;
 const alexanderStopLayers = [];
 let activeAlexanderLayer = null;
 let alexanderHasAutoFit = false;
+let pendingCloseAlexanderStop = null;
 
 function alexanderPhase(stop) {
   if (typeof ALEXANDER_PHASES === 'undefined' || !stop) return null;
@@ -708,18 +709,22 @@ function fitRomanModeView() {
 
 // A bright pulsing beacon at a stop (persistent dot + expanding ring), so a
 // searched/linked place announces itself even when its dot's colour is invisible.
-function dropAlexanderBeacon(stop) {
+function dropAlexanderBeacon(stop, opts = {}) {
   alexanderBeaconGroup.clearLayers();
   if (!stop || typeof stop.lat !== 'number') return;
+  const bounded = !!opts.bounded;
   const icon = L.divIcon({
-    className: 'alex-beacon',
+    className: `alex-beacon${bounded ? ' bounded' : ''}`,
     html: '<div class="alex-beacon-ring"></div><div class="alex-beacon-dot"></div>',
     iconSize: [0, 0],
   });
   L.marker([stop.lat, stop.lng], { icon, interactive: false, keyboard: false, zIndexOffset: 1200 })
     .addTo(alexanderBeaconGroup);
 }
-function clearAlexanderBeacon() { alexanderBeaconGroup.clearLayers(); }
+function clearAlexanderBeacon() {
+  alexanderBeaconGroup.clearLayers();
+  pendingCloseAlexanderStop = null;
+}
 
 const ALEX_LIT_LINE = '#f4ead2';   // bright cream — high luminance for lit routes
 function alexStopSpotStyle(stop, state) {
@@ -996,7 +1001,9 @@ function showAlexanderPanel(stop, layer) {
   panel.classList.add('open');
   dismissMobileGuide(true);
   panToWithPanelOffset([stop.lat, stop.lng]);
-  dropAlexanderBeacon(stop);   // pulsing beacon so the stop is findable, colour-blind or not
+  const persistentMobileBeacon = window.innerWidth <= 640 && !QA;
+  pendingCloseAlexanderStop = persistentMobileBeacon ? stop : null;
+  dropAlexanderBeacon(stop, { bounded: !persistentMobileBeacon });   // colour-blind selected-stop beacon
 }
 
 // ── SITE MARKERS ─────────────────────────────────────────
@@ -1965,6 +1972,7 @@ function panToWithPanelOffset(latlng, zoom) {
 function closePanel() {
   const panel = document.getElementById('info-panel');
   const pulseSiteIdAfterClose = pendingClosePulseSiteId;
+  const alexanderStopAfterClose = pendingCloseAlexanderStop;
   // An Alexander stop renders DIM (r=4, ~26% opacity) when unselected, so on
   // mobile — where the panel covers the map — tearing down the beacon AND
   // un-lighting the stop on close left the just-viewed stop unfindable the
@@ -1973,6 +1981,8 @@ function closePanel() {
   // stop is picked (dropAlexanderBeacon clears first), cleared on mode switch
   // (refreshAlexanderLayer), and dismissable via the legend Clear button
   // (clearAlexSpotlight). Non-Alexander closes still tear down normally.
+  // Current behavior: desktop keeps only the selected dot after a bounded pulse;
+  // mobile keeps the infinite beacon while the sheet is open, then bounded-pulses on close.
   const keepAlexanderMark = currentPanelKind === 'alexander';
   panel.classList.remove('open');
   panel.classList.remove('segment-panel');
@@ -2012,6 +2022,10 @@ function closePanel() {
     if (pulseMarker) {
       setTimeout(() => triggerMarkerPulse(pulseMarker), 140);
     }
+  }
+  pendingCloseAlexanderStop = null;
+  if (alexanderStopAfterClose && window.innerWidth <= 640) {
+    setTimeout(() => dropAlexanderBeacon(alexanderStopAfterClose, { bounded: true }), 140);
   }
 }
 

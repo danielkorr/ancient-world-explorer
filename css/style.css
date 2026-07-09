@@ -450,6 +450,9 @@ body.mode-alexander #campaign-legend { display: block; }
   animation: alexBeaconPulse 1.2s ease-out infinite;
   pointer-events: none;
 }
+.alex-beacon.bounded .alex-beacon-ring {
+  animation: alexBeaconPulse 0.7s ease-out 4;
+}
 @keyframes alexBeaconPulse {
   0%   { transform: scale(0.45); opacity: 1; }
   70%  { transform: scale(2.7);  opacity: 0.28; }

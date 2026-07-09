@@ -296,7 +296,15 @@ const ITINERE_DEFAULT_STYLE = { color: '#8a6a3a', weight: 1, opacity: 0.42, dash
 // map click/tap point. Each entry caches its latlng bbox for a cheap prefilter.
 const itinereSegs = [];
 
-if (!QA && typeof ROADS_ITINERE !== 'undefined') {
+// Name index for Itiner-e road search (populated by buildItinereBaseline).
+const ITINERE_NAME_INDEX = [];
+
+// The Itiner-e baseline is built LAZILY, after first paint (see ensureRoadsLoaded
+// at the end of init), so the ~2.96 MB dataset never blocks the map from becoming
+// interactive. This populates itinereSegs + ITINERE_NAME_INDEX + certCounts, adds
+// the required CC BY attribution, then refreshes the roads legend + filter UI.
+function buildItinereBaseline() {
+  if (typeof ROADS_ITINERE === 'undefined') return;
   const META = (typeof ROADS_ITINERE_META !== 'undefined') ? ROADS_ITINERE_META : [];
   for (const seg of ROADS_ITINERE) {
     const meta = seg.m != null ? META[seg.m] : null;
@@ -326,19 +334,9 @@ if (!QA && typeof ROADS_ITINERE !== 'undefined') {
     // group's contents (mobile-safe), never toggling group membership.
     itinereSegs.push({ ll: latlngs, meta, id: seg.id, pl, minLat, maxLat, minLng, maxLng });
   }
-  // CC BY 4.0 attribution — required by the dataset license.
-  map.attributionControl.addAttribution(
-    'Roads: <a href="https://itiner-e.org" target="_blank" rel="noopener">Itiner-e</a> (CC BY 4.0)'
-  );
-}
-
-// Name index for Itiner-e road search. Every rendered segment carries a scholarly
-// name (endpoint-pair, e.g. "Coptos-Berenike"); a named road is the set of all
-// segments that share it. Grouping by name turns ~14.8k anonymous canvas segments
-// into ~6.2k searchable, highlightable named roads. Built once at load from refs
-// into itinereSegs (normalizeSearchText is a hoisted function — safe to call here).
-const ITINERE_NAME_INDEX = [];
-(function buildItinereNameIndex() {
+  // Name index: group segments that share a scholarly name (endpoint-pair, e.g.
+  // "Coptos-Berenike") into searchable roads — ~14.8k anonymous canvas segments
+  // become ~6.2k named, highlightable roads. (normalizeSearchText is hoisted.)
   const byName = new Map();
   for (const s of itinereSegs) {
     const nm = s.meta && s.meta.name;
@@ -354,7 +352,26 @@ const ITINERE_NAME_INDEX = [];
     e.segs.push(s);
   }
   ITINERE_NAME_INDEX.sort((a, b) => a.name.localeCompare(b.name));
-})();
+
+  // Certainty counts for the roads legend (was a parse-time const; now post-load).
+  certCounts = itinereSegs.reduce((acc, s) => {
+    const c = s.meta && s.meta.cert;
+    if (c) acc[c] = (acc[c] || 0) + 1;
+    return acc;
+  }, {});
+
+  // CC BY 4.0 attribution — required by the dataset license.
+  map.attributionControl.addAttribution(
+    'Roads: <a href="https://itiner-e.org" target="_blank" rel="noopener">Itiner-e</a> (CC BY 4.0)'
+  );
+
+  // Segments are now on itinereRoadsGroup (added above, same mechanism the cert
+  // filter uses — mobile-safe). Refresh legend counts + filter UI; re-apply a
+  // certainty filter only if the user already set one before roads finished.
+  if (activeCert.size > 0) refreshVisibleRoads();
+  decorateRoadsLegend();
+  syncRoadsFilterUI();
+}
 
 // Pixel distance from point p to segment a-b (all L.Point in container space).
 function _distToSegPx(p, a, b) {
@@ -408,11 +425,9 @@ function findNearestItinere(latlng, cp, threshPx) {
 // which is the mobile-safe pattern. Rows are inert while the Roads layer is off.
 const ITINERE_CERTS = ['c', 'j', 'h'];
 const activeCert    = new Set();   // empty = show all certainties
-const certCounts    = itinereSegs.reduce((acc, s) => {
-  const c = s.meta && s.meta.cert;
-  if (c) acc[c] = (acc[c] || 0) + 1;
-  return acc;
-}, {});
+// Populated by buildItinereBaseline once the (lazy) roads dataset loads; empty
+// until then so the legend rows read 0 and stay inert.
+let certCounts      = {};
 
 function refreshVisibleRoads() {
   itinereRoadsGroup.clearLayers();
@@ -4915,6 +4930,31 @@ bindDetailSlider();
 syncDetailUI();
 bindSiteSearch();
 bindDock();
+
+// ── LAZY ROADS ───────────────────────────────────────────
+// The Itiner-e baseline (~2.96 MB, ~15k segments) is the single heaviest asset.
+// Loading it AFTER first paint lets the map + markers + the 14 curated named roads
+// become interactive first, then the dense scholarly baseline fades in a beat
+// later (buildItinereBaseline). ?qa=1 skips it entirely — deterministic tests stay
+// light, exactly as the old index.html document.write guard did.
+let _roadsState = 'idle';
+function ensureRoadsLoaded() {
+  if (QA || _roadsState !== 'idle') return;
+  _roadsState = 'loading';
+  const s = document.createElement('script');
+  // Roads keep their OWN cache token (independent of app.js's ?v=), so bumping the
+  // app doesn't force a 2.96 MB re-download. Bump HERE when roads-itinere.js is
+  // regenerated — this used to live in index.html as ?v=119.
+  s.src = 'js/roads-itinere.js?v=119';
+  s.async = true;
+  s.onload = () => { _roadsState = 'ready'; buildItinereBaseline(); };
+  s.onerror = () => { _roadsState = 'error'; };
+  document.head.appendChild(s);
+}
+if (!QA) {
+  if ('requestIdleCallback' in window) requestIdleCallback(() => ensureRoadsLoaded(), { timeout: 2000 });
+  else setTimeout(ensureRoadsLoaded, 200);
+}
 
 // Keyboard activation for the legend filter rows (they're role="button"). Site
 // tier rows carry data-tier; roads certainty rows carry data-cert.

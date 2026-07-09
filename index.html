@@ -459,16 +459,12 @@
 <script src="js/sites-vici.js?v=106"></script>
 <script src="js/vici-links.js?v=106"></script>
 <script src="js/sites-linked-data.js?v=107"></script>
-<!-- The Itiner-e road dataset is ~2.7MB; parsing it intermittently crashes
-     headless Chromium, breaking deterministic tests. Skip it entirely in ?qa=1
-     (app.js guards on `typeof ROADS_ITINERE`). document.write here runs during
-     parse, so the script still loads synchronously before data.js/app.js in the
-     normal (non-QA) path — ordering is preserved. -->
-<script>
-  if (!/[?&]qa=1/.test(location.search)) {
-    document.write('<scr' + 'ipt src="js/roads-itinere.js?v=119"><\/scr' + 'ipt>');
-  }
-</script>
+<!-- The Itiner-e road dataset (~2.96 MB) is now LAZY-loaded by app.js
+     (ensureRoadsLoaded) AFTER first paint, so it never blocks the map from
+     becoming interactive. ?qa=1 still skips it entirely. It used to be
+     document.write'd here synchronously before data.js/app.js, which blocked
+     time-to-interactive on the single heaviest asset in the app. -->
+<!-- (roads-itinere.js load moved into js/app.js) -->
 <script src="js/data.js?v=131"></script>
 <script src="js/alexander.js?v=111"></script>
 <script src="js/alexander-photos.js?v=4"></script>
@@ -477,7 +473,7 @@
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
 <script src="js/basemap.js?v=106"></script>
-<script src="js/app.js?v=144"></script>
+<script src="js/app.js?v=145"></script>
 
 </body>
 </html>

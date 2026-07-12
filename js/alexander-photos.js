@@ -243,13 +243,13 @@ window.ALEXANDER_PHOTOS = {
     "caption": "Pictured: Alexander Mosaic, Roman copy of a Hellenistic battle scene"
   },
   "gaugamela": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Battle_of_Gaugamela_DVIDS171952.jpg/960px-Battle_of_Gaugamela_DVIDS171952.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Battle_of_Gaugamela_DVIDS171952.jpg",
-    "credit": "Spc. Daniel Nelson",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Fragmen_of_battle_of_arbela_painting_by_charles_le_brun.jpg/960px-Fragmen_of_battle_of_arbela_painting_by_charles_le_brun.jpg",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Fragmen_of_battle_of_arbela_painting_by_charles_le_brun.jpg",
+    "credit": "Charles Le Brun",
     "license": "Public domain",
-    "source": "https://commons.wikimedia.org/wiki/File:Battle_of_Gaugamela_DVIDS171952.jpg",
-    "position": "center 50%",
-    "caption": "Pictured: modern Gaugamela landscape; battlefield identification is approximate"
+    "source": "https://commons.wikimedia.org/wiki/File:Fragmen_of_battle_of_arbela_painting_by_charles_le_brun.jpg",
+    "position": "center 40%",
+    "caption": "Pictured: Charles Le Brun's Battle of Arbela (Gaugamela), 1669 — Louvre"
   },
   "persian-gate": {
     "thumb": "https://upload.wikimedia.org/wikipedia/commons/f/f6/2persian_gate_wall.JPG",

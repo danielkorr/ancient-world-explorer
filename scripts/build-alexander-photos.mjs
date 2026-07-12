@@ -54,7 +54,7 @@ const PINNED_FILES = {
   '922695': 'پانوراما روز تخت جمشید.jpg',
   'persian-gate': '2persian gate wall.JPG',
   '687902': 'Southern Palestine. Gaza, from the west. LOC matpc.01376.jpg',
-  'gaugamela': 'Battle of Gaugamela DVIDS171952.jpg',
+  'gaugamela': 'Fragmen of battle of arbela painting by charles le brun.jpg',
   'sogdian-rock': 'Vista de les muntanyes al sud de Mazori Sharif (Panjakent, Sughd, Tajikistan).jpg',
   '59987': 'Indus River Delta.jpg',
   'gedrosian-route': 'Baluchistan Canyons.jpg',
@@ -70,7 +70,7 @@ const PINNED_POSITION = {
   '922695': 'center 55%',
   'persian-gate': 'center 50%',
   '687902': 'center 50%',
-  'gaugamela': 'center 50%',
+  'gaugamela': 'center 40%',
   'sogdian-rock': 'center 52%',
   '59987': 'center 50%',
   'gedrosian-route': 'center 48%',
@@ -83,7 +83,7 @@ const PINNED_CAPTION = {
   '961886': 'Pictured: later ruins at Balkh/Bactra',
   'persian-gate': 'Pictured: Persian Gate pass; battlefield marker is approximate',
   '687902': 'Pictured: Gaza from the west, Matson Collection, 1900',
-  'gaugamela': 'Pictured: modern Gaugamela landscape; battlefield identification is approximate',
+  'gaugamela': "Pictured: Charles Le Brun's Battle of Arbela (Gaugamela), 1669 — Louvre",
   'sogdian-rock': 'Pictured: Sughd mountain landscape; exact site disputed',
   '59987': 'Pictured: Indus delta; Patala location approximate',
   'gedrosian-route': 'Pictured: Makran/Balochistan landscape; route generalized',
@@ -91,6 +91,7 @@ const PINNED_CAPTION = {
 };
 const PINNED_CREDIT = {
   'aegae': 'Unknown artist',
+  'gaugamela': 'Charles Le Brun',
 };
 
 async function exists(p) { try { await stat(p); return true; } catch { return false; } }

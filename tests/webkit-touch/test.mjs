@@ -148,6 +148,58 @@ try {
     !document.getElementById('info-panel').classList.contains('open'));
   ok('tap on empty map closed the panel', closed);
 
+  // 4) Alexander campaign stops: same tap-open / double-tap-zoom behavior as Roman
+  // markers. Stops are non-interactive circleMarkers resolved by nearest-point
+  // (see findNearestAlexanderStop in app.js), so unlike markers/roads they carry no
+  // DOM element the pane-level touchend delegations can hit-test — they're handled
+  // by a dedicated map-container-level delegation. This exercises that path.
+  const ALEX_ID = 'pella';
+  await page.evaluate(() => { if (typeof setMode === 'function') setMode('alexander'); });
+  await sleep(300);   // refreshAlexanderLayer + fitAlexanderBounds (rAF-deferred)
+
+  const alexXY = await page.evaluate((id) => {
+    const stop = (typeof ALEXANDER_STOPS !== 'undefined') ? ALEXANDER_STOPS.find(s => s.id === id) : null;
+    if (!stop) return null;
+    map.setView([stop.lat, stop.lng], 8, { animate: false });
+    const rect = map.getContainer().getBoundingClientRect();
+    const pt = map.latLngToContainerPoint([stop.lat, stop.lng]);
+    return { x: rect.left + pt.x, y: rect.top + pt.y, zoom: map.getZoom() };
+  }, ALEX_ID).catch(() => null);
+  ok(`found Alexander stop "${ALEX_ID}" and positioned it`, !!alexXY);
+
+  if (alexXY) {
+    // Single tap → opens the stop panel (deferred past the double-tap window).
+    await page.touchscreen.tap(alexXY.x, alexXY.y);
+    await sleep(450);
+    const alexOpened = await page.evaluate((id) => {
+      const panelOpen = document.getElementById('info-panel').classList.contains('open');
+      const nameEl = document.getElementById('panel-name');
+      const stop = (typeof ALEXANDER_STOPS !== 'undefined') ? ALEXANDER_STOPS.find(s => s.id === id) : null;
+      return panelOpen && stop && nameEl && nameEl.textContent === stop.name;
+    }, ALEX_ID).catch(() => false);
+    ok('tap on Alexander stop opened its panel (map-container touch delegation)', alexOpened);
+
+    // Reset for the double-tap check: close the panel, re-center on the stop at
+    // the same zoom, then fire two rapid taps at the same point.
+    await page.evaluate((id) => {
+      if (typeof closePanel === 'function') closePanel();
+      const stop = (typeof ALEXANDER_STOPS !== 'undefined') ? ALEXANDER_STOPS.find(s => s.id === id) : null;
+      if (stop) map.setView([stop.lat, stop.lng], 8, { animate: false });
+    }, ALEX_ID).catch(() => {});
+    await sleep(150);
+
+    await page.touchscreen.tap(alexXY.x, alexXY.y);
+    await sleep(80);   // well inside ALEX_DBLTAP_MS (280ms)
+    await page.touchscreen.tap(alexXY.x, alexXY.y);
+    await sleep(450);
+    const afterDbl = await page.evaluate(() => ({
+      zoom: map.getZoom(),
+      panelOpen: document.getElementById('info-panel').classList.contains('open'),
+    })).catch(() => null);
+    ok('double-tap on Alexander stop zoomed in one level (not just re-opened the panel)',
+       !!afterDbl && afterDbl.zoom === alexXY.zoom + 1);
+  }
+
   ok('no uncaught page errors', errors.length === 0);
   if (errors.length) errors.forEach(e => console.log('    page error:', e));
 

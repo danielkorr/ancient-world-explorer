@@ -1633,6 +1633,66 @@ if (COARSE_POINTER) {
   }, { passive: false });
 }
 
+// Alexander campaign stops hit a THIRD variant of the iOS tap wall. They're
+// L.circleMarker layers rendered `interactive: false` (resolved by nearest-point
+// from findNearestAlexanderStop, not real hit-tests — see refreshAlexanderLayer),
+// so they carry no `.leaflet-interactive` class and get `pointer-events: none`.
+// That means a tap over one isn't captured by the markerPane/overlayPane
+// delegations above at all — pointer-events:none makes the browser's hit-test
+// skip straight past them to whatever's underneath (a tile in tilePane, a sibling
+// pane with no ancestor relationship to marker/overlayPane), so neither delegated
+// listener ever sees the touch. Those taps fall all the way through to Leaflet's
+// own map-level tap handling, which is what map.on('click') → findNearestAlexanderStop
+// relies on for single taps. But nothing there discriminated a double tap from two
+// single taps, so a second tap just re-ran showAlexanderPanel's pan on top of
+// whatever Leaflet's native double-tap-zoom was doing — the "flash, then back
+// where you started" the bug report described. Delegate on the map container
+// itself (the one ancestor guaranteed to receive the bubbled touch regardless of
+// which pane/tile actually got hit) and apply the same tap-vs-double-tap
+// discriminator as markers/roads above.
+const ALEX_DBLTAP_MS = 280;
+if (COARSE_POINTER) {
+  const alexTouchEl = map.getContainer();
+  let _alexStart = null;
+  let _lastAlexTap = null;   // {id, t, timer} of the last single-tap awaiting open
+  alexTouchEl.addEventListener('touchstart', e => {
+    const t = e.changedTouches && e.changedTouches[0];
+    _alexStart = t ? { x: t.clientX, y: t.clientY } : null;
+  }, { passive: true });
+  alexTouchEl.addEventListener('touchend', e => {
+    if (appMode !== 'alexander') return;
+    const t = e.changedTouches && e.changedTouches[0];
+    if (!t) return;
+    if (_alexStart && (Math.abs(t.clientX - _alexStart.x) > 12 || Math.abs(t.clientY - _alexStart.y) > 12)) return;
+
+    let ll; try { ll = map.mouseEventToLatLng(t); } catch (_) { return; }
+    if (!ll) return;
+    const hit = findNearestAlexanderStop(ll, map.latLngToContainerPoint(ll));
+    if (!hit) return;   // nothing under the finger — let native click/dblclick + panel-close run
+    const stop = hit._alexanderStop;
+    e.preventDefault();   // we own this tap → suppress the late synthesized click/dblclick
+
+    // Tap vs double-tap discriminator (mirrors MARKER_DBLTAP_MS). A double-tap on
+    // the SAME stop zooms in one level; a lone tap opens the panel, but only after
+    // the double-tap window so a second tap can pre-empt it.
+    const now = Date.now();
+    if (_lastAlexTap && _lastAlexTap.id === stop.id && (now - _lastAlexTap.t) < ALEX_DBLTAP_MS) {
+      clearTimeout(_lastAlexTap.timer);
+      _lastAlexTap = null;
+      const z = Math.min(map.getZoom() + 1, map.getMaxZoom());
+      if (document.getElementById('info-panel').classList.contains('open')) panToWithPanelOffset([stop.lat, stop.lng], z);
+      else map.setView([stop.lat, stop.lng], z, { animate: true });
+      return;
+    }
+    if (_lastAlexTap) clearTimeout(_lastAlexTap.timer);   // a pending open on another stop — last tap wins
+    const openTimer = setTimeout(() => {
+      _lastAlexTap = null;
+      showAlexanderPanel(stop, hit);
+    }, ALEX_DBLTAP_MS);
+    _lastAlexTap = { id: stop.id, t: now, timer: openTimer };
+  }, { passive: false });
+}
+
 // ── INFO PANEL ───────────────────────────────────────────
 
 // One-line "what is VIA" pitch appended to the quest emails — most recipients

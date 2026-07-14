@@ -1211,12 +1211,16 @@ let   pulseTimer   = null;
 let   pendingClosePulseSiteId = null;
 let   focusToken   = 0;   // guards against stale async reveal callbacks (race)
 
+function clearActiveMarker() {
+  if (!activeMarker) return;
+  activeMarker.setIcon(makeIcon(activeMarker._site, false));
+  activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
+  activeMarker = null;
+}
+
 function setActiveMarker(marker) {
   if (activeMarker === marker) return;
-  if (activeMarker) {
-    activeMarker.setIcon(makeIcon(activeMarker._site, false));
-    activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
-  }
+  clearActiveMarker();
   activeMarker = marker || null;
   if (activeMarker) {
     activeMarker.setIcon(makeIcon(activeMarker._site, false));
@@ -1797,6 +1801,7 @@ function showPanel(site) {
   if (_segNear) _segNear.style.display = 'none';
   const _segPl = document.getElementById('segment-pleiades');
   if (_segPl) { _segPl.style.display = 'none'; _segPl.innerHTML = ''; }
+  if (site.coverage) clearActiveMarker();
 
   // Hero. Any site with a vici.org photo shows it as the hero with a credit/
   // license caption (the "imagery exists in the wild" made literal); elevation
@@ -2049,11 +2054,7 @@ function closePanel() {
     setActiveAlexanderLayer(null);
     clearAlexanderBeacon();
   }
-  if (activeMarker) {
-    activeMarker.setIcon(makeIcon(activeMarker._site, false));
-    activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
-    activeMarker = null;
-  }
+  clearActiveMarker();
   currentPanelSite = null;
   currentPanelKind = null;
   currentSegmentMeta = null;
@@ -3836,11 +3837,7 @@ function showSegmentPanel(meta, latlngs, segIds) {
   currentPanelKind = 'segment';
   currentPanelSite = null;
   currentSegmentMeta = meta || null;
-  if (activeMarker) {
-    activeMarker.setIcon(makeIcon(activeMarker._site, false));
-    activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
-    activeMarker = null;
-  }
+  clearActiveMarker();
 
   // Hero. Roads have no imagery of their own, but a site along the stretch often
   // does — borrow the nearest such vici photo so the road panel is as rich as a

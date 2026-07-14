@@ -359,6 +359,17 @@ body.lock-alexander #mode-crosslink { display: flex; justify-content: center; }
 /* Only the OTHER experience's link shows per page. */
 body.lock-roman .mode-cross.to-roman { display: none; }
 body.lock-alexander .mode-cross.to-alexander { display: none; }
+
+/* ── PHASE 3: split-unlock subtractions ──
+   On the Roman-locked page the Alexander layer chip + legend row are dead
+   controls (no Alexander layer to toggle). Hidden here; kept for ?lock=none
+   dual-mode dev. */
+body.lock-roman #btn-alexander,
+body.lock-roman #legend-alexander-toggle { display: none; }
+
+/* Topbar Key button: mobile-only (folded up from the old dock). Desktop keeps
+   the always-open legend, so it stays hidden there. Shown in the ≤640px block. */
+#topbar-key { display: none; }
 .mode-cross {
   display: inline-flex; align-items: center; gap: 7px;
   padding: 6px 14px; border-radius: 999px;
@@ -2183,7 +2194,18 @@ path.leaflet-interactive { outline: none !important; }
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  #topbar-right   { gap: 6px; }
+  #topbar-right   { gap: 6px; align-items: center; }
+  /* Key folded up from the dock (Phase 3): a slim pill next to the profile pill. */
+  #topbar-key {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 10px; border-radius: 999px;
+    background: var(--ink-panel); color: var(--gold);
+    border: 1px solid var(--gold-dim);
+    font-family: 'Cinzel', serif; font-size: var(--fs-11); font-weight: 600;
+    letter-spacing: 0.4px; line-height: 1; cursor: pointer;
+  }
+  #topbar-key svg { display: block; flex: 0 0 auto; }
+  #topbar-key[aria-expanded="true"] { background: var(--gold); color: var(--ink); }
   /* Search moved off the top bar into the dock (see #dock-search-panel). The
      input + results are reparented into the search overlay at boot, so here we
      reset the topbar-search positioning to flow inside that panel. */

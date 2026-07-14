@@ -56,7 +56,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=144">
+  <link rel="stylesheet" href="css/style.css?v=145">
 </head>
 <body>
 
@@ -84,6 +84,13 @@
     <div id="site-search-results" data-testid="site-search-results" role="listbox" aria-label="Search results"></div>
   </div>
   <div id="topbar-right">
+    <!-- Key: the map legend/filters. Mobile-only (CSS) — folded up here from the
+         old dock so the bottom bar is just search. Desktop keeps the always-open
+         legend, so this stays hidden there. Toggles #quest-legend.mobile-open. -->
+    <button id="topbar-key" type="button" onclick="toggleLegend()" aria-label="Legend &amp; filters" aria-expanded="false" aria-controls="quest-legend">
+      <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M3 5h18l-7 8.2V21l-4-2.2v-5.6z" fill="currentColor"/></svg>
+      <span id="topbar-key-label">Key</span>
+    </button>
     <button id="profile-pill" onclick="openAuthModal()" title="Sign in">
       <span id="profile-pill-glyph">⊙</span>
       <span id="profile-pill-label">Sign in</span>
@@ -280,13 +287,8 @@
   <button class="ctrl-btn" id="btn-names" data-testid="names-filter-button" onclick="toggleLayer('names')" title="Show ancient + modern place names on the map">
     <span class="ctrl-icon" aria-hidden="true">🏷️</span><div class="swatch-name">Aa</div><span class="ctrl-label">Names</span>
   </button>
-  <div class="detail-control" id="detail-control" data-testid="detail-filter-control" aria-label="Map detail">
-    <div class="detail-head">
-      <span class="detail-title">Detail</span>
-      <span id="detail-readout">Highlights · drag for more</span>
-    </div>
-    <input id="detail-slider" data-testid="detail-filter-slider" type="range" min="0" max="3" step="1" value="0" aria-label="Map detail">
-  </div>
+  <!-- Detail slider removed (Phase 3): map detail is derived from zoom
+       (detailLevelForZoom / syncDetailToZoom in app.js), not set by hand. -->
 </div>
 
 <!-- Empire inset — a fixed locator map (desktop only). Shows the DARE atlas at
@@ -301,26 +303,16 @@
   <div id="empire-inset-map"></div>
 </div>
 
-<!-- Mobile dock: one slim persistent bottom bar holding a search field, a
-     curation (Detail) button, and a Key button. Tapping a dock button opens a
-     popover/panel; opening one closes the others (dock controller in app.js).
-     Mobile-only — hidden on desktop, where the topbar search + #bottom-controls
-     remain. The map stays full-bleed; chrome appears only on demand. -->
+<!-- Mobile dock: a slim persistent bottom bar holding just the search field —
+     thumb-reachable. The Detail button is gone (Phase 3: detail follows zoom) and
+     Key moved to the top bar (#topbar-key). Tapping search opens its overlay (dock
+     controller in app.js). Mobile-only; hidden on desktop, where the topbar search
+     + #bottom-controls remain. The map stays full-bleed; chrome on demand. -->
 <div id="dock" data-testid="mobile-dock">
   <button id="dock-search" class="dock-btn dock-search-field" type="button"
           aria-haspopup="dialog" aria-expanded="false" aria-controls="dock-search-panel">
     <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
     <span class="dock-search-placeholder">Search sites, roads, or locations</span>
-  </button>
-  <button id="dock-curation" class="dock-btn" type="button"
-          aria-haspopup="dialog" aria-expanded="false" aria-controls="detail-control">
-    <span class="dock-btn-icon" aria-hidden="true">☰</span>
-    <span class="dock-btn-label">Detail</span>
-  </button>
-  <button id="dock-key" class="dock-btn" type="button"
-          aria-haspopup="dialog" aria-expanded="false" aria-controls="quest-legend">
-    <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M3 5h18l-7 8.2V21l-4-2.2v-5.6z" fill="currentColor"/></svg>
-    <span class="dock-btn-label">Key</span>
   </button>
 </div>
 <!-- Scrim behind the open search panel; tap to dismiss. -->
@@ -338,7 +330,7 @@
 <div id="mobile-guide" class="hidden" role="status" aria-live="polite">
   <div>
     <div id="mobile-guide-title">Start with the map</div>
-    <div id="mobile-guide-body">Tap a colored site or road line for the story. Drag Detail to reveal more quests as the map gets more detailed.</div>
+    <div id="mobile-guide-body">Tap a colored site or road line for its story. Zoom in — more places appear as you go.</div>
   </div>
   <button id="mobile-guide-close" onclick="dismissMobileGuide(true)" aria-label="Dismiss guide">×</button>
 </div>
@@ -546,7 +538,7 @@
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
 <script src="js/basemap.js?v=106"></script>
-<script src="js/app.js?v=152"></script>
+<script src="js/app.js?v=153"></script>
 
 </body>
 </html>

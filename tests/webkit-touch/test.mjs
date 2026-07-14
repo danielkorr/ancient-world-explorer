@@ -148,6 +148,46 @@ try {
     !document.getElementById('info-panel').classList.contains('open'));
   ok('tap on empty map closed the panel', closed);
 
+  // 3b) real TAP on the topbar Key button opens the legend sheet (Phase 3: Key
+  // folded up from the dock). Native <button onclick>, so a tap synthesizes a
+  // click — this confirms the folded-up Key is tappable on the real WebKit engine.
+  const keyXY = await page.evaluate(() => {
+    const b = document.getElementById('topbar-key');
+    if (!b) return null;
+    const r = b.getBoundingClientRect();
+    return (r.width && r.height) ? { x: r.left + r.width / 2, y: r.top + r.height / 2 } : null;
+  }).catch(() => null);
+  ok('topbar Key button rendered (mobile)', !!keyXY);
+  if (keyXY) {
+    await page.touchscreen.tap(keyXY.x, keyXY.y);
+    await sleep(300);
+    const legendOpen = await page.evaluate(() =>
+      document.getElementById('quest-legend').classList.contains('mobile-open'));
+    ok('tap topbar Key opens the legend sheet', legendOpen);
+    await page.touchscreen.tap(keyXY.x, keyXY.y);   // tap again to close (round-trip)
+    await sleep(300);
+    const legendClosed = await page.evaluate(() =>
+      !document.getElementById('quest-legend').classList.contains('mobile-open'));
+    ok('tap topbar Key again closes the legend sheet', legendClosed);
+  }
+
+  // 3c) Phase 3: detail follows ZOOM (the slider is gone). Zoom out → Highlights
+  // only; zoom in → more sites reveal. This exercises the real zoomend → syncDetailToZoom
+  // path (the deterministic harness can only force levels via the setDetail hook,
+  // never the async zoom path). Awaits between zooms so zoomend fires.
+  const reveal = await page.evaluate(async () => {
+    const count = () => window.VIA.getState().visibleSiteCount;
+    const c = map.getCenter();
+    map.setView(c, 4, { animate: false });                 // level 0 — curated only
+    await new Promise(r => setTimeout(r, 400));
+    const few = count();
+    map.setView(c, 9, { animate: false });                 // level 2 — all foreground sites
+    await new Promise(r => setTimeout(r, 400));
+    const many = count();
+    return { few, many };
+  }).catch(() => ({ few: 0, many: 0 }));
+  ok(`zoom in reveals more sites (few=${reveal.few} → many=${reveal.many})`, reveal.many > reveal.few);
+
   // 4) Alexander guided journey — real taps drive the stepper. The launcher and
   // rail are native <button onclick>, so unlike markers/roads they DO get a
   // synthesized click from a tap; this confirms the journey is tappable on the

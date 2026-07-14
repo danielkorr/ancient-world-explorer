@@ -4857,13 +4857,23 @@ function setDetailLevel(level) {
   syncDetailUI();
 }
 
-function bindDetailSlider() {
-  const slider = document.getElementById('detail-slider');
-  if (!slider || slider.dataset.bound === '1') return;
-  slider.dataset.bound = '1';
-  slider.addEventListener('input', e => {
-    setDetailLevel(Number(e.target.value));
-  });
+// Detail is DERIVED FROM ZOOM (Phase 3) — the slider is gone. Zooming into a
+// region IS the user asking "show me more here"; clustering viewport-culls, so
+// zoom sets density and pan sets the region, with no global density knob to
+// reason about. Thresholds are a starting point, tuned on-device.
+function detailLevelForZoom(z) {
+  if (z >= 10) return 3;   // + Documented (== AUTO_REVEAL_ZOOM; coverage already keys off zoom)
+  if (z >= 8)  return 2;   // all foreground sites
+  if (z >= 6)  return 1;   // quest sites
+  return 0;                // Highlights (curated) — the calm empire-scale default
+}
+
+// Recompute detail from the current zoom (call on zoomend + at boot). Only does
+// work when the derived level actually changes, so it's an instant no-op within
+// a threshold band.
+function syncDetailToZoom() {
+  const lvl = detailLevelForZoom(map.getZoom());
+  if (lvl !== detailLevel) setDetailLevel(lvl);
 }
 
 // Tap a lit legend tier to HIDE it; tap a hidden tier to bring it back. Empty
@@ -4913,8 +4923,16 @@ function toggleLegend() {
   const lg = document.getElementById('quest-legend');
   if (!lg) return;
   const open = lg.classList.toggle('mobile-open');
-  const fab = document.getElementById('legend-fab');
-  if (fab) fab.setAttribute('aria-expanded', open ? 'true' : 'false');
+  syncKeyExpanded(open);
+}
+
+// Keep both Key affordances' aria-expanded (and their active styling) in lockstep
+// with the legend sheet: the legacy FAB and the topbar Key button (Phase 3).
+function syncKeyExpanded(open) {
+  ['legend-fab', 'topbar-key'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
 }
 
 // Dismiss the mobile Key sheet (no-op on desktop, where the legend is always
@@ -4926,21 +4944,19 @@ function closeMobileLegend() {
   if (!lg || !lg.classList.contains('mobile-open')) return;
   lg.classList.remove('mobile-open');
   document.body.classList.remove('dock-key-open');
-  const fab = document.getElementById('legend-fab');
-  if (fab) fab.setAttribute('aria-expanded', 'false');
+  syncKeyExpanded(false);
   if (typeof syncDockButtons === 'function') syncDockButtons();
 }
 document.addEventListener('click', (e) => {
   const lg = document.getElementById('quest-legend');
   if (!lg || !lg.classList.contains('mobile-open')) return;
-  // Stay open when tapping inside the legend (filtering), the legacy FAB, or the
-  // dock Key button (its own handler toggles the panel).
+  // Stay open when tapping inside the legend (filtering), the legacy FAB, the old
+  // dock Key button, or the topbar Key button (each toggles the panel itself).
   if (lg.contains(e.target) ||
-      (e.target.closest && (e.target.closest('#legend-fab') || e.target.closest('#dock-key')))) return;
+      (e.target.closest && (e.target.closest('#legend-fab') || e.target.closest('#dock-key') || e.target.closest('#topbar-key')))) return;
   lg.classList.remove('mobile-open');
   document.body.classList.remove('dock-key-open');
-  const fab = document.getElementById('legend-fab');
-  if (fab) fab.setAttribute('aria-expanded', 'false');
+  syncKeyExpanded(false);
   if (typeof syncDockButtons === 'function') syncDockButtons();
 }, true);
 
@@ -5107,12 +5123,12 @@ if (buildBadge) buildBadge.textContent = `VIA ${BUILD !== '?' ? 'v' + BUILD : 'd
 
 map.on('zoomend', () => {
   updateBasemaps();
-  // Marker visibility is governed by the DETAIL slider, not zoom, and
-  // markercluster re-clusters by itself — so there's nothing to recompute
-  // here beyond the zoom-staged basemap opacity + satellite reveal…
+  // Detail follows zoom now (Phase 3): crossing a threshold reveals the next
+  // tier (quests → all sites → documented). No-op within a band.
+  syncDetailToZoom();
   if (coverageWanted()) ensureCoverageLoaded();  // deep zoom auto-reveals coverage (Phase C)
-  renderCoverageDots();   // …except the coverage dots, which are viewport-culled + zoom-gated
-  if (typeof syncDetailUI === 'function') syncDetailUI();   // refresh the "zoom in" hint
+  renderCoverageDots();   // coverage dots are viewport-culled + zoom-gated
+  if (typeof syncDetailUI === 'function') syncDetailUI();   // harmless no-op once the slider DOM is gone
 });
 // Coverage dots are culled to the viewport, so re-render after a pan too (only
 // does work when the "Documented" level is active — otherwise an instant no-op).
@@ -5125,7 +5141,7 @@ decorateRoadsLegend();
 syncFilterUI();
 syncRoadsFilterUI();
 refreshVisibleMarkers();
-bindDetailSlider();
+syncDetailToZoom();   // detail is derived from zoom now (Phase 3), not a slider
 syncDetailUI();
 bindSiteSearch();
 bindDock();

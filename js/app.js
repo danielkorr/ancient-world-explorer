@@ -1334,6 +1334,18 @@ SITES.forEach(site => {
 
   marker.on('click', function(e) {
     L.DomEvent.stopPropagation(e);
+    // The selected marker can visually sit on top of a nearby site (Cumae /
+    // Acropolis of Cumae), so a click that lands on the active dot may still be
+    // meant for the adjacent one. Re-resolve the local foreground target first;
+    // only stay put if the active marker is still the closest hit.
+    const near = nearestForegroundMarker(e.latlng, e.containerPoint);
+    if (near && near.marker !== this) {
+      clearSiteSearchInput();
+      setActiveMarker(near.marker);
+      showPanel(near.marker._site);
+      triggerMarkerPulse(near.marker);
+      return;
+    }
     // Re-clicking the already-selected marker must NOT re-run showPanel's 0.4s
     // pan animation — that churn was eating the next click and blocking the
     // double-click-to-zoom. Panel's already showing this site; do nothing.
@@ -1537,6 +1549,8 @@ if (COARSE_POINTER) {
     let hit = null;
     for (const m of allMarkers) { if (m._icon === iconEl) { hit = m; break; } }
     if (!hit) return;
+    const near = ll && cp ? nearestForegroundMarker(ll, cp) : null;
+    if (near && near.marker && near.marker !== hit) hit = near.marker;
     e.preventDefault();   // suppress any late synthesized click → no double-open
 
     // Tap vs double-tap discriminator (Track 3 / 3a). A double-tap on the SAME
@@ -1777,6 +1791,7 @@ function showPanel(site) {
   // Re-show anything a prior road-segment panel hid (showSegmentPanel hides the
   // site-only sections). Resetting to '' reverts to the stylesheet default; the
   // per-site logic below re-applies real visibility.
+  clearCoveragePin();
   currentPanelKind = 'site';
   currentSegmentMeta = null;
   document.getElementById('quest-progress').style.display = '';

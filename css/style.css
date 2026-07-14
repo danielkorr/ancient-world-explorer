@@ -346,6 +346,49 @@ body.mode-alexander #roman-legend { display: none; }
 #campaign-legend { display: none; }
 body.mode-alexander #campaign-legend { display: block; }
 
+/* ── PER-PAGE MODE LOCK (the split) ──
+   Each deployed page locks to one experience via body.lock-roman / lock-alexander
+   (set by applyModeLock from window.VIA_LOCK_MODE). Locked: hide the two-mode tab
+   switcher and show a single link to the sibling page instead. Unlocked (?lock=none
+   dev) leaves the tabs and keeps #mode-crosslink hidden. */
+#mode-crosslink { display: none; }
+body.lock-roman #mode-tabs,
+body.lock-alexander #mode-tabs { display: none; }
+body.lock-roman #mode-crosslink,
+body.lock-alexander #mode-crosslink { display: flex; justify-content: center; }
+/* Only the OTHER experience's link shows per page. */
+body.lock-roman .mode-cross.to-roman { display: none; }
+body.lock-alexander .mode-cross.to-alexander { display: none; }
+.mode-cross {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 14px; border-radius: 999px;
+  font-family: 'Cinzel', serif; font-size: var(--fs-13); font-weight: 600;
+  color: var(--gold); text-decoration: none;
+  background: rgba(212,168,83,0.08);
+  border: 1px solid rgba(212,168,83,0.35);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.mode-cross:hover { background: rgba(212,168,83,0.16); border-color: rgba(212,168,83,0.6); }
+.mode-cross-glyph { font-size: var(--fs-13); line-height: 1; }
+.mode-cross.to-alexander .mode-cross-glyph { font-family: 'Cinzel', serif; font-weight: 700; }
+.mode-cross-arrow { opacity: 0.8; }
+
+/* Welcome-modal copy variants: one per experience, selected by the lock. Default
+   (unlocked dev) shows the dual variant; a locked page shows only its own. */
+#welcome-body .wb-variant { display: none; }
+#welcome-body .wb-dual { display: block; }
+body.lock-roman #welcome-body .wb-dual,
+body.lock-alexander #welcome-body .wb-dual { display: none; }
+body.lock-roman #welcome-body .wb-roman { display: block; }
+body.lock-alexander #welcome-body .wb-alexander { display: block; }
+.welcome-cross-link {
+  display: inline-block; margin-top: 14px;
+  color: var(--gold); text-decoration: none;
+  font-size: var(--fs-14); border-bottom: 1px solid rgba(212,168,83,0.4);
+  padding-bottom: 1px;
+}
+.welcome-cross-link:hover { border-bottom-color: var(--gold); }
+
 /* Campaign phase key — the NUMBER is the primary channel (colorblind-safe);
    the color fill is a secondary reinforcement. */
 .phase-row { gap: 8px; }

@@ -221,6 +221,34 @@ let currentEra = 'ancient';
 // read it safely.
 let appMode = 'roman';
 
+// ── Per-page experience lock (the mode split) ──────────────────────────────
+// VIA ships as two focused pages on one origin (Roman map + Alexander campaign).
+// Each page sets window.VIA_LOCK_MODE inline in its <head>; when locked, the mode
+// tabs are hidden, only that experience's chrome shows, and cross-mode chips turn
+// into links to the sibling page (see crossToRoman/crossToAlexander). ?lock=none
+// disables the lock so a single local index.html can drive both modes for dev/QA;
+// ?lock=roman|alexander forces one for testing the sibling page's behavior.
+// PAGE_MODE also namespaces first-visit localStorage keys so the two same-origin
+// pages don't share welcome/guide/return state (auth keys stay shared on purpose).
+const VIA_LOCK = (function () {
+  try {
+    const q = new URL(location.href).searchParams.get('lock');
+    if (q === 'none') return null;
+    if (q === 'roman' || q === 'alexander') return q;
+  } catch (e) {}
+  const m = window.VIA_LOCK_MODE;
+  return (m === 'roman' || m === 'alexander') ? m : null;
+})();
+const PAGE_MODE = VIA_LOCK || 'roman';
+// Suffix a base storage key with the page's mode so Roman and Alexander (same
+// origin) keep separate first-visit state. Auth keys (via.user/checkins/guest)
+// deliberately do NOT use this — one sign-in should carry across both pages.
+const pageKey = (base) => `${base}.${PAGE_MODE}`;
+// This page's own canonical URL, for share/email links. Derived at runtime so
+// each of the two pages links to itself (not a hardcoded origin) — correct on
+// localhost, the Roman page, and the Alexander subpath alike.
+const selfUrl = (qs) => location.origin + location.pathname + (qs ? '?' + qs : '');
+
 // L.LayerGroup has no bringToFront. Re-add each group in stacking order
 // (bottom to top) to put them above any tile layer just inserted under
 // them. Itiner-e baseline first, named roads next, sites on top.
@@ -2519,6 +2547,14 @@ function siteTwinAlexanderStop(site) {
 function crossToRoman(siteId) {
   const site = (typeof SITES !== 'undefined') && SITES.find(s => s.id === siteId);
   if (!site) return;
+  // On the Alexander page the Roman experience isn't loaded as a mode — cross to
+  // the sibling page, deep-linking the twin site via ?site=<pleiades> (openSharedSite).
+  if (VIA_LOCK === 'alexander') {
+    location.href = site.pleiades
+      ? window.VIA_ROMAN_URL + '?site=' + encodeURIComponent(site.pleiades)
+      : window.VIA_ROMAN_URL;
+    return;
+  }
   if (appMode !== 'roman') setMode('roman', { preserveView: true });
   map.setView([site.lat, site.lng], Math.max(map.getZoom(), 8), { animate: false });
   focusSite(site, { pulse: true });
@@ -2526,6 +2562,12 @@ function crossToRoman(siteId) {
 function crossToAlexander(stopId) {
   const stop = (typeof ALEXANDER_STOPS !== 'undefined') && ALEXANDER_STOPS.find(s => s.id === stopId);
   if (!stop) return;
+  // On the Roman page the campaign isn't loaded as a mode — cross to the sibling
+  // page, deep-linking the stop via ?mode=alexander&alexander=<id> (openSharedMode).
+  if (VIA_LOCK === 'roman') {
+    location.href = window.VIA_ALEXANDER_URL + '?mode=alexander&alexander=' + encodeURIComponent(stop.id);
+    return;
+  }
   if (appMode !== 'alexander') setMode('alexander', { preserveView: true });
   map.setView([stop.lat, stop.lng], Math.max(map.getZoom(), 6), { animate: false });
   const layer = alexanderStopLayers.find(x => x._alexanderStop === stop);
@@ -2801,10 +2843,10 @@ function showRouteHint(origin) {
   const sub = el.querySelector('#route-hint-sub');
   if (sub) {
     let primed = true;
-    try { primed = localStorage.getItem('via.journeyPrimed') === '1'; } catch (e) {}
+    try { primed = localStorage.getItem(pageKey('via.journeyPrimed')) === '1'; } catch (e) {}
     if (!primed) {
       sub.textContent = 'Times & cost come from ORBIS — Stanford’s model of real Roman travel by road, river and sea.';
-      try { localStorage.setItem('via.journeyPrimed', '1'); } catch (e) {}
+      try { localStorage.setItem(pageKey('via.journeyPrimed'), '1'); } catch (e) {}
     } else {
       sub.textContent = '';
     }
@@ -3083,8 +3125,8 @@ let _coverageHintShown = false;
 function maybeHintCoverage() {
   if (_coverageHintShown) return;
   _coverageHintShown = true;   // once per session regardless of storage availability
-  try { if (localStorage.getItem('via.coverageHinted') === '1') return; } catch (e) {}
-  try { localStorage.setItem('via.coverageHinted', '1'); } catch (e) {}
+  try { if (localStorage.getItem(pageKey('via.coverageHinted')) === '1') return; } catch (e) {}
+  try { localStorage.setItem(pageKey('via.coverageHinted'), '1'); } catch (e) {}
   const el = document.getElementById('legend-toast');
   const t  = document.getElementById('legend-toast-title');
   const b  = document.getElementById('legend-toast-body');
@@ -3106,8 +3148,8 @@ let _omnesviaeHintShown = false;
 function maybeHintOmnesviae() {
   if (_omnesviaeHintShown) return;
   _omnesviaeHintShown = true;   // once per session regardless of storage availability
-  try { if (localStorage.getItem('via.omnesviaeHinted') === '1') return; } catch (e) {}
-  try { localStorage.setItem('via.omnesviaeHinted', '1'); } catch (e) {}
+  try { if (localStorage.getItem(pageKey('via.omnesviaeHinted')) === '1') return; } catch (e) {}
+  try { localStorage.setItem(pageKey('via.omnesviaeHinted'), '1'); } catch (e) {}
   const el = document.getElementById('legend-toast');
   const t  = document.getElementById('legend-toast-title');
   const b  = document.getElementById('legend-toast-body');
@@ -3836,7 +3878,7 @@ function showSegmentPanel(meta, latlngs, segIds) {
   let emailBtn = '';
   if (cert === 'j' || cert === 'h') {
     const eName = (meta && meta.name) ? meta.name : 'a Roman road';
-    const eUrl  = 'https://danielkorr.github.io/ancient-world-explorer/';
+    const eUrl  = selfUrl();
     const eSubj = `A VIA quest: help verify the Roman road ${eName} (${ci.label.toLowerCase()})`;
     const eBody = `${ci.label} Roman road: ${eName}.\n\nThis stretch of the ancient road network isn't field-verified. Walking or photographing it can help confirm the alignment.\n\nExplore it on VIA:\n${eUrl}\n\n${VIA_BLURB}\n\n#VIAquest`;
     emailBtn = `
@@ -3891,7 +3933,7 @@ function saveReturnState() {
   if (!currentPanelSite) return;
   const home = panelReturnView || { center: map.getCenter(), zoom: map.getZoom() };
   try {
-    sessionStorage.setItem('via.return', JSON.stringify({
+    sessionStorage.setItem(pageKey('via.return'), JSON.stringify({
       id:   currentPanelSite.id,
       lat:  home.center.lat,
       lng:  home.center.lng,
@@ -4462,7 +4504,7 @@ function siteQuestEmailPayload(site) {
   const q     = QUEST[site.quest] || QUEST.photo;
   const label = q.label.replace(' · Open', '');
   const where = site.modern ? `${site.name} (${site.modern})` : site.name;
-  const url   = `https://danielkorr.github.io/ancient-world-explorer/?site=${site.pleiades}`;
+  const url   = selfUrl(`site=${site.pleiades}`);
   const cta   = /closes the gap/i.test(q.text) ? '' : ' Be the traveler who closes the gap.';
   return {
     subject: `A VIA quest: help document ${site.name} (${label})`,
@@ -4485,7 +4527,7 @@ async function shareQuest() {
   const where = site.modern ? `${site.name} (${site.modern})` : site.name;
   // A VIA deep-link, NOT the raw Pleiades page: it opens the actual place in VIA
   // (Pleiades is one tap away in the panel) and unfurls with the OG card.
-  const url   = `https://danielkorr.github.io/ancient-world-explorer/?site=${site.pleiades}`;
+  const url   = selfUrl(`site=${site.pleiades}`);
   // Put EVERYTHING — context + the one link — in a single text block, and do NOT
   // pass navigator.share's separate `url` field. Share targets cherry-pick fields
   // inconsistently (Gmail keeps only `url`, Outlook keeps only `text`, neither
@@ -4530,7 +4572,7 @@ async function shareRoadSegment() {
   // VIA card and dropped people outside the app. No per-segment deep-link exists
   // (the static Itiner-e dump has no stable segment id), so use the VIA home URL:
   // it unfurls the VIA card and lands the recipient in the experience.
-  const url  = 'https://danielkorr.github.io/ancient-world-explorer/';
+  const url  = selfUrl();
   // Single self-contained message (see shareQuest) — context + one link, no
   // separate `url` field, so every share target shows the full thing.
   const message =
@@ -5026,12 +5068,12 @@ function openWelcome() {
 function closeWelcome() {
   const el = document.getElementById('welcome-modal');
   if (el) el.classList.remove('open');
-  try { localStorage.setItem('via.welcomed', '1'); } catch (e) {}
+  try { localStorage.setItem(pageKey('via.welcomed'), '1'); } catch (e) {}
   showMobileGuide();
 }
 
 function mobileGuideDismissed() {
-  try { return localStorage.getItem('via.mobileGuideDismissed') === '1'; }
+  try { return localStorage.getItem(pageKey('via.mobileGuideDismissed')) === '1'; }
   catch (e) { return true; }
 }
 
@@ -5047,16 +5089,28 @@ function dismissMobileGuide(persist) {
   const el = document.getElementById('mobile-guide');
   if (el) el.classList.add('hidden');
   if (persist) {
-    try { localStorage.setItem('via.mobileGuideDismissed', '1'); } catch (e) {}
+    try { localStorage.setItem(pageKey('via.mobileGuideDismissed'), '1'); } catch (e) {}
   }
 }
+
+// ── Apply the per-page experience lock ──
+// Runs before the welcome/deep-link IIFEs so the chrome and welcome variant are
+// already correct when they fire. Adds a `lock-<mode>` body class (CSS hides the
+// mode tabs + the other experience's controls, reveals the sibling cross-link)
+// and forces the mode. Roman is already the default appMode, so we only call
+// setMode when locking to Alexander. Unlocked (?lock=none / dev) leaves both tabs.
+(function applyModeLock() {
+  if (!VIA_LOCK) return;
+  document.body.classList.add('lock-' + VIA_LOCK);
+  if (VIA_LOCK !== appMode) setMode(VIA_LOCK);
+})();
 
 // Auto-show on the very first visit. Skip when a magic-link reload is about to
 // auto-open the sign-in modal (?signin=1) so we don't stack two modals at boot.
 (function maybeShowWelcome() {
   if (QA) return;                       // deterministic test boot: no modals/guide
   let welcomed = false;
-  try { welcomed = localStorage.getItem('via.welcomed') === '1'; } catch (e) {}
+  try { welcomed = localStorage.getItem(pageKey('via.welcomed')) === '1'; } catch (e) {}
   const autoSignin = /[?&]signin=1/.test(location.search);
   if (!welcomed && !autoSignin) openWelcome();
   else showMobileGuide();
@@ -5078,9 +5132,9 @@ if (_brandEl) {
 // reload or fresh visit isn't affected.
 (function restoreReturnState() {
   let raw = null;
-  try { raw = sessionStorage.getItem('via.return'); } catch (e) {}
+  try { raw = sessionStorage.getItem(pageKey('via.return')); } catch (e) {}
   if (!raw) return;
-  try { sessionStorage.removeItem('via.return'); } catch (e) {}
+  try { sessionStorage.removeItem(pageKey('via.return')); } catch (e) {}
   let st;
   try { st = JSON.parse(raw); } catch (e) { return; }
   const site = SITES.find(s => s.id === st.id);

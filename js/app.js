@@ -1219,7 +1219,7 @@ function setActiveMarker(marker) {
   }
   activeMarker = marker || null;
   if (activeMarker) {
-    activeMarker.setIcon(makeIcon(activeMarker._site, true));
+    activeMarker.setIcon(makeIcon(activeMarker._site, false));
     activeMarker.setZIndexOffset(1000);
   }
 }
@@ -1231,12 +1231,12 @@ function triggerMarkerPulse(marker) {
   pulseSiteId = marker._site.id;
   if (prevPulseId && prevPulseId !== pulseSiteId) {
     const prev = allMarkers.find(m => m._site && m._site.id === prevPulseId);
-    if (prev) prev.setIcon(makeIcon(prev._site, prev === activeMarker || prev === previewMarker));
+    if (prev) prev.setIcon(makeIcon(prev._site, prev === previewMarker));
   }
-  marker.setIcon(makeIcon(marker._site, true));
+  marker.setIcon(makeIcon(marker._site, false));
   pulseTimer = setTimeout(() => {
     pulseSiteId = null;
-    marker.setIcon(makeIcon(marker._site, marker === activeMarker || marker === previewMarker));
+    marker.setIcon(makeIcon(marker._site, marker === previewMarker));
   }, 2850);   // 4 broadcast rings (0.7s each) — see .selected-marker-pulse
 }
 
@@ -4585,7 +4585,7 @@ function onCheckInClick() {
 // Refresh marker icons after sign-in / check-in changes so the visited
 // badge appears/disappears live.
 function refreshAllMarkers() {
-  allMarkers.forEach(m => m.setIcon(makeIcon(m._site, m === activeMarker)));
+  allMarkers.forEach(m => m.setIcon(makeIcon(m._site, m === previewMarker)));
 }
 
 let _lastAuthUserId = null;

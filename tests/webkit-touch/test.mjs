@@ -148,6 +148,45 @@ try {
     !document.getElementById('info-panel').classList.contains('open'));
   ok('tap on empty map closed the panel', closed);
 
+  // 4) Alexander guided journey — real taps drive the stepper. The launcher and
+  // rail are native <button onclick>, so unlike markers/roads they DO get a
+  // synthesized click from a tap; this confirms the journey is tappable on the
+  // real WebKit engine (not just via the window.VIA.* hooks the deterministic
+  // harness uses). Load the campaign via ?lock=alexander (overrides the page lock).
+  const alexUrl = URL + (URL.indexOf('?') > -1 ? '&' : '?') + 'lock=alexander';
+  await page.goto(alexUrl, { waitUntil: 'load' });
+  await page.waitForFunction(() => window.VIA && window.VIA.ready, null, { timeout: 20000 }).catch(() => {});
+  console.log(`WebKit + touch — ${alexUrl}`);
+
+  const launcher = await page.evaluate(() => {
+    const b = document.getElementById('journey-launch');
+    if (!b || !b.classList.contains('journey-launch-show')) return null;
+    const r = b.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  }).catch(() => null);
+  ok('journey launcher shown at rest (alexander mode)', !!launcher);
+
+  if (launcher) {
+    await page.touchscreen.tap(launcher.x, launcher.y);   // REAL tap on the launcher button
+    await sleep(500);
+    const started = await page.evaluate(() => window.VIA.getState().journeyIndex);
+    ok('tap launcher starts journey at stop 0', started === 0);
+
+    const nextXY = await page.evaluate(() => {
+      const b = document.getElementById('journey-next');
+      if (!b) return null;
+      const r = b.getBoundingClientRect();
+      return (r.width && r.height) ? { x: r.left + r.width / 2, y: r.top + r.height / 2 } : null;
+    }).catch(() => null);
+    ok('journey Next button rendered in the rail', !!nextXY);
+    if (nextXY) {
+      await page.touchscreen.tap(nextXY.x, nextXY.y);     // REAL tap on the ‹ Next › button
+      await sleep(400);
+      const idx = await page.evaluate(() => window.VIA.getState().journeyIndex);
+      ok('tap Next advances to stop 1', idx === 1);
+    }
+  }
+
   ok('no uncaught page errors', errors.length === 0);
   if (errors.length) errors.forEach(e => console.log('    page error:', e));
 

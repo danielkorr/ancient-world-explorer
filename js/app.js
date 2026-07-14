@@ -2556,15 +2556,25 @@ function siteTwinAlexanderStop(site) {
   }
   return (best && bestD <= CROSS_TWIN_DEG) ? best : null;
 }
+// Twin deep-link URLs onto the sibling page. Pure (no navigation) so the QA
+// harness can assert the shape without a cross-origin hop; crossTo* use them
+// for the real jump. A site with no Pleiades id has no Roman twin to anchor, so
+// it lands on the Roman home view.
+function romanTwinUrl(site) {
+  return site && site.pleiades
+    ? window.VIA_ROMAN_URL + '?site=' + encodeURIComponent(site.pleiades)
+    : window.VIA_ROMAN_URL;
+}
+function alexanderTwinUrl(stop) {
+  return window.VIA_ALEXANDER_URL + '?mode=alexander&alexander=' + encodeURIComponent(stop.id);
+}
 function crossToRoman(siteId) {
   const site = (typeof SITES !== 'undefined') && SITES.find(s => s.id === siteId);
   if (!site) return;
   // On the Alexander page the Roman experience isn't loaded as a mode — cross to
   // the sibling page, deep-linking the twin site via ?site=<pleiades> (openSharedSite).
   if (VIA_LOCK === 'alexander') {
-    location.href = site.pleiades
-      ? window.VIA_ROMAN_URL + '?site=' + encodeURIComponent(site.pleiades)
-      : window.VIA_ROMAN_URL;
+    location.href = romanTwinUrl(site);
     return;
   }
   if (appMode !== 'roman') setMode('roman', { preserveView: true });
@@ -2577,7 +2587,7 @@ function crossToAlexander(stopId) {
   // On the Roman page the campaign isn't loaded as a mode — cross to the sibling
   // page, deep-linking the stop via ?mode=alexander&alexander=<id> (openSharedMode).
   if (VIA_LOCK === 'roman') {
-    location.href = window.VIA_ALEXANDER_URL + '?mode=alexander&alexander=' + encodeURIComponent(stop.id);
+    location.href = alexanderTwinUrl(stop);
     return;
   }
   if (appMode !== 'alexander') setMode('alexander', { preserveView: true });
@@ -5389,7 +5399,31 @@ window.VIA.getState    = function () {
     roadTooltipOpen: !!document.querySelector('.leaflet-tooltip.road-tip'),
     visibleSiteCount,
     siteCount: SITES.length,
+    // Mode-split + guided-journey state (Phase 1/2 coverage).
+    appMode,
+    lockMode: VIA_LOCK,          // null when ?lock=none / unlocked dev
+    pageMode: PAGE_MODE,
+    journeyIndex,
+    journeyCount: journeyStops().length,
+    journeyLauncherShown: (document.getElementById('journey-launch') || { classList: { contains: () => false } })
+      .classList.contains('journey-launch-show'),
   };
+};
+// Mode-split + journey control hooks for the deterministic harness. Thin
+// pass-throughs to the same functions the UI calls, so a test drives the app by
+// the exact production path (no shadow logic to drift).
+window.VIA.setMode        = function (m) { setMode(m); };
+window.VIA.startJourney   = function () { startJourney(); };
+window.VIA.journeyStep    = function (d) { journeyStep(d); };
+window.VIA.journeyGoTo    = function (i) { journeyGoTo(i); };
+window.VIA.journeyJumpPhase = function (k) { journeyJumpPhase(k); };
+window.VIA.pageKey        = function (b) { return pageKey(b); };
+window.VIA.romanTwinUrl   = function (id) {
+  const s = (typeof SITES !== 'undefined') && SITES.find(x => x.id === id); return s ? romanTwinUrl(s) : null;
+};
+window.VIA.alexanderTwinUrl = function (id) {
+  const s = (typeof ALEXANDER_STOPS !== 'undefined') && ALEXANDER_STOPS.find(x => x.id === id);
+  return s ? alexanderTwinUrl(s) : null;
 };
 
 // QA: replicate a curated-road TAP (opens the road mini-banner tooltip + the

@@ -1341,6 +1341,7 @@ SITES.forEach(site => {
     clearSiteSearchInput();   // moved on to another site — drop the stale query
     setActiveMarker(this);
     showPanel(this._site);
+    triggerMarkerPulse(this);
   });
 
   // Double-click a pin to zoom in one level, like double-clicking the map — but
@@ -1559,6 +1560,7 @@ if (COARSE_POINTER) {
       clearSiteSearchInput();   // moved on to another site — drop the stale query
       setActiveMarker(hit);
       showPanel(hit._site);
+      triggerMarkerPulse(hit);
     }, MARKER_DBLTAP_MS);
     _lastMarkerTap = { id: hit._site.id, t: now, timer: openTimer };
   }, { passive: false });
@@ -4073,18 +4075,22 @@ function saveReturnState() {
 // ring just OFF a small marker icon: e.g. the Cumae marker sits ~36px from its
 // own "Acropolis of Cumae" coverage dot, so a near-miss on the 14px icon used to
 // resolve to the dot ("it just sits on the acropolis"). Foreground wins.
-const SITE_TAP_PX = 28;
+const SITE_TAP_PX = COARSE_POINTER ? 26 : 20;
 function nearestForegroundMarker(latlng, cp, threshPx) {
   if (!layerState.sites) return null;
   const THRESH = threshPx != null ? threshPx : SITE_TAP_PX;
   let best = null, bestD = THRESH;
+  let bestHit = null, bestHitD = Infinity;
   for (const m of allMarkers) {
     if (!m._icon || !m._icon.parentNode) continue;   // clustered / not rendered → not tappable
+    const r = m._icon.getBoundingClientRect();
+    const inside = cp.x >= r.left && cp.x <= r.right && cp.y >= r.top && cp.y <= r.bottom;
     const p = map.latLngToContainerPoint(m.getLatLng());
     const d = Math.hypot(cp.x - p.x, cp.y - p.y);
-    if (d < bestD) { bestD = d; best = m; }
+    if (inside && d < bestHitD) { bestHitD = d; bestHit = m; }
+    else if (!bestHit && d < bestD) { bestD = d; best = m; }
   }
-  return best ? { marker: best, _dist: bestD } : null;
+  return bestHit ? { marker: bestHit, _dist: bestHitD } : (best ? { marker: best, _dist: bestD } : null);
 }
 
 map.on('click', (e) => {
@@ -4114,7 +4120,7 @@ map.on('click', (e) => {
     // tap. Only when the marker is the closest of the three.
     const mk = nearestForegroundMarker(e.latlng, e.containerPoint);
     if (mk && (!seg || mk._dist <= seg._dist) && (!cov || mk._dist <= cov._dist)) {
-      setActiveMarker(mk.marker); showPanel(mk.marker._site); return;
+      setActiveMarker(mk.marker); showPanel(mk.marker._site); triggerMarkerPulse(mk.marker); return;
     }
     if (seg && (!cov || seg._dist <= cov._dist)) { showSegmentPanel(seg.meta, seg.ll, [seg.id]); return; }
     if (cov) { focusCoverage(cov); return; }
@@ -4898,8 +4904,8 @@ function setDetailLevel(level) {
 // zoom sets density and pan sets the region, with no global density knob to
 // reason about. Thresholds are a starting point, tuned on-device.
 function detailLevelForZoom(z) {
-  if (z >= 10) return 3;   // + Documented (== AUTO_REVEAL_ZOOM; coverage already keys off zoom)
-  if (z >= 9)  return 2;   // all foreground sites — held back a zoom so mid-zoom stays calm
+  if (z >= 11) return 3;   // + Documented (coverage already keys off the deeper reveal floor)
+  if (z >= 8)  return 2;   // all foreground sites — earlier reveal keeps adjacent sites reachable
   if (z >= 7)  return 1;   // quest sites
   return 0;                // Highlights (curated) — the calm empire-scale default
 }

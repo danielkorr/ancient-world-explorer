@@ -426,6 +426,100 @@ body.lock-alexander #welcome-body .wb-alexander { display: block; }
   box-shadow: inset 3px 0 0 var(--gold, #d4a853);
 }
 #campaign-legend .phase-row.active .phase-num { box-shadow: 0 0 0 2px var(--gold, #d4a853); }
+
+/* ── Alexander guided journey ───────────────────────────────
+   The journey rail + phase pills live at the top of the info panel and only
+   show on .alexander-panel; the launcher floats over the map when no stop is
+   open. Prev/Next walk the ordered stops; the pills jump between phases. */
+#journey-rail,
+#journey-phases { display: none; }
+#info-panel.alexander-panel #journey-rail { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+#info-panel.alexander-panel #journey-phases { display: flex; }
+
+#journey-rail .journey-nav {
+  flex: 0 0 auto;
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: var(--fs-24); line-height: 1;
+  color: var(--gold, #d4a853);
+  background: rgba(212,168,83,0.08);
+  border: 1px solid rgba(212,168,83,0.38);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background .15s, opacity .15s;
+}
+#journey-rail .journey-nav:hover { background: rgba(212,168,83,0.16); }
+#journey-rail .journey-nav:disabled { opacity: 0.28; cursor: default; }
+#journey-pos { flex: 1 1 auto; text-align: center; min-width: 0; }
+#journey-count {
+  font-family: 'Cinzel', serif; font-weight: 600;
+  font-size: var(--fs-13); letter-spacing: 1px;
+  color: rgba(240,230,211,0.92);
+}
+#journey-phase-label {
+  font-size: var(--fs-11); letter-spacing: 0.4px;
+  color: rgba(212,168,83,0.75); margin-top: 2px;
+}
+
+#journey-phases {
+  gap: 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  margin-bottom: 14px;
+  padding-bottom: 2px;
+}
+#journey-phases::-webkit-scrollbar { display: none; }
+.journey-phase-pill {
+  flex: 0 0 auto;
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px 5px 5px;
+  background: rgba(20,12,2,0.6);
+  border: 1px solid rgba(212,168,83,0.22);
+  border-radius: 999px;
+  color: rgba(240,230,211,0.78);
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.journey-phase-pill .jpp-num {
+  flex: 0 0 auto;
+  width: 20px; height: 20px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: 'Cinzel', serif; font-weight: 700; font-size: var(--fs-11);
+  color: #110a00; background: var(--pc, #8f7cc3);
+  border-radius: 999px;
+}
+.journey-phase-pill .jpp-label {
+  font-size: var(--fs-11); letter-spacing: 0.3px; white-space: nowrap;
+}
+.journey-phase-pill:hover { border-color: rgba(212,168,83,0.5); color: rgba(240,230,211,0.95); }
+.journey-phase-pill.active {
+  background: rgba(212,168,83,0.14);
+  border-color: var(--gold, #d4a853);
+  color: rgba(240,230,211,0.98);
+}
+.journey-phase-pill.active .jpp-num { box-shadow: 0 0 0 2px var(--gold, #d4a853); }
+
+/* Floating launcher — the calm "enter the journey" affordance over the map. */
+#journey-launch { display: none; }
+#journey-launch.journey-launch-show {
+  display: inline-flex; align-items: center; gap: 9px;
+  position: fixed;
+  left: 50%; transform: translateX(-50%);
+  bottom: 26px;
+  z-index: 958;
+  padding: 12px 22px;
+  font-family: 'Cinzel', serif; font-weight: 600;
+  font-size: var(--fs-14); letter-spacing: 1px;
+  color: #110a00;
+  background: linear-gradient(180deg, #e6c983 0%, #d4a853 100%);
+  border: 1px solid rgba(212,168,83,0.6);
+  border-radius: 999px;
+  box-shadow: 0 6px 22px rgba(0,0,0,0.42), 0 0 0 4px rgba(212,168,83,0.14);
+  cursor: pointer;
+}
+#journey-launch .jl-icon { font-size: var(--fs-11); }
+
 .legend-sub {
   display: block;
   font-size: var(--fs-8);
@@ -2418,6 +2512,11 @@ path.leaflet-interactive { outline: none !important; }
     opacity: 0;
     transform: translateY(8px);
     pointer-events: none;
+  }
+  /* Journey launcher rides just above the dock on a phone (fixed 26px would sit
+     under the dock bar). */
+  #journey-launch.journey-launch-show {
+    bottom: calc(var(--dock-h) + 18px);
   }
   #mobile-guide-title {
     font-family: 'Cinzel', serif;

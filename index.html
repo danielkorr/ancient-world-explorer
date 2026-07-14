@@ -56,7 +56,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=143">
+  <link rel="stylesheet" href="css/style.css?v=144">
 </head>
 <body>
 
@@ -343,6 +343,14 @@
   <button id="mobile-guide-close" onclick="dismissMobileGuide(true)" aria-label="Dismiss guide">×</button>
 </div>
 
+<!-- Alexander guided-journey launcher — the calm entry point. Shown only in
+     Alexander mode when no stop panel is open (refreshJourneyLauncher); the full
+     route is already on the map, this invites you to walk it stop by stop. -->
+<button id="journey-launch" type="button" onclick="startJourney()" aria-label="Begin Alexander's guided journey">
+  <span class="jl-icon" aria-hidden="true">▶</span>
+  <span class="jl-label">Begin the journey</span>
+</button>
+
 <!-- DARE fallback banner (shown only when ancient tiles fail) -->
 <div id="dare-fallback-banner">
   <span class="dfb-icon">⚠</span>
@@ -437,6 +445,18 @@
   </div>
 
   <div id="panel-body" data-testid="selected-site-details">
+    <!-- Alexander guided-journey rail — shown only on .alexander-panel (CSS).
+         Prev/Next walk ALEXANDER_STOPS in narrative order; the phase pills jump
+         to a phase's first stop. Populated + synced by updateJourneyRail. -->
+    <div id="journey-rail" data-testid="journey-rail">
+      <button id="journey-prev" class="journey-nav" type="button" onclick="journeyStep(-1)" aria-label="Previous stop">‹</button>
+      <div id="journey-pos">
+        <div id="journey-count">Stop 1 of 42</div>
+        <div id="journey-phase-label"></div>
+      </div>
+      <button id="journey-next" class="journey-nav" type="button" onclick="journeyStep(1)" aria-label="Next stop">›</button>
+    </div>
+    <div id="journey-phases" data-testid="journey-phases"><!-- phase pills injected by buildJourneyPhases --></div>
     <div id="panel-badge"></div>
     <h2 id="panel-name" data-testid="selected-site-title">—</h2>
     <div id="panel-modern-name"></div>
@@ -526,7 +546,7 @@
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
 <script src="js/basemap.js?v=106"></script>
-<script src="js/app.js?v=149"></script>
+<script src="js/app.js?v=151"></script>
 
 </body>
 </html>

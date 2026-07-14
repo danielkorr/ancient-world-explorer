@@ -618,6 +618,10 @@ const alexanderStopLayers = [];
 let activeAlexanderLayer = null;
 let alexanderHasAutoFit = false;
 let pendingCloseAlexanderStop = null;
+// Guided-journey cursor: index into ALEXANDER_STOPS of the stop currently in the
+// panel, or -1 before the journey starts. Kept in sync whether the user steps
+// with Prev/Next, jumps a phase, taps a marker, or arrives via a deep-link.
+let journeyIndex = -1;
 
 function alexanderPhase(stop) {
   if (typeof ALEXANDER_PHASES === 'undefined' || !stop) return null;
@@ -1032,6 +1036,12 @@ function showAlexanderPanel(stop, layer) {
   const persistentMobileBeacon = window.innerWidth <= 640 && !QA;
   pendingCloseAlexanderStop = persistentMobileBeacon ? stop : null;
   dropAlexanderBeacon(stop, { bounded: !persistentMobileBeacon });   // colour-blind selected-stop beacon
+
+  // Sync the guided-journey cursor to whatever stop just opened — a direct marker
+  // tap or deep-link advances the journey exactly like Prev/Next would.
+  journeyIndex = (typeof ALEXANDER_STOPS !== 'undefined') ? ALEXANDER_STOPS.indexOf(stop) : -1;
+  updateJourneyRail();
+  refreshJourneyLauncher();
 }
 
 // ── SITE MARKERS ─────────────────────────────────────────
@@ -2055,6 +2065,8 @@ function closePanel() {
   if (alexanderStopAfterClose && window.innerWidth <= 640) {
     setTimeout(() => dropAlexanderBeacon(alexanderStopAfterClose, { bounded: true }), 140);
   }
+  // Panel closed → back on the open route; re-offer the journey launcher.
+  if (typeof refreshJourneyLauncher === 'function') refreshJourneyLauncher();
 }
 
 // Search lives in the top bar and resolves to the same site-panel flow as a
@@ -2574,6 +2586,85 @@ function crossToAlexander(stopId) {
   showAlexanderPanel(stop, layer);
 }
 
+// ── ALEXANDER GUIDED JOURNEY ──────────────────────────────
+// The campaign as a walkable story: Prev/Next move through ALEXANDER_STOPS in
+// narrative order, the map follows, and each stop opens its panel. Phase pills
+// jump to a phase's first stop. The launcher is the calm entry point over the
+// full route. showAlexanderPanel is the single render path — everything here
+// just moves the cursor and calls it, so a marker tap and a Next press converge.
+function journeyStops() {
+  return (typeof ALEXANDER_STOPS !== 'undefined') ? ALEXANDER_STOPS : [];
+}
+
+function journeyGoTo(i) {
+  const stops = journeyStops();
+  if (!stops.length) return;
+  i = Math.max(0, Math.min(stops.length - 1, i));   // linear: stop at the ends
+  const stop = stops[i];
+  const layer = alexanderStopLayers.find(x => x._alexanderStop === stop);
+  showAlexanderPanel(stop, layer);   // sets journeyIndex + rail + launcher
+}
+
+function journeyStep(dir) {
+  if (journeyIndex < 0) { journeyGoTo(0); return; }
+  journeyGoTo(journeyIndex + dir);
+}
+
+function startJourney() {
+  if (appMode !== 'alexander') setMode('alexander');
+  journeyGoTo(journeyIndex >= 0 ? journeyIndex : 0);
+}
+
+function journeyJumpPhase(key) {
+  const stops = journeyStops();
+  const i = stops.findIndex(s => s.phase === key);
+  if (i >= 0) journeyGoTo(i);
+}
+
+// Phase pills — built once at boot from ALEXANDER_PHASES. The NUMBER is the
+// primary channel (colour-blind safe, matching the campaign legend); the tint
+// is secondary. Tapping jumps the journey to that phase's first stop.
+const ALEX_PHASE_ORDER = ['macedon', 'anatolia', 'levantEgypt', 'persianCore', 'eastIndia', 'returnDeath'];
+function buildJourneyPhases() {
+  const el = document.getElementById('journey-phases');
+  if (!el || typeof ALEXANDER_PHASES === 'undefined') return;
+  el.innerHTML = ALEX_PHASE_ORDER.map((key, n) => {
+    const p = ALEXANDER_PHASES[key];
+    if (!p) return '';
+    return `<button type="button" class="journey-phase-pill" data-phase="${key}" onclick="journeyJumpPhase('${key}')" style="--pc:${p.color}" title="${escapeHtml(p.label)} · ${escapeHtml(p.years)}"><span class="jpp-num">${n + 1}</span><span class="jpp-label">${escapeHtml(p.label)}</span></button>`;
+  }).join('');
+}
+
+function updateJourneyRail() {
+  const stops = journeyStops();
+  if (journeyIndex < 0 || !stops.length) return;
+  const stop = stops[journeyIndex];
+  const phase = alexanderPhase(stop);
+  const count = document.getElementById('journey-count');
+  const phaseLabel = document.getElementById('journey-phase-label');
+  const prev = document.getElementById('journey-prev');
+  const next = document.getElementById('journey-next');
+  if (count) count.textContent = `Stop ${journeyIndex + 1} of ${stops.length}`;
+  if (phaseLabel) phaseLabel.textContent = phase ? `${phase.label} · ${phase.years}` : '';
+  if (prev) prev.disabled = journeyIndex <= 0;
+  if (next) next.disabled = journeyIndex >= stops.length - 1;
+  document.querySelectorAll('#journey-phases .journey-phase-pill').forEach(el => {
+    el.classList.toggle('active', !!stop && el.dataset.phase === stop.phase);
+  });
+}
+
+// The launcher shows only in Alexander mode with no stop panel open — once you're
+// in a stop, the panel's Prev/Next own the journey. Label reflects resume vs start.
+function refreshJourneyLauncher() {
+  const btn = document.getElementById('journey-launch');
+  if (!btn) return;
+  const panelOpen = document.getElementById('info-panel').classList.contains('open');
+  const show = appMode === 'alexander' && journeyStops().length > 0 && !panelOpen;
+  btn.classList.toggle('journey-launch-show', show);
+  const label = btn.querySelector('.jl-label');
+  if (label) label.textContent = journeyIndex >= 0 ? 'Resume the journey' : 'Begin the journey';
+}
+
 function itinereSearchMeta(entry) {
   const ci = entry.meta && CERT_INFO[entry.meta.cert];
   const bits = [];
@@ -2600,12 +2691,12 @@ function ensureCoverageLoaded() {
   // Wikidata P1584->P18, "looks related" bar not a scholarly-precision one).
   // Fetched in parallel with the script tag; a failure here just means coverage
   // panels stay honest-thin, never blocks the coverage data itself from loading.
-  const photoPromise = fetch('js/coverage-photos.json?v=' + BUILD)
+  const photoPromise = fetch(ASSET_BASE + 'js/coverage-photos.json?v=' + BUILD)
     .then(r => r.ok ? r.json() : {})
     .catch(() => ({}));
 
   const s = document.createElement('script');
-  s.src = 'js/sites-coverage.js?v=' + BUILD;     // same cache token as the app
+  s.src = ASSET_BASE + 'js/sites-coverage.js?v=' + BUILD;     // same cache token as the app
   s.async = true;
   s.onload = () => {
     const raw = (typeof window.SITES_COVERAGE !== 'undefined') ? window.SITES_COVERAGE : [];
@@ -2651,7 +2742,7 @@ function ensureRoadPleiadesLoaded() {
   if (QA || _roadPPState !== 'idle') return;
   _roadPPState = 'loading';
   const s = document.createElement('script');
-  s.src = 'js/roads-itinere-pleiades.js?v=' + BUILD;
+  s.src = ASSET_BASE + 'js/roads-itinere-pleiades.js?v=' + BUILD;
   s.async = true;
   s.onload = () => {
     _roadPPState = 'ready';
@@ -2722,7 +2813,7 @@ function ensureOrbisGraphLoaded() {
   }
   _orbisGraphPromise = new Promise((resolve) => {
     const s = document.createElement('script');
-    s.src = 'js/orbis-graph.js?v=' + BUILD;   // same cache token as the app
+    s.src = ASSET_BASE + 'js/orbis-graph.js?v=' + BUILD;   // same cache token as the app
     s.async = true;
     s.onload  = () => resolve(!!(window.ORBIS_ROUTE && window.ORBIS_ROUTE.ready()));
     s.onerror = () => resolve(false);
@@ -4150,6 +4241,7 @@ function setMode(mode, opts = {}) {
   decorateRoadsLegend();
   raiseOverlays();
   if (typeof updateEmpireInset === 'function') updateEmpireInset();   // relabel + reframe the locator
+  if (typeof refreshJourneyLauncher === 'function') refreshJourneyLauncher();   // show/hide the journey entry point per mode
 }
 
 // ── LAYER TOGGLES ────────────────────────────────────────
@@ -4945,6 +5037,14 @@ function updateBasemaps() {
 // version is the most reliable "am I current?" check there is.
 const BUILD = (document.querySelector('script[src*="app.js"]')
   ?.getAttribute('src')?.match(/v=(\d+)/) || [])[1] || '?';
+// Runtime-injected assets (lazy <script>/fetch) resolve relative to the *page* URL,
+// not to app.js — so a bare 'js/foo.js' 404s on the Alexander subpath
+// (/alexander-the-great-campaigns/js/foo.js). Derive the app's own directory from the
+// app.js src ('' on the Roman page, '../' on the Alexander page) and prefix injected
+// paths with it so they resolve against js/ wherever the page lives. build-pages.mjs
+// rewrites only *static* src/href, which is why this has to happen at runtime.
+const ASSET_BASE = ((document.querySelector('script[src*="app.js"]')
+  ?.getAttribute('src') || '').match(/^(.*?)js\/app\.js/) || ['', ''])[1];
 // The version is wrapped in a bold span whose inline `!important` styles beat
 // the faint 9px attribution defaults in style.css, so "VIA v52" is actually
 // readable in the corner while the licence credits stay subtle.
@@ -5034,7 +5134,7 @@ function ensureRoadsLoaded() {
   // Roads keep their OWN cache token (independent of app.js's ?v=), so bumping the
   // app doesn't force a 2.96 MB re-download. Bump HERE when roads-itinere.js is
   // regenerated — this used to live in index.html as ?v=119.
-  s.src = 'js/roads-itinere.js?v=119';
+  s.src = ASSET_BASE + 'js/roads-itinere.js?v=119';
   s.async = true;
   s.onload = () => { _roadsState = 'ready'; buildItinereBaseline(); };
   s.onerror = () => { _roadsState = 'error'; };
@@ -5103,6 +5203,30 @@ function dismissMobileGuide(persist) {
   if (!VIA_LOCK) return;
   document.body.classList.add('lock-' + VIA_LOCK);
   if (VIA_LOCK !== appMode) setMode(VIA_LOCK);
+})();
+
+// ── Guided-journey init ──
+// Build the phase pills once, sync the launcher for the current mode, and wire a
+// horizontal swipe on the panel to Prev/Next. The swipe is passive + only fires
+// on a clearly horizontal drag, so it never steals the panel's vertical scroll.
+(function initJourney() {
+  buildJourneyPhases();
+  refreshJourneyLauncher();
+  const panel = document.getElementById('info-panel');
+  if (!panel) return;
+  let x0 = 0, y0 = 0, tracking = false;
+  panel.addEventListener('touchstart', (e) => {
+    tracking = panel.classList.contains('alexander-panel') && e.touches.length === 1;
+    if (tracking) { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }
+  }, { passive: true });
+  panel.addEventListener('touchend', (e) => {
+    if (!tracking) return;
+    tracking = false;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - x0, dy = t.clientY - y0;
+    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;   // not a horizontal swipe
+    journeyStep(dx < 0 ? 1 : -1);   // swipe left → next, right → prev
+  }, { passive: true });
 })();
 
 // Auto-show on the very first visit. Skip when a magic-link reload is about to

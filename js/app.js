@@ -1334,22 +1334,19 @@ SITES.forEach(site => {
 
   marker.on('click', function(e) {
     L.DomEvent.stopPropagation(e);
-    // The selected marker can visually sit on top of a nearby site (Cumae /
-    // Acropolis of Cumae), so a click that lands on the active dot may still be
-    // meant for the adjacent one. Re-resolve the local foreground target first;
-    // only stay put if the active marker is still the closest hit.
-    const near = nearestForegroundMarker(e.latlng, e.containerPoint);
-    if (near && near.marker !== this) {
-      clearSiteSearchInput();
-      setActiveMarker(near.marker);
-      showPanel(near.marker._site);
-      triggerMarkerPulse(near.marker);
-      return;
-    }
     // Re-clicking the already-selected marker must NOT re-run showPanel's 0.4s
     // pan animation — that churn was eating the next click and blocking the
-    // double-click-to-zoom. Panel's already showing this site; do nothing.
-    if (activeMarker === this) return;
+    // double-click-to-zoom. If the selected marker is covering a neighbor, let
+    // the neighbor win instead of treating the active dot as the target.
+    if (activeMarker === this) {
+      const alt = nearestForegroundMarker(e.latlng, e.containerPoint, SITE_TAP_PX, { excludeMarker: this });
+      if (!alt) return;
+      clearSiteSearchInput();
+      setActiveMarker(alt.marker);
+      showPanel(alt.marker._site);
+      triggerMarkerPulse(alt.marker);
+      return;
+    }
     clearSiteSearchInput();   // moved on to another site — drop the stale query
     setActiveMarker(this);
     showPanel(this._site);
@@ -1549,8 +1546,6 @@ if (COARSE_POINTER) {
     let hit = null;
     for (const m of allMarkers) { if (m._icon === iconEl) { hit = m; break; } }
     if (!hit) return;
-    const near = ll && cp ? nearestForegroundMarker(ll, cp) : null;
-    if (near && near.marker && near.marker !== hit) hit = near.marker;
     e.preventDefault();   // suppress any late synthesized click → no double-open
 
     // Tap vs double-tap discriminator (Track 3 / 3a). A double-tap on the SAME
@@ -4091,12 +4086,14 @@ function saveReturnState() {
 // own "Acropolis of Cumae" coverage dot, so a near-miss on the 14px icon used to
 // resolve to the dot ("it just sits on the acropolis"). Foreground wins.
 const SITE_TAP_PX = COARSE_POINTER ? 26 : 20;
-function nearestForegroundMarker(latlng, cp, threshPx) {
+function nearestForegroundMarker(latlng, cp, threshPx, opts = {}) {
   if (!layerState.sites) return null;
   const THRESH = threshPx != null ? threshPx : SITE_TAP_PX;
+  const exclude = opts.excludeMarker || null;
   let best = null, bestD = THRESH;
   let bestHit = null, bestHitD = Infinity;
   for (const m of allMarkers) {
+    if (m === exclude) continue;
     if (!m._icon || !m._icon.parentNode) continue;   // clustered / not rendered → not tappable
     const r = m._icon.getBoundingClientRect();
     const inside = cp.x >= r.left && cp.x <= r.right && cp.y >= r.top && cp.y <= r.bottom;

@@ -1629,20 +1629,26 @@ if (COARSE_POINTER) {
     // tap strip) — same Parma-on-the-Via-Aemilia problem as the desktop click
     // handler (ROADS.forEach above) and the map-level click handler below.
     const covRaw = ll ? findNearestCoverage(ll, cp) : null;
+    const mkRaw  = ll ? nearestForegroundMarker(ll, cp) : null;
     const road = (roadHit && covRaw && covRaw._dist <= ROAD_HIT_WEIGHT / 2) ? null : roadHit;
     // Below curated-road-or-not, a nearby Itiner-e segment and a nearby coverage
     // dot are both just nearest-neighbor guesses — comparing _dist picks
     // whichever is actually closer instead of always favoring the segment.
     const segRaw = (!road && ll) ? findNearestItinere(ll, cp) : null;
-    const segWins = segRaw && (!covRaw || segRaw._dist <= covRaw._dist);
+    // A near-miss on a foreground site marker beats the canvas segment/dot it sits
+    // beside (the Cumae-vs-Acropolis-dot steal) — desktop's click handler agrees.
+    const mk = (!road && mkRaw &&
+                (!segRaw || mkRaw._dist <= segRaw._dist) &&
+                (!covRaw || mkRaw._dist <= covRaw._dist)) ? mkRaw : null;
+    const segWins = !mk && segRaw && (!covRaw || segRaw._dist <= covRaw._dist);
     const seg = (!road && segWins) ? segRaw : null;
-    const cov = (!road && !segWins && covRaw) ? covRaw : null;
+    const cov = (!road && !mk && !segWins && covRaw) ? covRaw : null;
     // …or the searched place's pin (reopen its panel even when dots aren't showing).
-    const pin = (!road && !seg && !cov && ll) ? nearestPinnedCoverage(ll, cp) : null;
+    const pin = (!road && !mk && !seg && !cov && ll) ? nearestPinnedCoverage(ll, cp) : null;
 
     // Nothing under the finger → don't preventDefault, so Leaflet's own map
     // double-tap zoom and map.on('click') (panel close) still run on empty canvas.
-    if (!road && !seg && !cov && !pin) return;
+    if (!road && !mk && !seg && !cov && !pin) return;
 
     e.preventDefault();   // we own this tap → suppress the late synthesized click
 
@@ -1650,7 +1656,9 @@ if (COARSE_POINTER) {
     // it with a zoom (above). A lone tap falls through and opens detail.
     const doOpen = () => {
       _lastRoadTap = null;
-      if (road) {
+      if (mk) {
+        setActiveMarker(mk.marker); showPanel(mk.marker._site);
+      } else if (road) {
         roadsGroup.eachLayer(l => { if (l.closeTooltip) l.closeTooltip(); });  // one at a time
         road.openTooltip(ll);
         roadBannerFromTap = true;   // tap-opened banner: clear it when the card closes
@@ -4058,6 +4066,27 @@ function saveReturnState() {
 // the road won every time and the site panel could never open. Comparing
 // _dist (both finders now return it) picks whichever is actually nearer to
 // the click instead of whichever was checked first.
+// Nearest RENDERED foreground site marker to a click, within threshPx, or null.
+// Only individual (declustered) markers currently in the DOM count — a clustered
+// or hidden marker is not a tap target. This lets the map-click handler prefer a
+// real site over a canvas coverage dot / road when the click lands in the dead
+// ring just OFF a small marker icon: e.g. the Cumae marker sits ~36px from its
+// own "Acropolis of Cumae" coverage dot, so a near-miss on the 14px icon used to
+// resolve to the dot ("it just sits on the acropolis"). Foreground wins.
+const SITE_TAP_PX = 28;
+function nearestForegroundMarker(latlng, cp, threshPx) {
+  if (!layerState.sites) return null;
+  const THRESH = threshPx != null ? threshPx : SITE_TAP_PX;
+  let best = null, bestD = THRESH;
+  for (const m of allMarkers) {
+    if (!m._icon || !m._icon.parentNode) continue;   // clustered / not rendered → not tappable
+    const p = map.latLngToContainerPoint(m.getLatLng());
+    const d = Math.hypot(cp.x - p.x, cp.y - p.y);
+    if (d < bestD) { bestD = d; best = m; }
+  }
+  return best ? { marker: best, _dist: bestD } : null;
+}
+
 map.on('click', (e) => {
   closeDockPanels();      // a tap on the open map dismisses any dock popover
   clearSiteSearchInput(); // a direct map tap supersedes any lingering search query
@@ -4080,6 +4109,13 @@ map.on('click', (e) => {
     // the site unreachable no matter how precisely you clicked.
     const seg = findNearestItinere(e.latlng, e.containerPoint);
     const cov = findNearestCoverage(e.latlng, e.containerPoint);  // only resolves when dots show
+    // A near-miss on a foreground site marker beats a canvas road/dot that sits
+    // nearer — otherwise the coverage dot right beside a small marker steals the
+    // tap. Only when the marker is the closest of the three.
+    const mk = nearestForegroundMarker(e.latlng, e.containerPoint);
+    if (mk && (!seg || mk._dist <= seg._dist) && (!cov || mk._dist <= cov._dist)) {
+      setActiveMarker(mk.marker); showPanel(mk.marker._site); return;
+    }
     if (seg && (!cov || seg._dist <= cov._dist)) { showSegmentPanel(seg.meta, seg.ll, [seg.id]); return; }
     if (cov) { focusCoverage(cov); return; }
     const pin = nearestPinnedCoverage(e.latlng, e.containerPoint);  // reopen a searched place's panel
@@ -4863,8 +4899,8 @@ function setDetailLevel(level) {
 // reason about. Thresholds are a starting point, tuned on-device.
 function detailLevelForZoom(z) {
   if (z >= 10) return 3;   // + Documented (== AUTO_REVEAL_ZOOM; coverage already keys off zoom)
-  if (z >= 8)  return 2;   // all foreground sites
-  if (z >= 6)  return 1;   // quest sites
+  if (z >= 9)  return 2;   // all foreground sites — held back a zoom so mid-zoom stays calm
+  if (z >= 7)  return 1;   // quest sites
   return 0;                // Highlights (curated) — the calm empire-scale default
 }
 

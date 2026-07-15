@@ -346,6 +346,60 @@ body.mode-alexander #roman-legend { display: none; }
 #campaign-legend { display: none; }
 body.mode-alexander #campaign-legend { display: block; }
 
+/* ── PER-PAGE MODE LOCK (the split) ──
+   Each deployed page locks to one experience via body.lock-roman / lock-alexander
+   (set by applyModeLock from window.VIA_LOCK_MODE). Locked: hide the two-mode tab
+   switcher and show a single link to the sibling page instead. Unlocked (?lock=none
+   dev) leaves the tabs and keeps #mode-crosslink hidden. */
+#mode-crosslink { display: none; }
+body.lock-roman #mode-tabs,
+body.lock-alexander #mode-tabs { display: none; }
+body.lock-roman #mode-crosslink,
+body.lock-alexander #mode-crosslink { display: flex; justify-content: center; }
+/* Only the OTHER experience's link shows per page. */
+body.lock-roman .mode-cross.to-roman { display: none; }
+body.lock-alexander .mode-cross.to-alexander { display: none; }
+
+/* ── PHASE 3: split-unlock subtractions ──
+   On the Roman-locked page the Alexander layer chip + legend row are dead
+   controls (no Alexander layer to toggle). Hidden here; kept for ?lock=none
+   dual-mode dev. */
+body.lock-roman #btn-alexander,
+body.lock-roman #legend-alexander-toggle { display: none; }
+
+/* Topbar Key button: mobile-only (folded up from the old dock). Desktop keeps
+   the always-open legend, so it stays hidden there. Shown in the ≤640px block. */
+#topbar-key { display: none; }
+.mode-cross {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 14px; border-radius: 999px;
+  font-family: 'Cinzel', serif; font-size: var(--fs-13); font-weight: 600;
+  color: var(--gold); text-decoration: none;
+  background: rgba(212,168,83,0.08);
+  border: 1px solid rgba(212,168,83,0.35);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.mode-cross:hover { background: rgba(212,168,83,0.16); border-color: rgba(212,168,83,0.6); }
+.mode-cross-glyph { font-size: var(--fs-13); line-height: 1; }
+.mode-cross.to-alexander .mode-cross-glyph { font-family: 'Cinzel', serif; font-weight: 700; }
+.mode-cross-arrow { opacity: 0.8; }
+
+/* Welcome-modal copy variants: one per experience, selected by the lock. Default
+   (unlocked dev) shows the dual variant; a locked page shows only its own. */
+#welcome-body .wb-variant { display: none; }
+#welcome-body .wb-dual { display: block; }
+body.lock-roman #welcome-body .wb-dual,
+body.lock-alexander #welcome-body .wb-dual { display: none; }
+body.lock-roman #welcome-body .wb-roman { display: block; }
+body.lock-alexander #welcome-body .wb-alexander { display: block; }
+.welcome-cross-link {
+  display: inline-block; margin-top: 14px;
+  color: var(--gold); text-decoration: none;
+  font-size: var(--fs-14); border-bottom: 1px solid rgba(212,168,83,0.4);
+  padding-bottom: 1px;
+}
+.welcome-cross-link:hover { border-bottom-color: var(--gold); }
+
 /* Campaign phase key — the NUMBER is the primary channel (colorblind-safe);
    the color fill is a secondary reinforcement. */
 .phase-row { gap: 8px; }
@@ -383,6 +437,100 @@ body.mode-alexander #campaign-legend { display: block; }
   box-shadow: inset 3px 0 0 var(--gold, #d4a853);
 }
 #campaign-legend .phase-row.active .phase-num { box-shadow: 0 0 0 2px var(--gold, #d4a853); }
+
+/* ── Alexander guided journey ───────────────────────────────
+   The journey rail + phase pills live at the top of the info panel and only
+   show on .alexander-panel; the launcher floats over the map when no stop is
+   open. Prev/Next walk the ordered stops; the pills jump between phases. */
+#journey-rail,
+#journey-phases { display: none; }
+#info-panel.alexander-panel #journey-rail { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+#info-panel.alexander-panel #journey-phases { display: flex; }
+
+#journey-rail .journey-nav {
+  flex: 0 0 auto;
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: var(--fs-24); line-height: 1;
+  color: var(--gold, #d4a853);
+  background: rgba(212,168,83,0.08);
+  border: 1px solid rgba(212,168,83,0.38);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background .15s, opacity .15s;
+}
+#journey-rail .journey-nav:hover { background: rgba(212,168,83,0.16); }
+#journey-rail .journey-nav:disabled { opacity: 0.28; cursor: default; }
+#journey-pos { flex: 1 1 auto; text-align: center; min-width: 0; }
+#journey-count {
+  font-family: 'Cinzel', serif; font-weight: 600;
+  font-size: var(--fs-13); letter-spacing: 1px;
+  color: rgba(240,230,211,0.92);
+}
+#journey-phase-label {
+  font-size: var(--fs-11); letter-spacing: 0.4px;
+  color: rgba(212,168,83,0.75); margin-top: 2px;
+}
+
+#journey-phases {
+  gap: 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  margin-bottom: 14px;
+  padding-bottom: 2px;
+}
+#journey-phases::-webkit-scrollbar { display: none; }
+.journey-phase-pill {
+  flex: 0 0 auto;
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px 5px 5px;
+  background: rgba(20,12,2,0.6);
+  border: 1px solid rgba(212,168,83,0.22);
+  border-radius: 999px;
+  color: rgba(240,230,211,0.78);
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.journey-phase-pill .jpp-num {
+  flex: 0 0 auto;
+  width: 20px; height: 20px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: 'Cinzel', serif; font-weight: 700; font-size: var(--fs-11);
+  color: #110a00; background: var(--pc, #8f7cc3);
+  border-radius: 999px;
+}
+.journey-phase-pill .jpp-label {
+  font-size: var(--fs-11); letter-spacing: 0.3px; white-space: nowrap;
+}
+.journey-phase-pill:hover { border-color: rgba(212,168,83,0.5); color: rgba(240,230,211,0.95); }
+.journey-phase-pill.active {
+  background: rgba(212,168,83,0.14);
+  border-color: var(--gold, #d4a853);
+  color: rgba(240,230,211,0.98);
+}
+.journey-phase-pill.active .jpp-num { box-shadow: 0 0 0 2px var(--gold, #d4a853); }
+
+/* Floating launcher — the calm "enter the journey" affordance over the map. */
+#journey-launch { display: none; }
+#journey-launch.journey-launch-show {
+  display: inline-flex; align-items: center; gap: 9px;
+  position: fixed;
+  left: 50%; transform: translateX(-50%);
+  bottom: 26px;
+  z-index: 958;
+  padding: 12px 22px;
+  font-family: 'Cinzel', serif; font-weight: 600;
+  font-size: var(--fs-14); letter-spacing: 1px;
+  color: #110a00;
+  background: linear-gradient(180deg, #e6c983 0%, #d4a853 100%);
+  border: 1px solid rgba(212,168,83,0.6);
+  border-radius: 999px;
+  box-shadow: 0 6px 22px rgba(0,0,0,0.42), 0 0 0 4px rgba(212,168,83,0.14);
+  cursor: pointer;
+}
+#journey-launch .jl-icon { font-size: var(--fs-11); }
+
 .legend-sub {
   display: block;
   font-size: var(--fs-8);
@@ -1879,7 +2027,8 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   height: calc(100% + 6px);
   border-radius: 50%;
   border: 2px solid currentColor;
-  animation: questPulse 2s ease-out infinite;
+  opacity: 0.65;
+  box-shadow: 0 0 0 1px rgba(20,10,0,0.18), 0 0 6px currentColor;
   pointer-events: none;
 }
 
@@ -2046,7 +2195,18 @@ path.leaflet-interactive { outline: none !important; }
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  #topbar-right   { gap: 6px; }
+  #topbar-right   { gap: 6px; align-items: center; }
+  /* Key folded up from the dock (Phase 3): a slim pill next to the profile pill. */
+  #topbar-key {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 10px; border-radius: 999px;
+    background: var(--ink-panel); color: var(--gold);
+    border: 1px solid var(--gold-dim);
+    font-family: 'Cinzel', serif; font-size: var(--fs-11); font-weight: 600;
+    letter-spacing: 0.4px; line-height: 1; cursor: pointer;
+  }
+  #topbar-key svg { display: block; flex: 0 0 auto; }
+  #topbar-key[aria-expanded="true"] { background: var(--gold); color: var(--ink); }
   /* Search moved off the top bar into the dock (see #dock-search-panel). The
      input + results are reparented into the search overlay at boot, so here we
      reset the topbar-search positioning to flow inside that panel. */
@@ -2375,6 +2535,11 @@ path.leaflet-interactive { outline: none !important; }
     opacity: 0;
     transform: translateY(8px);
     pointer-events: none;
+  }
+  /* Journey launcher rides just above the dock on a phone (fixed 26px would sit
+     under the dock bar). */
+  #journey-launch.journey-launch-show {
+    bottom: calc(var(--dock-h) + 18px);
   }
   #mobile-guide-title {
     font-family: 'Cinzel', serif;

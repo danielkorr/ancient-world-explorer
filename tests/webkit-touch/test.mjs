@@ -148,6 +148,46 @@ try {
     !document.getElementById('info-panel').classList.contains('open'));
   ok('tap on empty map closed the panel', closed);
 
+  // 3b) real TAP on the topbar Key button opens the legend sheet (Phase 3: Key
+  // folded up from the dock). Native <button onclick>, so a tap synthesizes a
+  // click — this confirms the folded-up Key is tappable on the real WebKit engine.
+  const keyXY = await page.evaluate(() => {
+    const b = document.getElementById('topbar-key');
+    if (!b) return null;
+    const r = b.getBoundingClientRect();
+    return (r.width && r.height) ? { x: r.left + r.width / 2, y: r.top + r.height / 2 } : null;
+  }).catch(() => null);
+  ok('topbar Key button rendered (mobile)', !!keyXY);
+  if (keyXY) {
+    await page.touchscreen.tap(keyXY.x, keyXY.y);
+    await sleep(300);
+    const legendOpen = await page.evaluate(() =>
+      document.getElementById('quest-legend').classList.contains('mobile-open'));
+    ok('tap topbar Key opens the legend sheet', legendOpen);
+    await page.touchscreen.tap(keyXY.x, keyXY.y);   // tap again to close (round-trip)
+    await sleep(300);
+    const legendClosed = await page.evaluate(() =>
+      !document.getElementById('quest-legend').classList.contains('mobile-open'));
+    ok('tap topbar Key again closes the legend sheet', legendClosed);
+  }
+
+  // 3c) Phase 3: detail follows ZOOM (the slider is gone). Zoom out → Highlights
+  // only; zoom in → more sites reveal. This exercises the real zoomend → syncDetailToZoom
+  // path (the deterministic harness can only force levels via the setDetail hook,
+  // never the async zoom path). Awaits between zooms so zoomend fires.
+  const reveal = await page.evaluate(async () => {
+    const count = () => window.VIA.getState().visibleSiteCount;
+    const c = map.getCenter();
+    map.setView(c, 4, { animate: false });                 // level 0 — curated only
+    await new Promise(r => setTimeout(r, 400));
+    const few = count();
+    map.setView(c, 9, { animate: false });                 // level 2 — all foreground sites
+    await new Promise(r => setTimeout(r, 400));
+    const many = count();
+    return { few, many };
+  }).catch(() => ({ few: 0, many: 0 }));
+  ok(`zoom in reveals more sites (few=${reveal.few} → many=${reveal.many})`, reveal.many > reveal.few);
+
   // 4) Alexander campaign stops: same tap-open / double-tap-zoom behavior as Roman
   // markers. Stops are non-interactive circleMarkers resolved by nearest-point
   // (see findNearestAlexanderStop in app.js), so unlike markers/roads they carry no
@@ -198,6 +238,45 @@ try {
     })).catch(() => null);
     ok('double-tap on Alexander stop zoomed in one level (not just re-opened the panel)',
        !!afterDbl && afterDbl.zoom === alexXY.zoom + 1);
+  }
+
+  // 5) Alexander guided journey — real taps drive the stepper. The launcher and
+  // rail are native <button onclick>, so unlike markers/roads they DO get a
+  // synthesized click from a tap; this confirms the journey is tappable on the
+  // real WebKit engine (not just via the window.VIA.* hooks the deterministic
+  // harness uses). Load the campaign via ?lock=alexander (overrides the page lock).
+  const alexUrl = URL + (URL.indexOf('?') > -1 ? '&' : '?') + 'lock=alexander';
+  await page.goto(alexUrl, { waitUntil: 'load' });
+  await page.waitForFunction(() => window.VIA && window.VIA.ready, null, { timeout: 20000 }).catch(() => {});
+  console.log(`WebKit + touch — ${alexUrl}`);
+
+  const launcher = await page.evaluate(() => {
+    const b = document.getElementById('journey-launch');
+    if (!b || !b.classList.contains('journey-launch-show')) return null;
+    const r = b.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  }).catch(() => null);
+  ok('journey launcher shown at rest (alexander mode)', !!launcher);
+
+  if (launcher) {
+    await page.touchscreen.tap(launcher.x, launcher.y);   // REAL tap on the launcher button
+    await sleep(500);
+    const started = await page.evaluate(() => window.VIA.getState().journeyIndex);
+    ok('tap launcher starts journey at stop 0', started === 0);
+
+    const nextXY = await page.evaluate(() => {
+      const b = document.getElementById('journey-next');
+      if (!b) return null;
+      const r = b.getBoundingClientRect();
+      return (r.width && r.height) ? { x: r.left + r.width / 2, y: r.top + r.height / 2 } : null;
+    }).catch(() => null);
+    ok('journey Next button rendered in the rail', !!nextXY);
+    if (nextXY) {
+      await page.touchscreen.tap(nextXY.x, nextXY.y);     // REAL tap on the ‹ Next › button
+      await sleep(400);
+      const idx = await page.evaluate(() => window.VIA.getState().journeyIndex);
+      ok('tap Next advances to stop 1', idx === 1);
+    }
   }
 
   ok('no uncaught page errors', errors.length === 0);

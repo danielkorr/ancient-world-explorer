@@ -221,6 +221,34 @@ let currentEra = 'ancient';
 // read it safely.
 let appMode = 'roman';
 
+// ── Per-page experience lock (the mode split) ──────────────────────────────
+// VIA ships as two focused pages on one origin (Roman map + Alexander campaign).
+// Each page sets window.VIA_LOCK_MODE inline in its <head>; when locked, the mode
+// tabs are hidden, only that experience's chrome shows, and cross-mode chips turn
+// into links to the sibling page (see crossToRoman/crossToAlexander). ?lock=none
+// disables the lock so a single local index.html can drive both modes for dev/QA;
+// ?lock=roman|alexander forces one for testing the sibling page's behavior.
+// PAGE_MODE also namespaces first-visit localStorage keys so the two same-origin
+// pages don't share welcome/guide/return state (auth keys stay shared on purpose).
+const VIA_LOCK = (function () {
+  try {
+    const q = new URL(location.href).searchParams.get('lock');
+    if (q === 'none') return null;
+    if (q === 'roman' || q === 'alexander') return q;
+  } catch (e) {}
+  const m = window.VIA_LOCK_MODE;
+  return (m === 'roman' || m === 'alexander') ? m : null;
+})();
+const PAGE_MODE = VIA_LOCK || 'roman';
+// Suffix a base storage key with the page's mode so Roman and Alexander (same
+// origin) keep separate first-visit state. Auth keys (via.user/checkins/guest)
+// deliberately do NOT use this — one sign-in should carry across both pages.
+const pageKey = (base) => `${base}.${PAGE_MODE}`;
+// This page's own canonical URL, for share/email links. Derived at runtime so
+// each of the two pages links to itself (not a hardcoded origin) — correct on
+// localhost, the Roman page, and the Alexander subpath alike.
+const selfUrl = (qs) => location.origin + location.pathname + (qs ? '?' + qs : '');
+
 // L.LayerGroup has no bringToFront. Re-add each group in stacking order
 // (bottom to top) to put them above any tile layer just inserted under
 // them. Itiner-e baseline first, named roads next, sites on top.
@@ -590,6 +618,10 @@ const alexanderStopLayers = [];
 let activeAlexanderLayer = null;
 let alexanderHasAutoFit = false;
 let pendingCloseAlexanderStop = null;
+// Guided-journey cursor: index into ALEXANDER_STOPS of the stop currently in the
+// panel, or -1 before the journey starts. Kept in sync whether the user steps
+// with Prev/Next, jumps a phase, taps a marker, or arrives via a deep-link.
+let journeyIndex = -1;
 
 function alexanderPhase(stop) {
   if (typeof ALEXANDER_PHASES === 'undefined' || !stop) return null;
@@ -1004,6 +1036,12 @@ function showAlexanderPanel(stop, layer) {
   const persistentMobileBeacon = window.innerWidth <= 640 && !QA;
   pendingCloseAlexanderStop = persistentMobileBeacon ? stop : null;
   dropAlexanderBeacon(stop, { bounded: !persistentMobileBeacon });   // colour-blind selected-stop beacon
+
+  // Sync the guided-journey cursor to whatever stop just opened — a direct marker
+  // tap or deep-link advances the journey exactly like Prev/Next would.
+  journeyIndex = (typeof ALEXANDER_STOPS !== 'undefined') ? ALEXANDER_STOPS.indexOf(stop) : -1;
+  updateJourneyRail();
+  refreshJourneyLauncher();
 }
 
 // ── SITE MARKERS ─────────────────────────────────────────
@@ -1173,15 +1211,19 @@ let   pulseTimer   = null;
 let   pendingClosePulseSiteId = null;
 let   focusToken   = 0;   // guards against stale async reveal callbacks (race)
 
+function clearActiveMarker() {
+  if (!activeMarker) return;
+  activeMarker.setIcon(makeIcon(activeMarker._site, false));
+  activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
+  activeMarker = null;
+}
+
 function setActiveMarker(marker) {
   if (activeMarker === marker) return;
-  if (activeMarker) {
-    activeMarker.setIcon(makeIcon(activeMarker._site, false));
-    activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
-  }
+  clearActiveMarker();
   activeMarker = marker || null;
   if (activeMarker) {
-    activeMarker.setIcon(makeIcon(activeMarker._site, true));
+    activeMarker.setIcon(makeIcon(activeMarker._site, false));
     activeMarker.setZIndexOffset(1000);
   }
 }
@@ -1193,12 +1235,12 @@ function triggerMarkerPulse(marker) {
   pulseSiteId = marker._site.id;
   if (prevPulseId && prevPulseId !== pulseSiteId) {
     const prev = allMarkers.find(m => m._site && m._site.id === prevPulseId);
-    if (prev) prev.setIcon(makeIcon(prev._site, prev === activeMarker || prev === previewMarker));
+    if (prev) prev.setIcon(makeIcon(prev._site, prev === previewMarker));
   }
-  marker.setIcon(makeIcon(marker._site, true));
+  marker.setIcon(makeIcon(marker._site, false));
   pulseTimer = setTimeout(() => {
     pulseSiteId = null;
-    marker.setIcon(makeIcon(marker._site, marker === activeMarker || marker === previewMarker));
+    marker.setIcon(makeIcon(marker._site, marker === previewMarker));
   }, 2850);   // 4 broadcast rings (0.7s each) — see .selected-marker-pulse
 }
 
@@ -1298,11 +1340,21 @@ SITES.forEach(site => {
     L.DomEvent.stopPropagation(e);
     // Re-clicking the already-selected marker must NOT re-run showPanel's 0.4s
     // pan animation — that churn was eating the next click and blocking the
-    // double-click-to-zoom. Panel's already showing this site; do nothing.
-    if (activeMarker === this) return;
+    // double-click-to-zoom. If the selected marker is covering a neighbor, let
+    // the neighbor win instead of treating the active dot as the target.
+    if (activeMarker === this) {
+      const alt = nearestForegroundMarker(e.latlng, e.containerPoint, SITE_TAP_PX, { excludeMarker: this });
+      if (!alt) return;
+      clearSiteSearchInput();
+      setActiveMarker(alt.marker);
+      showPanel(alt.marker._site);
+      triggerMarkerPulse(alt.marker);
+      return;
+    }
     clearSiteSearchInput();   // moved on to another site — drop the stale query
     setActiveMarker(this);
     showPanel(this._site);
+    triggerMarkerPulse(this);
   });
 
   // Double-click a pin to zoom in one level, like double-clicking the map — but
@@ -1521,6 +1573,7 @@ if (COARSE_POINTER) {
       clearSiteSearchInput();   // moved on to another site — drop the stale query
       setActiveMarker(hit);
       showPanel(hit._site);
+      triggerMarkerPulse(hit);
     }, MARKER_DBLTAP_MS);
     _lastMarkerTap = { id: hit._site.id, t: now, timer: openTimer };
   }, { passive: false });
@@ -1591,20 +1644,26 @@ if (COARSE_POINTER) {
     // tap strip) — same Parma-on-the-Via-Aemilia problem as the desktop click
     // handler (ROADS.forEach above) and the map-level click handler below.
     const covRaw = ll ? findNearestCoverage(ll, cp) : null;
+    const mkRaw  = ll ? nearestForegroundMarker(ll, cp) : null;
     const road = (roadHit && covRaw && covRaw._dist <= ROAD_HIT_WEIGHT / 2) ? null : roadHit;
     // Below curated-road-or-not, a nearby Itiner-e segment and a nearby coverage
     // dot are both just nearest-neighbor guesses — comparing _dist picks
     // whichever is actually closer instead of always favoring the segment.
     const segRaw = (!road && ll) ? findNearestItinere(ll, cp) : null;
-    const segWins = segRaw && (!covRaw || segRaw._dist <= covRaw._dist);
+    // A near-miss on a foreground site marker beats the canvas segment/dot it sits
+    // beside (the Cumae-vs-Acropolis-dot steal) — desktop's click handler agrees.
+    const mk = (!road && mkRaw &&
+                (!segRaw || mkRaw._dist <= segRaw._dist) &&
+                (!covRaw || mkRaw._dist <= covRaw._dist)) ? mkRaw : null;
+    const segWins = !mk && segRaw && (!covRaw || segRaw._dist <= covRaw._dist);
     const seg = (!road && segWins) ? segRaw : null;
-    const cov = (!road && !segWins && covRaw) ? covRaw : null;
+    const cov = (!road && !mk && !segWins && covRaw) ? covRaw : null;
     // …or the searched place's pin (reopen its panel even when dots aren't showing).
-    const pin = (!road && !seg && !cov && ll) ? nearestPinnedCoverage(ll, cp) : null;
+    const pin = (!road && !mk && !seg && !cov && ll) ? nearestPinnedCoverage(ll, cp) : null;
 
     // Nothing under the finger → don't preventDefault, so Leaflet's own map
     // double-tap zoom and map.on('click') (panel close) still run on empty canvas.
-    if (!road && !seg && !cov && !pin) return;
+    if (!road && !mk && !seg && !cov && !pin) return;
 
     e.preventDefault();   // we own this tap → suppress the late synthesized click
 
@@ -1612,7 +1671,9 @@ if (COARSE_POINTER) {
     // it with a zoom (above). A lone tap falls through and opens detail.
     const doOpen = () => {
       _lastRoadTap = null;
-      if (road) {
+      if (mk) {
+        setActiveMarker(mk.marker); showPanel(mk.marker._site);
+      } else if (road) {
         roadsGroup.eachLayer(l => { if (l.closeTooltip) l.closeTooltip(); });  // one at a time
         road.openTooltip(ll);
         roadBannerFromTap = true;   // tap-opened banner: clear it when the card closes
@@ -1789,6 +1850,7 @@ function showPanel(site) {
   // Re-show anything a prior road-segment panel hid (showSegmentPanel hides the
   // site-only sections). Resetting to '' reverts to the stylesheet default; the
   // per-site logic below re-applies real visibility.
+  clearCoveragePin();
   currentPanelKind = 'site';
   currentSegmentMeta = null;
   document.getElementById('quest-progress').style.display = '';
@@ -1799,6 +1861,7 @@ function showPanel(site) {
   if (_segNear) _segNear.style.display = 'none';
   const _segPl = document.getElementById('segment-pleiades');
   if (_segPl) { _segPl.style.display = 'none'; _segPl.innerHTML = ''; }
+  if (site.coverage) clearActiveMarker();
 
   // Hero. Any site with a vici.org photo shows it as the hero with a credit/
   // license caption (the "imagery exists in the wild" made literal); elevation
@@ -2051,11 +2114,7 @@ function closePanel() {
     setActiveAlexanderLayer(null);
     clearAlexanderBeacon();
   }
-  if (activeMarker) {
-    activeMarker.setIcon(makeIcon(activeMarker._site, false));
-    activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
-    activeMarker = null;
-  }
+  clearActiveMarker();
   currentPanelSite = null;
   currentPanelKind = null;
   currentSegmentMeta = null;
@@ -2087,6 +2146,8 @@ function closePanel() {
   if (alexanderStopAfterClose && window.innerWidth <= 640) {
     setTimeout(() => dropAlexanderBeacon(alexanderStopAfterClose, { bounded: true }), 140);
   }
+  // Panel closed → back on the open route; re-offer the journey launcher.
+  if (typeof refreshJourneyLauncher === 'function') refreshJourneyLauncher();
 }
 
 // Search lives in the top bar and resolves to the same site-panel flow as a
@@ -2576,9 +2637,27 @@ function siteTwinAlexanderStop(site) {
   }
   return (best && bestD <= CROSS_TWIN_DEG) ? best : null;
 }
+// Twin deep-link URLs onto the sibling page. Pure (no navigation) so the QA
+// harness can assert the shape without a cross-origin hop; crossTo* use them
+// for the real jump. A site with no Pleiades id has no Roman twin to anchor, so
+// it lands on the Roman home view.
+function romanTwinUrl(site) {
+  return site && site.pleiades
+    ? window.VIA_ROMAN_URL + '?site=' + encodeURIComponent(site.pleiades)
+    : window.VIA_ROMAN_URL;
+}
+function alexanderTwinUrl(stop) {
+  return window.VIA_ALEXANDER_URL + '?mode=alexander&alexander=' + encodeURIComponent(stop.id);
+}
 function crossToRoman(siteId) {
   const site = (typeof SITES !== 'undefined') && SITES.find(s => s.id === siteId);
   if (!site) return;
+  // On the Alexander page the Roman experience isn't loaded as a mode — cross to
+  // the sibling page, deep-linking the twin site via ?site=<pleiades> (openSharedSite).
+  if (VIA_LOCK === 'alexander') {
+    location.href = romanTwinUrl(site);
+    return;
+  }
   if (appMode !== 'roman') setMode('roman', { preserveView: true });
   map.setView([site.lat, site.lng], Math.max(map.getZoom(), 8), { animate: false });
   focusSite(site, { pulse: true });
@@ -2586,10 +2665,95 @@ function crossToRoman(siteId) {
 function crossToAlexander(stopId) {
   const stop = (typeof ALEXANDER_STOPS !== 'undefined') && ALEXANDER_STOPS.find(s => s.id === stopId);
   if (!stop) return;
+  // On the Roman page the campaign isn't loaded as a mode — cross to the sibling
+  // page, deep-linking the stop via ?mode=alexander&alexander=<id> (openSharedMode).
+  if (VIA_LOCK === 'roman') {
+    location.href = alexanderTwinUrl(stop);
+    return;
+  }
   if (appMode !== 'alexander') setMode('alexander', { preserveView: true });
   map.setView([stop.lat, stop.lng], Math.max(map.getZoom(), 6), { animate: false });
   const layer = alexanderStopLayers.find(x => x._alexanderStop === stop);
   showAlexanderPanel(stop, layer);
+}
+
+// ── ALEXANDER GUIDED JOURNEY ──────────────────────────────
+// The campaign as a walkable story: Prev/Next move through ALEXANDER_STOPS in
+// narrative order, the map follows, and each stop opens its panel. Phase pills
+// jump to a phase's first stop. The launcher is the calm entry point over the
+// full route. showAlexanderPanel is the single render path — everything here
+// just moves the cursor and calls it, so a marker tap and a Next press converge.
+function journeyStops() {
+  return (typeof ALEXANDER_STOPS !== 'undefined') ? ALEXANDER_STOPS : [];
+}
+
+function journeyGoTo(i) {
+  const stops = journeyStops();
+  if (!stops.length) return;
+  i = Math.max(0, Math.min(stops.length - 1, i));   // linear: stop at the ends
+  const stop = stops[i];
+  const layer = alexanderStopLayers.find(x => x._alexanderStop === stop);
+  showAlexanderPanel(stop, layer);   // sets journeyIndex + rail + launcher
+}
+
+function journeyStep(dir) {
+  if (journeyIndex < 0) { journeyGoTo(0); return; }
+  journeyGoTo(journeyIndex + dir);
+}
+
+function startJourney() {
+  if (appMode !== 'alexander') setMode('alexander');
+  journeyGoTo(journeyIndex >= 0 ? journeyIndex : 0);
+}
+
+function journeyJumpPhase(key) {
+  const stops = journeyStops();
+  const i = stops.findIndex(s => s.phase === key);
+  if (i >= 0) journeyGoTo(i);
+}
+
+// Phase pills — built once at boot from ALEXANDER_PHASES. The NUMBER is the
+// primary channel (colour-blind safe, matching the campaign legend); the tint
+// is secondary. Tapping jumps the journey to that phase's first stop.
+const ALEX_PHASE_ORDER = ['macedon', 'anatolia', 'levantEgypt', 'persianCore', 'eastIndia', 'returnDeath'];
+function buildJourneyPhases() {
+  const el = document.getElementById('journey-phases');
+  if (!el || typeof ALEXANDER_PHASES === 'undefined') return;
+  el.innerHTML = ALEX_PHASE_ORDER.map((key, n) => {
+    const p = ALEXANDER_PHASES[key];
+    if (!p) return '';
+    return `<button type="button" class="journey-phase-pill" data-phase="${key}" onclick="journeyJumpPhase('${key}')" style="--pc:${p.color}" title="${escapeHtml(p.label)} · ${escapeHtml(p.years)}"><span class="jpp-num">${n + 1}</span><span class="jpp-label">${escapeHtml(p.label)}</span></button>`;
+  }).join('');
+}
+
+function updateJourneyRail() {
+  const stops = journeyStops();
+  if (journeyIndex < 0 || !stops.length) return;
+  const stop = stops[journeyIndex];
+  const phase = alexanderPhase(stop);
+  const count = document.getElementById('journey-count');
+  const phaseLabel = document.getElementById('journey-phase-label');
+  const prev = document.getElementById('journey-prev');
+  const next = document.getElementById('journey-next');
+  if (count) count.textContent = `Stop ${journeyIndex + 1} of ${stops.length}`;
+  if (phaseLabel) phaseLabel.textContent = phase ? `${phase.label} · ${phase.years}` : '';
+  if (prev) prev.disabled = journeyIndex <= 0;
+  if (next) next.disabled = journeyIndex >= stops.length - 1;
+  document.querySelectorAll('#journey-phases .journey-phase-pill').forEach(el => {
+    el.classList.toggle('active', !!stop && el.dataset.phase === stop.phase);
+  });
+}
+
+// The launcher shows only in Alexander mode with no stop panel open — once you're
+// in a stop, the panel's Prev/Next own the journey. Label reflects resume vs start.
+function refreshJourneyLauncher() {
+  const btn = document.getElementById('journey-launch');
+  if (!btn) return;
+  const panelOpen = document.getElementById('info-panel').classList.contains('open');
+  const show = appMode === 'alexander' && journeyStops().length > 0 && !panelOpen;
+  btn.classList.toggle('journey-launch-show', show);
+  const label = btn.querySelector('.jl-label');
+  if (label) label.textContent = journeyIndex >= 0 ? 'Resume the journey' : 'Begin the journey';
 }
 
 function itinereSearchMeta(entry) {
@@ -2618,12 +2782,12 @@ function ensureCoverageLoaded() {
   // Wikidata P1584->P18, "looks related" bar not a scholarly-precision one).
   // Fetched in parallel with the script tag; a failure here just means coverage
   // panels stay honest-thin, never blocks the coverage data itself from loading.
-  const photoPromise = fetch('js/coverage-photos.json?v=' + BUILD)
+  const photoPromise = fetch(ASSET_BASE + 'js/coverage-photos.json?v=' + BUILD)
     .then(r => r.ok ? r.json() : {})
     .catch(() => ({}));
 
   const s = document.createElement('script');
-  s.src = 'js/sites-coverage.js?v=' + BUILD;     // same cache token as the app
+  s.src = ASSET_BASE + 'js/sites-coverage.js?v=' + BUILD;     // same cache token as the app
   s.async = true;
   s.onload = () => {
     const raw = (typeof window.SITES_COVERAGE !== 'undefined') ? window.SITES_COVERAGE : [];
@@ -2669,7 +2833,7 @@ function ensureRoadPleiadesLoaded() {
   if (QA || _roadPPState !== 'idle') return;
   _roadPPState = 'loading';
   const s = document.createElement('script');
-  s.src = 'js/roads-itinere-pleiades.js?v=' + BUILD;
+  s.src = ASSET_BASE + 'js/roads-itinere-pleiades.js?v=' + BUILD;
   s.async = true;
   s.onload = () => {
     _roadPPState = 'ready';
@@ -2740,7 +2904,7 @@ function ensureOrbisGraphLoaded() {
   }
   _orbisGraphPromise = new Promise((resolve) => {
     const s = document.createElement('script');
-    s.src = 'js/orbis-graph.js?v=' + BUILD;   // same cache token as the app
+    s.src = ASSET_BASE + 'js/orbis-graph.js?v=' + BUILD;   // same cache token as the app
     s.async = true;
     s.onload  = () => resolve(!!(window.ORBIS_ROUTE && window.ORBIS_ROUTE.ready()));
     s.onerror = () => resolve(false);
@@ -2861,10 +3025,10 @@ function showRouteHint(origin) {
   const sub = el.querySelector('#route-hint-sub');
   if (sub) {
     let primed = true;
-    try { primed = localStorage.getItem('via.journeyPrimed') === '1'; } catch (e) {}
+    try { primed = localStorage.getItem(pageKey('via.journeyPrimed')) === '1'; } catch (e) {}
     if (!primed) {
       sub.textContent = 'Times & cost come from ORBIS — Stanford’s model of real Roman travel by road, river and sea.';
-      try { localStorage.setItem('via.journeyPrimed', '1'); } catch (e) {}
+      try { localStorage.setItem(pageKey('via.journeyPrimed'), '1'); } catch (e) {}
     } else {
       sub.textContent = '';
     }
@@ -3143,8 +3307,8 @@ let _coverageHintShown = false;
 function maybeHintCoverage() {
   if (_coverageHintShown) return;
   _coverageHintShown = true;   // once per session regardless of storage availability
-  try { if (localStorage.getItem('via.coverageHinted') === '1') return; } catch (e) {}
-  try { localStorage.setItem('via.coverageHinted', '1'); } catch (e) {}
+  try { if (localStorage.getItem(pageKey('via.coverageHinted')) === '1') return; } catch (e) {}
+  try { localStorage.setItem(pageKey('via.coverageHinted'), '1'); } catch (e) {}
   const el = document.getElementById('legend-toast');
   const t  = document.getElementById('legend-toast-title');
   const b  = document.getElementById('legend-toast-body');
@@ -3166,8 +3330,8 @@ let _omnesviaeHintShown = false;
 function maybeHintOmnesviae() {
   if (_omnesviaeHintShown) return;
   _omnesviaeHintShown = true;   // once per session regardless of storage availability
-  try { if (localStorage.getItem('via.omnesviaeHinted') === '1') return; } catch (e) {}
-  try { localStorage.setItem('via.omnesviaeHinted', '1'); } catch (e) {}
+  try { if (localStorage.getItem(pageKey('via.omnesviaeHinted')) === '1') return; } catch (e) {}
+  try { localStorage.setItem(pageKey('via.omnesviaeHinted'), '1'); } catch (e) {}
   const el = document.getElementById('legend-toast');
   const t  = document.getElementById('legend-toast-title');
   const b  = document.getElementById('legend-toast-body');
@@ -3733,11 +3897,7 @@ function showSegmentPanel(meta, latlngs, segIds) {
   currentPanelKind = 'segment';
   currentPanelSite = null;
   currentSegmentMeta = meta || null;
-  if (activeMarker) {
-    activeMarker.setIcon(makeIcon(activeMarker._site, false));
-    activeMarker.setZIndexOffset(activeMarker._site.quest ? 500 : 0);
-    activeMarker = null;
-  }
+  clearActiveMarker();
 
   // Hero. Roads have no imagery of their own, but a site along the stretch often
   // does — borrow the nearest such vici photo so the road panel is as rich as a
@@ -3896,7 +4056,7 @@ function showSegmentPanel(meta, latlngs, segIds) {
   let emailBtn = '';
   if (cert === 'j' || cert === 'h') {
     const eName = (meta && meta.name) ? meta.name : 'a Roman road';
-    const eUrl  = 'https://danielkorr.github.io/ancient-world-explorer/';
+    const eUrl  = selfUrl();
     const eSubj = `A VIA quest: help verify the Roman road ${eName} (${ci.label.toLowerCase()})`;
     const eBody = `${ci.label} Roman road: ${eName}.\n\nThis stretch of the ancient road network isn't field-verified. Walking or photographing it can help confirm the alignment.\n\nExplore it on VIA:\n${eUrl}\n\n${VIA_BLURB}\n\n#VIAquest`;
     emailBtn = `
@@ -3951,7 +4111,7 @@ function saveReturnState() {
   if (!currentPanelSite) return;
   const home = panelReturnView || { center: map.getCenter(), zoom: map.getZoom() };
   try {
-    sessionStorage.setItem('via.return', JSON.stringify({
+    sessionStorage.setItem(pageKey('via.return'), JSON.stringify({
       id:   currentPanelSite.id,
       lat:  home.center.lat,
       lng:  home.center.lng,
@@ -3975,6 +4135,33 @@ function saveReturnState() {
 // the road won every time and the site panel could never open. Comparing
 // _dist (both finders now return it) picks whichever is actually nearer to
 // the click instead of whichever was checked first.
+// Nearest RENDERED foreground site marker to a click, within threshPx, or null.
+// Only individual (declustered) markers currently in the DOM count — a clustered
+// or hidden marker is not a tap target. This lets the map-click handler prefer a
+// real site over a canvas coverage dot / road when the click lands in the dead
+// ring just OFF a small marker icon: e.g. the Cumae marker sits ~36px from its
+// own "Acropolis of Cumae" coverage dot, so a near-miss on the 14px icon used to
+// resolve to the dot ("it just sits on the acropolis"). Foreground wins.
+const SITE_TAP_PX = COARSE_POINTER ? 26 : 20;
+function nearestForegroundMarker(latlng, cp, threshPx, opts = {}) {
+  if (!layerState.sites) return null;
+  const THRESH = threshPx != null ? threshPx : SITE_TAP_PX;
+  const exclude = opts.excludeMarker || null;
+  let best = null, bestD = THRESH;
+  let bestHit = null, bestHitD = Infinity;
+  for (const m of allMarkers) {
+    if (m === exclude) continue;
+    if (!m._icon || !m._icon.parentNode) continue;   // clustered / not rendered → not tappable
+    const r = m._icon.getBoundingClientRect();
+    const inside = cp.x >= r.left && cp.x <= r.right && cp.y >= r.top && cp.y <= r.bottom;
+    const p = map.latLngToContainerPoint(m.getLatLng());
+    const d = Math.hypot(cp.x - p.x, cp.y - p.y);
+    if (inside && d < bestHitD) { bestHitD = d; bestHit = m; }
+    else if (!bestHit && d < bestD) { bestD = d; best = m; }
+  }
+  return bestHit ? { marker: bestHit, _dist: bestHitD } : (best ? { marker: best, _dist: bestD } : null);
+}
+
 map.on('click', (e) => {
   closeDockPanels();      // a tap on the open map dismisses any dock popover
   clearSiteSearchInput(); // a direct map tap supersedes any lingering search query
@@ -3997,6 +4184,13 @@ map.on('click', (e) => {
     // the site unreachable no matter how precisely you clicked.
     const seg = findNearestItinere(e.latlng, e.containerPoint);
     const cov = findNearestCoverage(e.latlng, e.containerPoint);  // only resolves when dots show
+    // A near-miss on a foreground site marker beats a canvas road/dot that sits
+    // nearer — otherwise the coverage dot right beside a small marker steals the
+    // tap. Only when the marker is the closest of the three.
+    const mk = nearestForegroundMarker(e.latlng, e.containerPoint);
+    if (mk && (!seg || mk._dist <= seg._dist) && (!cov || mk._dist <= cov._dist)) {
+      setActiveMarker(mk.marker); showPanel(mk.marker._site); triggerMarkerPulse(mk.marker); return;
+    }
     if (seg && (!cov || seg._dist <= cov._dist)) { showSegmentPanel(seg.meta, seg.ll, [seg.id]); return; }
     if (cov) { focusCoverage(cov); return; }
     const pin = nearestPinnedCoverage(e.latlng, e.containerPoint);  // reopen a searched place's panel
@@ -4168,6 +4362,7 @@ function setMode(mode, opts = {}) {
   decorateRoadsLegend();
   raiseOverlays();
   if (typeof updateEmpireInset === 'function') updateEmpireInset();   // relabel + reframe the locator
+  if (typeof refreshJourneyLauncher === 'function') refreshJourneyLauncher();   // show/hide the journey entry point per mode
 }
 
 // ── LAYER TOGGLES ────────────────────────────────────────
@@ -4447,7 +4642,7 @@ function onCheckInClick() {
 // Refresh marker icons after sign-in / check-in changes so the visited
 // badge appears/disappears live.
 function refreshAllMarkers() {
-  allMarkers.forEach(m => m.setIcon(makeIcon(m._site, m === activeMarker)));
+  allMarkers.forEach(m => m.setIcon(makeIcon(m._site, m === previewMarker)));
 }
 
 let _lastAuthUserId = null;
@@ -4522,7 +4717,7 @@ function siteQuestEmailPayload(site) {
   const q     = QUEST[site.quest] || QUEST.photo;
   const label = q.label.replace(' · Open', '');
   const where = site.modern ? `${site.name} (${site.modern})` : site.name;
-  const url   = `https://danielkorr.github.io/ancient-world-explorer/?site=${site.pleiades}`;
+  const url   = selfUrl(`site=${site.pleiades}`);
   const cta   = /closes the gap/i.test(q.text) ? '' : ' Be the traveler who closes the gap.';
   return {
     subject: `A VIA quest: help document ${site.name} (${label})`,
@@ -4545,7 +4740,7 @@ async function shareQuest() {
   const where = site.modern ? `${site.name} (${site.modern})` : site.name;
   // A VIA deep-link, NOT the raw Pleiades page: it opens the actual place in VIA
   // (Pleiades is one tap away in the panel) and unfurls with the OG card.
-  const url   = `https://danielkorr.github.io/ancient-world-explorer/?site=${site.pleiades}`;
+  const url   = selfUrl(`site=${site.pleiades}`);
   // Put EVERYTHING — context + the one link — in a single text block, and do NOT
   // pass navigator.share's separate `url` field. Share targets cherry-pick fields
   // inconsistently (Gmail keeps only `url`, Outlook keeps only `text`, neither
@@ -4590,7 +4785,7 @@ async function shareRoadSegment() {
   // VIA card and dropped people outside the app. No per-segment deep-link exists
   // (the static Itiner-e dump has no stable segment id), so use the VIA home URL:
   // it unfurls the VIA card and lands the recipient in the experience.
-  const url  = 'https://danielkorr.github.io/ancient-world-explorer/';
+  const url  = selfUrl();
   // Single self-contained message (see shareQuest) — context + one link, no
   // separate `url` field, so every share target shows the full thing.
   const message =
@@ -4773,13 +4968,23 @@ function setDetailLevel(level) {
   syncDetailUI();
 }
 
-function bindDetailSlider() {
-  const slider = document.getElementById('detail-slider');
-  if (!slider || slider.dataset.bound === '1') return;
-  slider.dataset.bound = '1';
-  slider.addEventListener('input', e => {
-    setDetailLevel(Number(e.target.value));
-  });
+// Detail is DERIVED FROM ZOOM (Phase 3) — the slider is gone. Zooming into a
+// region IS the user asking "show me more here"; clustering viewport-culls, so
+// zoom sets density and pan sets the region, with no global density knob to
+// reason about. Thresholds are a starting point, tuned on-device.
+function detailLevelForZoom(z) {
+  if (z >= 11) return 3;   // + Documented (coverage already keys off the deeper reveal floor)
+  if (z >= 8)  return 2;   // all foreground sites — earlier reveal keeps adjacent sites reachable
+  if (z >= 7)  return 1;   // quest sites
+  return 0;                // Highlights (curated) — the calm empire-scale default
+}
+
+// Recompute detail from the current zoom (call on zoomend + at boot). Only does
+// work when the derived level actually changes, so it's an instant no-op within
+// a threshold band.
+function syncDetailToZoom() {
+  const lvl = detailLevelForZoom(map.getZoom());
+  if (lvl !== detailLevel) setDetailLevel(lvl);
 }
 
 // Tap a lit legend tier to HIDE it; tap a hidden tier to bring it back. Empty
@@ -4829,8 +5034,16 @@ function toggleLegend() {
   const lg = document.getElementById('quest-legend');
   if (!lg) return;
   const open = lg.classList.toggle('mobile-open');
-  const fab = document.getElementById('legend-fab');
-  if (fab) fab.setAttribute('aria-expanded', open ? 'true' : 'false');
+  syncKeyExpanded(open);
+}
+
+// Keep both Key affordances' aria-expanded (and their active styling) in lockstep
+// with the legend sheet: the legacy FAB and the topbar Key button (Phase 3).
+function syncKeyExpanded(open) {
+  ['legend-fab', 'topbar-key'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
 }
 
 // Dismiss the mobile Key sheet (no-op on desktop, where the legend is always
@@ -4842,21 +5055,19 @@ function closeMobileLegend() {
   if (!lg || !lg.classList.contains('mobile-open')) return;
   lg.classList.remove('mobile-open');
   document.body.classList.remove('dock-key-open');
-  const fab = document.getElementById('legend-fab');
-  if (fab) fab.setAttribute('aria-expanded', 'false');
+  syncKeyExpanded(false);
   if (typeof syncDockButtons === 'function') syncDockButtons();
 }
 document.addEventListener('click', (e) => {
   const lg = document.getElementById('quest-legend');
   if (!lg || !lg.classList.contains('mobile-open')) return;
-  // Stay open when tapping inside the legend (filtering), the legacy FAB, or the
-  // dock Key button (its own handler toggles the panel).
+  // Stay open when tapping inside the legend (filtering), the legacy FAB, the old
+  // dock Key button, or the topbar Key button (each toggles the panel itself).
   if (lg.contains(e.target) ||
-      (e.target.closest && (e.target.closest('#legend-fab') || e.target.closest('#dock-key')))) return;
+      (e.target.closest && (e.target.closest('#legend-fab') || e.target.closest('#dock-key') || e.target.closest('#topbar-key')))) return;
   lg.classList.remove('mobile-open');
   document.body.classList.remove('dock-key-open');
-  const fab = document.getElementById('legend-fab');
-  if (fab) fab.setAttribute('aria-expanded', 'false');
+  syncKeyExpanded(false);
   if (typeof syncDockButtons === 'function') syncDockButtons();
 }, true);
 
@@ -4963,6 +5174,14 @@ function updateBasemaps() {
 // version is the most reliable "am I current?" check there is.
 const BUILD = (document.querySelector('script[src*="app.js"]')
   ?.getAttribute('src')?.match(/v=(\d+)/) || [])[1] || '?';
+// Runtime-injected assets (lazy <script>/fetch) resolve relative to the *page* URL,
+// not to app.js — so a bare 'js/foo.js' 404s on the Alexander subpath
+// (/alexander-the-great-campaigns/js/foo.js). Derive the app's own directory from the
+// app.js src ('' on the Roman page, '../' on the Alexander page) and prefix injected
+// paths with it so they resolve against js/ wherever the page lives. build-pages.mjs
+// rewrites only *static* src/href, which is why this has to happen at runtime.
+const ASSET_BASE = ((document.querySelector('script[src*="app.js"]')
+  ?.getAttribute('src') || '').match(/^(.*?)js\/app\.js/) || ['', ''])[1];
 // The version is wrapped in a bold span whose inline `!important` styles beat
 // the faint 9px attribution defaults in style.css, so "VIA v52" is actually
 // readable in the corner while the licence credits stay subtle.
@@ -5015,12 +5234,12 @@ if (buildBadge) buildBadge.textContent = `VIA ${BUILD !== '?' ? 'v' + BUILD : 'd
 
 map.on('zoomend', () => {
   updateBasemaps();
-  // Marker visibility is governed by the DETAIL slider, not zoom, and
-  // markercluster re-clusters by itself — so there's nothing to recompute
-  // here beyond the zoom-staged basemap opacity + satellite reveal…
+  // Detail follows zoom now (Phase 3): crossing a threshold reveals the next
+  // tier (quests → all sites → documented). No-op within a band.
+  syncDetailToZoom();
   if (coverageWanted()) ensureCoverageLoaded();  // deep zoom auto-reveals coverage (Phase C)
-  renderCoverageDots();   // …except the coverage dots, which are viewport-culled + zoom-gated
-  if (typeof syncDetailUI === 'function') syncDetailUI();   // refresh the "zoom in" hint
+  renderCoverageDots();   // coverage dots are viewport-culled + zoom-gated
+  if (typeof syncDetailUI === 'function') syncDetailUI();   // harmless no-op once the slider DOM is gone
 });
 // Coverage dots are culled to the viewport, so re-render after a pan too (only
 // does work when the "Documented" level is active — otherwise an instant no-op).
@@ -5033,7 +5252,7 @@ decorateRoadsLegend();
 syncFilterUI();
 syncRoadsFilterUI();
 refreshVisibleMarkers();
-bindDetailSlider();
+syncDetailToZoom();   // detail is derived from zoom now (Phase 3), not a slider
 syncDetailUI();
 bindSiteSearch();
 bindDock();
@@ -5052,7 +5271,7 @@ function ensureRoadsLoaded() {
   // Roads keep their OWN cache token (independent of app.js's ?v=), so bumping the
   // app doesn't force a 2.96 MB re-download. Bump HERE when roads-itinere.js is
   // regenerated — this used to live in index.html as ?v=119.
-  s.src = 'js/roads-itinere.js?v=119';
+  s.src = ASSET_BASE + 'js/roads-itinere.js?v=119';
   s.async = true;
   s.onload = () => { _roadsState = 'ready'; buildItinereBaseline(); };
   s.onerror = () => { _roadsState = 'error'; };
@@ -5086,12 +5305,12 @@ function openWelcome() {
 function closeWelcome() {
   const el = document.getElementById('welcome-modal');
   if (el) el.classList.remove('open');
-  try { localStorage.setItem('via.welcomed', '1'); } catch (e) {}
+  try { localStorage.setItem(pageKey('via.welcomed'), '1'); } catch (e) {}
   showMobileGuide();
 }
 
 function mobileGuideDismissed() {
-  try { return localStorage.getItem('via.mobileGuideDismissed') === '1'; }
+  try { return localStorage.getItem(pageKey('via.mobileGuideDismissed')) === '1'; }
   catch (e) { return true; }
 }
 
@@ -5107,16 +5326,52 @@ function dismissMobileGuide(persist) {
   const el = document.getElementById('mobile-guide');
   if (el) el.classList.add('hidden');
   if (persist) {
-    try { localStorage.setItem('via.mobileGuideDismissed', '1'); } catch (e) {}
+    try { localStorage.setItem(pageKey('via.mobileGuideDismissed'), '1'); } catch (e) {}
   }
 }
+
+// ── Apply the per-page experience lock ──
+// Runs before the welcome/deep-link IIFEs so the chrome and welcome variant are
+// already correct when they fire. Adds a `lock-<mode>` body class (CSS hides the
+// mode tabs + the other experience's controls, reveals the sibling cross-link)
+// and forces the mode. Roman is already the default appMode, so we only call
+// setMode when locking to Alexander. Unlocked (?lock=none / dev) leaves both tabs.
+(function applyModeLock() {
+  if (!VIA_LOCK) return;
+  document.body.classList.add('lock-' + VIA_LOCK);
+  if (VIA_LOCK !== appMode) setMode(VIA_LOCK);
+})();
+
+// ── Guided-journey init ──
+// Build the phase pills once, sync the launcher for the current mode, and wire a
+// horizontal swipe on the panel to Prev/Next. The swipe is passive + only fires
+// on a clearly horizontal drag, so it never steals the panel's vertical scroll.
+(function initJourney() {
+  buildJourneyPhases();
+  refreshJourneyLauncher();
+  const panel = document.getElementById('info-panel');
+  if (!panel) return;
+  let x0 = 0, y0 = 0, tracking = false;
+  panel.addEventListener('touchstart', (e) => {
+    tracking = panel.classList.contains('alexander-panel') && e.touches.length === 1;
+    if (tracking) { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }
+  }, { passive: true });
+  panel.addEventListener('touchend', (e) => {
+    if (!tracking) return;
+    tracking = false;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - x0, dy = t.clientY - y0;
+    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;   // not a horizontal swipe
+    journeyStep(dx < 0 ? 1 : -1);   // swipe left → next, right → prev
+  }, { passive: true });
+})();
 
 // Auto-show on the very first visit. Skip when a magic-link reload is about to
 // auto-open the sign-in modal (?signin=1) so we don't stack two modals at boot.
 (function maybeShowWelcome() {
   if (QA) return;                       // deterministic test boot: no modals/guide
   let welcomed = false;
-  try { welcomed = localStorage.getItem('via.welcomed') === '1'; } catch (e) {}
+  try { welcomed = localStorage.getItem(pageKey('via.welcomed')) === '1'; } catch (e) {}
   const autoSignin = /[?&]signin=1/.test(location.search);
   if (!welcomed && !autoSignin) openWelcome();
   else showMobileGuide();
@@ -5138,9 +5393,9 @@ if (_brandEl) {
 // reload or fresh visit isn't affected.
 (function restoreReturnState() {
   let raw = null;
-  try { raw = sessionStorage.getItem('via.return'); } catch (e) {}
+  try { raw = sessionStorage.getItem(pageKey('via.return')); } catch (e) {}
   if (!raw) return;
-  try { sessionStorage.removeItem('via.return'); } catch (e) {}
+  try { sessionStorage.removeItem(pageKey('via.return')); } catch (e) {}
   let st;
   try { st = JSON.parse(raw); } catch (e) { return; }
   const site = SITES.find(s => s.id === st.id);
@@ -5271,7 +5526,31 @@ window.VIA.getState    = function () {
     roadTooltipOpen: !!document.querySelector('.leaflet-tooltip.road-tip'),
     visibleSiteCount,
     siteCount: SITES.length,
+    // Mode-split + guided-journey state (Phase 1/2 coverage).
+    appMode,
+    lockMode: VIA_LOCK,          // null when ?lock=none / unlocked dev
+    pageMode: PAGE_MODE,
+    journeyIndex,
+    journeyCount: journeyStops().length,
+    journeyLauncherShown: (document.getElementById('journey-launch') || { classList: { contains: () => false } })
+      .classList.contains('journey-launch-show'),
   };
+};
+// Mode-split + journey control hooks for the deterministic harness. Thin
+// pass-throughs to the same functions the UI calls, so a test drives the app by
+// the exact production path (no shadow logic to drift).
+window.VIA.setMode        = function (m) { setMode(m); };
+window.VIA.startJourney   = function () { startJourney(); };
+window.VIA.journeyStep    = function (d) { journeyStep(d); };
+window.VIA.journeyGoTo    = function (i) { journeyGoTo(i); };
+window.VIA.journeyJumpPhase = function (k) { journeyJumpPhase(k); };
+window.VIA.pageKey        = function (b) { return pageKey(b); };
+window.VIA.romanTwinUrl   = function (id) {
+  const s = (typeof SITES !== 'undefined') && SITES.find(x => x.id === id); return s ? romanTwinUrl(s) : null;
+};
+window.VIA.alexanderTwinUrl = function (id) {
+  const s = (typeof ALEXANDER_STOPS !== 'undefined') && ALEXANDER_STOPS.find(x => x.id === id);
+  return s ? alexanderTwinUrl(s) : null;
 };
 
 // QA: replicate a curated-road TAP (opens the road mini-banner tooltip + the

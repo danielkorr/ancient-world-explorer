@@ -883,6 +883,7 @@ function showAlexanderPanel(stop, layer) {
 
   currentPanelKind = 'alexander';
   currentPanelSite = null;
+  currentPanelAlexanderStop = stop;
   currentSegmentMeta = null;
   if (activeMarker) {
     activeMarker.setIcon(makeIcon(activeMarker._site, false));
@@ -1003,6 +1004,28 @@ function showAlexanderPanel(stop, layer) {
   }
 
   const actions = [];
+  const gmUrl = `https://maps.google.com/?q=${stop.lat},${stop.lng}`;
+  const satUrl = `https://www.google.com/maps/place/${stop.lat},${stop.lng}/@${stop.lat},${stop.lng},1000m/data=!3m1!1e3`;
+  actions.push(`
+    <a href="${gmUrl}" onclick="saveReturnState()" class="p-btn p-btn-maps">
+      <span class="p-btn-icon">🗺️</span>
+      <div><div class="p-btn-main">Google Maps</div><div class="p-btn-sub">Modern streets, places &amp; directions</div></div>
+      <span class="p-btn-ext" aria-hidden="true">↗</span>
+    </a>`);
+  actions.push(`
+    <a href="${satUrl}" onclick="saveReturnState()" class="p-btn p-btn-sat">
+      <span class="p-btn-icon">🛰️</span>
+      <div><div class="p-btn-main">Satellite View</div><div class="p-btn-sub">Aerial photo — inspect the campaign stop</div></div>
+      <span class="p-btn-ext" aria-hidden="true">↗</span>
+    </a>`);
+  if (stop.pleiades) {
+    actions.push(`
+      <a href="https://pleiades.stoa.org/places/${escapeHtml(stop.pleiades)}" onclick="saveReturnState()" class="p-btn p-btn-gold">
+        <span class="p-btn-icon">📜</span>
+        <div><div class="p-btn-main">Pleiades Gazetteer</div><div class="p-btn-sub">The authoritative scholarly place record</div></div>
+        <span class="p-btn-ext" aria-hidden="true">↗</span>
+      </a>`);
+  }
   const twinSite = alexanderTwinSite(stop);
   if (twinSite) {
     actions.push(`
@@ -1013,6 +1036,7 @@ function showAlexanderPanel(stop, layer) {
   }
   if (stop.links && stop.links.length) {
     for (const link of stop.links) {
+      if (stop.pleiades && /pleiades\.stoa\.org\/places\//.test(link.url || '')) continue;
       actions.push(`
         <a href="${escapeHtml(link.url)}" target="_blank" rel="noopener" class="p-btn p-btn-gold">
           <span class="p-btn-icon">↗</span>
@@ -1852,6 +1876,7 @@ function showPanel(site) {
   // per-site logic below re-applies real visibility.
   clearCoveragePin();
   currentPanelKind = 'site';
+  currentPanelAlexanderStop = null;
   currentSegmentMeta = null;
   document.getElementById('quest-progress').style.display = '';
   document.getElementById('checkin-row').style.display    = '';
@@ -2116,6 +2141,7 @@ function closePanel() {
   }
   clearActiveMarker();
   currentPanelSite = null;
+  currentPanelAlexanderStop = null;
   currentPanelKind = null;
   currentSegmentMeta = null;
   // Clear the road mini-banner (the curated-road name tooltip) when the detail
@@ -3896,6 +3922,7 @@ function showSegmentPanel(meta, latlngs, segIds) {
 
   currentPanelKind = 'segment';
   currentPanelSite = null;
+  currentPanelAlexanderStop = null;
   currentSegmentMeta = meta || null;
   clearActiveMarker();
 
@@ -4108,15 +4135,17 @@ function showSegmentPanel(meta, latlngs, segIds) {
 // VIA, restoreReturnState() can drop you right back where you were. Uses
 // sessionStorage so it's scoped to this tab and self-clears on a fresh visit.
 function saveReturnState() {
-  if (!currentPanelSite) return;
+  if (!currentPanelSite && !currentPanelAlexanderStop) return;
   const home = panelReturnView || { center: map.getCenter(), zoom: map.getZoom() };
+  const state = {
+    kind: currentPanelAlexanderStop ? 'alexander' : 'site',
+    id:   currentPanelAlexanderStop ? currentPanelAlexanderStop.id : currentPanelSite.id,
+    lat:  home.center.lat,
+    lng:  home.center.lng,
+    zoom: home.zoom
+  };
   try {
-    sessionStorage.setItem(pageKey('via.return'), JSON.stringify({
-      id:   currentPanelSite.id,
-      lat:  home.center.lat,
-      lng:  home.center.lng,
-      zoom: home.zoom
-    }));
+    sessionStorage.setItem(pageKey('via.return'), JSON.stringify(state));
   } catch (e) {}
 }
 
@@ -4436,7 +4465,8 @@ document.addEventListener('keydown', e => {
 // UI here doesn't care whether the backend is localStorage or Supabase.
 
 let currentPanelSite = null;
-let currentPanelKind = null;  // 'site' | 'segment' — what the info panel is showing
+let currentPanelAlexanderStop = null;
+let currentPanelKind = null;  // 'site' | 'segment' | 'alexander' — what the info panel is showing
 let currentSegmentMeta = null; // the Itiner-e meta backing a 'segment' panel
 let panelReturnView  = null;  // {center, zoom} captured when the panel opens
 let panelOpenToken   = 0;     // bumped each panel open; guards async Pleiades fetch races
@@ -5398,6 +5428,15 @@ if (_brandEl) {
   try { sessionStorage.removeItem(pageKey('via.return')); } catch (e) {}
   let st;
   try { st = JSON.parse(raw); } catch (e) { return; }
+  if (st.kind === 'alexander') {
+    const stop = (typeof ALEXANDER_STOPS !== 'undefined') ? ALEXANDER_STOPS.find(s => s.id === st.id) : null;
+    if (!stop) return;
+    map.setView([st.lat, st.lng], st.zoom, { animate: false });
+    setMode('alexander', { preserveView: true });
+    const layer = alexanderStopLayers.find(l => l._alexanderStop === stop);
+    showAlexanderPanel(stop, layer);
+    return;
+  }
   const site = SITES.find(s => s.id === st.id);
   if (!site) return;
   map.setView([st.lat, st.lng], st.zoom, { animate: false });

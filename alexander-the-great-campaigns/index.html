@@ -57,7 +57,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="../css/style.css?v=145">
+  <link rel="stylesheet" href="../css/style.css?v=146">
 </head>
 <body>
 
@@ -142,65 +142,76 @@
     <div class="welcome-tagline">Ancient World Explorer</div>
     <div id="welcome-body">
       <!-- DUAL variant: unlocked dev only (?lock=none), both experiences on one
-           page. Kept verbatim so local dual-mode testing is unchanged. -->
+           page. Kept in sync with the roman/alexander variants below. -->
       <div class="wb-variant wb-dual">
-        <p>Two thousand years of the ancient world, laid over the map as it stands today. VIA opens two ways in — switch between them anytime with the tabs at the top.</p>
+        <p>Two thousand years of the ancient world, laid over the map as it stands today. VIA opens two ways in — switch anytime with the tabs at the top.</p>
 
         <div class="welcome-modes">
           <div class="welcome-mode">
             <div class="welcome-mode-name"><span class="welcome-mode-glyph">🏛️</span>Roman Sites &amp; Roads</div>
-            <p>Where the empire reached — roads, cities, and ruins on the modern map. Many places carry an open <em>quest</em>: a gap in the scholarly record you can help close with a photo, a location, or a note.</p>
+            <p>Roads, cities, and ruins where the empire reached.</p>
           </div>
           <div class="welcome-mode">
             <div class="welcome-mode-name"><span class="welcome-mode-glyph alex">A</span>Alexander&rsquo;s Campaign</div>
-            <p>Follow a single lifetime across the ancient world — from Pella to the Hyphasis and back to Babylon, some 20,000&nbsp;km in ten years. Each stop is a turning point: a battle, a siege, a founded city — and, marked honestly, the places even scholars still dispute.</p>
+            <p>One lifetime, traced from Pella to the Hyphasis and back to Babylon.</p>
           </div>
         </div>
 
-        <p>Contribute to the record as you go. Sign in to check in at the places you reach and help fill the gaps. Be a part of it.</p>
-
-        <div class="welcome-quest-preview">
-          <div class="welcome-quest-title">Quests are open gaps</div>
-          <div class="welcome-quest-grid"><span>Zoom in</span><span>Pick a marker</span><span>Follow the steps</span></div>
-        </div>
         <p class="welcome-kicker">Learn history. Help write it.</p>
+
+        <details class="welcome-more">
+          <summary>How VIA works</summary>
+          <p>Many places carry an open <em>quest</em>: a gap in the scholarly record you can help close with a photo, a location, or a note.</p>
+          <div class="welcome-quest-preview">
+            <div class="welcome-quest-title">Quests are open gaps</div>
+            <div class="welcome-quest-grid"><span>Zoom in</span><span>Pick a marker</span><span>Follow the steps</span></div>
+          </div>
+          <p>Contribute to the record as you go — sign in to check in at the places you reach and help fill the gaps.</p>
+        </details>
       </div>
 
       <!-- ROMAN variant: shown on the Roman page (body.lock-roman). -->
       <div class="wb-variant wb-roman">
-        <p>Two thousand years of the Roman world, laid over the map as it stands today — roads, cities, and ruins where the empire actually reached.</p>
-        <p>Many places carry an open <em>quest</em>: a gap in the scholarly record you can help close with a photo, a verified location, or a note.</p>
-
-        <div class="welcome-quest-preview">
-          <div class="welcome-quest-title">Quests are open gaps</div>
-          <div class="welcome-quest-grid"><span>Zoom in</span><span>Pick a marker</span><span>Follow the steps</span></div>
-        </div>
-
-        <div class="welcome-sources">
-          <div class="welcome-sources-title">Plan a Roman journey</div>
-          <p>Tap any place, then tap a second — VIA traces the route a Roman traveller would have taken and tells you how many days it took, in road, river, and sea. The travel model is <strong>ORBIS</strong>, Stanford's reconstruction of the Roman world.</p>
-          <div class="welcome-sources-title">Built on the scholarly record</div>
-          <p><strong>Pleiades</strong> for places, <strong>Itiner-e</strong> for the road network, <strong>ORBIS</strong> for travel — the same open gazetteers historians use. VIA just puts them on one map.</p>
-        </div>
-        <p>Contribute as you go: sign in to check in at the places you reach and help fill the gaps.</p>
+        <p>Two thousand years of the Roman world, laid over the map as it stands today — roads, cities, and ruins where the empire actually reached. Tap any marker to explore it.</p>
         <p class="welcome-kicker">Learn history. Help write it.</p>
+
+        <details class="welcome-more">
+          <summary>How VIA works</summary>
+          <p>Many places carry an open <em>quest</em>: a gap in the scholarly record you can help close with a photo, a verified location, or a note.</p>
+          <div class="welcome-quest-preview">
+            <div class="welcome-quest-title">Quests are open gaps</div>
+            <div class="welcome-quest-grid"><span>Zoom in</span><span>Pick a marker</span><span>Follow the steps</span></div>
+          </div>
+          <div class="welcome-sources">
+            <div class="welcome-sources-title">Plan a Roman journey</div>
+            <p>Tap any place, then tap a second — VIA traces the route a Roman traveller would have taken and tells you how many days it took, in road, river, and sea. The travel model is <strong>ORBIS</strong>, Stanford's reconstruction of the Roman world.</p>
+            <div class="welcome-sources-title">Built on the scholarly record</div>
+            <p><strong>Pleiades</strong> for places, <strong>Itiner-e</strong> for the road network, <strong>ORBIS</strong> for travel — the same open gazetteers historians use. VIA just puts them on one map.</p>
+          </div>
+          <p>Contribute as you go: sign in to check in at the places you reach and help fill the gaps.</p>
+        </details>
+
         <a class="welcome-cross-link" href="alexander-the-great-campaigns/">Following one life instead? Trace <strong>Alexander&rsquo;s Campaign</strong> <span aria-hidden="true">→</span></a>
       </div>
 
       <!-- ALEXANDER variant: shown on the campaign page (body.lock-alexander).
            No check-in claim — the campaign is read-only by design. -->
       <div class="wb-variant wb-alexander">
-        <p>Follow a single lifetime across the ancient world — from Pella to the Hyphasis and back to Babylon, some 20,000&nbsp;km in ten years.</p>
-        <p>Each stop is a turning point: a battle, a siege, a founded city. Step through them in order — and where a battlefield or march is disputed, VIA says so rather than feign certainty.</p>
-
-        <div class="welcome-sources">
-          <div class="welcome-sources-title">Trace Alexander&rsquo;s route</div>
-          <p>The campaign is hand-curated from the ancient historians — <strong>Arrian</strong>, <strong>Plutarch</strong>, <strong>Diodorus</strong> — with each stop anchored to a <strong>Pleiades</strong> place.</p>
-          <div class="welcome-sources-title">Built on the scholarly record</div>
-          <p>Every stop links back to <strong>Pleiades</strong> and the ancient sources, so you can check the ground under each claim.</p>
-        </div>
-        <p>Sign in to VIA — your account carries across both the campaign and the Roman map.</p>
+        <p>Follow a single lifetime across the ancient world — from Pella to the Hyphasis and back to Babylon, some 20,000&nbsp;km in ten years. Step through each turning point in order.</p>
         <p class="welcome-kicker">A single life, mapped honestly.</p>
+
+        <details class="welcome-more">
+          <summary>How VIA works</summary>
+          <p>Each stop is a turning point: a battle, a siege, a founded city — and where a battlefield or march is disputed, VIA says so rather than feign certainty.</p>
+          <div class="welcome-sources">
+            <div class="welcome-sources-title">Trace Alexander&rsquo;s route</div>
+            <p>The campaign is hand-curated from the ancient historians — <strong>Arrian</strong>, <strong>Plutarch</strong>, <strong>Diodorus</strong> — with each stop anchored to a <strong>Pleiades</strong> place.</p>
+            <div class="welcome-sources-title">Built on the scholarly record</div>
+            <p>Every stop links back to <strong>Pleiades</strong> and the ancient sources, so you can check the ground under each claim.</p>
+          </div>
+          <p>Sign in to VIA — your account carries across both the campaign and the Roman map.</p>
+        </details>
+
         <a class="welcome-cross-link" href="../">Prefer the whole Roman world? Explore <strong>Roman Sites &amp; Roads</strong> <span aria-hidden="true">→</span></a>
       </div>
     </div>

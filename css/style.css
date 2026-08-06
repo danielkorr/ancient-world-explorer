@@ -400,6 +400,25 @@ body.lock-alexander #welcome-body .wb-alexander { display: block; }
 }
 .welcome-cross-link:hover { border-bottom-color: var(--gold); }
 
+/* "How VIA works" disclosure — keeps the first-run welcome to a couple of
+   sentences, with the quest/ORBIS/sources detail opt-in behind a link. */
+.welcome-more summary {
+  cursor: pointer;
+  list-style: none;
+  display: inline-block;
+  color: var(--gold);
+  font-size: var(--fs-13);
+  border-bottom: 1px solid rgba(212,168,83,0.4);
+  padding-bottom: 1px;
+}
+.welcome-more summary::-webkit-details-marker { display: none; }
+.welcome-more summary::marker { content: ''; }
+.welcome-more summary::after { content: ' →'; }
+.welcome-more[open] summary::after { content: ' ↓'; }
+.welcome-more summary:hover { border-bottom-color: var(--gold); }
+.welcome-more[open] summary { margin-bottom: 14px; }
+.welcome-more p:last-child { margin-bottom: 0; }
+
 /* Campaign phase key — the NUMBER is the primary channel (colorblind-safe);
    the color fill is a secondary reinforcement. */
 .phase-row { gap: 8px; }

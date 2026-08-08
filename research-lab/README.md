@@ -17,21 +17,50 @@ application.
   quarantine when explicitly enabled. It can never write to VIA.
 - Promotion into the core application is deliberately not implemented here.
 
-## Pilot
+## Scope
 
-The verification pilot is limited to six Alexander records that exercise different
-research problems:
+The research system now has two scopes:
 
-1. Aegae
-2. Granicus River
-3. Issus
-4. Gaza
-5. Gaugamela
-6. Persian Gate
+- **All 38 Alexander stops** for the actual research run.
+- The original **six-stop pilot** (Aegae, Granicus River, Issus, Gaza, Gaugamela,
+  Persian Gate) retained as a fast regression set.
 
-The pilot fingerprints `js/alexander.js`, creates a read-only snapshot, gathers evidence
-through source connectors, runs specialist research agents, and writes an immutable run
-record plus a materialized `latest.json` report under `.state/`.
+Both paths fingerprint `js/alexander.js`, create a read-only snapshot, gather evidence
+through source connectors, run specialist research agents, and write an immutable run
+record plus a materialized `latest.json` report under `.state/`. The full run discovers
+Wikidata identity candidates for stops that lack Pleiades IDs, but never auto-accepts a
+candidate.
+
+## Archaeological discovery
+
+The Archaeological Discovery Agent searches public Open Context archaeology records by
+place name and ranks returned records for review using transparent lexical and geospatial
+signals. A search match is never treated as proof of an association with Alexander.
+
+The report schema keeps four interpretations separate:
+
+- `established_evidence` — reserved for evidence that passes a higher verification gate;
+  raw discovery cannot create it.
+- `candidate_evidence` — a public record whose name/location makes it worth scholarly review.
+- `disputed_interpretation` — a contested archaeological interpretation.
+- `research_lead` — a weak or incomplete discovery lead.
+
+Every archaeology lead records its public source, location when published by the source,
+publication date when available, relevance rationale, confidence score, source evidence,
+and sensitivity policy. The confidence number is a **discovery triage score**, not a
+probability that Alexander was present there.
+
+Open Context's own FAIR/CARE guidance is part of the lab policy: discovery is restricted
+to public open data, and the lab does not infer, enrich, or republish non-public sensitive
+archaeological coordinates. See <https://opencontext.org/about/fair-care>.
+
+## Primary-source resolution
+
+All ancient citations currently attached to the 38 Alexander stops are parsed into
+canonical passage targets for Arrian, Plutarch's *Alexander*, Diodorus, and Curtius.
+Edition/work URNs are pinned only where they were identified through Scaife/Perseus.
+The CTS passage still has to fetch successfully before evidence can become `verified`;
+service failure or incompatible passage granularity remains visibly `unresolved`.
 
 ## Commands
 
@@ -39,7 +68,9 @@ From the repository root:
 
 ```bash
 npm run research:snapshot
+npm run research:snapshot:all
 npm run research:pilot
+npm run research:alexander
 npm run research:test
 npm run research:serve
 ```
@@ -56,6 +87,8 @@ The first-pass connector allowlist is intentionally narrow:
 - Wikidata entity data
 - Wikimedia Commons image metadata
 - Scaife/Perseus CTS passages when an explicit CTS URN is known
+- Open Context public archaeology search results
 
-Classical citations without a resolvable machine identifier remain visibly
-`unresolved`; the system does not invent a CTS mapping.
+Classical citations without a resolvable machine identifier remain visibly `unresolved`;
+the system does not invent a CTS mapping. Open Context's API documentation describes its
+individual-record and search APIs as JSON-LD services: <https://opencontext.org/about/services>.

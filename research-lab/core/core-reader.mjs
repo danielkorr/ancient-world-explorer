@@ -42,15 +42,20 @@ export async function readAlexanderPhotos() {
 }
 
 export async function readPilotSnapshot(ids = PILOT_STOP_IDS) {
+  return readAlexanderSnapshot(ids);
+}
+
+export async function readAlexanderSnapshot(ids = null) {
   const [campaign, photoData] = await Promise.all([
     readAlexanderStops(),
     readAlexanderPhotos(),
   ]);
   const byId = new Map(campaign.stops.map((stop) => [stop.id, stop]));
-  const missing = ids.filter((id) => !byId.has(id));
-  if (missing.length) throw new Error(`Pilot stop(s) missing from core data: ${missing.join(', ')}`);
+  const selectedIds = ids === null ? campaign.stops.map((stop) => stop.id) : [...ids];
+  const missing = selectedIds.filter((id) => !byId.has(id));
+  if (missing.length) throw new Error(`Alexander stop(s) missing from core data: ${missing.join(', ')}`);
 
-  const stops = ids.map((id) => {
+  const stops = selectedIds.map((id) => {
     const stop = clone(byId.get(id));
     const photoKey = String(stop.pleiades || stop.id);
     stop.existing_photo = photoData.photos[photoKey] || photoData.photos[stop.id] || null;
@@ -64,7 +69,8 @@ export async function readPilotSnapshot(ids = PILOT_STOP_IDS) {
       { path: campaign.source, sha256: campaign.sha256 },
       { path: photoData.source, sha256: photoData.sha256 },
     ],
-    stop_ids: [...ids],
+    scope: ids === null ? 'all-alexander-stops' : 'selected-alexander-stops',
+    stop_ids: selectedIds,
     stops,
   });
 }

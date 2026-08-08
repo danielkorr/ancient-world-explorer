@@ -23,6 +23,7 @@
       ['Claims', report.claims.length],
       ['Evidence', report.evidence.length],
       ['Conflicts', report.conflicts.length],
+      ['Archaeology leads', (report.archaeology_leads || []).length],
     ];
     for (const [label, value] of items) {
       const box = el('div', 'metric');
@@ -38,7 +39,7 @@
       const button = el('button', `subject-btn${subject.id === selectedId ? ' active' : ''}`, subject.name);
       button.type = 'button';
       button.dataset.testid = 'research-subject-row';
-      button.append(el('small', '', `${subject.evidence_count} evidence · ${subject.conflict_count} conflicts`));
+      button.append(el('small', '', `${subject.evidence_count} evidence · ${subject.archaeology_lead_count || 0} archaeology · ${subject.conflict_count} conflicts`));
       button.addEventListener('click', () => { selectedId = subject.id; renderSubjects(); renderDetail(); });
       root.append(button);
     }
@@ -106,6 +107,27 @@
     return card;
   }
 
+  function archaeologyCard(item) {
+    const card = el('article', 'archaeology-lead');
+    card.dataset.testid = 'archaeology-lead';
+    const top = el('div', 'claim-top');
+    top.append(el('div', 'claim-field', item.title), el('div', `status archaeology-status ${item.classification}`, item.classification.replaceAll('_', ' ')));
+    card.append(top);
+    const facts = el('div', 'lead-facts');
+    facts.append(el('span', '', `Confidence ${item.confidence}/100`));
+    if (item.distance_km !== null) facts.append(el('span', '', `${item.distance_km.toFixed(1)} km from VIA marker`));
+    if (item.date) facts.append(el('span', '', `Published ${item.date}`));
+    card.append(facts);
+    card.append(el('p', '', item.relevance));
+    if (item.rationale) card.append(el('p', 'muted', item.rationale));
+    const source = el('a', 'lead-source', 'Open source record');
+    source.href = item.source_url;
+    source.target = '_blank';
+    source.rel = 'noopener noreferrer';
+    card.append(source);
+    return card;
+  }
+
   function renderDetail() {
     const root = document.getElementById('subject-detail');
     root.replaceChildren();
@@ -127,6 +149,14 @@
     if (subject.scores.disputed) scores.append(el('div', 'score disputed', 'DISPUTED'));
     head.append(scores);
     root.append(head);
+    const leads = (report.archaeology_leads || []).filter((item) => item.subject_id === subject.id);
+    if (leads.length) {
+      const section = el('section', 'archaeology-section');
+      section.append(el('div', 'section-eyebrow', 'ARCHAEOLOGICAL DISCOVERY · CANDIDATES FOR REVIEW'));
+      section.append(el('p', 'muted', 'These are public-source discovery matches, not claims that the record is associated with Alexander.'));
+      leads.forEach((item) => section.append(archaeologyCard(item)));
+      root.append(section);
+    }
     report.claims.filter((item) => item.subject_id === subject.id).forEach((item) => root.append(claimCard(item)));
   }
 
@@ -134,6 +164,8 @@
     .then((response) => response.ok ? response.json() : Promise.reject(new Error('Run the research pilot before opening the Observatory.')))
     .then((data) => {
       report = data;
+      const scope = document.getElementById('research-scope');
+      scope.textContent = report.scope === 'all-38-alexander-stops' ? 'Alexander · all 38 stops' : 'Alexander · six-stop pilot';
       selectedId = report.subjects[0]?.id || null;
       summary();
       renderSubjects();

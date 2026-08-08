@@ -6,7 +6,9 @@
     "test:webkit": "node tests/webkit-touch/test.mjs",
 
     "research:snapshot": "node research-lab/snapshot.mjs",
+    "research:snapshot:all": "node research-lab/snapshot-all.mjs",
     "research:pilot": "node research-lab/run-pilot.mjs",
+    "research:alexander": "node research-lab/run-alexander.mjs",
     "research:test": "node --test research-lab/tests/*.test.mjs",
     "research:serve": "node research-lab/observatory/server.mjs",
 

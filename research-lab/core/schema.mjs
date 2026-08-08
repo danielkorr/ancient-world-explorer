@@ -15,6 +15,13 @@ export const EVIDENCE_STATUS = Object.freeze({
   QUARANTINED: 'quarantined',
 });
 
+export const ARCHAEOLOGY_CLASSIFICATION = Object.freeze({
+  ESTABLISHED: 'established_evidence',
+  CANDIDATE: 'candidate_evidence',
+  DISPUTED: 'disputed_interpretation',
+  LEAD: 'research_lead',
+});
+
 function stableId(prefix, value) {
   return `${prefix}-${createHash('sha256').update(String(value)).digest('hex').slice(0, 16)}`;
 }
@@ -74,14 +81,38 @@ export function conflict({ subjectId, field, description, severity = 'medium', e
   };
 }
 
+export function archaeologyLead({ subjectId, classification = ARCHAEOLOGY_CLASSIFICATION.LEAD, sourceType, sourceUrl, title, location = null, date = null, relevance, confidence = 0, distanceKm = null, evidenceIds = [], rationale = '', sensitivity = 'public-source-only' }) {
+  const score = Math.max(0, Math.min(100, Math.round(Number(confidence) || 0)));
+  const key = `${subjectId}|${sourceType}|${sourceUrl || title}|${classification}`;
+  return {
+    id: stableId('archaeology', key),
+    subject_id: subjectId,
+    classification,
+    source_type: sourceType,
+    source_url: sourceUrl,
+    title,
+    location,
+    date,
+    relevance,
+    confidence: score,
+    distance_km: Number.isFinite(distanceKm) ? Number(distanceKm.toFixed(3)) : null,
+    evidence_ids: [...new Set(evidenceIds)],
+    rationale,
+    sensitivity,
+  };
+}
+
 export function auditEvent(type, detail = {}) {
   return { id: randomUUID(), at: new Date().toISOString(), type, detail };
 }
 
 export function assertReportShape(report) {
-  if (!report || report.schema_version !== 1) throw new Error('Invalid research report schema_version');
+  if (!report || ![1, 2].includes(report.schema_version)) throw new Error('Invalid research report schema_version');
   if (!Array.isArray(report.subjects) || !Array.isArray(report.claims) || !Array.isArray(report.evidence)) {
     throw new Error('Invalid research report collections');
+  }
+  if (report.schema_version >= 2 && !Array.isArray(report.archaeology_leads)) {
+    throw new Error('Invalid archaeology lead collection');
   }
   return report;
 }

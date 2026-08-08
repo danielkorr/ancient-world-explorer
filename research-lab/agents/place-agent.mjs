@@ -1,4 +1,73 @@
 import { claim, conflict, evidence, CLAIM_STATUS, EVIDENCE_STATUS } from '../core/schema.mjs';
+import { haversineKm } from '../core/geo.mjs';
+
+function normalizedWords(value) {
+  return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().split(/\s+/).filter((word) => word.length > 2);
+}
+
+function authorityCandidateScore(stop, candidate, entity) {
+  const expected = new Set(normalizedWords(stop.name));
+  const found = new Set(normalizedWords(candidate.label));
+  const overlap = [...expected].filter((word) => found.has(word)).length;
+  const exact = String(stop.name || '').toLowerCase() === String(candidate.label || '').toLowerCase();
+  const distance = entity?.coordinate ? haversineKm({ lat: stop.lat, lng: stop.lng }, entity.coordinate) : null;
+  let score = 15 + overlap * 15 + (exact ? 25 : 0) + (entity?.pleiades ? 15 : 0);
+  if (distance !== null) score += distance <= 5 ? 25 : distance <= 25 ? 18 : distance <= 100 ? 8 : -20;
+  return { score: Math.max(0, Math.min(95, score)), distance };
+}
+
+async function discoverWikidataCandidates({ stop, subject, wikidata }) {
+  const evidenceItems = [];
+  const searchUrl = `https://www.wikidata.org/w/index.php?search=${encodeURIComponent(stop.name)}`;
+  try {
+    const results = await wikidata.searchEntities(stop.name, 5);
+    for (const candidate of results.slice(0, 3)) {
+      let entity = null;
+      try { entity = await wikidata.getEntity(candidate.id); } catch {}
+      const ranked = authorityCandidateScore(stop, candidate, entity);
+      const quarantined = candidate.security?.prompt_injection_suspected || entity?.security?.prompt_injection_suspected;
+      evidenceItems.push(evidence({
+        subjectId: subject.id,
+        sourceType: 'wikidata_identity_candidate',
+        sourceUrl: candidate.source_url,
+        title: `${candidate.id}: ${candidate.label}`,
+        assertion: 'Wikidata search candidate discovered for a stop lacking a Pleiades identity; it has not been accepted as the VIA place identity.',
+        status: quarantined ? EVIDENCE_STATUS.QUARANTINED : EVIDENCE_STATUS.UNRESOLVED,
+        payload: {
+          id: candidate.id,
+          label: candidate.label,
+          description: candidate.description,
+          pleiades: entity?.pleiades || null,
+          coordinate: entity?.coordinate || null,
+          distance_km: ranked.distance === null ? null : Number(ranked.distance.toFixed(3)),
+          candidate_score: Math.round(ranked.score),
+          auto_accept: false,
+        },
+        security: entity?.security || candidate.security,
+      }));
+    }
+    if (!evidenceItems.length) {
+      evidenceItems.push(evidence({
+        subjectId: subject.id,
+        sourceType: 'wikidata_identity_search',
+        sourceUrl: searchUrl,
+        title: `Wikidata search: ${stop.name}`,
+        assertion: 'No authority candidate was returned; place identity remains unresolved.',
+        status: EVIDENCE_STATUS.UNRESOLVED,
+      }));
+    }
+  } catch (error) {
+    evidenceItems.push(evidence({
+      subjectId: subject.id,
+      sourceType: 'wikidata_identity_search',
+      sourceUrl: searchUrl,
+      title: `Wikidata search: ${stop.name}`,
+      assertion: `Authority discovery unavailable: ${error.message}`,
+      status: EVIDENCE_STATUS.UNRESOLVED,
+    }));
+  }
+  return evidenceItems;
+}
 
 export async function runPlaceAgent({ stop, subject, pleiades, wikidata }) {
   const claims = [];
@@ -8,13 +77,16 @@ export async function runPlaceAgent({ stop, subject, pleiades, wikidata }) {
   let wikidataEntity = null;
 
   if (!stop.pleiades) {
+    const candidates = await discoverWikidataCandidates({ stop, subject, wikidata });
+    evidenceItems.push(...candidates);
     claims.push(claim({
       subject,
       field: 'pleiades_identity',
       existingValue: null,
       status: CLAIM_STATUS.OBSERVED,
       agent: 'ancient-places-agent',
-      note: 'No Pleiades id is present in core data. The research lab will not guess one.',
+      evidence: candidates.map((item) => item.id),
+      note: 'No Pleiades id is present in core data. Authority candidates may be surfaced for review, but the research lab will not guess or auto-accept one.',
     }));
     conflicts.push(conflict({
       subjectId: subject.id,
@@ -22,7 +94,7 @@ export async function runPlaceAgent({ stop, subject, pleiades, wikidata }) {
       description: 'No machine-verifiable Pleiades identity is attached to this campaign stop.',
       severity: stop.certainty === 'disputed' ? 'high' : 'medium',
     }));
-    return { claims, evidence: evidenceItems, conflicts, context: { pleiadesPlace, wikidataEntity } };
+    return { claims, evidence: evidenceItems, conflicts, context: { pleiadesPlace, wikidataEntity, authorityCandidates: candidates } };
   }
 
   try {
@@ -111,5 +183,5 @@ export async function runPlaceAgent({ stop, subject, pleiades, wikidata }) {
     }
   }
 
-  return { claims, evidence: evidenceItems, conflicts, context: { pleiadesPlace, wikidataEntity } };
+  return { claims, evidence: evidenceItems, conflicts, context: { pleiadesPlace, wikidataEntity, authorityCandidates: [] } };
 }

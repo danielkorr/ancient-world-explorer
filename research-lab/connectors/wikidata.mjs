@@ -35,4 +35,27 @@ export class WikidataConnector {
       security: result.security,
     };
   }
+
+  async searchEntities(query, limit = 5) {
+    const search = String(query || '').trim();
+    if (!search || search.length > 160) throw new Error('A Wikidata search term of 1-160 characters is required');
+    const count = Math.max(1, Math.min(10, Number(limit) || 5));
+    const url = new URL('https://www.wikidata.org/w/api.php');
+    url.searchParams.set('action', 'wbsearchentities');
+    url.searchParams.set('search', search);
+    url.searchParams.set('language', 'en');
+    url.searchParams.set('uselang', 'en');
+    url.searchParams.set('type', 'item');
+    url.searchParams.set('limit', String(count));
+    url.searchParams.set('format', 'json');
+    url.searchParams.set('formatversion', '2');
+    const result = await safeFetchJson(url.toString(), { offline: this.offline });
+    return (result.data?.search || []).slice(0, count).map((item) => ({
+      id: String(item.id || '').toUpperCase(),
+      label: item.label || '',
+      description: item.description || '',
+      source_url: item.concepturi || (item.id ? `https://www.wikidata.org/wiki/${item.id}` : null),
+      security: result.security,
+    })).filter((item) => /^Q\d+$/.test(item.id));
+  }
 }

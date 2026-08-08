@@ -1,12 +1,5 @@
 import { claim, conflict, evidence, CLAIM_STATUS, EVIDENCE_STATUS } from '../core/schema.mjs';
-
-function haversineKm(a, b) {
-  const rad = (d) => d * Math.PI / 180;
-  const dLat = rad(b.lat - a.lat);
-  const dLng = rad(b.lng - a.lng);
-  const x = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLng / 2) ** 2;
-  return 6371.0088 * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
-}
+import { haversineKm } from '../core/geo.mjs';
 
 export function runGeospatialAgent({ stop, subject, pleiadesPlace = null, wikidataEntity = null }) {
   const claims = [];

@@ -21,9 +21,16 @@ export const SOURCE_HOSTS = Object.freeze(new Set([
   'www.wikidata.org',
   'commons.wikimedia.org',
   'scaife.perseus.org',
+  'opencontext.org',
 ]));
 
 export const USER_AGENT =
   'VIA-AncientWorldExplorer-ResearchLab/0.1 (+https://github.com/danielkorr/ancient-world-explorer)';
 
 export const EXTERNAL_AGENT_ENABLE_VALUE = 'RESEARCH_QUARANTINE_ONLY';
+
+export const ARCHAEOLOGY_POLICY = Object.freeze({
+  access: 'public-open-data-only',
+  sensitivity: 'Do not infer, enrich, or republish non-public sensitive archaeological coordinates.',
+  interpretation: 'Discovery matches are research leads, not evidence of association with Alexander.',
+});

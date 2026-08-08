@@ -1,0 +1,13 @@
+{
+  "baseline_commit": "c9ed0586c26cd70b0925a60a6b5829d74d6a7aa3",
+  "description": "Core files that the experimental AI Research System must not modify before promotion is explicitly approved.",
+  "sha256": {
+    "index.html": "15acdc99051e5d3b381def67eef2e57de4b175da33200ff2f39ba9b9cd9f1c57",
+    "css/style.css": "bbbb9354ef652f3ad54bc908b17df76da7c86aed13ac9f478c9e595af824d7f8",
+    "js/app.js": "69d99265033be3c762d628dd123bf95c39e272eae691eeb83081488dce50a856",
+    "js/data.js": "cc93e76ea58a3332305495bbc8cdffaddb3778c83bb3c5ca0f06e6db125c0c4b",
+    "js/alexander.js": "8dc72358f6f58bda02acba449ca882e9a624d4a697eace13b1931f84f0e7568a",
+    "js/auth.js": "0fafcbf99f356bf816207f0b7030aa5cbfeb720c27492f2281ca0bd84c253704",
+    "js/config.js": "4526b902aa1dc3345d9d13380aebc8002b1c51c66727a6eb84c899d9fede06dc"
+  }
+}

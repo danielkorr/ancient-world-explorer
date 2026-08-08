@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>VIA Research Observatory</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">VIA · ANCIENT WORLD EXPLORER</div>
+      <h1>Research Observatory</h1>
+    </div>
+    <div class="quarantine" data-testid="quarantine-status">EXPERIMENTAL · NO CORE WRITES</div>
+  </header>
+
+  <main>
+    <section id="run-summary" class="summary" data-testid="research-run-summary" aria-live="polite"></section>
+    <div class="workspace">
+      <nav class="subjects" aria-label="Research subjects">
+        <h2>Alexander pilot</h2>
+        <div id="subject-list" data-testid="research-subject-list"></div>
+      </nav>
+      <section id="subject-detail" class="detail" data-testid="research-subject-detail">
+        <p class="muted">Loading research report…</p>
+      </section>
+    </div>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

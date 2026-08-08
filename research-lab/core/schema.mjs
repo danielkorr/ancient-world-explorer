@@ -107,12 +107,15 @@ export function auditEvent(type, detail = {}) {
 }
 
 export function assertReportShape(report) {
-  if (!report || ![1, 2].includes(report.schema_version)) throw new Error('Invalid research report schema_version');
+  if (!report || ![1, 2, 3].includes(report.schema_version)) throw new Error('Invalid research report schema_version');
   if (!Array.isArray(report.subjects) || !Array.isArray(report.claims) || !Array.isArray(report.evidence)) {
     throw new Error('Invalid research report collections');
   }
   if (report.schema_version >= 2 && !Array.isArray(report.archaeology_leads)) {
     throw new Error('Invalid archaeology lead collection');
+  }
+  if (report.schema_version >= 3 && !Array.isArray(report.dossiers)) {
+    throw new Error('Invalid research dossier collection');
   }
   return report;
 }

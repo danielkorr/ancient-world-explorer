@@ -31,6 +31,19 @@ record plus a materialized `latest.json` report under `.state/`. The full run di
 Wikidata identity candidates for stops that lack Pleiades IDs, but never auto-accepts a
 candidate.
 
+## Research dossiers
+
+Every researched stop now produces one Research Dossier. The dossier is a synthesis view
+over the run's existing claims, evidence, conflicts, archaeology leads, and confidence
+scores; it does not invent a separate layer of facts. Each dossier includes an executive
+synthesis, what-we-know summary, primary sources, archaeological and geographic evidence,
+modern scholarship links, competing interpretations, unresolved questions, research
+priorities, confidence assessment, and the IDs of every record used as provenance.
+
+Interpretive labels such as `contested`, `qualified`, and `source-supported` summarize
+the state of the research record. They are not declarations that a historical claim is
+true.
+
 ## Archaeological discovery
 
 The Archaeological Discovery Agent searches public Open Context archaeology records by
@@ -49,6 +62,11 @@ Every archaeology lead records its public source, location when published by the
 publication date when available, relevance rationale, confidence score, source evidence,
 and sensitivity policy. The confidence number is a **discovery triage score**, not a
 probability that Alexander was present there.
+
+The Observatory adds a dedicated Archaeology Review queue. A reviewer can record a lead
+as `relevant`, `not-relevant`, or `more-research` and add a note. These judgments are
+append-only entries in the research review log. They never rewrite the lead's discovery
+classification and cannot promote it to `established_evidence`.
 
 Open Context's own FAIR/CARE guidance is part of the lab policy: discovery is restricted
 to public open data, and the lab does not infer, enrich, or republish non-public sensitive
@@ -77,7 +95,8 @@ npm run research:serve
 
 The Observatory binds to `127.0.0.1` by default and is intended only for local review.
 Review decisions are appended to `research-lab/.state/reviews.jsonl`; they do not change
-VIA data.
+VIA data. Its three review views are **Research Dossiers**, **Archaeology Review**, and
+**Claims & Evidence**.
 
 ## Source connectors
 

@@ -37,16 +37,35 @@ export class ResearchStore {
     return JSON.parse(await readFile(this.path('latest.json'), 'utf8'));
   }
 
+  async readReviews() {
+    try {
+      const text = await readFile(this.path('reviews.jsonl'), 'utf8');
+      return text.split('\n').filter(Boolean).map((line) => JSON.parse(line));
+    } catch (error) {
+      if (error?.code === 'ENOENT') return [];
+      throw error;
+    }
+  }
+
   async appendReview(review) {
     await this.init();
+    const targetType = review.target_type || 'claim';
+    const targetId = review.target_id || review.claim_id;
+    const allowed = targetType === 'claim'
+      ? ['accept', 'reject', 'more-research']
+      : targetType === 'archaeology_lead'
+        ? ['relevant', 'not-relevant', 'more-research']
+        : [];
     const record = {
       id: review.id,
       at: review.at || new Date().toISOString(),
-      claim_id: review.claim_id,
+      target_type: targetType,
+      target_id: targetId,
       decision: review.decision,
       note: String(review.note || '').slice(0, 2000),
     };
-    if (!record.id || !record.claim_id || !['accept', 'reject', 'more-research'].includes(record.decision)) {
+    if (targetType === 'claim') record.claim_id = targetId;
+    if (!record.id || !record.target_id || !allowed.includes(record.decision)) {
       throw new Error('Invalid review record');
     }
     await appendFile(this.path('reviews.jsonl'), JSON.stringify(record) + '\n', 'utf8');

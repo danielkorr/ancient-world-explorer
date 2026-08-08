@@ -55,18 +55,29 @@ const server = http.createServer(async (req, res) => {
       const report = await store.readLatest();
       return send(res, 200, JSON.stringify(report));
     }
+    if (req.method === 'GET' && url.pathname === '/api/reviews') {
+      return send(res, 200, JSON.stringify(await store.readReviews()));
+    }
     if (req.method === 'POST' && url.pathname === '/api/reviews') {
       if (!String(req.headers['content-type'] || '').toLowerCase().startsWith('application/json')) {
         return send(res, 415, JSON.stringify({ error: 'application/json required' }));
       }
       const body = await readBody(req);
       const report = await store.readLatest();
-      if (!report.claims.some((claim) => claim.id === body.claim_id)) {
-        return send(res, 400, JSON.stringify({ error: 'Unknown claim_id' }));
+      const targetType = body.target_type || 'claim';
+      const targetId = body.target_id || body.claim_id;
+      const knownTarget = targetType === 'claim'
+        ? report.claims.some((claim) => claim.id === targetId)
+        : targetType === 'archaeology_lead'
+          ? (report.archaeology_leads || []).some((lead) => lead.id === targetId)
+          : false;
+      if (!knownTarget) {
+        return send(res, 400, JSON.stringify({ error: `Unknown ${targetType} target` }));
       }
       const review = await store.appendReview({
         id: randomUUID(),
-        claim_id: body.claim_id,
+        target_type: targetType,
+        target_id: targetId,
         decision: body.decision,
         note: body.note,
       });

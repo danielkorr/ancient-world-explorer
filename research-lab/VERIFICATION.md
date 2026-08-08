@@ -12,6 +12,7 @@ been approved for VIA.
   `c9ed0586c26cd70b0925a60a6b5829d74d6a7aa3`.
 - [x] Unsupported source claims remain `unresolved`.
 - [x] Full-scope snapshot and offline research run cover all 38 Alexander stops.
+- [x] Every full-scope subject receives exactly one dossier with validated provenance IDs.
 - [x] Every current Alexander ancient-source citation maps to a known work/edition target;
   only a successful CTS passage fetch upgrades it to `verified`.
 - [x] Missing place identities may produce Wikidata candidates, but candidates never
@@ -24,8 +25,10 @@ been approved for VIA.
 - [x] Prompt-like instructions in retrieved material are quarantined as untrusted data.
 - [x] External-agent payloads are disabled by default and, when explicitly enabled, can
   write only quarantined research state.
-- [x] The Observatory can record claim-level review decisions but has no production
-  mutation endpoint.
+- [x] The Observatory records claim and archaeology review decisions as append-only
+  research state and has no production mutation endpoint.
+- [x] Archaeology review decisions use a separate vocabulary and cannot rewrite discovery
+  classification or promote a lead into established evidence.
 
 ## Human scholarly gates
 
@@ -38,7 +41,8 @@ These remain intentionally incomplete until Dano examines the expanded output:
 - [ ] Review authority candidates for the eight stops currently lacking a Pleiades ID:
   Aegae, Granicus, Issus, Gaugamela, Persian Gate, Sogdian Rock, Gedrosian Route, and Opis.
 - [ ] Review every archaeological candidate for actual chronological, contextual, and
-  interpretive relevance; a name/proximity match alone is insufficient.
+  interpretive relevance in the Archaeology Review queue; a name/proximity match alone is
+  insufficient.
 - [ ] Resolve coordinate disputes using published archaeological/historical scholarship.
 - [ ] Confirm every proposed image's relevance as well as its license.
 - [ ] Perform an independent factual audit of any proposed correction.

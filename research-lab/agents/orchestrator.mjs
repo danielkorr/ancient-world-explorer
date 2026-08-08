@@ -11,6 +11,7 @@ import { runArchaeologicalDiscoveryAgent } from './archaeological-discovery-agen
 import { runGeospatialAgent } from './geospatial-agent.mjs';
 import { runMediaAgent } from './media-agent.mjs';
 import { runPlaceAgent } from './place-agent.mjs';
+import { buildResearchDossier } from './research-dossier-agent.mjs';
 import { runScholarlyEvidenceAgent } from './scholarly-evidence-agent.mjs';
 import { runSkepticAgent } from './skeptic-agent.mjs';
 import { runVerificationAgent } from './verification-agent.mjs';
@@ -69,11 +70,19 @@ export async function runResearch(snapshot, { offline = false, ctsMap = {}, scop
     subject.archaeology_lead_count = subjectLeads.length;
   }
 
-  const verification = runVerificationAgent({ subjects, claims: cleanClaims, evidence: cleanEvidence, conflicts: cleanConflicts, archaeologyLeads: cleanArchaeologyLeads });
+  const dossiers = subjects.map((subject) => buildResearchDossier({
+    subject,
+    claims: cleanClaims.filter((item) => item.subject_id === subject.id),
+    evidence: cleanEvidence.filter((item) => item.subject_id === subject.id),
+    conflicts: cleanConflicts.filter((item) => item.subject_id === subject.id),
+    archaeologyLeads: cleanArchaeologyLeads.filter((item) => item.subject_id === subject.id),
+  }));
+
+  const verification = runVerificationAgent({ subjects, claims: cleanClaims, evidence: cleanEvidence, conflicts: cleanConflicts, archaeologyLeads: cleanArchaeologyLeads, dossiers });
   audit.push(...verification.events, auditEvent('research-finished', { scope, verification_passed: verification.passed }));
 
   return {
-    schema_version: 2,
+    schema_version: 3,
     run_id: `${new Date().toISOString().replace(/[:.]/g, '-')}-${randomUUID().slice(0, 8)}`,
     created_at: new Date().toISOString(),
     branch_policy: 'experiment/ai-research-system',
@@ -92,6 +101,7 @@ export async function runResearch(snapshot, { offline = false, ctsMap = {}, scop
     evidence: cleanEvidence,
     conflicts: cleanConflicts,
     archaeology_leads: cleanArchaeologyLeads,
+    dossiers,
     audit,
   };
 }

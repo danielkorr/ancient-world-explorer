@@ -15,6 +15,13 @@ been approved for VIA.
 - [x] Every full-scope subject receives exactly one dossier with validated provenance IDs.
 - [x] Every current Alexander ancient-source citation maps to a known work/edition target;
   only a successful CTS passage fetch upgrades it to `verified`.
+- [x] Resolved ancient citations expose a human-readable Scaife `/reader/` URL separately
+  from the machine-readable CTS verification endpoint; verification rejects swapped or
+  malformed link roles.
+- [x] The Observatory labels CTS success as `citation resolved`, not historical
+  verification, and identifies external links by their scholarly function.
+- [x] Machine citation resolution cannot inflate substantive evidence counts,
+  source-quality scoring, or scholarly-confidence scoring.
 - [x] Missing place identities may produce Wikidata candidates, but candidates never
   become proposed or accepted Pleiades IDs automatically.
 - [x] Archaeological discovery results are typed as candidates/leads and cannot become

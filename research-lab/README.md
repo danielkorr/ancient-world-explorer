@@ -80,6 +80,17 @@ Edition/work URNs are pinned only where they were identified through Scaife/Pers
 The CTS passage still has to fetch successfully before evidence can become `verified`;
 service failure or incompatible passage granularity remains visibly `unresolved`.
 
+For primary texts, `verified` is scoped specifically to machine citation resolution:
+the edition URN was recognized and the requested passage was retrieved. It does not mean
+the historical assertion is true. The Observatory therefore displays this state as
+`citation resolved`, links the reader-facing Scaife passage separately from the
+machine-readable CTS verification record, and may show a short passage excerpt. Other
+external links are labeled by purpose (authority, media, dataset, search, or linked
+reference) rather than by the ambiguous word `source`. Citation resolution improves
+research completeness but is excluded from substantive evidence counts, source-quality
+scoring, and scholarly-confidence scoring until a human or later semantic review
+establishes the passage's relevance to the historical claim.
+
 ## Commands
 
 From the repository root:

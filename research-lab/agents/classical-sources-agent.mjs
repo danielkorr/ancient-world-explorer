@@ -23,12 +23,21 @@ export async function runClassicalSourcesAgent({ stop, subject, scaife, ctsMap =
       evidenceItems.push(evidence({
         subjectId: subject.id,
         sourceType: 'scaife_cts',
-        sourceUrl: passage.source_url,
+        sourceUrl: passage.reader_url,
         citation,
         title: citation,
-        assertion: `CTS passage resolved as ${mappedUrn}`,
+        assertion: `CTS citation resolved and passage retrieved as ${mappedUrn}`,
         status: passage.security.prompt_injection_suspected ? EVIDENCE_STATUS.QUARANTINED : EVIDENCE_STATUS.VERIFIED,
-        payload: { urn: mappedUrn, citation_resolution: parsed, mapping_source: ctsMap[citation] ? 'explicit-map' : 'verified-edition-registry' },
+        payload: {
+          urn: mappedUrn,
+          citation_resolution: parsed,
+          mapping_source: ctsMap[citation] ? 'explicit-map' : 'verified-edition-registry',
+          verification_scope: 'citation-resolution',
+          source_link_kind: 'human-readable-passage',
+          verification_link_kind: 'machine-readable-cts-xml',
+          verification_url: passage.verification_url,
+          excerpt: passage.excerpt,
+        },
         security: passage.security,
       }));
     } catch (error) {
@@ -49,11 +58,10 @@ export async function runClassicalSourcesAgent({ stop, subject, scaife, ctsMap =
       subject,
       field: 'ancient_sources',
       existingValue: stop.ancient_sources || [],
-      status: evidenceItems.length && evidenceItems.every((e) => e.status === EVIDENCE_STATUS.VERIFIED)
-        ? CLAIM_STATUS.VERIFIED : CLAIM_STATUS.OBSERVED,
+      status: CLAIM_STATUS.OBSERVED,
       agent: 'classical-sources-agent',
       evidence: evidenceItems.map((e) => e.id),
-      note: 'Known works are mapped only through verified edition URNs; a failed passage lookup remains unresolved and no CTS identifier is fabricated.',
+      note: 'Citation resolution verifies edition and passage availability, not the historical claim. Failed passage lookups remain unresolved and no CTS identifier is fabricated.',
     })],
     evidence: evidenceItems,
     conflicts: [],

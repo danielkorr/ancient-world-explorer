@@ -1,9 +1,12 @@
 function clamp(n) { return Math.max(0, Math.min(100, Math.round(n))); }
 
 export function scoreSubject({ claims, evidence, conflicts, archaeologyLeads = [] }) {
-  const verifiedEvidence = evidence.filter((e) => e.status === 'verified').length;
+  const substantivelyVerified = evidence.filter((e) =>
+    e.status === 'verified' && e.payload?.verification_scope !== 'citation-resolution'
+  );
+  const verifiedEvidence = substantivelyVerified.length;
   const unresolvedEvidence = evidence.filter((e) => e.status === 'unresolved').length;
-  const sourceKinds = new Set(evidence.filter((e) => e.status === 'verified').map((e) => e.source_type)).size;
+  const sourceKinds = new Set(substantivelyVerified.map((e) => e.source_type)).size;
   const disputedClaims = claims.filter((c) => c.status === 'disputed').length;
   const proposedClaims = claims.filter((c) => c.status === 'proposed').length;
 

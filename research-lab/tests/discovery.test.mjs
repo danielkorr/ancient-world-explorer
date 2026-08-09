@@ -3,6 +3,7 @@ import test from 'node:test';
 import { runArchaeologicalDiscoveryAgent } from '../agents/archaeological-discovery-agent.mjs';
 import { runPlaceAgent } from '../agents/place-agent.mjs';
 import { runVerificationAgent } from '../agents/verification-agent.mjs';
+import { scaifeReaderUrl, scaifeVerificationUrl } from '../connectors/scaife.mjs';
 import { readAlexanderSnapshot } from '../core/core-reader.mjs';
 import { resolveClassicalCitation } from '../core/classical-citation.mjs';
 import { subjectFromStop } from '../core/schema.mjs';
@@ -15,6 +16,7 @@ test('all current Alexander citations resolve to a verified edition target witho
     const resolved = resolveClassicalCitation(citation);
     assert.ok(resolved, `missing resolver for ${citation}`);
     assert.match(resolved.cts_urn, /^urn:cts:/);
+    assert.equal(scaifeReaderUrl(resolved.cts_urn), `https://scaife.perseus.org/reader/${resolved.cts_urn}`);
   }
   assert.equal(resolveClassicalCitation('Arrian 1.7-9').canonical_passage, '1.7-1.9');
   assert.equal(resolveClassicalCitation('Diodorus 17.70-72').canonical_passage, '17.70-17.72');
@@ -90,4 +92,24 @@ test('verification rejects established archaeology that lacks verified supportin
   const result = runVerificationAgent({ subjects: [subject], claims: [], evidence: [ev], conflicts: [], archaeologyLeads: [lead] });
   assert.equal(result.passed, false);
   assert.ok(result.events.some((event) => event.type === 'unsupported-established-archaeology'));
+});
+
+test('verification rejects a machine or catalog route presented as a human Scaife source', () => {
+  const subject = { id: 'alexander:pella' };
+  const urn = 'urn:cts:greekLit:tlg0007.tlg047.perseus-eng2:3';
+  const badEvidence = {
+    id: 'ev-scaife-bad-link',
+    subject_id: subject.id,
+    source_type: 'scaife_cts',
+    source_url: scaifeVerificationUrl(urn),
+    status: 'verified',
+    payload: { verification_scope: 'citation-resolution', verification_url: scaifeVerificationUrl(urn) },
+  };
+  const rejected = runVerificationAgent({ subjects: [subject], claims: [], evidence: [badEvidence], conflicts: [] });
+  assert.equal(rejected.passed, false);
+  assert.ok(rejected.events.some((event) => event.type === 'invalid-scaife-reader-link'));
+
+  const validEvidence = { ...badEvidence, source_url: scaifeReaderUrl(urn) };
+  const accepted = runVerificationAgent({ subjects: [subject], claims: [], evidence: [validEvidence], conflicts: [] });
+  assert.equal(accepted.passed, true);
 });

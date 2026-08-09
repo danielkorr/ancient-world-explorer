@@ -23,6 +23,17 @@ export function runVerificationAgent({ subjects, claims, evidence, conflicts, ar
       try { protocol = new URL(item.source_url).protocol; } catch {}
       if (protocol !== 'https:') events.push(auditEvent('unsafe-source-url', { evidence_id: item.id, url: item.source_url }));
     }
+    if (item.source_type === 'scaife_cts' && item.status === 'verified') {
+      if (!/^https:\/\/scaife\.perseus\.org\/reader\/urn:cts:[A-Za-z0-9_.:-]+$/.test(item.source_url || '')) {
+        events.push(auditEvent('invalid-scaife-reader-link', { evidence_id: item.id, url: item.source_url }));
+      }
+      if (!/^https:\/\/scaife\.perseus\.org\/library\/[^/]+\/cts-api-xml\/$/.test(item.payload?.verification_url || '')) {
+        events.push(auditEvent('invalid-scaife-verification-link', { evidence_id: item.id, url: item.payload?.verification_url }));
+      }
+      if (item.payload?.verification_scope !== 'citation-resolution') {
+        events.push(auditEvent('invalid-scaife-verification-scope', { evidence_id: item.id }));
+      }
+    }
   }
 
 

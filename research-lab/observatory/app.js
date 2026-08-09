@@ -25,6 +25,49 @@
     return String(value || '').replaceAll('_', ' ').replaceAll('-', ' ');
   }
 
+  function evidenceStatusLabel(item) {
+    if (item.source_type === 'scaife_cts' && item.status === 'verified') return 'citation resolved';
+    return titleCase(item.status);
+  }
+
+  function sourceLinks(item) {
+    if (item.source_type === 'scaife_cts') {
+      const links = [];
+      if (item.source_url) links.push({ label: 'Read passage', url: item.source_url });
+      if (item.payload?.verification_url || item.verification_url) {
+        links.push({ label: 'CTS verification record', url: item.payload?.verification_url || item.verification_url });
+      }
+      return links;
+    }
+    if (!item.source_url) return [];
+    const labels = {
+      pleiades: 'Pleiades authority record',
+      pleiades_reference: 'Pleiades linked reference',
+      wikidata: 'Wikidata authority record',
+      wikidata_identity_candidate: 'Wikidata candidate record',
+      wikidata_identity_search: 'Wikidata search results',
+      wikimedia_commons: 'Wikimedia media record',
+      open_context: 'Open Context dataset record',
+      open_context_candidate: 'Open Context candidate record',
+      open_context_search: 'Open Context search record',
+    };
+    return [{ label: labels[item.source_type] || 'Open source record', url: item.source_url }];
+  }
+
+  function appendSourceLinks(root, item) {
+    const links = sourceLinks(item);
+    if (!links.length) return;
+    const holder = el('span', 'source-links');
+    links.forEach(({ label, url }) => {
+      const link = el('a', '', label);
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      holder.append(link);
+    });
+    root.append(holder);
+  }
+
   function subjectFor(id) {
     return report.subjects.find((item) => item.id === id);
   }
@@ -134,15 +177,9 @@
     if (evidence.length) {
       const list = el('ul', 'evidence');
       for (const ev of evidence) {
-        const row = el('li', '', `${ev.status}: ${ev.assertion}`);
-        if (ev.source_url) {
-          row.append(document.createTextNode(' '));
-          const link = el('a', '', 'source');
-          link.href = ev.source_url;
-          link.target = '_blank';
-          link.rel = 'noopener noreferrer';
-          row.append(link);
-        }
+        const row = el('li', '', `${evidenceStatusLabel(ev)}: ${ev.assertion}`);
+        appendSourceLinks(row, ev);
+        if (ev.payload?.excerpt) row.append(el('blockquote', 'passage-excerpt', ev.payload.excerpt));
         list.append(row);
       }
       card.append(list);
@@ -268,14 +305,9 @@
     for (const item of items) {
       const row = el('div', 'dossier-source');
       row.append(el('div', '', item.citation || item.title || item.assertion));
-      row.append(el('div', 'muted', `${titleCase(item.status)} · ${titleCase(item.source_type)}`));
-      if (item.source_url) {
-        const link = el('a', '', 'Open source');
-        link.href = item.source_url;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        row.append(link);
-      }
+      row.append(el('div', 'muted', `${evidenceStatusLabel(item)} · ${titleCase(item.source_type)}`));
+      appendSourceLinks(row, item);
+      if (item.excerpt) row.append(el('blockquote', 'passage-excerpt', item.excerpt));
       section.append(row);
     }
     return section;

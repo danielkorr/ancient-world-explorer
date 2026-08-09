@@ -18,11 +18,21 @@ function evidenceSummary(item) {
     source_type: item.source_type,
     source_url: item.source_url,
     assertion: item.assertion,
+    excerpt: item.payload?.excerpt || null,
+    verification_url: item.payload?.verification_url || null,
+    verification_scope: item.payload?.verification_scope || null,
+    source_link_kind: item.payload?.source_link_kind || null,
+    urn: item.payload?.urn || item.payload?.attempted_urn || null,
   };
 }
 
 export function buildResearchDossier({ subject, claims, evidence, conflicts, archaeologyLeads }) {
-  const verifiedEvidence = evidence.filter((item) => item.status === 'verified');
+  const citationResolvedEvidence = evidence.filter((item) =>
+    item.status === 'verified' && item.payload?.verification_scope === 'citation-resolution'
+  );
+  const verifiedEvidence = evidence.filter((item) =>
+    item.status === 'verified' && item.payload?.verification_scope !== 'citation-resolution'
+  );
   const unresolvedEvidence = evidence.filter((item) => item.status === 'unresolved');
   const primarySources = evidence
     .filter((item) => ['scaife_cts', 'classical_citation'].includes(item.source_type))
@@ -57,7 +67,7 @@ export function buildResearchDossier({ subject, claims, evidence, conflicts, arc
   const questions = unique(unresolvedQuestions).slice(0, 24);
   const highConfidenceLeads = archaeologyLeads.filter((item) => item.confidence >= 60).length;
   const executiveSynthesis = [
-    `${subject.name} currently has ${verifiedEvidence.length} verified evidence item${verifiedEvidence.length === 1 ? '' : 's'}, ${unresolvedEvidence.length} unresolved item${unresolvedEvidence.length === 1 ? '' : 's'}, and ${conflicts.length} recorded conflict${conflicts.length === 1 ? '' : 's'}.`,
+    `${subject.name} currently has ${verifiedEvidence.length} substantively verified evidence item${verifiedEvidence.length === 1 ? '' : 's'}, ${citationResolvedEvidence.length} machine-resolved primary citation${citationResolvedEvidence.length === 1 ? '' : 's'}, ${unresolvedEvidence.length} unresolved item${unresolvedEvidence.length === 1 ? '' : 's'}, and ${conflicts.length} recorded conflict${conflicts.length === 1 ? '' : 's'}.`,
     archaeologyLeads.length
       ? `Archaeological discovery surfaced ${archaeologyLeads.length} public-source lead${archaeologyLeads.length === 1 ? '' : 's'}${highConfidenceLeads ? `, including ${highConfidenceLeads} higher-priority lead${highConfidenceLeads === 1 ? '' : 's'}` : ''}; these remain candidates until independently reviewed.`
       : 'No archaeological discovery lead is presently attached to this dossier.',

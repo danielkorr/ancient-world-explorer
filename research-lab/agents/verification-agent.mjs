@@ -1,5 +1,21 @@
 import { auditEvent } from '../core/schema.mjs';
 
+function isOpenContextHumanUrl(value) {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:'
+      && url.hostname === 'opencontext.org'
+      && !/\.(json|jsonld|xml|rdf|ttl|nt)$/i.test(url.pathname);
+  } catch { return false; }
+}
+
+function isOpenContextDataUrl(value) {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' && url.hostname === 'opencontext.org' && /\.(json|jsonld)$/i.test(url.pathname);
+  } catch { return false; }
+}
+
 export function runVerificationAgent({ subjects, claims, evidence, conflicts, archaeologyLeads = [], dossiers = [] }) {
   const events = [];
   const evidenceIds = new Set(evidence.map((item) => item.id));
@@ -34,6 +50,10 @@ export function runVerificationAgent({ subjects, claims, evidence, conflicts, ar
         events.push(auditEvent('invalid-scaife-verification-scope', { evidence_id: item.id }));
       }
     }
+    if (item.source_type === 'open_context_candidate') {
+      if (!isOpenContextHumanUrl(item.source_url)) events.push(auditEvent('invalid-open-context-reader-link', { evidence_id: item.id, url: item.source_url }));
+      if (item.payload?.data_url && !isOpenContextDataUrl(item.payload.data_url)) events.push(auditEvent('invalid-open-context-data-link', { evidence_id: item.id, url: item.payload.data_url }));
+    }
   }
 
 
@@ -42,6 +62,10 @@ export function runVerificationAgent({ subjects, claims, evidence, conflicts, ar
     if (!lead.source_url || !/^https:\/\//.test(lead.source_url)) events.push(auditEvent('unsafe-archaeology-source', { lead_id: lead.id }));
     if (lead.confidence < 0 || lead.confidence > 100) events.push(auditEvent('invalid-archaeology-confidence', { lead_id: lead.id }));
     for (const id of lead.evidence_ids) if (!evidenceIds.has(id)) events.push(auditEvent('missing-archaeology-evidence', { lead_id: lead.id, evidence_id: id }));
+    if (lead.source_type === 'open_context') {
+      if (!isOpenContextHumanUrl(lead.source_url)) events.push(auditEvent('invalid-open-context-reader-link', { lead_id: lead.id, url: lead.source_url }));
+      if (lead.data_url && !isOpenContextDataUrl(lead.data_url)) events.push(auditEvent('invalid-open-context-data-link', { lead_id: lead.id, url: lead.data_url }));
+    }
     if (lead.classification === 'established_evidence') {
       const supporting = lead.evidence_ids.map((id) => evidence.find((item) => item.id === id));
       if (lead.confidence < 80 || supporting.some((item) => item?.status !== 'verified')) {

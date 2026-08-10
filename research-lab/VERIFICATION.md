@@ -28,6 +28,8 @@ been approved for VIA.
   `established_evidence` without verified supporting evidence and confidence >= 80.
 - [x] Archaeological discovery is limited to public Open Context data under a FAIR/CARE
   sensitivity policy.
+- [x] Open Context HTML reader links, JSON-LD data links, and persistent citation links
+  are stored separately; machine formats cannot masquerade as human review links.
 - [x] Explicit uncertainty produces visible conflicts/dispute state.
 - [x] Prompt-like instructions in retrieved material are quarantined as untrusted data.
 - [x] External-agent payloads are disabled by default and, when explicitly enabled, can
@@ -36,6 +38,8 @@ been approved for VIA.
   research state and has no production mutation endpoint.
 - [x] Archaeology review decisions use a separate vocabulary and cannot rewrite discovery
   classification or promote a lead into established evidence.
+- [x] Source-relevance decisions are evidence-level, source-family-aware, append-only,
+  and cannot mutate evidence status, confidence, dossiers, or core data.
 
 ## Human scholarly gates
 

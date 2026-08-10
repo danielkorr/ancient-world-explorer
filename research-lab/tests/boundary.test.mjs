@@ -36,15 +36,31 @@ test('archaeology reviews are append-only judgments with a separate decision voc
     id: 'arch-review-test',
     target_type: 'archaeology_lead',
     target_id: 'archaeology-test',
-    decision: 'relevant',
+    decision: 'chronologically-incompatible',
     note: 'Check stratigraphic date independently.',
   });
   assert.equal(record.target_type, 'archaeology_lead');
-  assert.equal(record.decision, 'relevant');
+  assert.equal(record.decision, 'chronologically-incompatible');
   assert.equal(record.claim_id, undefined);
   assert.equal((await store.readReviews()).length, 1);
   await assert.rejects(
     store.appendReview({ id: 'bad-review', target_type: 'archaeology_lead', target_id: 'archaeology-test', decision: 'accept' }),
     /invalid review record/i,
   );
+});
+
+test('source relevance reviews persist as evidence judgments without mutating evidence', async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), 'awe-source-review-'));
+  const store = new ResearchStore(root);
+  const review = await store.appendReview({
+    id: 'source-review-test',
+    target_type: 'evidence',
+    target_id: 'evidence-test',
+    decision: 'contextual-support',
+    note: 'Useful context but not direct support.',
+  });
+  assert.equal(review.target_type, 'evidence');
+  assert.equal(review.target_id, 'evidence-test');
+  assert.equal(review.decision, 'contextual-support');
+  assert.equal((await store.readReviews())[0].note, 'Useful context but not direct support.');
 });

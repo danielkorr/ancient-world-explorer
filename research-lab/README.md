@@ -64,9 +64,33 @@ and sensitivity policy. The confidence number is a **discovery triage score**, n
 probability that Alexander was present there.
 
 The Observatory adds a dedicated Archaeology Review queue. A reviewer can record a lead
-as `relevant`, `not-relevant`, or `more-research` and add a note. These judgments are
-append-only entries in the research review log. They never rewrite the lead's discovery
-classification and cannot promote it to `established_evidence`.
+with direct, contextual, name-only, geographic, chronological, insufficient-information,
+or more-research judgments and add a note. These judgments are append-only entries in
+the research review log. They never rewrite the lead's discovery classification and
+cannot promote it to `established_evidence`.
+
+Open Context links preserve three distinct roles: the normal HTML record for human
+reading, an optional JSON-LD representation for machine inspection, and an optional
+persistent ARK citation. Search-result snippets, project/context metadata, chronology,
+and coordinates are carried into the review card so a reviewer can assess relevance
+before leaving the Observatory.
+
+## Source relevance review
+
+The Source Relevance view presents evidence records across all stops and adapts its
+decision vocabulary to the source family:
+
+- Primary sources: direct, contextual, partial, not relevant, or more research.
+- Modern scholarship: directly relevant, useful background, bibliographic lead,
+  outdated/superseded, not relevant, unable to access, or more research.
+- Authority records: correct, possible, or incorrect identity, or more research.
+- Media and other records: relevant, not relevant, unable to access, or more research.
+- Archaeological leads retain their more detailed chronology/geography review in the
+  Archaeology Review view.
+
+Every source-relevance decision targets the evidence record ID and is appended to the
+same research-only review log. It does not rewrite evidence status, confidence scores,
+the generated dossier, or VIA core data.
 
 Open Context's own FAIR/CARE guidance is part of the lab policy: discovery is restricted
 to public open data, and the lab does not infer, enrich, or republish non-public sensitive
@@ -106,8 +130,8 @@ npm run research:serve
 
 The Observatory binds to `127.0.0.1` by default and is intended only for local review.
 Review decisions are appended to `research-lab/.state/reviews.jsonl`; they do not change
-VIA data. Its three review views are **Research Dossiers**, **Archaeology Review**, and
-**Claims & Evidence**.
+VIA data. Its four review views are **Research Dossiers**, **Source Relevance**,
+**Archaeology Review**, and **Claims & Evidence**.
 
 ## Source connectors
 

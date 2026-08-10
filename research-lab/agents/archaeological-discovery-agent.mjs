@@ -34,7 +34,7 @@ export async function runArchaeologicalDiscoveryAgent({ stop, subject, openConte
   const evidenceItems = [];
   const leads = [];
   let searchUrl = null;
-  try { searchUrl = openContext.searchUrl(query, 8); } catch {}
+  try { searchUrl = openContext.searchPageUrl ? openContext.searchPageUrl(query, 8) : openContext.searchUrl(query, 8); } catch {}
 
   try {
     const result = await openContext.search(query, { rows: 8 });
@@ -56,14 +56,21 @@ export async function runArchaeologicalDiscoveryAgent({ stop, subject, openConte
       const ev = evidence({
         subjectId: subject.id,
         sourceType: 'open_context_candidate',
-        sourceUrl: record.source_url || record.citation_url || result.source_url,
+        sourceUrl: record.source_url || result.source_url,
         title: record.label,
         assertion: 'Open Context returned this public archaeological record for the place-name search; relevance to Alexander is not established.',
         status: EVIDENCE_STATUS.UNRESOLVED,
         payload: {
+          data_url: record.data_url,
+          citation_url: record.citation_url,
           category: record.category,
           project: record.project,
+          project_url: record.project_url,
           context: record.context,
+          context_url: record.context_url,
+          snippet: record.snippet,
+          early_year: record.early_year,
+          late_year: record.late_year,
           published: record.published,
           updated: record.updated,
           coordinate: record.coordinate,
@@ -75,10 +82,18 @@ export async function runArchaeologicalDiscoveryAgent({ stop, subject, openConte
         subjectId: subject.id,
         classification: ranked.classification,
         sourceType: 'open_context',
-        sourceUrl: record.source_url || record.citation_url || result.source_url,
+        sourceUrl: record.source_url || result.source_url,
+        dataUrl: record.data_url,
+        citationUrl: record.citation_url,
         title: record.label,
         location: record.coordinate,
         date: record.published,
+        snippet: record.snippet,
+        project: record.project,
+        context: record.context,
+        chronology: record.early_year !== null || record.late_year !== null
+          ? { early_year: record.early_year, late_year: record.late_year }
+          : null,
         relevance: ranked.overlap
           ? `Place-name/context overlap (${ranked.overlap} token${ranked.overlap === 1 ? '' : 's'}); association requires scholarly review.`
           : 'Search-result proximity only; no name overlap detected.',

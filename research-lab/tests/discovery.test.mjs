@@ -74,6 +74,7 @@ test('archaeological discovery labels a close public Open Context match as candi
   assert.equal(result.leads[0].classification, 'candidate_evidence');
   assert.notEqual(result.leads[0].classification, 'established_evidence');
   assert.equal(result.leads[0].sensitivity, 'public-open-data-only');
+  assert.equal(result.leads[0].source_url, 'https://opencontext.org/subjects/example');
   assert.equal(result.evidence[0].status, 'unresolved');
   assert.match(result.leads[0].rationale, /not evidence of association/i);
 });
@@ -112,4 +113,21 @@ test('verification rejects a machine or catalog route presented as a human Scaif
   const validEvidence = { ...badEvidence, source_url: scaifeReaderUrl(urn) };
   const accepted = runVerificationAgent({ subjects: [subject], claims: [], evidence: [validEvidence], conflicts: [] });
   assert.equal(accepted.passed, true);
+});
+
+test('verification rejects Open Context JSON-LD as a human archaeology link', () => {
+  const subject = { id: 'alexander:pella' };
+  const lead = {
+    id: 'lead-open-context-machine-link',
+    subject_id: subject.id,
+    source_type: 'open_context',
+    source_url: 'https://opencontext.org/subjects/example.json',
+    data_url: 'https://opencontext.org/subjects/example.json',
+    classification: 'research_lead',
+    confidence: 40,
+    evidence_ids: [],
+  };
+  const result = runVerificationAgent({ subjects: [subject], claims: [], evidence: [], conflicts: [], archaeologyLeads: [lead] });
+  assert.equal(result.passed, false);
+  assert.ok(result.events.some((event) => event.type === 'invalid-open-context-reader-link'));
 });

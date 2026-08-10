@@ -4,7 +4,7 @@ import { runClassicalSourcesAgent } from '../agents/classical-sources-agent.mjs'
 import { safeFetch } from '../connectors/http.mjs';
 import { PleiadesConnector } from '../connectors/pleiades.mjs';
 import { ScaifeConnector, scaifePassageExcerpt, scaifeReaderUrl, scaifeVerificationUrl } from '../connectors/scaife.mjs';
-import { OpenContextConnector } from '../connectors/open-context.mjs';
+import { normalizeOpenContextRecord, OpenContextConnector } from '../connectors/open-context.mjs';
 import { scoreSubject } from '../core/confidence.mjs';
 import { subjectFromStop } from '../core/schema.mjs';
 
@@ -18,12 +18,41 @@ test('source connectors validate identifiers before network access', async () =>
 });
 
 test('Open Context discovery URL is constrained to the allowlisted JSON search API', () => {
-  const url = new URL(new OpenContextConnector({ offline: true }).searchUrl('Pella', 8));
+  const connector = new OpenContextConnector({ offline: true });
+  const url = new URL(connector.searchUrl('Pella', 8));
   assert.equal(url.protocol, 'https:');
   assert.equal(url.hostname, 'opencontext.org');
   assert.equal(url.pathname, '/query/.json');
   assert.equal(url.searchParams.get('q'), 'Pella');
   assert.equal(url.searchParams.get('rows'), '8');
+  const reader = new URL(connector.searchPageUrl('Pella', 8));
+  assert.equal(reader.pathname, '/query/');
+  assert.equal(reader.searchParams.get('q'), 'Pella');
+});
+
+test('Open Context records separate the human page, JSON-LD data, and persistent citation', () => {
+  const record = normalizeOpenContextRecord({
+    label: 'DEM-1982',
+    uri: 'http://opencontext.org/subjects/e54594fc-ecef-445e-aa66-0947f44dbd70',
+    href: 'https://opencontext.org/subjects/e54594fc-ecef-445e-aa66-0947f44dbd70',
+    'citation uri': 'https://n2t.net/ark:/28722/r2p3k14c/dem_1982',
+    'project label': 'Cross-referenced p3k14c',
+    'project href': 'https://opencontext.org/projects/cdd78c10-e6da-42ef-9829-e792ce55bdd6',
+    'context label': 'Europe/Greece/Central Macedonia',
+    'context href': 'https://opencontext.org/subjects/25a28674-5040-4add-bca7-762f8eb917ff',
+    'early bce/ce': -2846,
+    'late bce/ce': -2472,
+    snippet: 'Sample from <mark>Pella</mark>',
+  });
+  assert.equal(record.source_url, 'https://opencontext.org/subjects/e54594fc-ecef-445e-aa66-0947f44dbd70');
+  assert.equal(record.data_url, 'https://opencontext.org/subjects/e54594fc-ecef-445e-aa66-0947f44dbd70.json');
+  assert.equal(record.citation_url, 'https://n2t.net/ark:/28722/r2p3k14c/dem_1982');
+  assert.equal(record.snippet, 'Sample from Pella');
+  assert.deepEqual([record.early_year, record.late_year], [-2846, -2472]);
+
+  const missing = normalizeOpenContextRecord({ label: 'Undated record', latitude: null, longitude: null, 'early bce/ce': null, 'late bce/ce': null });
+  assert.equal(missing.coordinate, null);
+  assert.deepEqual([missing.early_year, missing.late_year], [null, null]);
 });
 
 test('Scaife separates human-readable passage links from machine verification links', () => {

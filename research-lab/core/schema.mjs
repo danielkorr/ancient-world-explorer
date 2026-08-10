@@ -81,7 +81,7 @@ export function conflict({ subjectId, field, description, severity = 'medium', e
   };
 }
 
-export function archaeologyLead({ subjectId, classification = ARCHAEOLOGY_CLASSIFICATION.LEAD, sourceType, sourceUrl, title, location = null, date = null, relevance, confidence = 0, distanceKm = null, evidenceIds = [], rationale = '', sensitivity = 'public-source-only' }) {
+export function archaeologyLead({ subjectId, classification = ARCHAEOLOGY_CLASSIFICATION.LEAD, sourceType, sourceUrl, dataUrl = null, citationUrl = null, title, location = null, date = null, snippet = '', project = '', context = '', chronology = null, relevance, confidence = 0, distanceKm = null, evidenceIds = [], rationale = '', sensitivity = 'public-source-only' }) {
   const score = Math.max(0, Math.min(100, Math.round(Number(confidence) || 0)));
   const key = `${subjectId}|${sourceType}|${sourceUrl || title}|${classification}`;
   return {
@@ -90,9 +90,15 @@ export function archaeologyLead({ subjectId, classification = ARCHAEOLOGY_CLASSI
     classification,
     source_type: sourceType,
     source_url: sourceUrl,
+    data_url: dataUrl,
+    citation_url: citationUrl,
     title,
     location,
     date,
+    snippet,
+    project,
+    context,
+    chronology,
     relevance,
     confidence: score,
     distance_km: Number.isFinite(distanceKm) ? Number(distanceKm.toFixed(3)) : null,

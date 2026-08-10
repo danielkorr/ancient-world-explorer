@@ -54,6 +54,12 @@ main { max-width: 1400px; margin: 0 auto; padding: 24px; }
 .score b { color: var(--ink); }
 .disputed { color: #efaaa2; border-color: #744b47; }
 .claim { border: 1px solid var(--line); margin-top: 14px; padding: 15px; }
+.source-review-card { border-color: #3c5060; background: #1a1d1f; }
+.source-family { color: var(--blue); }
+.source-review-actions button { font-size: 12px; }
+.linked-claims { margin: 10px 0; padding: 10px; border-left: 2px solid var(--blue); background: #171a1c; }
+.linked-claims .section-eyebrow { margin-bottom: 5px; color: var(--blue); }
+.linked-claims div + div { margin-top: 4px; }
 .claim-top { display: flex; justify-content: space-between; gap: 12px; }
 .claim-field { color: var(--gold); font-weight: 650; }
 .status { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--blue); }

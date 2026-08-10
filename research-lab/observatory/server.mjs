@@ -70,7 +70,9 @@ const server = http.createServer(async (req, res) => {
         ? report.claims.some((claim) => claim.id === targetId)
         : targetType === 'archaeology_lead'
           ? (report.archaeology_leads || []).some((lead) => lead.id === targetId)
-          : false;
+          : targetType === 'evidence'
+            ? report.evidence.some((item) => item.id === targetId)
+            : false;
       if (!knownTarget) {
         return send(res, 400, JSON.stringify({ error: `Unknown ${targetType} target` }));
       }

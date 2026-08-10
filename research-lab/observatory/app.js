@@ -8,6 +8,9 @@
   let queueSubjectId = null;
   let classificationFilter = 'all';
   let reviewFilter = 'all';
+  let sourceQueueSubjectId = null;
+  let sourceFamilyFilter = 'all';
+  let sourceReviewFilter = 'all';
 
   const el = (tag, className, text) => {
     const node = document.createElement(tag);
@@ -39,6 +42,15 @@
       }
       return links;
     }
+    if (['open_context', 'open_context_candidate', 'open_context_search'].includes(item.source_type)) {
+      const links = [];
+      if (item.source_url) links.push({ label: item.source_type === 'open_context_search' ? 'View search results' : 'View archaeological record', url: item.source_url });
+      const dataUrl = item.data_url || item.payload?.data_url;
+      const citationUrl = item.citation_url || item.payload?.citation_url;
+      if (dataUrl) links.push({ label: 'JSON-LD data', url: dataUrl });
+      if (citationUrl) links.push({ label: 'Persistent citation', url: citationUrl });
+      return links;
+    }
     if (!item.source_url) return [];
     const labels = {
       pleiades: 'Pleiades authority record',
@@ -47,9 +59,6 @@
       wikidata_identity_candidate: 'Wikidata candidate record',
       wikidata_identity_search: 'Wikidata search results',
       wikimedia_commons: 'Wikimedia media record',
-      open_context: 'Open Context dataset record',
-      open_context_candidate: 'Open Context candidate record',
-      open_context_search: 'Open Context search record',
     };
     return [{ label: labels[item.source_type] || 'Open source record', url: item.source_url }];
   }
@@ -70,6 +79,45 @@
 
   function subjectFor(id) {
     return report.subjects.find((item) => item.id === id);
+  }
+
+  function sourceFamily(item) {
+    if (['scaife_cts', 'classical_citation'].includes(item.source_type)) return 'primary-sources';
+    if (item.source_type === 'pleiades_reference') return 'modern-scholarship';
+    if (item.source_type === 'pleiades' || item.source_type.startsWith('wikidata')) return 'authority-records';
+    if (item.source_type === 'wikimedia_commons') return 'media-records';
+    if (item.source_type.startsWith('open_context')) return 'archaeological-records';
+    return 'geographic-and-other';
+  }
+
+  function sourceReviewOptions(item) {
+    const family = sourceFamily(item);
+    if (family === 'primary-sources') return [
+      ['direct-support', 'Direct support'], ['contextual-support', 'Contextual support'], ['partial-support', 'Partial support'], ['not-relevant', 'Not relevant'], ['more-research', 'More research'],
+    ];
+    if (family === 'modern-scholarship') return [
+      ['directly-relevant', 'Directly relevant'], ['useful-background', 'Useful background'], ['bibliographic-lead', 'Bibliographic lead'], ['outdated-superseded', 'Outdated / superseded'], ['not-relevant', 'Not relevant'], ['unable-to-access', 'Unable to access'], ['more-research', 'More research'],
+    ];
+    if (family === 'authority-records') return [
+      ['correct-identity', 'Correct identity'], ['possible-identity', 'Possible identity'], ['incorrect-identity', 'Incorrect identity'], ['more-research', 'More research'],
+    ];
+    return [
+      ['relevant', 'Relevant'], ['not-relevant', 'Not relevant'], ['unable-to-access', 'Unable to access'], ['more-research', 'More research'],
+    ];
+  }
+
+  function formatYear(year) {
+    if (!Number.isFinite(year)) return null;
+    if (year < 0) return `${Math.abs(year)} BCE`;
+    if (year === 0) return '1 BCE / 1 CE boundary';
+    return `${year} CE`;
+  }
+
+  function chronologyLabel(chronology) {
+    if (!chronology) return null;
+    const early = formatYear(chronology.early_year);
+    const late = formatYear(chronology.late_year);
+    return early && late ? `${early}–${late}` : early || late;
   }
 
   function latestReview(targetType, targetId) {
@@ -112,21 +160,34 @@
   function renderSubjects() {
     const root = document.getElementById('subject-list');
     root.replaceChildren();
-    if (activeMode === 'archaeology') {
-      const all = el('button', `subject-btn${queueSubjectId === null ? ' active' : ''}`, 'All discoveries');
+    if (['archaeology', 'sources'].includes(activeMode)) {
+      const selectedQueueId = activeMode === 'archaeology' ? queueSubjectId : sourceQueueSubjectId;
+      const all = el('button', `subject-btn${selectedQueueId === null ? ' active' : ''}`, activeMode === 'archaeology' ? 'All discoveries' : 'All sources');
       all.type = 'button';
-      all.append(el('small', '', `${(report.archaeology_leads || []).length} leads across ${report.subjects.length} stops`));
-      all.addEventListener('click', () => { queueSubjectId = null; renderSubjects(); renderDetail(); });
+      all.append(el('small', '', activeMode === 'archaeology'
+        ? `${(report.archaeology_leads || []).length} leads across ${report.subjects.length} stops`
+        : `${report.evidence.length} evidence records across ${report.subjects.length} stops`));
+      all.addEventListener('click', () => {
+        if (activeMode === 'archaeology') queueSubjectId = null;
+        else sourceQueueSubjectId = null;
+        renderSubjects();
+        renderDetail();
+      });
       root.append(all);
     }
     for (const subject of report.subjects) {
-      const active = activeMode === 'archaeology' ? subject.id === queueSubjectId : subject.id === selectedId;
+      const active = activeMode === 'archaeology'
+        ? subject.id === queueSubjectId
+        : activeMode === 'sources'
+          ? subject.id === sourceQueueSubjectId
+          : subject.id === selectedId;
       const button = el('button', `subject-btn${active ? ' active' : ''}`, subject.name);
       button.type = 'button';
       button.dataset.testid = 'research-subject-row';
       button.append(el('small', '', `${subject.evidence_count} evidence · ${subject.archaeology_lead_count || 0} archaeology · ${subject.conflict_count} conflicts`));
       button.addEventListener('click', () => {
         if (activeMode === 'archaeology') queueSubjectId = subject.id;
+        else if (activeMode === 'sources') sourceQueueSubjectId = subject.id;
         else selectedId = subject.id;
         renderSubjects();
         renderDetail();
@@ -205,6 +266,71 @@
     return card;
   }
 
+  function sourceReviewCard(item) {
+    const card = el('article', 'claim source-review-card');
+    card.dataset.testid = 'source-review-record';
+    const subject = subjectFor(item.subject_id);
+    const top = el('div', 'claim-top');
+    top.append(
+      el('div', 'claim-field', `${subject?.name || item.subject_id} · ${item.citation || item.title || titleCase(item.source_type)}`),
+      el('div', 'status source-family', titleCase(sourceFamily(item))),
+    );
+    card.append(top);
+
+    const facts = el('div', 'lead-facts');
+    facts.append(el('span', '', `Record: ${titleCase(item.source_type)}`));
+    facts.append(el('span', '', `Status: ${evidenceStatusLabel(item)}`));
+    if (item.payload?.project) facts.append(el('span', '', `Project: ${item.payload.project}`));
+    const chronology = chronologyLabel(item.payload && { early_year: item.payload.early_year, late_year: item.payload.late_year });
+    if (chronology) facts.append(el('span', '', `Chronology: ${chronology}`));
+    card.append(facts);
+    const linkedClaims = report.claims.filter((claim) => claim.evidence_ids.includes(item.id));
+    if (linkedClaims.length) {
+      const claims = el('div', 'linked-claims');
+      claims.append(el('div', 'section-eyebrow', 'LINKED RESEARCH CLAIMS'));
+      linkedClaims.forEach((claim) => {
+        claims.append(el('div', '', `${titleCase(claim.field)} — ${titleCase(claim.status)}: ${formatValue(claim.proposed_value)}`));
+      });
+      card.append(claims);
+    }
+    if (item.assertion) card.append(el('p', '', item.assertion));
+    if (item.payload?.context) card.append(el('p', 'muted', `Context: ${item.payload.context}`));
+    if (item.payload?.snippet) card.append(el('blockquote', 'passage-excerpt', item.payload.snippet));
+    if (item.payload?.excerpt) card.append(el('blockquote', 'passage-excerpt', item.payload.excerpt));
+    appendSourceLinks(card, item);
+
+    const state = reviewState('evidence', item.id);
+    if (state) card.append(state);
+    const note = el('textarea', 'review-note');
+    note.placeholder = 'Why does this source support, qualify, or fail to support the research record?';
+    note.setAttribute('aria-label', `Source relevance note for ${item.citation || item.title}`);
+    card.append(note);
+
+    const actions = el('div', 'actions source-review-actions');
+    for (const [decision, label] of sourceReviewOptions(item)) {
+      const button = el('button', '', label);
+      button.type = 'button';
+      button.dataset.testid = `source-review-${decision}`;
+      button.addEventListener('click', () => {
+        actions.querySelectorAll('button').forEach((node) => { node.disabled = true; });
+        recordReview('evidence', item.id, decision, note.value).catch((error) => {
+          actions.append(el('div', 'error', error.message));
+          actions.querySelectorAll('button').forEach((node) => { node.disabled = false; });
+        });
+      });
+      actions.append(button);
+    }
+    const open = el('button', 'open-dossier', 'Open dossier');
+    open.type = 'button';
+    open.addEventListener('click', () => {
+      selectedId = item.subject_id;
+      selectMode('dossier');
+    });
+    actions.append(open);
+    card.append(actions, el('p', 'muted', 'Source relevance is a reviewer judgment. It does not rewrite evidence status, confidence, or VIA core data.'));
+    return card;
+  }
+
   function archaeologyCard(item, { showSubject = false } = {}) {
     const card = el('article', 'archaeology-lead');
     card.dataset.testid = 'archaeology-lead';
@@ -219,13 +345,12 @@
     if (item.date) facts.append(el('span', '', `Published ${item.date}`));
     card.append(facts, el('p', '', item.relevance));
     if (item.rationale) card.append(el('p', 'muted', item.rationale));
-    if (item.source_url) {
-      const source = el('a', 'lead-source', 'Open source record');
-      source.href = item.source_url;
-      source.target = '_blank';
-      source.rel = 'noopener noreferrer';
-      card.append(source);
-    }
+    if (item.project) card.append(el('p', 'muted', `Project: ${item.project}`));
+    if (item.context) card.append(el('p', 'muted', `Context: ${item.context}`));
+    const chronology = chronologyLabel(item.chronology);
+    if (chronology) card.append(el('p', 'muted', `Chronology: ${chronology}`));
+    if (item.snippet) card.append(el('blockquote', 'passage-excerpt', item.snippet));
+    appendSourceLinks(card, item);
 
     const state = reviewState('archaeology_lead', item.id);
     if (state) card.append(state);
@@ -235,7 +360,15 @@
     card.append(note);
 
     const actions = el('div', 'actions');
-    for (const [decision, label] of [['relevant', 'Relevant'], ['not-relevant', 'Not relevant'], ['more-research', 'More research']]) {
+    for (const [decision, label] of [
+      ['directly-relevant', 'Directly relevant'],
+      ['contextually-relevant', 'Contextually relevant'],
+      ['name-only-match', 'Name-only match'],
+      ['geographically-unrelated', 'Geographically unrelated'],
+      ['chronologically-incompatible', 'Chronologically incompatible'],
+      ['insufficient-information', 'Insufficient information'],
+      ['more-research', 'More research'],
+    ]) {
       const button = el('button', '', label);
       button.type = 'button';
       button.dataset.testid = `archaeology-review-${decision}`;
@@ -308,6 +441,8 @@
       row.append(el('div', 'muted', `${evidenceStatusLabel(item)} · ${titleCase(item.source_type)}`));
       appendSourceLinks(row, item);
       if (item.excerpt) row.append(el('blockquote', 'passage-excerpt', item.excerpt));
+      const state = reviewState('evidence', item.evidence_id);
+      if (state) row.append(state);
       section.append(row);
     }
     return section;
@@ -359,7 +494,7 @@
 
     const review = el('label', 'filter', 'Review state');
     const reviewSelect = el('select');
-    for (const value of ['all', 'unreviewed', 'relevant', 'not-relevant', 'more-research']) {
+    for (const value of ['all', 'unreviewed', 'reviewed']) {
       const option = el('option', '', titleCase(value));
       option.value = value;
       option.selected = value === reviewFilter;
@@ -369,6 +504,61 @@
     review.append(reviewSelect);
     filters.append(classification, review);
     root.append(filters);
+  }
+
+  function sourceFilters(root) {
+    const filters = el('div', 'filters');
+    const family = el('label', 'filter', 'Source family');
+    const familySelect = el('select');
+    for (const value of ['all', 'primary-sources', 'modern-scholarship', 'authority-records', 'archaeological-records', 'media-records', 'geographic-and-other']) {
+      const option = el('option', '', titleCase(value));
+      option.value = value;
+      option.selected = value === sourceFamilyFilter;
+      familySelect.append(option);
+    }
+    familySelect.addEventListener('change', () => { sourceFamilyFilter = familySelect.value; renderDetail(); });
+    family.append(familySelect);
+
+    const review = el('label', 'filter', 'Review state');
+    const reviewSelect = el('select');
+    for (const value of ['all', 'unreviewed', 'reviewed']) {
+      const option = el('option', '', titleCase(value));
+      option.value = value;
+      option.selected = value === sourceReviewFilter;
+      reviewSelect.append(option);
+    }
+    reviewSelect.addEventListener('change', () => { sourceReviewFilter = reviewSelect.value; renderDetail(); });
+    review.append(reviewSelect);
+    filters.append(family, review);
+    root.append(filters);
+  }
+
+  function renderSourceQueue(root) {
+    const head = el('div', 'queue-head');
+    head.append(el('div', 'section-eyebrow', 'SOURCE RELEVANCE · HUMAN SCHOLARLY REVIEW'));
+    head.append(el('h2', '', sourceQueueSubjectId ? `${subjectFor(sourceQueueSubjectId)?.name || 'Selected stop'} sources` : 'All source records'));
+    head.append(el('p', 'muted', 'Assess whether each accessible record directly supports, contextualizes, merely mentions, or fails to support the research claim. Criteria adapt to the source family.'));
+    sourceFilters(head);
+    root.append(head);
+
+    let sources = [...report.evidence];
+    if (sourceQueueSubjectId) sources = sources.filter((item) => item.subject_id === sourceQueueSubjectId);
+    if (sourceFamilyFilter !== 'all') sources = sources.filter((item) => sourceFamily(item) === sourceFamilyFilter);
+    if (sourceReviewFilter !== 'all') {
+      sources = sources.filter((item) => {
+        const reviewed = Boolean(latestReview('evidence', item.id));
+        return sourceReviewFilter === 'reviewed' ? reviewed : !reviewed;
+      });
+    }
+    sources.sort((a, b) => {
+      const subjectOrder = report.subjects.findIndex((item) => item.id === a.subject_id) - report.subjects.findIndex((item) => item.id === b.subject_id);
+      return subjectOrder || sourceFamily(a).localeCompare(sourceFamily(b)) || String(a.title).localeCompare(String(b.title));
+    });
+    if (!sources.length) {
+      root.append(el('div', 'queue-empty', 'No source records match the current review filters.'));
+      return;
+    }
+    sources.forEach((item) => root.append(sourceReviewCard(item)));
   }
 
   function renderArchaeologyQueue(root) {
@@ -384,8 +574,8 @@
     if (classificationFilter !== 'all') leads = leads.filter((item) => item.classification === classificationFilter);
     if (reviewFilter !== 'all') {
       leads = leads.filter((item) => {
-        const state = latestReview('archaeology_lead', item.id)?.decision || 'unreviewed';
-        return state === reviewFilter;
+        const reviewed = Boolean(latestReview('archaeology_lead', item.id));
+        return reviewFilter === 'reviewed' ? reviewed : !reviewed;
       });
     }
     leads.sort((a, b) => b.confidence - a.confidence);
@@ -401,6 +591,10 @@
     root.replaceChildren();
     if (activeMode === 'archaeology') {
       renderArchaeologyQueue(root);
+      return;
+    }
+    if (activeMode === 'sources') {
+      renderSourceQueue(root);
       return;
     }
     const subject = subjectFor(selectedId);

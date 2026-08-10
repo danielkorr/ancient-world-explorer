@@ -54,8 +54,10 @@ export class ResearchStore {
     const allowed = targetType === 'claim'
       ? ['accept', 'reject', 'more-research']
       : targetType === 'archaeology_lead'
-        ? ['relevant', 'not-relevant', 'more-research']
-        : [];
+        ? ['relevant', 'not-relevant', 'directly-relevant', 'contextually-relevant', 'name-only-match', 'geographically-unrelated', 'chronologically-incompatible', 'insufficient-information', 'more-research']
+        : targetType === 'evidence'
+          ? ['direct-support', 'contextual-support', 'partial-support', 'directly-relevant', 'useful-background', 'bibliographic-lead', 'outdated-superseded', 'correct-identity', 'possible-identity', 'incorrect-identity', 'relevant', 'not-relevant', 'unable-to-access', 'more-research']
+          : [];
     const record = {
       id: review.id,
       at: review.at || new Date().toISOString(),

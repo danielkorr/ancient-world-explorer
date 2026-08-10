@@ -33,11 +33,45 @@ main { max-width: 1400px; margin: 0 auto; padding: 24px; }
 .subject-btn { width: 100%; text-align: left; border: 0; border-top: 1px solid var(--line); color: var(--ink); background: transparent; padding: 12px 4px; cursor: pointer; }
 .subject-btn:hover, .subject-btn.active { color: var(--gold); }
 .subject-btn small { display: block; color: var(--muted); }
+.subject-btn .subject-review-coverage { color: var(--blue); margin-top: 3px; }
 .detail { padding: 22px; min-width: 0; }
 .detail-head { display: flex; justify-content: space-between; gap: 18px; align-items: start; border-bottom: 1px solid var(--line); padding-bottom: 15px; }
 .detail-head h2 { margin: 0; font-size: 27px; }
 .dossier-status { display: inline-block; margin-top: 8px; border: 1px solid var(--gold); color: var(--gold); padding: 4px 7px; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; }
 .dossier-synthesis { margin: 18px 0; padding: 16px; border-left: 3px solid var(--gold); background: #191915; font: 16px/1.65 Georgia, serif; }
+.machine-label { margin-top: 18px; color: var(--gold); font-size: 10px; font-weight: 700; letter-spacing: .12em; }
+.human-synthesis { margin: 20px 0; padding: 17px; border: 1px solid #45677f; background: #181d20; }
+.human-synthesis-head { display: flex; justify-content: space-between; align-items: start; gap: 16px; }
+.human-synthesis-head h3 { margin: 3px 0 0; font-size: 22px; }
+.overall-review { border: 1px solid var(--blue); color: var(--blue); padding: 6px 9px; white-space: nowrap; }
+.human-synthesis-note { color: #c4cbd0; max-width: 880px; }
+.coverage-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; margin: 15px 0; }
+.coverage-card { border: 1px solid var(--line); background: #15191b; padding: 10px; }
+.coverage-head { display: flex; justify-content: space-between; gap: 8px; }
+.coverage-head b { color: var(--blue); }
+.coverage-track { height: 5px; margin: 8px 0; background: #30383d; overflow: hidden; }
+.coverage-fill { display: block; height: 100%; background: var(--blue); }
+.coverage-card small { color: var(--muted); }
+.assessment-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.human-assessment { border: 1px solid var(--line); padding: 12px; min-width: 0; }
+.human-assessment h4 { margin: 0 0 8px; font: 16px Georgia, serif; }
+.human-assessment ul { margin: 0; padding-left: 18px; }
+.human-assessment li + li { margin-top: 8px; }
+.human-assessment li > small { display: block; color: var(--muted); }
+.human-assessment.direct { border-left: 3px solid var(--green); }
+.human-assessment.direct h4 { color: var(--green); }
+.human-assessment.qualified { border-left: 3px solid var(--blue); }
+.human-assessment.qualified h4 { color: var(--blue); }
+.human-assessment.excluded { border-left: 3px solid var(--red); }
+.human-assessment.excluded h4 { color: #e49a92; }
+.human-assessment.pending, .human-assessment.unreviewed { border-left: 3px solid var(--gold); }
+.human-assessment.pending h4, .human-assessment.unreviewed h4 { color: var(--gold); }
+.human-assessment.unreviewed { grid-column: 1 / -1; }
+.assessment-type { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; margin-right: 5px; }
+.reviewer-note { margin: 5px 0 0; padding-left: 8px; border-left: 2px solid var(--line); color: #c8c0b2; }
+.outstanding-status, .complete-status { margin: 13px 0 0; padding-top: 10px; border-top: 1px solid var(--line); }
+.outstanding-status { color: var(--gold); }
+.complete-status { color: var(--green); }
 .dossier-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
 .dossier-section { border: 1px solid var(--line); padding: 14px; min-width: 0; }
 .dossier-section h3 { margin: 0 0 9px; color: var(--gold); font-size: 17px; }
@@ -107,6 +141,9 @@ main { max-width: 1400px; margin: 0 auto; padding: 24px; }
   .subjects { position: static; max-height: none; }
   .value-grid { grid-template-columns: 1fr; }
   .dossier-grid { grid-template-columns: 1fr; }
+  .coverage-grid, .assessment-grid { grid-template-columns: 1fr; }
+  .human-assessment.unreviewed { grid-column: auto; }
+  .human-synthesis-head { flex-direction: column; }
   .dossier-section.wide { grid-column: auto; }
   .mode-tabs { overflow-x: auto; }
   .mode-tab { white-space: nowrap; }

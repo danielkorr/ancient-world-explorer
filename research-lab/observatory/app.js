@@ -3,6 +3,7 @@
 
   let report = null;
   let reviews = [];
+  let reviewSyntheses = [];
   let selectedId = null;
   let activeMode = 'dossier';
   let queueSubjectId = null;
@@ -79,6 +80,10 @@
 
   function subjectFor(id) {
     return report.subjects.find((item) => item.id === id);
+  }
+
+  function reviewSynthesisFor(id) {
+    return reviewSyntheses.find((item) => item.subject_id === id) || null;
   }
 
   function sourceFamily(item) {
@@ -185,6 +190,8 @@
       button.type = 'button';
       button.dataset.testid = 'research-subject-row';
       button.append(el('small', '', `${subject.evidence_count} evidence · ${subject.archaeology_lead_count || 0} archaeology · ${subject.conflict_count} conflicts`));
+      const synthesis = reviewSynthesisFor(subject.id);
+      if (synthesis) button.append(el('small', 'subject-review-coverage', `${synthesis.coverage.overall.completion_percent}% human reviewed · ${synthesis.outstanding_work.length} outstanding`));
       button.addEventListener('click', () => {
         if (activeMode === 'archaeology') queueSubjectId = subject.id;
         else if (activeMode === 'sources') sourceQueueSubjectId = subject.id;
@@ -205,6 +212,10 @@
     const body = await response.json();
     if (!response.ok) throw new Error(body.error || 'Review failed');
     reviews.push(body);
+    const synthesisResponse = await fetch('/api/review-syntheses');
+    if (!synthesisResponse.ok) throw new Error('Review saved, but synthesis refresh failed');
+    reviewSyntheses = await synthesisResponse.json();
+    renderSubjects();
     renderDetail();
   }
 
@@ -448,6 +459,82 @@
     return section;
   }
 
+  function coverageCard(label, coverage) {
+    const card = el('div', 'coverage-card');
+    const head = el('div', 'coverage-head');
+    head.append(el('span', '', label), el('b', '', `${coverage.completion_percent}%`));
+    const track = el('div', 'coverage-track');
+    const fill = el('span', 'coverage-fill');
+    fill.style.width = `${coverage.completion_percent}%`;
+    track.append(fill);
+    card.append(head, track, el('small', '', `${coverage.reviewed} of ${coverage.total} reviewed · ${coverage.unreviewed} unreviewed`));
+    return card;
+  }
+
+  function assessmentSection(title, className, items, emptyMessage) {
+    const section = el('section', `human-assessment ${className}`);
+    section.append(el('h4', '', title));
+    if (!items.length) {
+      section.append(el('p', 'muted', emptyMessage));
+      return section;
+    }
+    const list = el('ul');
+    items.forEach((item) => {
+      const row = el('li');
+      row.append(el('span', 'assessment-type', titleCase(item.target_type)), document.createTextNode(` ${item.title}`));
+      if (item.decision) row.append(el('small', '', titleCase(item.decision)));
+      if (item.note) row.append(el('blockquote', 'reviewer-note', item.note));
+      list.append(row);
+    });
+    section.append(list);
+    return section;
+  }
+
+  function renderHumanSynthesis(subject) {
+    const synthesis = reviewSynthesisFor(subject.id);
+    const panel = el('section', 'human-synthesis');
+    panel.dataset.testid = 'human-review-synthesis';
+    const heading = el('div', 'human-synthesis-head');
+    const title = el('div');
+    title.append(el('div', 'section-eyebrow', 'HUMAN-REVIEWED DOSSIER SYNTHESIS'), el('h3', '', 'Scholarly review overlay'));
+    heading.append(title);
+
+    if (!synthesis) {
+      panel.append(heading, el('p', 'muted', 'Human-review synthesis is unavailable. The machine-generated dossier remains unchanged.'));
+      return panel;
+    }
+
+    const overall = el('div', 'overall-review', `${synthesis.coverage.overall.completion_percent}% reviewed`);
+    heading.append(overall);
+    panel.append(heading);
+    panel.append(el('p', 'human-synthesis-note', 'This layer summarizes the latest human decisions in the append-only review log. It does not change machine confidence, generated findings, or VIA core data.'));
+
+    const coverage = el('div', 'coverage-grid');
+    coverage.append(
+      coverageCard('All records', synthesis.coverage.overall),
+      coverageCard('Sources', synthesis.coverage.sources),
+      coverageCard('Archaeology', synthesis.coverage.archaeology),
+      coverageCard('Claims', synthesis.coverage.claims),
+    );
+    panel.append(coverage);
+
+    const assessmentGrid = el('div', 'assessment-grid');
+    assessmentGrid.append(
+      assessmentSection('Direct support', 'direct', synthesis.assessments.direct, 'No records have been judged direct support.'),
+      assessmentSection('Qualified or contextual', 'qualified', synthesis.assessments.qualified, 'No qualified or contextual judgments yet.'),
+      assessmentSection('Excluded from synthesis', 'excluded', synthesis.assessments.excluded, 'No records have been excluded.'),
+      assessmentSection('Pending research', 'pending', synthesis.assessments.pending, 'No reviewed records are awaiting more research.'),
+      assessmentSection('Unreviewed records', 'unreviewed', synthesis.assessments.unreviewed, 'All records in this dossier have a human decision.'),
+    );
+    panel.append(assessmentGrid);
+
+    const status = synthesis.outstanding_work.length
+      ? `${synthesis.outstanding_work.length} item${synthesis.outstanding_work.length === 1 ? '' : 's'} still require review or resolution.`
+      : 'Human review is complete for the current dossier record set.';
+    panel.append(el('p', synthesis.outstanding_work.length ? 'outstanding-status' : 'complete-status', status));
+    return panel;
+  }
+
   function renderDossier(root, subject) {
     const dossier = (report.dossiers || []).find((item) => item.subject_id === subject.id);
     if (!dossier) {
@@ -455,7 +542,9 @@
       return;
     }
     root.append(subjectHead(subject, dossier.interpretive_status));
+    root.append(el('div', 'machine-label', 'MACHINE-GENERATED RESEARCH SYNTHESIS'));
     root.append(el('p', 'dossier-synthesis', dossier.executive_synthesis));
+    root.append(renderHumanSynthesis(subject));
 
     const grid = el('div', 'dossier-grid');
     grid.append(dossierListSection('Research priorities', dossier.research_priorities, (item) => item, { wide: true }));
@@ -610,10 +699,12 @@
   Promise.all([
     fetch('/api/report').then((response) => response.ok ? response.json() : Promise.reject(new Error('Run the research system before opening the Observatory.'))),
     fetch('/api/reviews').then((response) => response.ok ? response.json() : []),
+    fetch('/api/review-syntheses').then((response) => response.ok ? response.json() : []),
   ])
-    .then(([data, reviewData]) => {
+    .then(([data, reviewData, synthesisData]) => {
       report = data;
       reviews = reviewData;
+      reviewSyntheses = synthesisData;
       const scope = document.getElementById('research-scope');
       scope.textContent = report.scope === 'all-38-alexander-stops' ? 'Alexander · all 38 stops' : 'Alexander · six-stop pilot';
       selectedId = report.subjects[0]?.id || null;

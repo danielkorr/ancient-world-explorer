@@ -4,6 +4,7 @@ import http from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ResearchStore } from '../core/store.mjs';
+import { buildReviewSyntheses } from '../core/review-synthesis.mjs';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const store = new ResearchStore();
@@ -57,6 +58,11 @@ const server = http.createServer(async (req, res) => {
     }
     if (req.method === 'GET' && url.pathname === '/api/reviews') {
       return send(res, 200, JSON.stringify(await store.readReviews()));
+    }
+    if (req.method === 'GET' && url.pathname === '/api/review-syntheses') {
+      const report = await store.readLatest();
+      const reviews = await store.readReviews();
+      return send(res, 200, JSON.stringify(buildReviewSyntheses(report, reviews)));
     }
     if (req.method === 'POST' && url.pathname === '/api/reviews') {
       if (!String(req.headers['content-type'] || '').toLowerCase().startsWith('application/json')) {

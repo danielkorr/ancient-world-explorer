@@ -40,6 +40,11 @@ been approved for VIA.
   classification or promote a lead into established evidence.
 - [x] Source-relevance decisions are evidence-level, source-family-aware, append-only,
   and cannot mutate evidence status, confidence, dossiers, or core data.
+- [x] Human-reviewed dossier synthesis is computed dynamically from the immutable report
+  and latest append-only decisions; it cannot mutate the report, confidence scores,
+  discovery classifications, or core data.
+- [x] Human-review coverage keeps sources, archaeology leads, claims, pending decisions,
+  and unreviewed records distinct so incomplete review cannot appear complete.
 
 ## Human scholarly gates
 

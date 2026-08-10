@@ -92,6 +92,20 @@ Every source-relevance decision targets the evidence record ID and is appended t
 same research-only review log. It does not rewrite evidence status, confidence scores,
 the generated dossier, or VIA core data.
 
+## Human-reviewed dossier synthesis
+
+Each Research Dossier now places a human-review synthesis beside the immutable
+machine-generated synthesis. This overlay derives its state dynamically from the latest
+decision for each claim, evidence record, and archaeological lead while preserving all
+earlier decisions in the append-only review log.
+
+The overlay reports review coverage separately for sources, archaeology, and claims. It
+groups reviewed material as direct support, qualified/contextual support, excluded, or
+pending, and keeps every record without a human judgment explicitly unreviewed. Reviewer
+notes and unresolved work remain visible in the dossier. These judgments do not change
+the generated report, machine confidence, source status, archaeology classification, or
+VIA core data.
+
 Open Context's own FAIR/CARE guidance is part of the lab policy: discovery is restricted
 to public open data, and the lab does not infer, enrich, or republish non-public sensitive
 archaeological coordinates. See <https://opencontext.org/about/fair-care>.

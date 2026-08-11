@@ -5143,10 +5143,13 @@ function decorateLegend() {
   });
 }
 
-// DARE only becomes legible around z7; at the z5 landing its shrunk atlas
-// plate is pure label noise, while the sepia terrain fallback underneath is
-// clean and beautiful. Fade DARE in as you zoom so the ancient world resolves
-// the deeper you go — turning zoom into a reveal.
+// EXPERIMENT (branch: experiment/dare-reveal-tuning): DARE used to be fully
+// hidden at the z5 landing (shrunk atlas plate read as pure label noise) and
+// only became legible around z7. That hid ancient toponyms/region names
+// (e.g. "Macedonia", Italy's Augustan regio numerals) from users who never
+// zoomed past the landing view. This tunes the curve to show a legible hint
+// at landing and ramp in faster, while the sepia terrain fallback underneath
+// keeps things clean if it's still too noisy at world scale.
 //
 // Deep-zoom reveal. The atlas/street layers carry normal zoom, but they run out
 // of real detail: DARE has tiles only to z11 (an upscaled blur beyond), and the
@@ -5157,8 +5160,9 @@ function decorateLegend() {
 // DARE: sharp through z11, blurry past it. Reveal in low, fade fully out by z12
 // once the satellite starts taking over on top so its upscaled mush never shows.
 function ancientOpacityForZoom(z) {
-  if (z <= 5)  return 0;          // landing: clean terrain, atlas plate is noise
-  if (z < 7)   return 0.5;        // resolving in
+  if (z <= 4)  return 0;          // world scale: still pure noise
+  if (z === 5) return 0.35;       // landing: a legible hint of the ancient plate
+  if (z < 7)   return 0.7;        // resolving in
   if (z <= 11) return 1;          // full Roman atlas — DARE is sharp through z11
   return 0;                       // z12+: satellite fades in on top, drop the mush
 }

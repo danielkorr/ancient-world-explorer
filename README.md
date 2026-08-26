@@ -2,7 +2,7 @@
 
 > *"The world's oldest unsolved mysteries. Go find them."*
 
-There are 2 Separate Modes (Lenses) to Examine. 1) Ancient Roman Sites and Roads: A map-based application that layers the ancient Roman world onto the present. Explore roads, cities, ports, and fortresses across the full Roman Empire — and discover historical quests waiting to be completed by travelers today; and 2) Alexander the Great's Campaigns of Conquest: Follow Alexander's life from his Birth in Pella, Macedonia in 356 BC through his series of military campaigns and conquests in Greece, the Middle-East and across Central Asia and India, and finally to his death at the age of 32 in 323 BC. 
+There are 2 Separate Modes (Lenses) to Examine. 1) Ancient Roman Sites and Roads: A map-based application that layers the ancient Roman world onto the present. Explore roads, cities, ports, and fortresses across the full Roman Empire — and discover historical quests waiting to be completed by travelers today; and 2) Alexander the Great's Campaigns of Conquest: Follow Alexander's life from his Birth in Pella, Macedonia in 356 BC through his series of military campaigns and conquests across Greece, the Middle-East, Central Asia and India; and finally to his premature death in Babylon at the age of 32 in 323 BC. 
 
 ## What It Does
 

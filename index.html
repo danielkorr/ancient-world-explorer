@@ -56,7 +56,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=146">
+  <link rel="stylesheet" href="css/style.css?v=148">
 </head>
 <body>
 
@@ -98,30 +98,27 @@
   </div>
 </div>
 
-<!-- Mode tabs: the top-level experience switch (Roman explorer vs Alexander
-     campaign) over one shared map/auth. setMode swaps content + chrome by driving
-     layerState. Colorblind-safe: the active tab reads by gold luminance, not hue. -->
+<!-- Mode tabs: unlocked local development only (?lock=none). Production keeps
+     the two focused sibling pages and renders the matching navigation links below. -->
 <div id="mode-tabs" data-testid="mode-tabs" role="tablist" aria-label="Choose an experience">
   <button class="mode-tab active" id="mode-roman" data-mode="roman" data-testid="mode-roman" role="tab" aria-selected="true" onclick="setMode('roman')">
-    <span class="mode-tab-glyph" aria-hidden="true">🏛️</span><span class="mode-tab-label">Roman Sites &amp; Roads</span>
+    <span class="mode-tab-label">Roman World</span>
   </button>
   <button class="mode-tab" id="mode-alexander" data-mode="alexander" data-testid="mode-alexander" role="tab" aria-selected="false" onclick="setMode('alexander')">
-    <span class="mode-tab-glyph" aria-hidden="true">A</span><span class="mode-tab-label">Alexander&rsquo;s Campaign</span>
+    <span class="mode-tab-label">Alexander&rsquo;s Empire</span>
   </button>
 </div>
 
-<!-- Cross-experience link: replaces the tabs when the page is locked to one mode
-     (body.lock-roman / body.lock-alexander via CSS). Only the anchor for the OTHER
-     experience is shown per page; relative hrefs resolve correctly from each page's
-     location (root -> subfolder, subfolder -> ../). -->
-<div id="mode-crosslink" data-testid="mode-crosslink">
-  <a class="mode-cross to-alexander" href="alexander-the-great-campaigns/">
-    <span class="mode-cross-glyph" aria-hidden="true">A</span><span class="mode-cross-label">Alexander&rsquo;s Campaign</span><span class="mode-cross-arrow" aria-hidden="true">→</span>
-  </a>
+<!-- Production experience tabs. Both choices stay visible; the active one is
+     marked by applyModeLock(). The inactive relative link is correct on each page. -->
+<nav id="mode-crosslink" data-testid="mode-crosslink" aria-label="Ancient-world experience">
   <a class="mode-cross to-roman" href="../">
-    <span class="mode-cross-glyph" aria-hidden="true">🏛️</span><span class="mode-cross-label">Roman Sites &amp; Roads</span><span class="mode-cross-arrow" aria-hidden="true">→</span>
+    <span class="mode-cross-label">Roman World</span>
   </a>
-</div>
+  <a class="mode-cross to-alexander" href="alexander-the-great-campaigns/">
+    <span class="mode-cross-label">Alexander&rsquo;s Empire</span>
+  </a>
+</nav>
 
 <div id="era-toggle-wrap">
   <div id="era-toggle" data-testid="era-toggle">
@@ -132,78 +129,79 @@
 
 <div id="build-badge" aria-live="polite"></div>
 
-<!-- Welcome modal (first-visit intro; reopen via the brand title) -->
-<div id="welcome-modal" onclick="if(event.target===this)closeWelcome()">
+<!-- Shared first-visit introduction; reopen via the brand title. -->
+<div id="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-title" onclick="if(event.target===this)closeWelcome()">
   <div id="welcome-card">
-    <button class="auth-close" onclick="closeWelcome()">✕</button>
-    <div class="welcome-glyph">⊕</div>
-    <h2 class="auth-title">Welcome to VIA</h2>
-    <div class="welcome-tagline">Ancient World Explorer</div>
-    <div id="welcome-body">
-      <!-- DUAL variant: unlocked dev only (?lock=none), both experiences on one
-           page. Kept verbatim so local dual-mode testing is unchanged. -->
-      <div class="wb-variant wb-dual">
-        <p>Two thousand years of the ancient world, laid over the map as it stands today. VIA opens two ways in — switch between them anytime with the tabs at the top.</p>
+    <button class="auth-close" onclick="closeWelcome()" aria-label="Close welcome">✕</button>
+    <div class="welcome-layout">
+      <section class="welcome-overview">
+        <header class="welcome-heading">
+          <div class="welcome-glyph" aria-hidden="true">⊕</div>
+          <h2 id="welcome-title">Welcome to VIA</h2>
+          <p>Two ways into the ancient world.</p>
+        </header>
 
-        <div class="welcome-modes">
-          <div class="welcome-mode">
-            <div class="welcome-mode-name"><span class="welcome-mode-glyph">🏛️</span>Roman Sites &amp; Roads</div>
-            <p>Where the empire reached — roads, cities, and ruins on the modern map. Many places carry an open <em>quest</em>: a gap in the scholarly record you can help close with a photo, a location, or a note.</p>
+        <div class="welcome-how" aria-labelledby="welcome-how-title">
+          <h3 id="welcome-how-title">How VIA works</h3>
+          <div class="welcome-how-item">
+            <strong>Ancient history on today&rsquo;s map.</strong>
+            <span>See roads, cities, ruins, and campaigns in their present geography.</span>
           </div>
-          <div class="welcome-mode">
-            <div class="welcome-mode-name"><span class="welcome-mode-glyph alex">A</span>Alexander&rsquo;s Campaign</div>
-            <p>Follow a single lifetime across the ancient world — from Pella to the Hyphasis and back to Babylon, some 20,000&nbsp;km in ten years. Each stop is a turning point: a battle, a siege, a founded city — and, marked honestly, the places even scholars still dispute.</p>
+          <div class="welcome-how-item">
+            <strong>Plan Roman journeys with ORBIS.</strong>
+            <span>Tap one place, then another to estimate days by road, river, and sea.</span>
+          </div>
+          <div class="welcome-how-item">
+            <strong>Built on the scholarly record.</strong>
+            <span>Pleiades for places, Itiner-e for roads, and ORBIS for travel.</span>
           </div>
         </div>
 
-        <p>Contribute to the record as you go. Sign in to check in at the places you reach and help fill the gaps. Be a part of it.</p>
+        <button class="welcome-quest-link" type="button" onclick="openWelcomeQuest()">
+          <span class="welcome-quest-name">Quests</span>
+          <span>For those who want a genuine challenge</span>
+          <span class="welcome-quest-action">Learn how quests work →</span>
+        </button>
+      </section>
 
-        <div class="welcome-quest-preview">
-          <div class="welcome-quest-title">Quests are open gaps</div>
-          <div class="welcome-quest-grid"><span>Zoom in</span><span>Pick a marker</span><span>Follow the steps</span></div>
-        </div>
-        <p class="welcome-kicker">Learn history. Help write it.</p>
-      </div>
+      <section class="welcome-paths" aria-label="Choose an experience">
+        <article class="welcome-path welcome-path-roman">
+          <div class="welcome-path-copy">
+            <div class="welcome-path-overline">Roman World</div>
+            <h3>Roman Sites &amp; Roads</h3>
+            <p>Two thousand years of the Roman world, laid over the map as it stands today — roads, cities, and ruins where the empire actually reached.</p>
+            <button type="button" class="welcome-path-cta" onclick="chooseWelcomeExperience('roman')">Explore the Roman World <span aria-hidden="true">→</span></button>
+          </div>
+        </article>
 
-      <!-- ROMAN variant: shown on the Roman page (body.lock-roman). -->
-      <div class="wb-variant wb-roman">
-        <p>Two thousand years of the Roman world, laid over the map as it stands today — roads, cities, and ruins where the empire actually reached.</p>
-        <p>Many places carry an open <em>quest</em>: a gap in the scholarly record you can help close with a photo, a verified location, or a note.</p>
-
-        <div class="welcome-quest-preview">
-          <div class="welcome-quest-title">Quests are open gaps</div>
-          <div class="welcome-quest-grid"><span>Zoom in</span><span>Pick a marker</span><span>Follow the steps</span></div>
-        </div>
-
-        <div class="welcome-sources">
-          <div class="welcome-sources-title">Plan a Roman journey</div>
-          <p>Tap any place, then tap a second — VIA traces the route a Roman traveller would have taken and tells you how many days it took, in road, river, and sea. The travel model is <strong>ORBIS</strong>, Stanford's reconstruction of the Roman world.</p>
-          <div class="welcome-sources-title">Built on the scholarly record</div>
-          <p><strong>Pleiades</strong> for places, <strong>Itiner-e</strong> for the road network, <strong>ORBIS</strong> for travel — the same open gazetteers historians use. VIA just puts them on one map.</p>
-        </div>
-        <p>Contribute as you go: sign in to check in at the places you reach and help fill the gaps.</p>
-        <p class="welcome-kicker">Learn history. Help write it.</p>
-        <a class="welcome-cross-link" href="alexander-the-great-campaigns/">Following one life instead? Trace <strong>Alexander&rsquo;s Campaign</strong> <span aria-hidden="true">→</span></a>
-      </div>
-
-      <!-- ALEXANDER variant: shown on the campaign page (body.lock-alexander).
-           No check-in claim — the campaign is read-only by design. -->
-      <div class="wb-variant wb-alexander">
-        <p>Follow a single lifetime across the ancient world — from Pella to the Hyphasis and back to Babylon, some 20,000&nbsp;km in ten years.</p>
-        <p>Each stop is a turning point: a battle, a siege, a founded city. Step through them in order — and where a battlefield or march is disputed, VIA says so rather than feign certainty.</p>
-
-        <div class="welcome-sources">
-          <div class="welcome-sources-title">Trace Alexander&rsquo;s route</div>
-          <p>The campaign is hand-curated from the ancient historians — <strong>Arrian</strong>, <strong>Plutarch</strong>, <strong>Diodorus</strong> — with each stop anchored to a <strong>Pleiades</strong> place.</p>
-          <div class="welcome-sources-title">Built on the scholarly record</div>
-          <p>Every stop links back to <strong>Pleiades</strong> and the ancient sources, so you can check the ground under each claim.</p>
-        </div>
-        <p>Sign in to VIA — your account carries across both the campaign and the Roman map.</p>
-        <p class="welcome-kicker">A single life, mapped honestly.</p>
-        <a class="welcome-cross-link" href="../">Prefer the whole Roman world? Explore <strong>Roman Sites &amp; Roads</strong> <span aria-hidden="true">→</span></a>
-      </div>
+        <article class="welcome-path welcome-path-alexander">
+          <div class="welcome-path-copy">
+            <div class="welcome-path-overline">Alexander&rsquo;s Empire</div>
+            <h3>Alexander&rsquo;s Campaign</h3>
+            <p>Follow a single lifetime from Pella to the Hyphasis and back to Babylon — some 20,000&nbsp;km in ten years. Step through every turning point in order.</p>
+            <button type="button" class="welcome-path-cta" onclick="chooseWelcomeExperience('alexander')">Trace Alexander&rsquo;s Campaign <span aria-hidden="true">→</span></button>
+          </div>
+        </article>
+      </section>
     </div>
-    <button class="auth-primary" onclick="closeWelcome()">Begin Exploring</button>
+  </div>
+</div>
+
+<!-- Optional quest explainer, deliberately separate from the primary welcome path. -->
+<div id="welcome-quest-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-quest-title" onclick="if(event.target===this)closeWelcomeQuest()">
+  <div id="welcome-quest-card">
+    <button class="auth-close" onclick="closeWelcomeQuest()" aria-label="Back to welcome">✕</button>
+    <div class="welcome-quest-eyebrow">An optional challenge</div>
+    <h2 id="welcome-quest-title">Quests close open gaps</h2>
+    <p>Some ancient places still lack a usable photograph, a verified location, or a concise note in the scholarly record. VIA marks those gaps for travelers who want to help.</p>
+    <ol class="welcome-quest-steps">
+      <li><strong>Zoom in.</strong><span>Reveal quest markers among the documented places.</span></li>
+      <li><strong>Choose a place.</strong><span>Open its marker to see exactly what evidence is missing.</span></li>
+      <li><strong>Follow the steps.</strong><span>Visit, document what you find, and submit it with the requested context.</span></li>
+    </ol>
+    <p class="welcome-quest-note">Participation is entirely optional. You can explore every map, road, site, and campaign without taking on a quest.</p>
+    <button class="auth-primary" type="button" onclick="chooseWelcomeExperience('roman')">Explore Roman Quests</button>
+    <button class="auth-secondary" type="button" onclick="closeWelcomeQuest()">Back to Welcome</button>
   </div>
 </div>
 
@@ -538,7 +536,7 @@
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
 <script src="js/basemap.js?v=106"></script>
-<script src="js/app.js?v=159"></script>
+<script src="js/app.js?v=160"></script>
 
 </body>
 </html>

@@ -5329,14 +5329,43 @@ if (_legendEl) {
 // First-time arrivals land cold; this is the one-screen "what is this." Shown
 // once (gated on localStorage), reopenable any time by tapping the brand.
 function openWelcome() {
+  const quest = document.getElementById('welcome-quest-modal');
+  if (quest) quest.classList.remove('open');
   const el = document.getElementById('welcome-modal');
   if (el) el.classList.add('open');
 }
 function closeWelcome() {
   const el = document.getElementById('welcome-modal');
   if (el) el.classList.remove('open');
-  try { localStorage.setItem(pageKey('via.welcomed'), '1'); } catch (e) {}
+  try { localStorage.setItem('via.welcomed', '1'); } catch (e) {}
   showMobileGuide();
+}
+
+function openWelcomeQuest() {
+  const welcome = document.getElementById('welcome-modal');
+  const quest   = document.getElementById('welcome-quest-modal');
+  if (welcome) welcome.classList.remove('open');
+  if (quest) quest.classList.add('open');
+}
+
+function closeWelcomeQuest(returnToWelcome = true) {
+  const quest = document.getElementById('welcome-quest-modal');
+  if (quest) quest.classList.remove('open');
+  if (returnToWelcome) openWelcome();
+}
+
+// The deployed Roman and Alexander maps remain payload-focused sibling pages.
+// The welcome makes that split feel like one choice: stay put when the selected
+// experience is already loaded, otherwise follow the correct relative sibling URL.
+function chooseWelcomeExperience(mode) {
+  closeWelcomeQuest(false);
+  closeWelcome();
+  if (!VIA_LOCK) {
+    setMode(mode);
+    return;
+  }
+  if (mode === VIA_LOCK) return;
+  location.href = mode === 'roman' ? '../' : 'alexander-the-great-campaigns/';
 }
 
 function mobileGuideDismissed() {
@@ -5369,6 +5398,16 @@ function dismissMobileGuide(persist) {
 (function applyModeLock() {
   if (!VIA_LOCK) return;
   document.body.classList.add('lock-' + VIA_LOCK);
+  document.querySelectorAll('#mode-crosslink .mode-cross').forEach(link => {
+    const active = link.classList.contains('to-' + VIA_LOCK);
+    link.classList.toggle('active', active);
+    if (active) {
+      link.setAttribute('aria-current', 'page');
+      link.removeAttribute('href');
+    } else {
+      link.removeAttribute('aria-current');
+    }
+  });
   if (VIA_LOCK !== appMode) setMode(VIA_LOCK);
 })();
 
@@ -5401,7 +5440,7 @@ function dismissMobileGuide(persist) {
 (function maybeShowWelcome() {
   if (QA) return;                       // deterministic test boot: no modals/guide
   let welcomed = false;
-  try { welcomed = localStorage.getItem(pageKey('via.welcomed')) === '1'; } catch (e) {}
+  try { welcomed = localStorage.getItem('via.welcomed') === '1'; } catch (e) {}
   const autoSignin = /[?&]signin=1/.test(location.search);
   if (!welcomed && !autoSignin) openWelcome();
   else showMobileGuide();

@@ -103,20 +103,21 @@ body {
 
 #app-title {
   font-family: 'Cinzel', serif;
-  font-size: var(--fs-22);
+  font-size: var(--fs-28);
   font-weight: 700;
   letter-spacing: 6px;
   color: var(--gold);
-  text-shadow: 0 0 24px rgba(212,168,83,0.35);
+  text-shadow: 0 1px 18px rgba(17,10,0,0.85), 0 0 24px rgba(212,168,83,0.32);
   line-height: 1;
 }
 
 #app-subtitle {
-  font-size: var(--fs-11);
-  letter-spacing: 3px;
-  color: rgba(212,168,83,0.72);
+  font-size: var(--fs-12);
+  letter-spacing: 2.4px;
+  color: rgba(240,230,211,0.92);
   text-transform: uppercase;
-  margin-top: 4px;
+  margin-top: 5px;
+  text-shadow: 0 1px 12px rgba(10,5,0,0.95);
 }
 
 #topbar-search {
@@ -224,7 +225,7 @@ body {
 /* ── ERA TOGGLE ── */
 #era-toggle-wrap {
   position: fixed;
-  top: 64px;
+  top: 122px;
   left: 18px;
   z-index: 905;
   pointer-events: none;
@@ -291,32 +292,32 @@ body {
 /* ── MODE TABS (top-level experience switch) ── */
 #mode-tabs {
   position: fixed;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 76px;
+  left: 18px;
   z-index: 906;                 /* above era toggle (905); below transient overlays */
   display: flex;
-  gap: 4px;
-  padding: 4px;
+  gap: 0;
+  padding: 3px;
   background: rgba(10,5,0,0.9);
   border: 1px solid rgba(212,168,83,0.4);
-  border-radius: 30px;
+  border-radius: 5px;
   box-shadow: 0 4px 18px rgba(0,0,0,0.4);
   pointer-events: auto;
 }
 .mode-tab {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  justify-content: center;
+  min-width: 164px;
   border: none;
   background: transparent;
   color: rgba(212,168,83,0.82);
   font-family: 'Cinzel', serif;
-  font-size: var(--fs-11);
-  letter-spacing: 1.5px;
+  font-size: var(--fs-10);
+  letter-spacing: 1.2px;
   font-weight: 600;
-  padding: 7px 16px;
-  border-radius: 26px;
+  padding: 8px 15px;
+  border-radius: 3px;
   cursor: pointer;
   white-space: nowrap;
   transition: color .2s, background .2s;
@@ -346,19 +347,26 @@ body.mode-alexander #roman-legend { display: none; }
 #campaign-legend { display: none; }
 body.mode-alexander #campaign-legend { display: block; }
 
-/* ── PER-PAGE MODE LOCK (the split) ──
-   Each deployed page locks to one experience via body.lock-roman / lock-alexander
-   (set by applyModeLock from window.VIA_LOCK_MODE). Locked: hide the two-mode tab
-   switcher and show a single link to the sibling page instead. Unlocked (?lock=none
-   dev) leaves the tabs and keeps #mode-crosslink hidden. */
-#mode-crosslink { display: none; }
+/* ── PER-PAGE MODE NAVIGATION ──
+   The deployed experiences stay separate for payload focus, but their sibling
+   links render as one persistent two-tab control. */
+#mode-crosslink {
+  position: fixed;
+  top: 76px;
+  left: 18px;
+  z-index: 906;
+  display: none;
+  align-items: stretch;
+  padding: 3px;
+  background: rgba(10,5,0,0.92);
+  border: 1px solid rgba(212,168,83,0.45);
+  border-radius: 5px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.4);
+}
 body.lock-roman #mode-tabs,
 body.lock-alexander #mode-tabs { display: none; }
 body.lock-roman #mode-crosslink,
-body.lock-alexander #mode-crosslink { display: flex; justify-content: center; }
-/* Only the OTHER experience's link shows per page. */
-body.lock-roman .mode-cross.to-roman { display: none; }
-body.lock-alexander .mode-cross.to-alexander { display: none; }
+body.lock-alexander #mode-crosslink { display: flex; }
 
 /* ── PHASE 3: split-unlock subtractions ──
    On the Roman-locked page the Alexander layer chip + legend row are dead
@@ -371,18 +379,30 @@ body.lock-roman #legend-alexander-toggle { display: none; }
    the always-open legend, so it stays hidden there. Shown in the ≤640px block. */
 #topbar-key { display: none; }
 .mode-cross {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 6px 14px; border-radius: 999px;
-  font-family: 'Cinzel', serif; font-size: var(--fs-13); font-weight: 600;
-  color: var(--gold); text-decoration: none;
-  background: rgba(212,168,83,0.08);
-  border: 1px solid rgba(212,168,83,0.35);
-  transition: background 0.15s ease, border-color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 164px;
+  padding: 8px 15px;
+  border-radius: 3px;
+  font-family: 'Cinzel', serif;
+  font-size: var(--fs-10);
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  color: rgba(240,230,211,0.78);
+  text-decoration: none;
+  background: transparent;
+  transition: background 0.15s ease, color 0.15s ease;
 }
-.mode-cross:hover { background: rgba(212,168,83,0.16); border-color: rgba(212,168,83,0.6); }
-.mode-cross-glyph { font-size: var(--fs-13); line-height: 1; }
-.mode-cross.to-alexander .mode-cross-glyph { font-family: 'Cinzel', serif; font-weight: 700; }
-.mode-cross-arrow { opacity: 0.8; }
+.mode-cross:hover { color: var(--gold); background: rgba(212,168,83,0.1); }
+.mode-cross.active,
+body.lock-roman .mode-cross.to-roman,
+body.lock-alexander .mode-cross.to-alexander {
+  color: var(--ink);
+  background: linear-gradient(135deg, #e0b562, #b98532);
+  box-shadow: 0 2px 10px rgba(212,168,83,0.28);
+  pointer-events: none;
+}
 
 /* Welcome-modal copy variants: one per experience, selected by the lock. Default
    (unlocked dev) shows the dual variant; a locked page shows only its own. */
@@ -3005,4 +3025,451 @@ path.leaflet-interactive { outline: none !important; }
   .quest-banner-icon,
   #panel-quest-banner.visible { animation: none !important; }
   .pl-loading span { animation-duration: 2s !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   WELCOME REDESIGN — one shared prologue, two clear ways into VIA
+   ═══════════════════════════════════════════════════════════════════════════ */
+#welcome-modal {
+  background: rgba(15,7,1,0.76);
+  backdrop-filter: blur(5px) sepia(0.08);
+}
+
+#welcome-card {
+  width: min(1100px, calc(100vw - 56px));
+  height: min(690px, calc(100dvh - 40px));
+  max-height: none;
+  padding: 0;
+  overflow: hidden;
+  text-align: left;
+  background: #1a0d04;
+  border-color: rgba(224,181,98,0.62);
+  border-radius: 8px;
+  box-shadow: 0 22px 70px rgba(0,0,0,0.62), 0 0 0 1px rgba(90,43,8,0.5) inset;
+  transform: translateX(48px);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(224,181,98,0.62) rgba(23,11,3,0.92);
+}
+
+#welcome-card::-webkit-scrollbar,
+#welcome-quest-card::-webkit-scrollbar { width: 8px; }
+
+#welcome-card::-webkit-scrollbar-track,
+#welcome-quest-card::-webkit-scrollbar-track { background: rgba(23,11,3,0.92); }
+
+#welcome-card::-webkit-scrollbar-thumb,
+#welcome-quest-card::-webkit-scrollbar-thumb {
+  background: rgba(224,181,98,0.62);
+  border: 2px solid rgba(23,11,3,0.92);
+  border-radius: 999px;
+}
+
+#welcome-card > .auth-close {
+  z-index: 3;
+  top: 14px;
+  right: 14px;
+  background: rgba(26,13,4,0.78);
+}
+
+.welcome-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 34%) minmax(0, 1fr);
+  height: 100%;
+}
+
+.welcome-overview {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 30px 28px 26px;
+  background: linear-gradient(155deg, rgba(43,21,7,0.98), rgba(19,9,3,0.99));
+  border-right: 1px solid rgba(224,181,98,0.48);
+}
+
+.welcome-heading {
+  text-align: center;
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(224,181,98,0.3);
+}
+
+.welcome-heading .welcome-glyph {
+  margin: 0 0 7px;
+  font-size: var(--fs-44);
+  line-height: 1;
+  color: #e0b562;
+  text-shadow: 0 0 20px rgba(224,181,98,0.2);
+}
+
+.welcome-heading h2,
+#welcome-quest-title {
+  font-family: 'Cinzel', serif;
+  font-size: var(--fs-22);
+  line-height: 1.2;
+  letter-spacing: 2px;
+  color: #e6b968;
+}
+
+.welcome-heading p {
+  margin-top: 7px;
+  font-family: 'Cinzel', serif;
+  font-size: var(--fs-13);
+  font-style: italic;
+  color: rgba(238,214,176,0.78);
+}
+
+.welcome-how {
+  flex: 1 1 auto;
+  padding: 19px 2px 17px;
+}
+
+.welcome-how h3,
+.welcome-quest-name,
+.welcome-path-overline,
+.welcome-quest-eyebrow {
+  font-family: 'Cinzel', serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #d8a653;
+}
+
+.welcome-how h3 {
+  margin-bottom: 17px;
+  text-align: center;
+  font-size: var(--fs-11);
+}
+
+.welcome-how-item {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 17px;
+}
+
+.welcome-how-item:last-child { margin-bottom: 0; }
+
+.welcome-how-item strong {
+  font-size: var(--fs-13);
+  line-height: 1.35;
+  color: rgba(235,183,92,0.98);
+}
+
+.welcome-how-item span {
+  font-size: var(--fs-12);
+  line-height: 1.5;
+  color: rgba(240,224,198,0.75);
+}
+
+.welcome-quest-link {
+  width: 100%;
+  display: grid;
+  gap: 5px;
+  padding: 17px 10px 0;
+  border: 0;
+  border-top: 1px solid rgba(224,181,98,0.3);
+  background: transparent;
+  color: rgba(240,224,198,0.76);
+  text-align: center;
+  font: inherit;
+  cursor: pointer;
+}
+
+.welcome-quest-name { font-size: var(--fs-12); }
+.welcome-quest-link > span:not(.welcome-quest-name):not(.welcome-quest-action) { font-size: var(--fs-12); }
+.welcome-quest-action {
+  justify-self: center;
+  color: #e0b562;
+  font-size: var(--fs-13);
+  border-bottom: 1px solid rgba(224,181,98,0.48);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.welcome-quest-link:hover .welcome-quest-action,
+.welcome-quest-link:focus-visible .welcome-quest-action {
+  color: #f1ca7c;
+  border-bottom-color: #f1ca7c;
+}
+
+.welcome-paths {
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  min-width: 0;
+}
+
+.welcome-path {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 0;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center right;
+}
+
+.welcome-path + .welcome-path { border-top: 1px solid rgba(180,94,91,0.7); }
+
+.welcome-path-roman {
+  background-image:
+    linear-gradient(90deg, rgba(28,13,3,0.99) 4%, rgba(34,16,4,0.94) 54%, rgba(40,18,3,0.54) 100%),
+    url('../assets/welcome-roman.jpg');
+}
+
+.welcome-path-alexander {
+  background-image:
+    linear-gradient(90deg, rgba(30,14,10,0.99) 4%, rgba(38,18,19,0.94) 54%, rgba(63,29,31,0.55) 100%),
+    url('../assets/welcome-alexander.jpg');
+}
+
+.welcome-path-copy {
+  position: relative;
+  z-index: 1;
+  width: min(72%, 520px);
+  padding: 35px 42px;
+}
+
+.welcome-path-overline {
+  margin-bottom: 10px;
+  font-size: var(--fs-10);
+}
+
+.welcome-path h3 {
+  font-family: 'Cinzel', serif;
+  font-size: var(--fs-28);
+  line-height: 1.2;
+  letter-spacing: 1px;
+  color: #e9bd6e;
+}
+
+.welcome-path h3::after {
+  content: '';
+  display: block;
+  width: 86px;
+  margin-top: 15px;
+  border-top: 1px solid rgba(224,181,98,0.55);
+}
+
+.welcome-path-alexander h3::after { border-color: rgba(190,105,113,0.72); }
+
+.welcome-path p {
+  margin-top: 17px;
+  font-size: var(--fs-15);
+  line-height: 1.6;
+  color: rgba(244,231,209,0.9);
+}
+
+.welcome-path-cta {
+  min-width: min(100%, 360px);
+  margin-top: 22px;
+  padding: 12px 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border: 1px solid rgba(235,190,108,0.86);
+  border-radius: 4px;
+  background: linear-gradient(135deg, #e3b660, #bd8230);
+  color: #1a0d04;
+  font-family: 'Cinzel', serif;
+  font-size: var(--fs-11);
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.welcome-path-alexander .welcome-path-cta {
+  color: #f0c7a7;
+  background: rgba(106,52,53,0.78);
+  border-color: rgba(190,105,113,0.72);
+}
+
+.welcome-path-cta:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+#welcome-quest-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2110;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15,7,1,0.82);
+  backdrop-filter: blur(5px) sepia(0.08);
+}
+#welcome-quest-modal.open { display: flex; }
+
+#welcome-quest-card {
+  position: relative;
+  width: min(520px, 94vw);
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  padding: 38px 34px 30px;
+  background: linear-gradient(155deg, #2c1608, #170b03);
+  border: 1px solid rgba(224,181,98,0.56);
+  border-radius: 8px;
+  box-shadow: 0 22px 70px rgba(0,0,0,0.62);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(224,181,98,0.62) rgba(23,11,3,0.92);
+}
+
+.welcome-quest-eyebrow {
+  margin-bottom: 8px;
+  font-size: var(--fs-10);
+}
+
+#welcome-quest-title { margin: 0 36px 16px 0; }
+
+#welcome-quest-card > p {
+  font-size: var(--fs-14);
+  line-height: 1.6;
+  color: rgba(244,231,209,0.82);
+}
+
+.welcome-quest-steps {
+  list-style: none;
+  counter-reset: welcome-quest-step;
+  display: grid;
+  gap: 14px;
+  margin: 24px 0;
+}
+
+.welcome-quest-steps li {
+  counter-increment: welcome-quest-step;
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  column-gap: 10px;
+  padding-top: 13px;
+  border-top: 1px solid rgba(224,181,98,0.22);
+}
+
+.welcome-quest-steps li::before {
+  content: counter(welcome-quest-step);
+  grid-row: 1 / span 2;
+  width: 25px;
+  height: 25px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(224,181,98,0.5);
+  border-radius: 50%;
+  color: #e0b562;
+  font-family: 'Cinzel', serif;
+  font-size: var(--fs-11);
+}
+
+.welcome-quest-steps strong { color: #e8b965; font-size: var(--fs-13); }
+.welcome-quest-steps span { margin-top: 3px; color: rgba(244,231,209,0.72); font-size: var(--fs-12); line-height: 1.45; }
+#welcome-quest-card .welcome-quest-note { margin-bottom: 22px; color: rgba(244,231,209,0.66); font-size: var(--fs-12); }
+
+@media (max-width: 900px) and (min-width: 641px) {
+  #welcome-card {
+    width: calc(100vw - 32px);
+    transform: none;
+  }
+  .welcome-layout { grid-template-columns: 300px minmax(0, 1fr); }
+  .welcome-overview { padding: 26px 22px 22px; }
+  .welcome-path-copy { width: 86%; padding: 28px; }
+  .welcome-path h3 { font-size: var(--fs-22); }
+  .welcome-path p { font-size: var(--fs-13); }
+}
+
+@media (max-width: 640px) {
+  #app-brand {
+    max-width: 154px;
+    padding: 3px 4px;
+    margin: -3px -4px;
+  }
+  #app-title { font-size: var(--fs-22); letter-spacing: 4px; }
+  #app-subtitle {
+    max-width: 150px;
+    font-size: var(--fs-9);
+    letter-spacing: 0.9px;
+    color: rgba(240,230,211,0.94);
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  #mode-tabs,
+  #mode-crosslink {
+    top: calc(env(safe-area-inset-top, 0px) + 58px);
+    left: 10px;
+    right: 10px;
+    transform: none;
+    justify-content: center;
+    gap: 0;
+    padding: 2px;
+    border-radius: 5px;
+  }
+  .mode-tab,
+  .mode-cross {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 32px;
+    padding: 0 7px;
+    font-size: var(--fs-9);
+    letter-spacing: 0.45px;
+    border-radius: 3px;
+  }
+  #era-toggle-wrap {
+    top: calc(env(safe-area-inset-top, 0px) + 99px);
+    left: 10px;
+    right: 10px;
+  }
+
+  #welcome-modal {
+    align-items: flex-start;
+    padding: max(10px, env(safe-area-inset-top, 0px)) 10px max(10px, env(safe-area-inset-bottom, 0px));
+  }
+  #welcome-card {
+    width: 100%;
+    height: auto;
+    max-height: calc(100dvh - max(20px, env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)));
+    overflow-y: auto;
+    transform: none;
+  }
+  .welcome-layout {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+  }
+  .welcome-overview { display: contents; }
+  .welcome-heading {
+    order: 0;
+    padding: 26px 46px 21px;
+    background: linear-gradient(155deg, rgba(43,21,7,0.98), rgba(19,9,3,0.99));
+  }
+  .welcome-heading .welcome-glyph { font-size: var(--fs-38); }
+  .welcome-heading h2 { font-size: var(--fs-20); }
+  .welcome-paths {
+    order: 1;
+    display: grid;
+    grid-template-rows: none;
+  }
+  .welcome-path {
+    min-height: 300px;
+    border-top: 1px solid rgba(224,181,98,0.34);
+  }
+  .welcome-path-copy {
+    width: 86%;
+    padding: 34px 24px;
+  }
+  .welcome-path h3 { font-size: var(--fs-23); }
+  .welcome-path p { font-size: var(--fs-14); line-height: 1.55; }
+  .welcome-path-cta { min-width: 100%; font-size: var(--fs-10); letter-spacing: 1.25px; }
+  .welcome-how {
+    order: 2;
+    padding: 24px 22px 7px;
+    background: #1b0d04;
+    border-top: 1px solid rgba(224,181,98,0.34);
+  }
+  .welcome-how h3 { margin-bottom: 19px; }
+  .welcome-how-item { margin-bottom: 18px; }
+  .welcome-how-item strong { font-size: var(--fs-14); }
+  .welcome-how-item span { font-size: var(--fs-13); }
+  .welcome-quest-link {
+    order: 3;
+    width: auto;
+    margin: 0 22px 26px;
+    padding-top: 19px;
+  }
+  #welcome-quest-modal { align-items: flex-start; padding: 10px; }
+  #welcome-quest-card { width: 100%; max-height: calc(100dvh - 20px); padding: 34px 22px 24px; }
 }

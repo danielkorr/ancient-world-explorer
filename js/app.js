@@ -1448,6 +1448,13 @@ map.on('zoomend moveend', refreshNameLabels);
 // rectangle tracks the main map's viewport; clicking flies the main map there.
 // Its own fresh tile-layer instances — a Leaflet TileLayer belongs to one map.
 let empireInset = null;
+function syncEraToggleToInset() {
+  const wrap = document.getElementById('empire-inset');
+  const era = document.getElementById('era-toggle-wrap');
+  if (!wrap || !era || window.matchMedia('(max-width: 640px)').matches) return;
+  const gap = 8;
+  era.style.top = `${Math.round(wrap.offsetTop + wrap.offsetHeight + gap)}px`;
+}
 function buildEmpireInset() {
   const host = document.getElementById('empire-inset-map');
   if (!host || empireInset) return;
@@ -1481,12 +1488,14 @@ function buildEmpireInset() {
       const collapsed = wrap.classList.toggle('collapsed');
       toggle.textContent = collapsed ? '▸' : '▾';
       toggle.setAttribute('aria-label', collapsed ? 'Expand the empire inset' : 'Collapse the empire inset');
+      syncEraToggleToInset();
       if (!collapsed) setTimeout(() => insetMap.invalidateSize(), 0);
     });
   }
   // The host can be sized 0 at boot (just-laid-out flex/grid); settle it once.
   setTimeout(() => insetMap.invalidateSize(), 0);
   updateEmpireInset();   // frame + label for the current mode
+  syncEraToggleToInset();
 }
 
 // The inset auto-follows the active mode: Roman empire scale + "The Roman Empire"

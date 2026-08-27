@@ -56,7 +56,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=148">
+  <link rel="stylesheet" href="css/style.css?v=149">
 </head>
 <body>
 
@@ -144,16 +144,25 @@
         <div class="welcome-how" aria-labelledby="welcome-how-title">
           <h3 id="welcome-how-title">How VIA works</h3>
           <div class="welcome-how-item">
-            <strong>Ancient history on today&rsquo;s map.</strong>
-            <span>See roads, cities, ruins, and campaigns in their present geography.</span>
+            <img class="welcome-how-icon" src="assets/welcome-icon-world.png" alt="" aria-hidden="true">
+            <div class="welcome-how-copy">
+              <strong>Ancient history on today&rsquo;s map.</strong>
+              <span>See roads, cities, ruins, and campaigns in their present geography.</span>
+            </div>
           </div>
           <div class="welcome-how-item">
-            <strong>Plan Roman journeys with ORBIS.</strong>
-            <span>Tap one place, then another to estimate days by road, river, and sea.</span>
+            <img class="welcome-how-icon" src="assets/welcome-icon-column.png" alt="" aria-hidden="true">
+            <div class="welcome-how-copy">
+              <strong>Plan Roman journeys with ORBIS.</strong>
+              <span>Tap one place, then another to estimate days by road, river, and sea.</span>
+            </div>
           </div>
           <div class="welcome-how-item">
-            <strong>Built on the scholarly record.</strong>
-            <span>Pleiades for places, Itiner-e for roads, and ORBIS for travel.</span>
+            <img class="welcome-how-icon" src="assets/welcome-icon-sources.png" alt="" aria-hidden="true">
+            <div class="welcome-how-copy">
+              <strong>Built on the scholarly record.</strong>
+              <span>Pleiades for places, Itiner-e for roads, and ORBIS for travel.</span>
+            </div>
           </div>
         </div>
 
@@ -166,6 +175,7 @@
 
       <section class="welcome-paths" aria-label="Choose an experience">
         <article class="welcome-path welcome-path-roman">
+          <img class="welcome-path-emblem" src="assets/welcome-emblem-roman.png" alt="" aria-hidden="true">
           <div class="welcome-path-copy">
             <div class="welcome-path-overline">Roman World</div>
             <h3>Roman Sites &amp; Roads</h3>
@@ -175,6 +185,7 @@
         </article>
 
         <article class="welcome-path welcome-path-alexander">
+          <img class="welcome-path-emblem" src="assets/welcome-emblem-alexander.png" alt="" aria-hidden="true">
           <div class="welcome-path-copy">
             <div class="welcome-path-overline">Alexander&rsquo;s Empire</div>
             <h3>Alexander&rsquo;s Campaign</h3>
@@ -282,8 +293,8 @@
   <button class="ctrl-btn" id="btn-alexander" data-testid="alexander-layer-button" onclick="toggleLayer('alexander')">
     <span class="ctrl-icon" aria-hidden="true">A</span><div class="swatch-campaign"></div><span class="ctrl-label">Alexander</span>
   </button>
-  <button class="ctrl-btn" id="btn-names" data-testid="names-filter-button" onclick="toggleLayer('names')" title="Show ancient + modern place names on the map">
-    <span class="ctrl-icon" aria-hidden="true">🏷️</span><div class="swatch-name">Aa</div><span class="ctrl-label">Names</span>
+  <button class="ctrl-btn ctrl-btn-names" id="btn-names" data-testid="names-filter-button" onclick="toggleLayer('names')" title="Show place names in ancient and modern forms" aria-label="Show place names in ancient and modern forms">
+    <span class="ctrl-icon" aria-hidden="true">🏷️</span><div class="swatch-name">Aa</div><span class="ctrl-label"><span class="ctrl-label-title">Place Names</span><span class="ctrl-label-detail">Ancient + modern</span></span>
   </button>
   <!-- Detail slider removed (Phase 3): map detail is derived from zoom
        (detailLevelForZoom / syncDetailToZoom in app.js), not set by hand. -->

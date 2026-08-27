@@ -15,19 +15,21 @@
 
 **Findings**
 
-- No actionable P0, P1, or P2 findings remain.
+- No actionable P0, P1, or P2 findings remain. The requested ceremonial detail is implemented with five transparent raster illustrations: three How VIA Works icons plus Roman SPQR and Alexander sunburst emblems.
 - [P3] Decorative density is intentionally lighter than the selected concept.
   Location: `#welcome-card`, especially the How VIA Works column and the two experience panels.
   Evidence: the source includes a Roman crest, Alexander sunburst, and three decorative explanatory icons; the implementation preserves the same hierarchy, copy intent, warm palette, and generated photographic backgrounds without those extra ornaments.
   Impact: the implementation feels slightly less ceremonial, but it is also less visually busy and better matches the user's request for warmth and detail without overwhelm.
   Fix: optional only—add separately generated or licensed decorative assets if a more ceremonial treatment is wanted later.
 
+The former P3 note about missing ceremonial ornaments is resolved by the five new image assets listed above.
+
 **Required fidelity surfaces**
 
 - Fonts and typography: Cinzel remains the display face and the existing sans-serif body stack remains the reading face. Heading hierarchy, uppercase overlines, letter spacing, line height, and mobile wrapping are clear. The Roman and Alexander titles retain distinct but balanced weight.
 - Spacing and layout rhythm: the desktop 34/66 split, two equal destination rows, border rhythm, card radii, and CTA placement match the source structure. Mobile changes to a deliberate heading → Roman → Alexander → How VIA Works → optional Quests reading order with no horizontal overflow.
 - Colors and visual tokens: warm bronze, dark umber, parchment text, and the restrained Alexander burgundy are consistent with the selected direction. Contrast remains strong against the image overlays.
-- Image quality and asset fidelity: `assets/welcome-roman.jpg` and `assets/welcome-alexander.jpg` are purpose-generated raster assets, correctly cropped and darkened for overlaid text. No placeholder boxes, emoji imagery, handcrafted SVGs, or CSS-drawn illustrations were substituted.
+- Image quality and asset fidelity: `assets/welcome-roman.jpg` and `assets/welcome-alexander.jpg` are purpose-generated raster assets, correctly cropped and darkened for overlaid text. The five transparent gold illustrations are purpose-generated raster assets, sized responsively, with no placeholder boxes, emoji imagery, handcrafted SVGs, or CSS-drawn illustrations substituted.
 - Copy and content: both primary choices use the approved short explanations. How VIA Works is present on the first landing surface. Quests are explicitly optional and moved into a separate explainer.
 
 **Full-view comparison evidence**

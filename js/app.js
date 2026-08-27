@@ -5442,7 +5442,12 @@ function dismissMobileGuide(persist) {
   let welcomed = false;
   try { welcomed = localStorage.getItem('via.welcomed') === '1'; } catch (e) {}
   const autoSignin = /[?&]signin=1/.test(location.search);
-  if (!welcomed && !autoSignin) openWelcome();
+  // The root URL is the product's front door, so it should remain an explorable
+  // landing page even after a visitor has previously dismissed the intro. The
+  // focused Roman/Alexander pages stay direct-entry map views via VIA_LOCK.
+  const isLandingRoute = !VIA_LOCK &&
+    (location.pathname === '/' || /\/index\.html$/i.test(location.pathname));
+  if ((isLandingRoute || !welcomed) && !autoSignin) openWelcome();
   else showMobileGuide();
 })();
 

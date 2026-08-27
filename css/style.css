@@ -225,7 +225,7 @@ body {
 /* ── ERA TOGGLE ── */
 #era-toggle-wrap {
   position: fixed;
-  top: 122px;
+  top: 154px;
   left: 18px;
   z-index: 905;
   pointer-events: none;
@@ -2997,8 +2997,7 @@ path.leaflet-interactive { outline: none !important; }
 #empire-inset {
   position: fixed;
   left: 18px;
-  top: 112px;            /* below the era toggle (top:64 + ~36 tall); the
-                            bottom-left corner belongs to #bottom-controls */
+  top: 114px;            /* stacked between the experience tabs and era toggle */
   width: 184px;
   z-index: 900;
   background: var(--ink-panel);

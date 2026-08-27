@@ -5456,7 +5456,7 @@ function dismissMobileGuide(persist) {
   // landing page even after a visitor has previously dismissed the intro. The
   // focused Roman/Alexander pages stay direct-entry map views via VIA_LOCK.
   const isLandingRoute = !VIA_LOCK &&
-    (location.pathname === '/' || /\/index\.html$/i.test(location.pathname));
+    !/\/alexander-the-great-campaigns(?:\/|$)/i.test(location.pathname);
   if ((isLandingRoute || !welcomed) && !autoSignin && !directMap) openWelcome();
   else showMobileGuide();
 })();

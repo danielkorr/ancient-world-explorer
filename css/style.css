@@ -2262,13 +2262,13 @@ path.leaflet-interactive { outline: none !important; }
   #topbar-key {
     display: inline-flex; align-items: center; gap: 5px;
     padding: 5px 10px; border-radius: 999px;
-    background: var(--ink-panel); color: var(--gold);
-    border: 1px solid var(--gold-dim);
+    background: var(--gold); color: var(--ink);
+    border: 1px solid var(--gold);
     font-family: 'Cinzel', serif; font-size: var(--fs-11); font-weight: 600;
     letter-spacing: 0.4px; line-height: 1; cursor: pointer;
   }
   #topbar-key svg { display: block; flex: 0 0 auto; }
-  #topbar-key[aria-expanded="true"] { background: var(--gold); color: var(--ink); }
+  #topbar-key[aria-expanded="true"] { background: var(--ink-panel); color: var(--gold); border-color: var(--gold-dim); }
   /* Search moved off the top bar into the dock (see #dock-search-panel). The
      input + results are reparented into the search overlay at boot, so here we
      reset the topbar-search positioning to flow inside that panel. */

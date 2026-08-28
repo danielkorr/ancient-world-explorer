@@ -52,6 +52,11 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 
+  <!-- CARTO vector basemap support (Leaflet remains the app's map/overlay engine). -->
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css"/>
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.0.22/leaflet-maplibre-gl.js"></script>
+
   <!-- Supabase client (loaded as global; we wire it in js/auth.js) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4"></script>
 
@@ -548,7 +553,7 @@
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
 <script src="../js/basemap.js?v=107"></script>
-<script src="../js/app.js?v=165"></script>
+<script src="../js/app.js?v=166"></script>
 
 </body>
 </html>

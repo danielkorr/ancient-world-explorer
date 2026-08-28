@@ -143,10 +143,47 @@ const ancientFallbackLayer  = _ancientFloor.carto;   // keyless sepia CARTO base
 const ancientStamenLayer    = _ancientFloor.stamen;  // Stamen on top (Stadia)
 const ancientFallbackLabels = _ancientFloor.labels;  // null for terrain
 
-const modernLayer = L.tileLayer(
+const modernRasterFallback = L.tileLayer(
   'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png' + (window.VIA_CARTO_KEY_PARAM || ''),
   { maxZoom:19, attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>' }
 );
+
+// CARTO's current Voyager basemap is vector-first. Keep the keyed PNG layer
+// underneath as a graceful fallback for browsers/WebGL contexts that cannot
+// initialize MapLibre (or if a style/tile request fails).
+const modernVectorStyle = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json' + (window.VIA_CARTO_KEY_PARAM || '');
+const modernLayer = L.maplibreGL({
+  style: modernVectorStyle,
+  interactive: false,
+  pane: 'tilePane',
+  transformRequest: (url) => {
+    if (!window.VIA_CARTO_KEY || !/basemaps\.carto(?:cdn)?\.com/i.test(url)) return { url };
+    if (/[?&]key=/.test(url)) return { url };
+    return { url: url + (url.includes('?') ? '&' : '?') + 'key=' + encodeURIComponent(window.VIA_CARTO_KEY) };
+  }
+});
+let modernVectorReady = false;
+let modernVectorFailed = false;
+
+function setModernOpacity(value) {
+  modernRasterFallback.setOpacity(value);
+  const container = modernLayer.getContainer && modernLayer.getContainer();
+  if (container) container.style.opacity = value;
+}
+
+function installModernVectorFallback() {
+  const gl = modernLayer.getMaplibreMap && modernLayer.getMaplibreMap();
+  if (!gl || modernVectorFailed) return;
+  gl.once('load', () => { modernVectorReady = true; });
+  gl.on('error', (event) => {
+    if (modernVectorReady || modernVectorFailed) return;
+    modernVectorFailed = true;
+    if (map.hasLayer(modernLayer)) map.removeLayer(modernLayer);
+    if (!map.hasLayer(modernRasterFallback)) map.addLayer(modernRasterFallback);
+    modernRasterFallback.setOpacity(1);
+    console.warn('[VIA] CARTO vector basemap failed; using keyed raster fallback.', event && event.error);
+  });
+}
 
 // Boot the ancient stack bottom→top: sepia CARTO base, Stamen on top of it,
 // (Toner labels for watercolor), then DARE on top. Leaflet stacks tile layers
@@ -203,6 +240,9 @@ window.VIA.map = map;
 // Leaflet container — unlike bottom-right, that container isn't display:none'd on
 // mobile — then CSS fixes it above the dock.
 L.control.zoom({ position: 'topright' }).addTo(map);
+map.on('layeradd', (event) => {
+  if (event.layer === modernLayer) installModernVectorFallback();
+});
 
 // QA / test mode (?qa=1). A deterministic fixture state for headless Playwright
 // journeys: it SKIPS the ~14,800-segment Itiner-e canvas build (the layer that
@@ -4328,6 +4368,7 @@ function setEra(era) {
 
   if (era === 'ancient') {
     if (map.hasLayer(modernLayer)) map.removeLayer(modernLayer);
+    if (map.hasLayer(modernRasterFallback)) map.removeLayer(modernRasterFallback);
     if (!map.hasLayer(ancientFallbackLayer)) map.addLayer(ancientFallbackLayer);
     if (!map.hasLayer(ancientStamenLayer))   map.addLayer(ancientStamenLayer);
     if (ancientFallbackLabels && !map.hasLayer(ancientFallbackLabels)) map.addLayer(ancientFallbackLabels);
@@ -4337,7 +4378,9 @@ function setEra(era) {
     if (map.hasLayer(ancientStamenLayer))   map.removeLayer(ancientStamenLayer);
     if (map.hasLayer(ancientFallbackLayer)) map.removeLayer(ancientFallbackLayer);
     if (ancientFallbackLabels && map.hasLayer(ancientFallbackLabels)) map.removeLayer(ancientFallbackLabels);
-    if (!map.hasLayer(modernLayer))         map.addLayer(modernLayer);
+    if (!modernVectorFailed && !map.hasLayer(modernRasterFallback)) map.addLayer(modernRasterFallback);
+    if (!modernVectorFailed && !map.hasLayer(modernLayer)) map.addLayer(modernLayer);
+    if (modernVectorFailed && !map.hasLayer(modernRasterFallback)) map.addLayer(modernRasterFallback);
   }
   updateBasemaps();  // re-apply zoom-staged opacity + satellite reveal for the new era
   raiseOverlays();
@@ -5202,7 +5245,7 @@ function updateBasemaps() {
     ancientStamenLayer.setOpacity(1);
     if (ancientFallbackLabels) ancientFallbackLabels.setOpacity(1);
   } else {
-    modernLayer.setOpacity(1);
+    setModernOpacity(1);
   }
 }
 

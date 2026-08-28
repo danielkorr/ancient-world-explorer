@@ -144,7 +144,7 @@ const ancientStamenLayer    = _ancientFloor.stamen;  // Stamen on top (Stadia)
 const ancientFallbackLabels = _ancientFloor.labels;  // null for terrain
 
 const modernLayer = L.tileLayer(
-  'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+  'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png' + (window.VIA_CARTO_KEY_PARAM || ''),
   { maxZoom:19, attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>' }
 );
 
@@ -1459,7 +1459,7 @@ function buildEmpireInset() {
   const host = document.getElementById('empire-inset-map');
   if (!host || empireInset) return;
   const insetBase = L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', { maxZoom: 11 });
+    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png' + (window.VIA_CARTO_KEY_PARAM || ''), { maxZoom: 11 });
   const insetDare = L.tileLayer(
     'https://dh.gu.se/tiles/imperium/{z}/{x}/{y}.png', { maxNativeZoom: 11, maxZoom: 11 });
   const insetMap = L.map(host, {

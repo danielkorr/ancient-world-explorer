@@ -1,7 +1,12 @@
 // basemap.js — ANCIENT-MODE FLOOR for VIA (sepia CARTO base + Stamen on top)
-// Domain auth only: NO API key in code. localhost / 127.0.0.1 are keyless;
-// production is authorized via danielkorr.github.io (whitelisted in the Stadia
-// dashboard). A key in client code would be public on deploy and is unnecessary.
+
+// CARTO's PNG basemap service now requires a key. This is intentionally a
+// browser-visible key, restricted by CARTO to VIA's development and Pages
+// hostnames; it is not a server credential.
+window.VIA_CARTO_KEY = 'cb1_2enb_1_2b1e6e38177c786ccae7ff40';
+window.VIA_CARTO_KEY_PARAM = '?key=' + encodeURIComponent(window.VIA_CARTO_KEY);
+// The key is intentionally browser-visible and should remain restricted in
+// CARTO to VIA's development and GitHub Pages hostnames.
 //
 // The ANCIENT-mode floor beneath the DARE atlas is TWO stacked layers:
 //   1. a KEYLESS sepia-tinted CARTO light_all base that ALWAYS renders, and
@@ -54,7 +59,7 @@
     const cfg = BASEMAPS[ACTIVE_ANCIENT_FLOOR];
 
     const carto = L.tileLayer(
-      'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+      'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png' + window.VIA_CARTO_KEY_PARAM,
       {
         maxZoom: 19,
         className: 'ancient-sepia-floor',

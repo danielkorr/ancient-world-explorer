@@ -3350,6 +3350,33 @@ path.leaflet-interactive { outline: none !important; }
   border-color: rgba(190,105,113,0.72);
 }
 
+.welcome-research-link {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin: 14px 20px 20px;
+  padding: 13px 15px;
+  border: 1px solid rgba(212,168,83,0.34);
+  color: rgba(240,230,211,0.84);
+  background: rgba(212,168,83,0.06);
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+.welcome-research-link:hover,
+.welcome-research-link:focus-visible {
+  border-color: var(--gold);
+  background: rgba(212,168,83,0.12);
+  transform: translateY(-1px);
+}
+.welcome-research-mark {
+  color: var(--gold);
+  font: 27px/1 'Instrument Serif', Georgia, serif;
+}
+.welcome-research-copy { display: grid; gap: 2px; min-width: 0; }
+.welcome-research-copy .welcome-path-overline { margin: 0; color: var(--gold); }
+.welcome-research-copy strong { color: rgba(244,231,209,0.96); font: 600 var(--fs-13)/1.2 Inter, sans-serif; }
+.welcome-research-copy > span:last-child { color: rgba(244,231,209,0.62); font-size: var(--fs-11); line-height: 1.4; }
+.welcome-research-arrow { margin-left: auto; color: var(--gold); font-size: 18px; }
+
 .welcome-path-cta:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
 #welcome-quest-modal {

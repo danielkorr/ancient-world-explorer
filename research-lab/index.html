@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Go behind the map with the VIA Research Lab. Follow sources, disagreements, and open questions in the ancient world.">
+  <title>Research Lab | VIA Ancient World Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    :root { --ink:#10171b; --ink-2:#172329; --paper:#e9e0cf; --paper-2:#f3ecdf; --gold:#d0a24c; --rust:#b96e50; --muted:#a6b1ad; --line:rgba(233,224,207,.18); }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--paper); background:var(--ink); font-family:'DM Sans',sans-serif; }
+    a { color:inherit; text-decoration:none; }
+    .shell { max-width:1240px; margin:0 auto; padding:24px 42px 80px; }
+    .top { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); padding-bottom:18px; }
+    .brand { font-family:'Instrument Serif',serif; font-size:25px; letter-spacing:.03em; }
+    .brand span { color:var(--gold); }
+    .eyebrow, .mono { font:500 11px 'DM Mono',monospace; text-transform:uppercase; letter-spacing:.14em; }
+    .eyebrow { color:var(--gold); }
+    .back { color:var(--muted); font-size:13px; }
+    .hero { min-height:560px; display:grid; grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr); align-items:center; gap:72px; position:relative; }
+    .hero:after { content:''; position:absolute; right:5%; top:17%; width:290px; height:290px; border:1px solid rgba(208,162,76,.24); border-radius:50%; box-shadow:0 0 0 26px rgba(208,162,76,.025),0 0 0 52px rgba(208,162,76,.02); pointer-events:none; }
+    h1 { font:normal clamp(62px,8vw,116px)/.88 'Instrument Serif',serif; letter-spacing:-.045em; margin:20px 0 28px; max-width:760px; }
+    h1 em { color:var(--gold); }
+    .lead { color:var(--muted); font-size:18px; line-height:1.6; max-width:530px; }
+    .cta { display:inline-flex; align-items:center; gap:14px; margin-top:28px; padding:13px 18px; background:var(--gold); color:var(--ink); font-weight:600; font-size:13px; }
+    .cta:after { content:'↓'; font-size:18px; }
+    .hero-note { justify-self:end; max-width:330px; position:relative; z-index:1; }
+    .question { font:normal 42px/1.02 'Instrument Serif',serif; color:var(--paper-2); margin:22px 0; }
+    .rule { height:1px; background:var(--gold); opacity:.6; width:72px; }
+    .note-copy { color:var(--muted); font-size:14px; line-height:1.7; }
+    .section { border-top:1px solid var(--line); padding-top:30px; margin-top:34px; }
+    .section-head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:22px; }
+    h2 { font:normal 38px/1 'Instrument Serif',serif; margin:0; }
+    .section-head p { color:var(--muted); font-size:13px; margin:0; }
+    .steps { display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--line); }
+    .step { min-height:155px; background:var(--ink-2); padding:20px; }
+    .step .num { color:var(--gold); font:11px 'DM Mono',monospace; }
+    .step h3 { font:normal 25px 'Instrument Serif',serif; margin:38px 0 8px; }
+    .step p { color:var(--muted); font-size:12px; line-height:1.45; margin:0; }
+    .dossier { display:grid; grid-template-columns:.9fr 1.1fr; background:var(--paper-2); color:var(--ink); }
+    .dossier-intro { padding:38px; background:#d9cfbd; }
+    .dossier-intro h2 { font-size:52px; margin:18px 0; }
+    .dossier-intro p { color:#53605e; line-height:1.6; font-size:14px; }
+    .stamp { display:inline-block; border:1px solid #9b7651; color:#8d6044; padding:5px 8px; font:10px 'DM Mono',monospace; text-transform:uppercase; letter-spacing:.1em; }
+    .dossier-body { padding:38px; }
+    .dossier-body h3 { font:600 12px 'DM Mono',monospace; text-transform:uppercase; letter-spacing:.12em; color:#8d6044; margin:0 0 14px; }
+    .dossier-body p { font:normal 22px/1.3 'Instrument Serif',serif; margin:0 0 28px; max-width:580px; }
+    .evidence { border-top:1px solid rgba(16,23,27,.2); padding-top:15px; display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    .evidence div { font-size:12px; line-height:1.5; color:#53605e; }
+    .evidence strong { display:block; color:var(--ink); font-weight:600; }
+    .honesty { display:grid; grid-template-columns:1fr 1fr; gap:30px; align-items:start; }
+    .honesty h2 { font-size:48px; max-width:420px; }
+    .honesty ul { list-style:none; padding:0; margin:0; border-top:1px solid var(--line); }
+    .honesty li { padding:15px 0 15px 24px; border-bottom:1px solid var(--line); color:var(--muted); font-size:14px; position:relative; }
+    .honesty li:before { content:'×'; color:var(--rust); position:absolute; left:0; font:20px 'Instrument Serif',serif; }
+    .observatory { display:flex; justify-content:space-between; gap:30px; align-items:center; border:1px solid rgba(208,162,76,.35); padding:22px 24px; margin-top:44px; }
+    .observatory p { color:var(--muted); font-size:13px; line-height:1.5; margin:5px 0 0; max-width:650px; }
+    .observatory .mono { color:var(--gold); white-space:nowrap; }
+    .footer-line { margin-top:52px; display:flex; justify-content:space-between; gap:24px; color:var(--muted); font-size:12px; line-height:1.5; }
+    @media (max-width:760px) { .shell { padding:18px 20px 50px; } .hero { min-height:640px; display:block; padding-top:90px; } .hero:after { right:4%; top:10%; width:210px; height:210px; } h1 { font-size:70px; } .hero-note { margin-top:76px; max-width:290px; } .steps, .dossier, .honesty { grid-template-columns:1fr; } .steps { display:block; background:none; } .step { border-bottom:1px solid var(--line); } .step h3 { margin-top:22px; } .dossier-intro, .dossier-body { padding:26px; } .dossier-intro h2 { font-size:44px; } .section-head { display:block; } .section-head p { margin-top:8px; } .observatory { display:block; } .observatory .mono { display:block; margin-top:12px; white-space:normal; } .footer-line { display:block; } }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="top"><div class="brand">VIA <span>/</span> Research Lab</div><a class="back" href="../?map=1">← Return to the map</a></header>
+    <section class="hero">
+      <div>
+        <div class="eyebrow">A public window into the work</div>
+        <h1>Go behind<br>the <em>map.</em></h1>
+        <p class="lead">The map is the starting point. The Research Lab follows the sources, disagreements, and open questions that make a historical place worth studying.</p>
+        <a class="cta" href="#dossier">Follow one question</a>
+      </div>
+      <aside class="hero-note">
+        <div class="rule"></div>
+        <div class="question">How do we know where Alexander actually fought?</div>
+        <p class="note-copy">Not every answer is a pin. Some are a trail of ancient texts, modern scholarship, archaeological leads, and honest uncertainty.</p>
+      </aside>
+    </section>
+    <section class="section">
+      <div class="section-head"><h2>Watch a claim take shape.</h2><p>One question. Five moves.</p></div>
+      <div class="steps">
+        <article class="step"><div class="num">01 / DISCOVER</div><h3>Find a place</h3><p>A name, a coordinate, or a question opens the file.</p></article>
+        <article class="step"><div class="num">02 / GATHER</div><h3>Read the record</h3><p>Texts, gazetteers, scholarship, and public archaeology sources enter the trail.</p></article>
+        <article class="step"><div class="num">03 / COMPARE</div><h3>Lay out the gaps</h3><p>Conflicts stay visible. Similar names do not become proof.</p></article>
+        <article class="step"><div class="num">04 / REVIEW</div><h3>Ask what holds</h3><p>Human judgments qualify, exclude, or leave a lead pending.</p></article>
+        <article class="step"><div class="num">05 / PRESERVE</div><h3>Keep the trail</h3><p>The next reader can see what was used, and what remains unresolved.</p></article>
+      </div>
+    </section>
+    <section class="section" id="dossier">
+      <div class="section-head"><h2>A dossier, opened.</h2><p>Alexander / Granicus River</p></div>
+      <article class="dossier">
+        <div class="dossier-intro"><span class="stamp">Research dossier · example</span><h2>The crossing is not the conclusion.</h2><p>A dossier brings the evidence together without collapsing different kinds of knowledge into one confident sentence.</p></div>
+        <div class="dossier-body"><h3>Executive synthesis</h3><p>Ancient accounts place Alexander at the Granicus, but the exact crossing and battlefield geography remain matters of interpretation.</p><div class="evidence"><div><strong>Source-supported</strong> Ancient narratives consistently describe a river crossing and battle.</div><div><strong>Qualified</strong> Modern location proposals do not agree on every geographic detail.</div><div><strong>Research lead</strong> Public archaeology records suggest places to inspect, not proof of association.</div><div><strong>Open question</strong> Which physical features best fit the accounts and later landscape?</div></div></div>
+      </article>
+    </section>
+    <section class="section honesty">
+      <h2>What the Lab refuses to do.</h2>
+      <ul><li>Turn a search result into proof.</li><li>Erase disagreement to make a cleaner story.</li><li>Present machine confidence as historical truth.</li><li>Hide the trail from the next reader.</li></ul>
+    </section>
+    <section class="observatory"><div><div class="eyebrow">The working Observatory</div><p>The review workspace currently runs locally while the public dossier experience is being prepared. The evidence boundary is real before the interface is public.</p></div><span class="mono">PUBLIC DOSSIERS / NEXT</span></section>
+    <div class="footer-line"><span>Nothing here silently becomes fact.</span><span>The Lab begins with Alexander's campaign and grows from there.</span></div>
+  </main>
+</body>
+</html>

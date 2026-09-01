@@ -20,6 +20,44 @@ Alexander's campaign, a major Roman city, and a research question about how thos
 historical layers relate. VIA should let the visitor move between those narratives
 without losing the place.
 
+## Core idea: the many historical lives of a place
+
+Every site, city, road, battlefield, and region should be treated as a living
+historical record. "Living" does not imply uninterrupted continuity or a single
+unchanging identity. It means that a place gathers layers of human activity, memory,
+interpretation, and evidence across time.
+
+The visitor's anchor is always **this place**. Adventures are different historical
+lenses on it, and the Research Lab is the evidence layer that helps those lenses meet:
+
+```text
+Place -> historical lens -> evidence -> another historical lens
+```
+
+This is deliberately place-centered rather than adventure-centered. Alexandria can
+have a life in the age of Alexander, another under the Ptolemies, and another as a
+Roman metropolis. Carthage can connect Phoenician, Punic, and Roman layers. Cannae
+can connect Hannibal's campaign, Roman memory, and modern archaeological debate.
+
+The phrase **many historical lives** echoes the human-centered tradition of Plutarch's
+*Lives* while giving VIA a distinctive place-centered voice. It is suitable for curious
+visitors, but also accurately signals the scholarly reality that places have layered
+chronologies, changing identities, competing sources, and inherited memory.
+
+The guiding product sentence is:
+
+> Every journey begins with a place. The Research Lab reveals everything that place
+> has carried through history.
+
+The corresponding experience model is:
+
+> **The map shows where. The adventures show when and why. The Research Lab shows how
+> we know.**
+
+This principle should guide future narratives, including Hannibal and the Punic Wars,
+Caesar's campaigns, and later historical layers. Users should feel that they are
+following one place through time, not being bounced between separate applications.
+
 ## Why this exists
 
 VIA currently has strong experiences for seeing historical places and following

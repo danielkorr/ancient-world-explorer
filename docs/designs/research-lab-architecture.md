@@ -15,6 +15,11 @@ ecosystem with three distinct rooms:
 
 The map is the starting point. The Lab is the evidence journey.
 
+The same place may belong to more than one story. Alexandria can be a city in
+Alexander's campaign, a major Roman city, and a research question about how those
+historical layers relate. VIA should let the visitor move between those narratives
+without losing the place.
+
 ## Why this exists
 
 VIA currently has strong experiences for seeing historical places and following
@@ -77,6 +82,56 @@ place or claim:
 
 These links should open a specific dossier or question, not only the Lab homepage.
 
+## Narrative bridges
+
+Narrative bridges are first-class navigation inside descriptive panels. They are not
+generic "related content" links and they should never imply that two records are the
+same merely because they share a name or are geographically close.
+
+### Place panels
+
+When a reliable identity join exists, a site or campaign stop should expose the other
+historical view directly:
+
+- Alexander stop: **See Alexandria in the Roman World**
+- Roman site: **Alexander was here**
+- Either view: **Follow the evidence behind this place**
+
+The preferred join is a shared Pleiades identifier. A proximity match is acceptable only
+where the existing data model already treats the match as a meaningful twin, and the
+label should describe the relationship rather than claim identity.
+
+The current application already has bidirectional Roman/Alexander panel links for the
+overlapping place set. The next step is to make the pattern visually and verbally
+consistent, then add the Research Lab action beside those existing world-to-world links.
+
+### Road panels
+
+Roads do not automatically have an Alexander twin. A road panel should therefore bridge
+through meaningful places and regions, not fabricate a shared entity:
+
+- **Places along this road** can open a Roman site panel.
+- A nearby Alexander stop can be labeled **Nearby in Alexander's campaign**, only when
+  the relationship is useful and geographically defensible.
+- A matching Research Lab dossier can be labeled **Why this place or route matters**.
+
+The road panel should not say that Alexander traveled a Roman road unless a curated
+source explicitly supports that claim. This distinction protects the connective tissue
+from becoming a false-continuity machine.
+
+### Bridge behavior
+
+Every bridge should preserve orientation:
+
+- move to the destination narrative at the same place
+- keep the visitor's ability to return with one obvious action
+- retain the relevant year, mode, or question in the destination context
+- avoid opening a new browser tab for internal VIA movement
+
+On mobile, this should be a prominent panel action, not a tiny inline link. On desktop,
+it can be a quiet action group with the Research Lab link visually distinct as the deeper
+contextual step.
+
 ## Reverse links
 
 Every public dossier should offer a route back to the map:
@@ -90,6 +145,15 @@ The visitor should be able to move repeatedly through this loop:
 ```text
 map marker -> evidence question -> dossier -> locate on map -> another question
 ```
+
+For a place represented in multiple narratives, the complete loop becomes:
+
+```text
+Alexander place -> Roman place -> Research dossier -> Alexander place
+```
+
+This is the core connective-tissue behavior. The visitor is not switching between
+unrelated pages. They are rotating the same historical place to see another layer.
 
 ## URL contract
 
@@ -166,6 +230,17 @@ Use Alexander first because the Lab already has a 38-stop research run.
 - Add reverse links from each dossier to the campaign map.
 - Keep the link language question-led, not technical.
 
+### Phase 2b: narrative bridge pass
+
+Make the existing Roman/Alexander cross-mode links feel like one system rather than an
+isolated feature.
+
+- Audit every current place twin and its label.
+- Add the Research Lab action where a dossier or research question exists.
+- Add explicit return behavior for map-to-Lab-to-map movement.
+- Add road-panel bridges through nearby places and research questions, with conservative
+  language and no unsupported historical continuity.
+
 ### Phase 3: public read-only dossiers
 
 Publish selected dossiers as visitor-friendly static content. Each dossier should show:
@@ -210,4 +285,3 @@ the hosting, authentication, moderation, and state-retention model are settled.
 The first version succeeds if a visitor who came to explore a map marker leaves with a
 better question than they arrived with, and can move naturally between the place and the
 evidence behind it.
-

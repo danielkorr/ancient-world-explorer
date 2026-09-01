@@ -52,6 +52,9 @@
     .evidence { border-top:1px solid rgba(16,23,27,.2); padding-top:15px; display:grid; grid-template-columns:1fr 1fr; gap:18px; }
     .evidence div { font-size:12px; line-height:1.5; color:#53605e; }
     .evidence strong { display:block; color:var(--ink); font-weight:600; }
+    .dossier-links { display:flex; flex-wrap:wrap; gap:10px; margin-top:28px; }
+    .dossier-links a { border:1px solid rgba(16,23,27,.28); padding:10px 12px; color:var(--ink); font:500 11px 'DM Mono',monospace; text-transform:uppercase; letter-spacing:.06em; }
+    .dossier-links a:hover, .dossier-links a:focus-visible { background:var(--ink); color:var(--paper-2); }
     .honesty { display:grid; grid-template-columns:1fr 1fr; gap:30px; align-items:start; }
     .honesty h2 { font-size:48px; max-width:420px; }
     .honesty ul { list-style:none; padding:0; margin:0; border-top:1px solid var(--line); }
@@ -92,10 +95,10 @@
       </div>
     </section>
     <section class="section" id="dossier">
-      <div class="section-head"><h2>A dossier, opened.</h2><p>Alexander / Granicus River</p></div>
+      <div class="section-head"><h2>A dossier, opened.</h2><p id="dossier-context">Alexander / Granicus River</p></div>
       <article class="dossier">
-        <div class="dossier-intro"><span class="stamp">Research dossier · example</span><h2>The crossing is not the conclusion.</h2><p>A dossier brings the evidence together without collapsing different kinds of knowledge into one confident sentence.</p></div>
-        <div class="dossier-body"><h3>Executive synthesis</h3><p>Ancient accounts place Alexander at the Granicus, but the exact crossing and battlefield geography remain matters of interpretation.</p><div class="evidence"><div><strong>Source-supported</strong> Ancient narratives consistently describe a river crossing and battle.</div><div><strong>Qualified</strong> Modern location proposals do not agree on every geographic detail.</div><div><strong>Research lead</strong> Public archaeology records suggest places to inspect, not proof of association.</div><div><strong>Open question</strong> Which physical features best fit the accounts and later landscape?</div></div></div>
+        <div class="dossier-intro"><span class="stamp" id="dossier-stamp">Research dossier · example</span><h2 id="dossier-title">The crossing is not the conclusion.</h2><p id="dossier-intro-copy">A dossier brings the evidence together without collapsing different kinds of knowledge into one confident sentence.</p></div>
+        <div class="dossier-body"><h3>Executive synthesis</h3><p id="dossier-synthesis">Ancient accounts place Alexander at the Granicus, but the exact crossing and battlefield geography remain matters of interpretation.</p><div class="evidence" id="dossier-evidence"><div><strong>Source-supported</strong> Ancient narratives consistently describe a river crossing and battle.</div><div><strong>Qualified</strong> Modern location proposals do not agree on every geographic detail.</div><div><strong>Research lead</strong> Public archaeology records suggest places to inspect, not proof of association.</div><div><strong>Open question</strong> Which physical features best fit the accounts and later landscape?</div></div><nav class="dossier-links" id="dossier-links" aria-label="Continue exploring"></nav></div>
       </article>
     </section>
     <section class="section honesty">
@@ -111,14 +114,61 @@
       const from = params.get('from');
       const returnId = params.get('return');
       const back = document.getElementById('back-link');
-      if (!back || !returnId) return;
-      if (from === 'alexander') {
+      if (back && returnId && from === 'alexander') {
         back.href = '../alexander-the-great-campaigns/?mode=alexander&alexander=' + encodeURIComponent(returnId);
         back.textContent = '← Return to Alexander';
-      } else if (from === 'roman') {
+      } else if (back && returnId && from === 'roman') {
         back.href = '../?site=' + encodeURIComponent(returnId);
         back.textContent = '← Return to the Roman World';
       }
+
+      const dossiers = {
+        granicus: {
+          context: 'Alexander / Granicus River',
+          stamp: 'Research dossier · example',
+          title: 'The crossing is not the conclusion.',
+          intro: 'A dossier brings the evidence together without collapsing different kinds of knowledge into one confident sentence.',
+          synthesis: 'Ancient accounts place Alexander at the Granicus, but the exact crossing and battlefield geography remain matters of interpretation.',
+          evidence: [
+            ['Source-supported', 'Ancient narratives consistently describe a river crossing and battle.'],
+            ['Qualified', 'Modern location proposals do not agree on every geographic detail.'],
+            ['Research lead', 'Public archaeology records suggest places to inspect, not proof of association.'],
+            ['Open question', 'Which physical features best fit the accounts and later landscape?']
+          ],
+          links: [
+            ['Open in Alexander’s campaign', '../alexander-the-great-campaigns/?mode=alexander&alexander=granicus']
+          ]
+        },
+        alexandria: {
+          context: 'Alexander → Ptolemaic → Roman / Alexandria',
+          stamp: 'Research dossier · shared place',
+          title: 'A city with more than one life.',
+          intro: 'Alexandria was founded by Alexander, remade by the Ptolemies, and absorbed into the Roman world. The name stays familiar; the historical place keeps changing.',
+          synthesis: 'The same Alexandria appears in both VIA narratives, joined by a shared Pleiades identity. Alexander’s foundation is the beginning of the story, not the complete explanation of the Roman city that followed.',
+          evidence: [
+            ['Source-supported', 'Alexander’s foundation at the site is described in the ancient campaign tradition.'],
+            ['Layered', 'The city’s Ptolemaic institutions and monuments shaped the place before Roman rule.'],
+            ['Roman life', 'Alexandria became a major city of Roman Egypt, with its own civic, religious, and intellectual history.'],
+            ['Open question', 'Which surviving traces best reveal the transitions between these historical lives?']
+          ],
+          links: [
+            ['Open in Alexander’s campaign', '../alexander-the-great-campaigns/?mode=alexander&alexander=alexandria-egypt'],
+            ['Locate in the Roman World', '../?site=727070']
+          ]
+        }
+      };
+      const dossier = dossiers[params.get('place')] || dossiers.granicus;
+      document.getElementById('dossier-context').textContent = dossier.context;
+      document.getElementById('dossier-stamp').textContent = dossier.stamp;
+      document.getElementById('dossier-title').textContent = dossier.title;
+      document.getElementById('dossier-intro-copy').textContent = dossier.intro;
+      document.getElementById('dossier-synthesis').textContent = dossier.synthesis;
+      document.getElementById('dossier-evidence').innerHTML = dossier.evidence.map(function (item) {
+        return '<div><strong>' + item[0] + '</strong> ' + item[1] + '</div>';
+      }).join('');
+      document.getElementById('dossier-links').innerHTML = dossier.links.map(function (link) {
+        return '<a href="' + link[1] + '">' + link[0] + ' ↗</a>';
+      }).join('');
     }());
   </script>
 </body>

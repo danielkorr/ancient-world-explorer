@@ -2089,8 +2089,16 @@ function showPanel(site) {
       <span class="p-btn-icon">A</span>
       <div><div class="p-btn-main">Alexander was here</div><div class="p-btn-sub">${escapeHtml(twinStop.year_label || '')} · ${escapeHtml(twinStop.name)}</div></div>
     </button>` : '';
+  const researchPlace = researchLabPlaceForSite(site);
+  const researchBtn = researchPlace ? `
+    <a href="${researchLabUrl(researchPlace, 'roman', site.pleiades)}" onclick="saveReturnState()" class="p-btn p-btn-research">
+      <span class="p-btn-icon">◌</span>
+      <div><div class="p-btn-main">Follow the evidence</div><div class="p-btn-sub">Research Lab dossier · ${escapeHtml(site.name)}</div></div>
+      <span class="p-btn-ext" aria-hidden="true">↗</span>
+    </a>` : '';
   document.getElementById('panel-actions').innerHTML = `
     ${alexBtn}
+    ${researchBtn}
     <button type="button" onclick="armRouteFromCurrent()" class="p-btn p-btn-route">
       <span class="p-btn-icon">🧭</span>
       <div><div class="p-btn-main">Plan a route from here</div><div class="p-btn-sub">Trace an ORBIS journey to another place</div></div>
@@ -2735,9 +2743,13 @@ function alexanderTwinUrl(stop) {
 }
 // Public dossiers are deliberately opt-in. A research link appears only when the
 // visitor can land on a real, readable dossier rather than an empty Observatory shell.
-const PUBLIC_RESEARCH_PLACES = Object.freeze({ granicus: 'granicus' });
+const PUBLIC_RESEARCH_PLACES = Object.freeze({ granicus: 'granicus', 'alexandria-egypt': 'alexandria' });
 function researchLabPlaceForStop(stop) {
   return stop && PUBLIC_RESEARCH_PLACES[stop.id] ? PUBLIC_RESEARCH_PLACES[stop.id] : null;
+}
+const PUBLIC_RESEARCH_SITES = Object.freeze({ alexandria: 'alexandria' });
+function researchLabPlaceForSite(site) {
+  return site && PUBLIC_RESEARCH_SITES[site.id] ? PUBLIC_RESEARCH_SITES[site.id] : null;
 }
 function researchLabUrl(placeKey, fromMode, returnId) {
   const params = new URLSearchParams({ place: placeKey });

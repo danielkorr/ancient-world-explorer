@@ -1074,6 +1074,15 @@ function showAlexanderPanel(stop, layer) {
         <div><div class="p-btn-main">See in Roman Sites</div><div class="p-btn-sub">${escapeHtml(twinSite.name)}</div></div>
       </button>`);
   }
+  const researchPlace = researchLabPlaceForStop(stop);
+  if (researchPlace) {
+    actions.push(`
+      <a href="${researchLabUrl(researchPlace, 'alexander', stop.id)}" onclick="saveReturnState()" class="p-btn p-btn-research">
+        <span class="p-btn-icon">◌</span>
+        <div><div class="p-btn-main">Follow the evidence</div><div class="p-btn-sub">Research Lab dossier · ${escapeHtml(stop.name)}</div></div>
+        <span class="p-btn-ext" aria-hidden="true">↗</span>
+      </a>`);
+  }
   if (stop.links && stop.links.length) {
     for (const link of stop.links) {
       if (stop.pleiades && /pleiades\.stoa\.org\/places\//.test(link.url || '')) continue;
@@ -2723,6 +2732,18 @@ function romanTwinUrl(site) {
 }
 function alexanderTwinUrl(stop) {
   return window.VIA_ALEXANDER_URL + '?mode=alexander&alexander=' + encodeURIComponent(stop.id);
+}
+// Public dossiers are deliberately opt-in. A research link appears only when the
+// visitor can land on a real, readable dossier rather than an empty Observatory shell.
+const PUBLIC_RESEARCH_PLACES = Object.freeze({ granicus: 'granicus' });
+function researchLabPlaceForStop(stop) {
+  return stop && PUBLIC_RESEARCH_PLACES[stop.id] ? PUBLIC_RESEARCH_PLACES[stop.id] : null;
+}
+function researchLabUrl(placeKey, fromMode, returnId) {
+  const params = new URLSearchParams({ place: placeKey });
+  if (fromMode) params.set('from', fromMode);
+  if (returnId) params.set('return', returnId);
+  return window.VIA_RESEARCH_LAB_URL + '?' + params.toString() + '#dossier';
 }
 function crossToRoman(siteId) {
   const site = (typeof SITES !== 'undefined') && SITES.find(s => s.id === siteId);

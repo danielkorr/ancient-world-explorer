@@ -1995,6 +1995,12 @@ body.mode-alexander #campaign-legend .legend-line.alexander { border-top-color: 
 .p-btn-cross:hover { background:rgba(143,124,195,0.22); border-color:rgba(143,124,195,0.55); }
 .p-btn-cross .p-btn-icon { font-family:'Cinzel', serif; font-weight:700; }
 
+/* Public Research Lab bridge. Kept distinct from the world-to-world chip. */
+.p-btn-research { width:100%; text-align:left; font-family:inherit;
+  background:rgba(208,162,76,0.1); border-color:rgba(208,162,76,0.38); color:#e4bd73; }
+.p-btn-research:hover { background:rgba(208,162,76,0.19); border-color:rgba(208,162,76,0.62); }
+.p-btn-research .p-btn-icon { font-family:Georgia, serif; font-size:var(--fs-22); }
+
 .p-btn-icon { font-size: var(--fs-19); flex-shrink: 0; }
 .p-btn-main { font-weight: 500; }
 .p-btn-sub  { font-size: var(--fs-10); opacity: 0.55; margin-top: 1px; }

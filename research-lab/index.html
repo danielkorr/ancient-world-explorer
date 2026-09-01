@@ -67,7 +67,7 @@
 </head>
 <body>
   <main class="shell">
-    <header class="top"><div class="brand">VIA <span>/</span> Research Lab</div><a class="back" href="../?map=1">← Return to the map</a></header>
+  <header class="top"><div class="brand">VIA <span>/</span> Research Lab</div><a class="back" id="back-link" href="../?map=1">← Return to the map</a></header>
     <section class="hero">
       <div>
         <div class="eyebrow">A public window into the work</div>
@@ -103,7 +103,23 @@
       <ul><li>Turn a search result into proof.</li><li>Erase disagreement to make a cleaner story.</li><li>Present machine confidence as historical truth.</li><li>Hide the trail from the next reader.</li></ul>
     </section>
     <section class="observatory"><div><div class="eyebrow">The working Observatory</div><p>The review workspace currently runs locally while the public dossier experience is being prepared. The evidence boundary is real before the interface is public.</p></div><span class="mono">PUBLIC DOSSIERS / NEXT</span></section>
-    <div class="footer-line"><span>Nothing here silently becomes fact.</span><span>The Lab begins with Alexander's campaign and grows from there.</span></div>
+  <div class="footer-line"><span>Nothing here silently becomes fact.</span><span>The Lab begins with Alexander's campaign and grows from there.</span></div>
   </main>
+  <script>
+    (function () {
+      const params = new URLSearchParams(location.search);
+      const from = params.get('from');
+      const returnId = params.get('return');
+      const back = document.getElementById('back-link');
+      if (!back || !returnId) return;
+      if (from === 'alexander') {
+        back.href = '../alexander-the-great-campaigns/?mode=alexander&alexander=' + encodeURIComponent(returnId);
+        back.textContent = '← Return to Alexander';
+      } else if (from === 'roman') {
+        back.href = '../?site=' + encodeURIComponent(returnId);
+        back.textContent = '← Return to the Roman World';
+      }
+    }());
+  </script>
 </body>
 </html>

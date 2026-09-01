@@ -24,3 +24,4 @@ window.VIA_CONFIG = {
 //  Kept here (shared config) so both generated pages agree on the URLs.
 window.VIA_ROMAN_URL     = 'https://danielkorr.github.io/ancient-world-explorer/';
 window.VIA_ALEXANDER_URL = 'https://danielkorr.github.io/ancient-world-explorer/alexander-the-great-campaigns/';
+window.VIA_RESEARCH_LAB_URL = 'https://danielkorr.github.io/ancient-world-explorer/research-lab/';

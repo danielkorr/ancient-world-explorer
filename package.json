@@ -11,6 +11,7 @@
     "research:alexander": "node research-lab/run-alexander.mjs",
     "research:test": "node --test research-lab/tests/*.test.mjs",
     "research:serve": "node research-lab/observatory/server.mjs",
+    "research:periodo": "node research-lab/import-periodo.mjs",
 
     "regen:photos": "node scripts/detect-pleiades-photos.mjs",
     "regen:site-photos": "node scripts/build-site-photos.mjs",

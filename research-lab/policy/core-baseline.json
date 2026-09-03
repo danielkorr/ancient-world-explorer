@@ -1,13 +1,13 @@
 {
-  "baseline_commit": "c9ed0586c26cd70b0925a60a6b5829d74d6a7aa3",
-  "description": "Core files that the experimental AI Research System must not modify before promotion is explicitly approved.",
+  "baseline_commit": "approved-bridge-state-2026-09-03",
+  "description": "Approved core state after the Alexandria bridge; future Research Lab work must not modify these files without an explicit product decision.",
   "sha256": {
-    "index.html": "15acdc99051e5d3b381def67eef2e57de4b175da33200ff2f39ba9b9cd9f1c57",
-    "css/style.css": "bbbb9354ef652f3ad54bc908b17df76da7c86aed13ac9f478c9e595af824d7f8",
-    "js/app.js": "69d99265033be3c762d628dd123bf95c39e272eae691eeb83081488dce50a856",
-    "js/data.js": "cc93e76ea58a3332305495bbc8cdffaddb3778c83bb3c5ca0f06e6db125c0c4b",
-    "js/alexander.js": "8dc72358f6f58bda02acba449ca882e9a624d4a697eace13b1931f84f0e7568a",
+    "index.html": "8f419ebe0c58ffb1df71d330f0cc73a28c5d9e6fde3729b2953d03a4fb820b2d",
+    "css/style.css": "96be44f8a91c8371503bed851f11ece0fd5a31bf147eaa020eeeeac721283c10",
+    "js/app.js": "e650033829553ce7bc58cc9cb1df43151885d594859345304d770c59282111f0",
+    "js/data.js": "57c820dfd801c895cb15fd6ebc337ea8891c1af7dc0057f15377f993cc97b2ca",
+    "js/alexander.js": "466f2d88a47945cc61f15cdb609cb3f05c23c405149f6b25ad748158a32e6a53",
     "js/auth.js": "0fafcbf99f356bf816207f0b7030aa5cbfeb720c27492f2281ca0bd84c253704",
-    "js/config.js": "4526b902aa1dc3345d9d13380aebc8002b1c51c66727a6eb84c899d9fede06dc"
+    "js/config.js": "9dc4dcb7b1779a2669e0d698cc1cfad221e647113a0cf1b9f78d89f683e9c0f3"
   }
 }

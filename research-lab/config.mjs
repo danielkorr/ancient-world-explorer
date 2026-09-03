@@ -22,6 +22,10 @@ export const SOURCE_HOSTS = Object.freeze(new Set([
   'commons.wikimedia.org',
   'scaife.perseus.org',
   'opencontext.org',
+  'n2t.net',
+  'arks.org',
+  'ezid.cdlib.org',
+  'data.perio.do',
 ]));
 
 export const USER_AGENT =

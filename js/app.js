@@ -2743,11 +2743,22 @@ function alexanderTwinUrl(stop) {
 }
 // Public dossiers are deliberately opt-in. A research link appears only when the
 // visitor can land on a real, readable dossier rather than an empty Observatory shell.
-const PUBLIC_RESEARCH_PLACES = Object.freeze({ granicus: 'granicus', 'alexandria-egypt': 'alexandria' });
+const PUBLIC_RESEARCH_BRIDGES = (typeof window !== 'undefined' && Array.isArray(window.VIA_PLACE_BRIDGES))
+  ? window.VIA_PLACE_BRIDGES.filter(bridge => bridge && bridge.public && bridge.dossier)
+  : [];
+const PUBLIC_RESEARCH_PLACES = Object.freeze(Object.fromEntries(
+  PUBLIC_RESEARCH_BRIDGES
+    .filter(bridge => bridge.alexander_stop_id)
+    .map(bridge => [bridge.alexander_stop_id, bridge.dossier]),
+));
 function researchLabPlaceForStop(stop) {
   return stop && PUBLIC_RESEARCH_PLACES[stop.id] ? PUBLIC_RESEARCH_PLACES[stop.id] : null;
 }
-const PUBLIC_RESEARCH_SITES = Object.freeze({ alexandria: 'alexandria' });
+const PUBLIC_RESEARCH_SITES = Object.freeze(Object.fromEntries(
+  PUBLIC_RESEARCH_BRIDGES
+    .filter(bridge => bridge.roman_site_id)
+    .map(bridge => [bridge.roman_site_id, bridge.dossier]),
+));
 function researchLabPlaceForSite(site) {
   return site && PUBLIC_RESEARCH_SITES[site.id] ? PUBLIC_RESEARCH_SITES[site.id] : null;
 }

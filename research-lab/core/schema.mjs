@@ -52,7 +52,7 @@ export function claim({ subject, field, existingValue, proposedValue = existingV
   };
 }
 
-export function evidence({ subjectId, sourceType, sourceUrl = null, citation = null, title = '', assertion = '', status = EVIDENCE_STATUS.UNRESOLVED, retrievedAt = new Date().toISOString(), payload = null, security = null }) {
+export function evidence({ subjectId, sourceType, sourceUrl = null, citation = null, title = '', assertion = '', status = EVIDENCE_STATUS.UNRESOLVED, retrievedAt = new Date().toISOString(), payload = null, security = null, temporalAssertions = [] }) {
   const key = `${subjectId}|${sourceType}|${sourceUrl || citation || title}|${assertion}`;
   return {
     id: stableId('evidence', key),
@@ -66,6 +66,7 @@ export function evidence({ subjectId, sourceType, sourceUrl = null, citation = n
     retrieved_at: retrievedAt,
     payload,
     security,
+    temporal_assertion_ids: [...new Set(temporalAssertions)].map(String),
   };
 }
 

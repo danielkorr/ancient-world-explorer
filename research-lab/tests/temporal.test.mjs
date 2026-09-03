@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { buildPeriodOIndex, PeriodOConnector, PERIODO_DATASET_URL } from '../connectors/periodo.mjs';
 import { temporalAssertion, TEMPORAL_REVIEW_STATUS, validateTemporalAssertion } from '../core/temporal.mjs';
+import { evidence } from '../core/schema.mjs';
 
 test('PeriodO connector uses the canonical structured dataset and stays offline-safe', async () => {
   assert.equal(PERIODO_DATASET_URL, 'https://n2t.net/ark:/99152/p0d.json');
@@ -55,4 +56,15 @@ test('PeriodO index keeps authority, spatial scope, and approximate dates togeth
   assert.deepEqual(index.records[0].normalized_date_range, { earliest: -322, latest: -301 });
   assert.equal(index.records[0].authority_source, 'Test chronology');
   assert.equal(index.records[0].spatial_scope[0].label, 'Exampleland');
+});
+
+test('evidence records can point to temporal assertions without replacing source wording', () => {
+  const record = evidence({
+    subjectId: 'alexander:pella',
+    sourceType: 'scholarship',
+    assertion: 'The site belongs to the early Hellenistic period.',
+    temporalAssertions: ['temporal-one', 'temporal-one'],
+  });
+  assert.deepEqual(record.temporal_assertion_ids, ['temporal-one']);
+  assert.equal(record.assertion, 'The site belongs to the early Hellenistic period.');
 });

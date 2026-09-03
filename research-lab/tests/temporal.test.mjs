@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { buildPeriodOIndex, PeriodOConnector, PERIODO_DATASET_URL, rankPeriodODefinitions } from '../connectors/periodo.mjs';
 import { temporalAssertion, TEMPORAL_REVIEW_STATUS, validateTemporalAssertion } from '../core/temporal.mjs';
+import { assertPilotReadyForPublicChronology, reviewedTemporalAssertions } from '../core/promotion.mjs';
 import { evidence } from '../core/schema.mjs';
 
 test('PeriodO connector uses the canonical structured dataset and stays offline-safe', async () => {
@@ -95,4 +96,12 @@ test('PeriodO ranking returns candidates without silently assigning one', () => 
   assert.equal(candidates[0].record.uri, 'https://n2t.net/ark:/99152/p0testperiod');
   assert.ok(candidates[0].score >= 90);
   assert.equal(Object.hasOwn(candidates[0], 'selected_definition_uri'), false);
+});
+
+test('public chronology promotion requires every pilot assignment to be human-selected', () => {
+  const pilot = { assignments: [{ annotation_id: 'a1', subject_id: 'alexander:pella', source_temporal_expression: 'Hellenistic period', candidates: [{ uri: 'https://n2t.net/ark:/99152/p06v8w4bh8d', labels: ['Hellenistic'], authority_source: 'Test authority', spatial_scope: [{ label: 'Macedonia' }], normalized_date_range: { earliest: -350, latest: 30 } }] }] };
+  assert.throws(() => assertPilotReadyForPublicChronology(pilot, []), /public chronology blocked/i);
+  const assertions = assertPilotReadyForPublicChronology(pilot, [{ target_type: 'temporal_assertion', target_id: 'a1', decision: 'select-definition', selected_definition_uri: 'https://n2t.net/ark:/99152/p06v8w4bh8d', note: 'Human selection' }]);
+  assert.equal(assertions[0].review_status, 'human-reviewed');
+  assert.equal(reviewedTemporalAssertions(pilot, []).length, 0);
 });

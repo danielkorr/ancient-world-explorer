@@ -45,6 +45,16 @@ been approved for VIA.
   discovery classifications, or core data.
 - [x] Human-review coverage keeps sources, archaeology leads, claims, pending decisions,
   and unreviewed records distinct so incomplete review cannot appear complete.
+- [x] PeriodO uses a cached, build-time dataset and preserves source wording, authority,
+  spatial scope, normalized range, alternatives, and review status.
+- [x] The Pella/Aegae PeriodO pilot displays ranked candidates without silently assigning
+  a definition; temporal selections are append-only Observatory decisions.
+- [x] Trismegistos and WHG inputs remain separate, review-gated source records; neither
+  adapter is called by the public visitor path.
+- [x] The PLATO-oriented export contains only explicitly human-selected temporal
+  attestations and is materialized under Research Lab state.
+- [x] Public chronology promotion refuses to materialize until every pilot assignment has
+  a valid human-selected PeriodO definition.
 
 ## Human scholarly gates
 
@@ -62,6 +72,10 @@ These remain intentionally incomplete until Dano examines the expanded output:
 - [ ] Resolve coordinate disputes using published archaeological/historical scholarship.
 - [ ] Confirm every proposed image's relevance as well as its license.
 - [ ] Perform an independent factual audit of any proposed correction.
+- [ ] Review the Pella/Aegae PeriodO candidates for terminology, authority, geographic
+  scope, and the usefulness of the normalized date range.
+- [ ] Decide whether the reviewed temporal layer is understandable enough for a public
+  chronology disclosure; keep the public experience unchanged until that decision.
 
 ## Live connector spot-check — 2026-08-08
 
@@ -78,7 +92,9 @@ corpus. The human gates above remain required.
 
 ## Promotion rule
 
-There is deliberately no `promote`, `apply`, `merge`, or production-write command in the
-Research Lab. A future promotion must be a separate, explicit decision after human review.
+There is deliberately no production-write command in the Research Lab. The
+`research:periodo:promote` command is only a readiness gate that writes a review artifact
+inside `.state`; it cannot alter the public static app. A future promotion must be a
+separate, explicit decision after human review.
 If approved, changes should be prepared as a reviewable core-data diff; the research run,
 claim IDs, evidence IDs, conflicts, and reviewer decisions should accompany that diff.

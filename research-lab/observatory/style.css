@@ -123,6 +123,7 @@ main { max-width: 1400px; margin: 0 auto; padding: 24px; }
 .periodo-candidate { border: 1px solid var(--line); background: #181814; margin-top: 10px; padding: 12px; }
 .periodo-candidate .claim-top { align-items: center; }
 .periodo-select { border: 1px solid var(--gold); background: transparent; color: var(--gold); padding: 6px 8px; cursor: pointer; }
+.periodo-select::after { content: ' →'; }
 .periodo-select:hover { background: #2a261b; }
 .periodo-select.is-confirming { background: #665a3d; color: #fff8e8; }
 .periodo-uri { display: block; color: #9fc2dd; font-size: 11px; overflow-wrap: anywhere; }

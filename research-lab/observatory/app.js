@@ -286,8 +286,10 @@
     const card = el('article', 'claim temporal-assignment');
     card.dataset.testid = 'periodo-assignment';
     const review = periodoReviewFor(assignment.annotation_id);
+    const reviewConfirmed = review && (review.decision !== 'select-definition' || Boolean(String(review.note || '').trim()));
+    const statusLabel = !review ? 'Needs review' : reviewConfirmed ? titleCase(review.decision) : 'Needs confirmation';
     const head = el('div', 'claim-top');
-    head.append(el('div', 'claim-field', `${assignment.subject_id} · ${assignment.source_temporal_expression}`), el('div', `status ${review ? 'reviewed' : ''}`, review ? titleCase(review.decision) : 'Unassigned'));
+    head.append(el('div', 'claim-field', `${assignment.subject_id} · ${assignment.source_temporal_expression}`), el('div', `status ${reviewConfirmed ? 'reviewed' : ''}`, statusLabel));
     card.append(head);
     card.append(el('p', '', assignment.source_note));
     const facts = el('div', 'lead-facts');
@@ -296,8 +298,7 @@
     if (range) facts.append(el('span', '', `Working range: ${range}`));
     card.append(facts);
     if (review) {
-      const complete = review.decision !== 'select-definition' || Boolean(String(review.note || '').trim());
-      card.append(el('div', 'review-state', `${complete ? 'Latest review' : 'Exploratory selection, not confirmed'}: ${titleCase(review.decision)}${review.selected_definition_uri ? ` · ${review.selected_definition_uri}` : ''}`));
+      card.append(el('div', 'review-state', `${reviewConfirmed ? 'Latest review' : 'Exploratory selection, not confirmed'}: ${titleCase(review.decision)}${review.selected_definition_uri ? ` · ${review.selected_definition_uri}` : ''}`));
       if (review.note) card.append(el('p', 'muted', review.note));
     }
     const actions = el('div', 'actions');

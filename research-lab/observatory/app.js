@@ -224,14 +224,14 @@
     return latestReview('temporal_assertion', annotationId);
   }
 
-  function periodoCandidateCard(assignment, candidate, actions) {
+  function periodoCandidateCard(assignment, candidate, actions, note) {
     const card = el('article', 'periodo-candidate');
     const title = candidate.labels.join(' / ') || 'Unnamed PeriodO definition';
     const select = el('button', 'periodo-select', 'Select this definition');
     select.type = 'button';
     select.addEventListener('click', () => {
       actions.querySelectorAll('button').forEach((node) => { node.disabled = true; });
-      recordPeriodoReview(assignment, 'select-definition', candidate.uri, '').catch((error) => {
+      recordPeriodoReview(assignment, 'select-definition', candidate.uri, note.value).catch((error) => {
         actions.append(el('div', 'error', error.message));
         actions.querySelectorAll('button').forEach((node) => { node.disabled = false; });
       });
@@ -285,13 +285,17 @@
     }
     const actions = el('div', 'actions');
     if (!review || review.decision === 'more-research') {
-      assignment.candidates.forEach((candidate) => card.append(periodoCandidateCard(assignment, candidate, actions)));
+      const note = el('textarea', 'review-note');
+      note.placeholder = 'Why does this definition fit, or why does uncertainty remain?';
+      note.setAttribute('aria-label', `PeriodO review note for ${assignment.source_temporal_expression}`);
+      card.append(note);
+      assignment.candidates.forEach((candidate) => card.append(periodoCandidateCard(assignment, candidate, actions, note)));
       for (const [decision, label] of [['reject-candidates', 'Reject all candidates'], ['mark-disputed', 'Mark disputed'], ['more-research', 'More research']]) {
         const button = el('button', '', label);
         button.type = 'button';
         button.addEventListener('click', () => {
           actions.querySelectorAll('button').forEach((node) => { node.disabled = true; });
-          recordPeriodoReview(assignment, decision, null, '').catch((error) => {
+          recordPeriodoReview(assignment, decision, null, note.value).catch((error) => {
             actions.append(el('div', 'error', error.message));
             actions.querySelectorAll('button').forEach((node) => { node.disabled = false; });
           });

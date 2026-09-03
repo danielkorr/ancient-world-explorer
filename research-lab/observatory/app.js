@@ -312,6 +312,12 @@
     head.append(el('div', 'section-eyebrow', 'PERIODO · TEMPORAL AUTHORITY REVIEW GATE'));
     head.append(el('h2', '', 'Pella and Aegae pilot'));
     head.append(el('p', 'muted', 'Review source expressions against PeriodO definitions. This pilot is isolated from public chronology and from VIA core data.'));
+    const guide = el('aside', 'review-guide');
+    guide.append(el('strong', '', 'Reviewer guide'));
+    const guideList = el('ul');
+    ['Keep the source wording visible; the normalized range is approximate.', 'Prefer a scope that fits the historical place, not simply the broadest label match.', 'Check the authority and retain meaningful alternatives in your note.', 'Select only when the rationale is clear; otherwise mark disputed or request more research.'].forEach((item) => guideList.append(el('li', '', item)));
+    guide.append(guideList);
+    head.append(guide);
     if (!periodoPilot) {
       root.append(head, el('div', 'queue-empty', 'The PeriodO pilot is unavailable. Run the cached PeriodO import and pilot commands first.'));
       return;

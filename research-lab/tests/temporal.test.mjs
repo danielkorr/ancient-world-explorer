@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { buildPeriodOIndex, PeriodOConnector, PERIODO_DATASET_URL } from '../connectors/periodo.mjs';
+import { buildPeriodOIndex, PeriodOConnector, PERIODO_DATASET_URL, rankPeriodODefinitions } from '../connectors/periodo.mjs';
 import { temporalAssertion, TEMPORAL_REVIEW_STATUS, validateTemporalAssertion } from '../core/temporal.mjs';
 import { evidence } from '../core/schema.mjs';
 
@@ -67,4 +67,32 @@ test('evidence records can point to temporal assertions without replacing source
   });
   assert.deepEqual(record.temporal_assertion_ids, ['temporal-one']);
   assert.equal(record.assertion, 'The site belongs to the early Hellenistic period.');
+});
+
+test('PeriodO ranking returns candidates without silently assigning one', () => {
+  const index = buildPeriodOIndex({
+    authorities: {
+      p0test: {
+        id: 'p0test',
+        source: { title: 'Macedonian chronology' },
+        periods: {
+          p0testperiod: {
+            id: 'p0testperiod',
+            label: 'Hellenistic Period',
+            start: { in: { year: '-0323' } },
+            stop: { in: { year: '-0030' } },
+            spatialCoverage: [{ label: 'Macedonia' }],
+          },
+        },
+      },
+    },
+  });
+  const candidates = rankPeriodODefinitions(index, {
+    expression: 'Hellenistic period',
+    spatialHints: ['Macedonia'],
+    dateRange: { earliest: -323, latest: -30 },
+  });
+  assert.equal(candidates[0].record.uri, 'https://n2t.net/ark:/99152/p0testperiod');
+  assert.ok(candidates[0].score >= 90);
+  assert.equal(Object.hasOwn(candidates[0], 'selected_definition_uri'), false);
 });

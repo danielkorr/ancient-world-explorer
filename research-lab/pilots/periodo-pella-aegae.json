@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "pilot": "pella-aegae-periodo",
+  "purpose": "Test source-specific period matching without automatically assigning a definition.",
+  "annotations": [
+    {
+      "annotation_id": "periodo-pilot-pella-1",
+      "subject_id": "alexander:pella",
+      "pleiades": "491687",
+      "place_labels": ["Pella", "Macedonia"],
+      "source_temporal_expression": "Hellenistic period",
+      "approximate_date_range": { "earliest": -323, "latest": -30 },
+      "source_note": "Pilot fixture representing a temporal expression requiring researcher selection."
+    },
+    {
+      "annotation_id": "periodo-pilot-aegae-1",
+      "subject_id": "alexander:aegae",
+      "pleiades": "550404",
+      "place_labels": ["Aegae", "Macedonia"],
+      "source_temporal_expression": "Early Hellenistic period",
+      "approximate_date_range": { "earliest": -323, "latest": -30 },
+      "source_note": "Pilot fixture representing a temporal expression requiring researcher selection."
+    }
+  ]
+}

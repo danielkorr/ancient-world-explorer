@@ -64,3 +64,22 @@ test('source relevance reviews persist as evidence judgments without mutating ev
   assert.equal(review.decision, 'contextual-support');
   assert.equal((await store.readReviews())[0].note, 'Useful context but not direct support.');
 });
+
+test('PeriodO reviews preserve a selected definition as research-state judgment', async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), 'awe-periodo-review-'));
+  const store = new ResearchStore(root);
+  const review = await store.appendReview({
+    id: 'periodo-review-test',
+    target_type: 'temporal_assertion',
+    target_id: 'periodo-pilot-pella-1',
+    decision: 'select-definition',
+    selected_definition_uri: 'https://n2t.net/ark:/99152/p06v8w4bh8d',
+    note: 'Macedonia-scoped definition is the best current fit; retain the original wording.',
+  });
+  assert.equal(review.target_type, 'temporal_assertion');
+  assert.equal(review.selected_definition_uri, 'https://n2t.net/ark:/99152/p06v8w4bh8d');
+  await assert.rejects(
+    store.appendReview({ id: 'bad-periodo-review', target_type: 'temporal_assertion', target_id: 'periodo-pilot-pella-1', decision: 'accept' }),
+    /invalid review record/i,
+  );
+});

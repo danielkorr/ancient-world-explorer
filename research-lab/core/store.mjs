@@ -57,6 +57,8 @@ export class ResearchStore {
         ? ['relevant', 'not-relevant', 'directly-relevant', 'contextually-relevant', 'name-only-match', 'geographically-unrelated', 'chronologically-incompatible', 'insufficient-information', 'more-research']
         : targetType === 'evidence'
           ? ['direct-support', 'contextual-support', 'partial-support', 'directly-relevant', 'useful-background', 'bibliographic-lead', 'outdated-superseded', 'correct-identity', 'possible-identity', 'incorrect-identity', 'relevant', 'not-relevant', 'unable-to-access', 'more-research']
+          : targetType === 'temporal_assertion'
+            ? ['select-definition', 'reject-candidates', 'mark-disputed', 'more-research']
           : [];
     const record = {
       id: review.id,
@@ -67,6 +69,9 @@ export class ResearchStore {
       note: String(review.note || '').slice(0, 2000),
     };
     if (targetType === 'claim') record.claim_id = targetId;
+    if (targetType === 'temporal_assertion' && review.selected_definition_uri) {
+      record.selected_definition_uri = String(review.selected_definition_uri).slice(0, 500);
+    }
     if (!record.id || !record.target_id || !allowed.includes(record.decision)) {
       throw new Error('Invalid review record');
     }

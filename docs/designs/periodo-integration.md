@@ -73,7 +73,12 @@ The original wording is never replaced by the normalized range.
 
 ## Current implementation boundary
 
-The first code slice adds the bridge registry and temporal primitives. The PeriodO
-connector is intentionally allowlisted and offline-safe, but the importer and pilot
-materialization remain separate from the public static app until the Research Lab
-workflow has been exercised against Pella/Aegae.
+The bridge registry, temporal primitives, allowlisted connector, cached importer, and
+Pella/Aegae pilot materialization are now implemented. The Observatory exposes the
+pilot as a dedicated **Temporal Authority** review queue. Review decisions are
+append-only records in Research Lab state, and selecting a definition is limited to
+the ranked candidates produced by the cached pilot artifact.
+
+The pilot remains deliberately outside the public static app. A selected definition
+does not yet change a dossier, a map panel, a chronology label, or any VIA core data.
+That is the required evidence before step 6, public chronology disclosure, can begin.

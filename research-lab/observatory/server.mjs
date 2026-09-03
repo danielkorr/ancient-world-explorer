@@ -42,6 +42,10 @@ async function readBody(req) {
   return JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}');
 }
 
+async function readPeriodoPilot() {
+  return JSON.parse(await readFile(path.join(root, '..', '.state', 'periodo', 'pella-aegae-review.json'), 'utf8'));
+}
+
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url || '/', `http://${host}:${port}`);
@@ -64,6 +68,9 @@ const server = http.createServer(async (req, res) => {
       const reviews = await store.readReviews();
       return send(res, 200, JSON.stringify(buildReviewSyntheses(report, reviews)));
     }
+    if (req.method === 'GET' && url.pathname === '/api/periodo-pilot') {
+      return send(res, 200, JSON.stringify(await readPeriodoPilot()));
+    }
     if (req.method === 'POST' && url.pathname === '/api/reviews') {
       if (!String(req.headers['content-type'] || '').toLowerCase().startsWith('application/json')) {
         return send(res, 415, JSON.stringify({ error: 'application/json required' }));
@@ -72,15 +79,23 @@ const server = http.createServer(async (req, res) => {
       const report = await store.readLatest();
       const targetType = body.target_type || 'claim';
       const targetId = body.target_id || body.claim_id;
+      const periodoPilot = targetType === 'temporal_assertion' ? await readPeriodoPilot() : null;
+      const periodoAssignment = periodoPilot?.assignments.find((item) => item.annotation_id === targetId);
       const knownTarget = targetType === 'claim'
         ? report.claims.some((claim) => claim.id === targetId)
         : targetType === 'archaeology_lead'
           ? (report.archaeology_leads || []).some((lead) => lead.id === targetId)
           : targetType === 'evidence'
             ? report.evidence.some((item) => item.id === targetId)
-            : false;
+            : targetType === 'temporal_assertion'
+              ? Boolean(periodoAssignment)
+              : false;
       if (!knownTarget) {
         return send(res, 400, JSON.stringify({ error: `Unknown ${targetType} target` }));
+      }
+      if (targetType === 'temporal_assertion' && body.decision === 'select-definition' &&
+        !periodoAssignment.candidates.some((candidate) => candidate.uri === body.selected_definition_uri)) {
+        return send(res, 400, JSON.stringify({ error: 'Selected PeriodO definition is not one of the ranked candidates' }));
       }
       const review = await store.appendReview({
         id: randomUUID(),
@@ -88,6 +103,7 @@ const server = http.createServer(async (req, res) => {
         target_id: targetId,
         decision: body.decision,
         note: body.note,
+        selected_definition_uri: body.selected_definition_uri,
       });
       return send(res, 201, JSON.stringify(review));
     }

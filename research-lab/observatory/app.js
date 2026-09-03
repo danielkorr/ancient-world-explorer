@@ -12,6 +12,7 @@
   let sourceQueueSubjectId = null;
   let sourceFamilyFilter = 'all';
   let sourceReviewFilter = 'all';
+  let periodoPilot = null;
 
   const el = (tag, className, text) => {
     const node = document.createElement(tag);
@@ -217,6 +218,102 @@
     reviewSyntheses = await synthesisResponse.json();
     renderSubjects();
     renderDetail();
+  }
+
+  function periodoReviewFor(annotationId) {
+    return latestReview('temporal_assertion', annotationId);
+  }
+
+  function periodoCandidateCard(assignment, candidate, actions) {
+    const card = el('article', 'periodo-candidate');
+    const title = candidate.labels.join(' / ') || 'Unnamed PeriodO definition';
+    const select = el('button', 'periodo-select', 'Select this definition');
+    select.type = 'button';
+    select.addEventListener('click', () => {
+      actions.querySelectorAll('button').forEach((node) => { node.disabled = true; });
+      recordPeriodoReview(assignment, 'select-definition', candidate.uri, '').catch((error) => {
+        actions.append(el('div', 'error', error.message));
+        actions.querySelectorAll('button').forEach((node) => { node.disabled = false; });
+      });
+    });
+    const head = el('div', 'claim-top');
+    head.append(el('div', 'claim-field', title), select);
+    card.append(head);
+    const facts = el('div', 'lead-facts');
+    facts.append(el('span', '', `Match ${candidate.score}/100`));
+    if (candidate.authority_source) facts.append(el('span', '', `Authority: ${candidate.authority_source}`));
+    if (candidate.spatial_scope?.length) facts.append(el('span', '', `Scope: ${candidate.spatial_scope.map((item) => item.label).slice(0, 3).join(', ')}`));
+    const range = chronologyLabel(candidate.normalized_date_range && { early_year: candidate.normalized_date_range.earliest, late_year: candidate.normalized_date_range.latest });
+    if (range) facts.append(el('span', '', `Range: ${range}`));
+    card.append(facts, el('p', 'muted', candidate.rationale.join(' · ')));
+    const link = el('a', 'periodo-uri', candidate.uri);
+    link.href = candidate.uri;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    card.append(link);
+    return card;
+  }
+
+  async function recordPeriodoReview(assignment, decision, selectedDefinitionUri, note) {
+    const response = await fetch('/api/reviews', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ target_type: 'temporal_assertion', target_id: assignment.annotation_id, decision, selected_definition_uri: selectedDefinitionUri, note }),
+    });
+    const body = await response.json();
+    if (!response.ok) throw new Error(body.error || 'Temporal review failed');
+    reviews.push(body);
+    renderDetail();
+  }
+
+  function temporalAssignmentCard(assignment) {
+    const card = el('article', 'claim temporal-assignment');
+    card.dataset.testid = 'periodo-assignment';
+    const review = periodoReviewFor(assignment.annotation_id);
+    const head = el('div', 'claim-top');
+    head.append(el('div', 'claim-field', `${assignment.subject_id} · ${assignment.source_temporal_expression}`), el('div', `status ${review ? 'reviewed' : ''}`, review ? titleCase(review.decision) : 'Unassigned'));
+    card.append(head);
+    card.append(el('p', '', assignment.source_note));
+    const facts = el('div', 'lead-facts');
+    facts.append(el('span', '', `Pleiades ${assignment.pleiades}`));
+    const range = chronologyLabel({ early_year: assignment.approximate_date_range.earliest, late_year: assignment.approximate_date_range.latest });
+    if (range) facts.append(el('span', '', `Working range: ${range}`));
+    card.append(facts);
+    if (review) {
+      card.append(el('div', 'review-state', `Latest review: ${titleCase(review.decision)}${review.selected_definition_uri ? ` · ${review.selected_definition_uri}` : ''}`));
+      if (review.note) card.append(el('p', 'muted', review.note));
+    }
+    const actions = el('div', 'actions');
+    if (!review || review.decision === 'more-research') {
+      assignment.candidates.forEach((candidate) => card.append(periodoCandidateCard(assignment, candidate, actions)));
+      for (const [decision, label] of [['reject-candidates', 'Reject all candidates'], ['mark-disputed', 'Mark disputed'], ['more-research', 'More research']]) {
+        const button = el('button', '', label);
+        button.type = 'button';
+        button.addEventListener('click', () => {
+          actions.querySelectorAll('button').forEach((node) => { node.disabled = true; });
+          recordPeriodoReview(assignment, decision, null, '').catch((error) => {
+            actions.append(el('div', 'error', error.message));
+            actions.querySelectorAll('button').forEach((node) => { node.disabled = false; });
+          });
+        });
+        actions.append(button);
+      }
+    }
+    card.append(actions, el('p', 'muted', 'PeriodO supplies candidate definitions. A researcher must select, reject, or dispute them before any public chronology is considered.'));
+    return card;
+  }
+
+  function renderTemporal(root) {
+    const head = el('div', 'queue-head');
+    head.append(el('div', 'section-eyebrow', 'PERIODO · TEMPORAL AUTHORITY REVIEW GATE'));
+    head.append(el('h2', '', 'Pella and Aegae pilot'));
+    head.append(el('p', 'muted', 'Review source expressions against PeriodO definitions. This pilot is isolated from public chronology and from VIA core data.'));
+    if (!periodoPilot) {
+      root.append(head, el('div', 'queue-empty', 'The PeriodO pilot is unavailable. Run the cached PeriodO import and pilot commands first.'));
+      return;
+    }
+    root.append(head);
+    periodoPilot.assignments.forEach((assignment) => root.append(temporalAssignmentCard(assignment)));
   }
 
   function reviewState(targetType, targetId) {
@@ -686,6 +783,10 @@
       renderSourceQueue(root);
       return;
     }
+    if (activeMode === 'temporal') {
+      renderTemporal(root);
+      return;
+    }
     const subject = subjectFor(selectedId);
     if (!subject) return;
     if (activeMode === 'claims') renderClaims(root, subject);
@@ -700,11 +801,13 @@
     fetch('/api/report').then((response) => response.ok ? response.json() : Promise.reject(new Error('Run the research system before opening the Observatory.'))),
     fetch('/api/reviews').then((response) => response.ok ? response.json() : []),
     fetch('/api/review-syntheses').then((response) => response.ok ? response.json() : []),
+    fetch('/api/periodo-pilot').then((response) => response.ok ? response.json() : null),
   ])
-    .then(([data, reviewData, synthesisData]) => {
+    .then(([data, reviewData, synthesisData, periodoData]) => {
       report = data;
       reviews = reviewData;
       reviewSyntheses = synthesisData;
+      periodoPilot = periodoData;
       const scope = document.getElementById('research-scope');
       scope.textContent = report.scope === 'all-38-alexander-stops' ? 'Alexander · all 38 stops' : 'Alexander · six-stop pilot';
       selectedId = report.subjects[0]?.id || null;

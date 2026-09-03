@@ -115,6 +115,12 @@ main { max-width: 1400px; margin: 0 auto; padding: 24px; }
 .filter { color: var(--muted); font-size: 11px; }
 .filter select { display: block; margin-top: 3px; border: 1px solid var(--line); background: #181814; color: var(--ink); padding: 7px; }
 .queue-empty { border: 1px dashed var(--line); color: var(--muted); padding: 18px; margin-top: 14px; }
+.temporal-assignment { border-color: #665a3d; background: #201e18; }
+.periodo-candidate { border: 1px solid var(--line); background: #181814; margin-top: 10px; padding: 12px; }
+.periodo-candidate .claim-top { align-items: center; }
+.periodo-select { border: 1px solid var(--gold); background: transparent; color: var(--gold); padding: 6px 8px; cursor: pointer; }
+.periodo-select:hover { background: #2a261b; }
+.periodo-uri { display: block; color: #9fc2dd; font-size: 11px; overflow-wrap: anywhere; }
 .open-dossier { margin-left: auto; }
 .value-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
 .value { background: #181814; padding: 10px; overflow-wrap: anywhere; }

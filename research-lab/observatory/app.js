@@ -229,7 +229,23 @@
     const title = candidate.labels.join(' / ') || 'Unnamed PeriodO definition';
     const select = el('button', 'periodo-select', 'Select this definition');
     select.type = 'button';
+    let confirming = false;
     select.addEventListener('click', () => {
+      if (!note.value.trim()) {
+        let error = card.querySelector('.periodo-review-error');
+        if (!error) {
+          error = el('div', 'error periodo-review-error', 'Add a reviewer rationale before confirming this selection.');
+          card.append(error);
+        }
+        note.focus();
+        return;
+      }
+      if (!confirming) {
+        confirming = true;
+        select.textContent = 'Confirm scholarly selection';
+        select.classList.add('is-confirming');
+        return;
+      }
       actions.querySelectorAll('button').forEach((node) => { node.disabled = true; });
       recordPeriodoReview(assignment, 'select-definition', candidate.uri, note.value).catch((error) => {
         actions.append(el('div', 'error', error.message));
@@ -280,15 +296,18 @@
     if (range) facts.append(el('span', '', `Working range: ${range}`));
     card.append(facts);
     if (review) {
-      card.append(el('div', 'review-state', `Latest review: ${titleCase(review.decision)}${review.selected_definition_uri ? ` · ${review.selected_definition_uri}` : ''}`));
+      const complete = review.decision !== 'select-definition' || Boolean(String(review.note || '').trim());
+      card.append(el('div', 'review-state', `${complete ? 'Latest review' : 'Exploratory selection, not confirmed'}: ${titleCase(review.decision)}${review.selected_definition_uri ? ` · ${review.selected_definition_uri}` : ''}`));
       if (review.note) card.append(el('p', 'muted', review.note));
     }
     const actions = el('div', 'actions');
-    if (!review || review.decision === 'more-research') {
+    if (!review || review.decision === 'more-research' || !String(review.note || '').trim()) {
+      const noteLabel = el('label', 'review-note-label', 'Reviewer rationale (required)');
       const note = el('textarea', 'review-note');
       note.placeholder = 'Why does this definition fit, or why does uncertainty remain?';
       note.setAttribute('aria-label', `PeriodO review note for ${assignment.source_temporal_expression}`);
-      card.append(note);
+      noteLabel.append(note);
+      card.append(noteLabel);
       assignment.candidates.forEach((candidate) => card.append(periodoCandidateCard(assignment, candidate, actions, note)));
       for (const [decision, label] of [['reject-candidates', 'Reject all candidates'], ['mark-disputed', 'Mark disputed'], ['more-research', 'More research']]) {
         const button = el('button', '', label);

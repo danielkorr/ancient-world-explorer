@@ -48,7 +48,9 @@ been approved for VIA.
 - [x] PeriodO uses a cached, build-time dataset and preserves source wording, authority,
   spatial scope, normalized range, alternatives, and review status.
 - [x] The Pella/Aegae PeriodO pilot displays ranked candidates without silently assigning
-  a definition; temporal selections are append-only Observatory decisions.
+  a definition; temporal selections require a rationale and explicit confirmation before
+  they become append-only Observatory decisions. Earlier exploratory selections remain
+  visible but cannot pass the promotion gate.
 - [x] Trismegistos and WHG inputs remain separate, review-gated source records; neither
   adapter is called by the public visitor path.
 - [x] The PLATO-oriented export contains only explicitly human-selected temporal

@@ -93,6 +93,9 @@ const server = http.createServer(async (req, res) => {
       if (!knownTarget) {
         return send(res, 400, JSON.stringify({ error: `Unknown ${targetType} target` }));
       }
+      if (targetType === 'temporal_assertion' && !String(body.note || '').trim()) {
+        return send(res, 400, JSON.stringify({ error: 'A reviewer rationale is required for temporal decisions' }));
+      }
       if (targetType === 'temporal_assertion' && body.decision === 'select-definition' &&
         !periodoAssignment.candidates.some((candidate) => candidate.uri === body.selected_definition_uri)) {
         return send(res, 400, JSON.stringify({ error: 'Selected PeriodO definition is not one of the ranked candidates' }));

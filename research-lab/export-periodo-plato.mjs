@@ -21,7 +21,7 @@ for (const review of reviews) {
 
 const places = pilot.assignments.flatMap((assignment) => {
   const review = latest.get(assignment.annotation_id);
-  if (!review || review.decision !== 'select-definition') return [];
+  if (!review || review.decision !== 'select-definition' || !String(review.note || '').trim()) return [];
   const candidate = assignment.candidates.find((item) => item.uri === review.selected_definition_uri);
   if (!candidate) return [];
   return [{

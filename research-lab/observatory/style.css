@@ -124,8 +124,11 @@ main { max-width: 1400px; margin: 0 auto; padding: 24px; }
 .periodo-candidate .claim-top { align-items: center; }
 .periodo-select { border: 1px solid var(--gold); background: transparent; color: var(--gold); padding: 6px 8px; cursor: pointer; }
 .periodo-select:hover { background: #2a261b; }
+.periodo-select.is-confirming { background: #665a3d; color: #fff8e8; }
 .periodo-uri { display: block; color: #9fc2dd; font-size: 11px; overflow-wrap: anywhere; }
 .temporal-assignment > .review-note { border-color: #665a3d; background: #171611; }
+.review-note-label { display: block; margin-top: 12px; color: var(--gold); font: 11px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .08em; }
+.review-note-label .review-note { display: block; box-sizing: border-box; margin-top: 6px; text-transform: none; letter-spacing: normal; }
 .open-dossier { margin-left: auto; }
 .value-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
 .value { background: #181814; padding: 10px; overflow-wrap: anywhere; }

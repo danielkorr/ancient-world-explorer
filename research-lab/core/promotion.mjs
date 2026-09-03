@@ -7,7 +7,7 @@ export function reviewedTemporalAssertions(pilot, reviews = []) {
   }
   return (pilot?.assignments || []).map((assignment) => {
     const review = latest.get(assignment.annotation_id);
-    if (!review || review.decision !== 'select-definition') return null;
+    if (!review || review.decision !== 'select-definition' || !String(review.note || '').trim()) return null;
     const candidate = assignment.candidates.find((item) => item.uri === review.selected_definition_uri);
     if (!candidate) return null;
     return temporalAssertion({

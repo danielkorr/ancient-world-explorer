@@ -144,8 +144,8 @@ npm run research:serve
 
 The Observatory binds to `127.0.0.1` by default and is intended only for local review.
 Review decisions are appended to `research-lab/.state/reviews.jsonl`; they do not change
-VIA data. Its four review views are **Research Dossiers**, **Source Relevance**,
-**Archaeology Review**, and **Claims & Evidence**.
+VIA data. Its five review views are **Research Dossiers**, **Source Relevance**,
+**Archaeology Review**, **Claims & Evidence**, and **Temporal Authority**.
 
 ## Source connectors
 
@@ -156,6 +156,20 @@ The first-pass connector allowlist is intentionally narrow:
 - Wikimedia Commons image metadata
 - Scaife/Perseus CTS passages when an explicit CTS URN is known
 - Open Context public archaeology search results
+- PeriodO cached temporal definitions
+- Trismegistos GeoResponder place records (review-gated documentary context)
+- WHG Entity API and reconciliation candidates (token-aware, review-gated)
+
+The Trismegistos and WHG adapters are not called by the public visitor path. They retain
+source identity, spatial/temporal fields, and attribution metadata as research inputs;
+they do not establish a VIA place identity or historical claim automatically. The
+`research-lab/export/plato.mjs` adapter emits a small PLATO-oriented JSON-LD exchange
+shape for reviewed or explicitly selected records. It is an export boundary, not a
+replacement for VIA's internal place and assertion model.
+
+Run `npm run research:export:plato` to materialize the currently human-selected
+PeriodO pilot attestations under `research-lab/.state/exports/`. With no selections,
+the export is intentionally empty rather than filled with machine-ranked candidates.
 
 Classical citations without a resolvable machine identifier remain visibly `unresolved`;
 the system does not invent a CTS mapping. Open Context's API documentation describes its

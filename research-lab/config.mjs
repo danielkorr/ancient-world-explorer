@@ -26,6 +26,10 @@ export const SOURCE_HOSTS = Object.freeze(new Set([
   'arks.org',
   'ezid.cdlib.org',
   'data.perio.do',
+  'trismegistos.org',
+  'www.trismegistos.org',
+  'whgazetteer.org',
+  'www.whgazetteer.org',
 ]));
 
 export const USER_AGENT =

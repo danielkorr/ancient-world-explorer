@@ -5,6 +5,9 @@ import { safeFetch } from '../connectors/http.mjs';
 import { PleiadesConnector } from '../connectors/pleiades.mjs';
 import { ScaifeConnector, scaifePassageExcerpt, scaifeReaderUrl, scaifeVerificationUrl } from '../connectors/scaife.mjs';
 import { normalizeOpenContextRecord, OpenContextConnector } from '../connectors/open-context.mjs';
+import { normalizeTrismegistosPlace, TrismegistosConnector, trismegistosPlaceUrl } from '../connectors/trismegistos.mjs';
+import { normalizeWhgPlace, WhgConnector } from '../connectors/whg.mjs';
+import { buildPlatoExport } from '../export/plato.mjs';
 import { scoreSubject } from '../core/confidence.mjs';
 import { subjectFromStop } from '../core/schema.mjs';
 
@@ -15,6 +18,30 @@ test('network connector rejects non-allowlisted hosts before fetching', async ()
 test('source connectors validate identifiers before network access', async () => {
   await assert.rejects(new PleiadesConnector({ offline: true }).getPlace('../etc/passwd'), /invalid pleiades/i);
   await assert.rejects(new ScaifeConnector({ offline: true }).getPassage('Arrian 3.8'), /valid CTS URN/i);
+  await assert.rejects(new TrismegistosConnector({ offline: true }).getPlace('../etc/passwd'), /invalid trismegistos/i);
+  await assert.rejects(new WhgConnector({ offline: true }).getEntity('place/169687'), /invalid whg/i);
+});
+
+test('Trismegistos normalizes GeoResponder places without promoting documentary evidence', () => {
+  assert.equal(trismegistosPlaceUrl(2355), 'https://www.trismegistos.org/place/2355');
+  const record = normalizeTrismegistosPlace({ type: 'Feature', geometry: { type: 'Point', coordinates: [25.685, 32.635] }, title: 'Thebes', uri: 'https://www.trismegistos.org/place/2355', TM_Geo_ID: '2355', properties: { country: 'Egypt', provincia: 'Aegyptus' } });
+  assert.deepEqual(record.representative_point, { lng: 25.685, lat: 32.635, basis: 'trismegistos-georesponder' });
+  assert.equal(record.province, 'Aegyptus');
+});
+
+test('WHG normalization preserves LPF candidates and its source dataset', () => {
+  const record = normalizeWhgPlace({ '@id': 'https://whgazetteer.org/entity/place:169687/api', properties: { title: 'London', dataset: 'Getty TGN (partial)' }, geometry: { type: 'Point', coordinates: [-0.1275, 51.50722] }, names: [{ toponym: 'Londinium' }], when: { timespans: [] }, links: [] });
+  assert.equal(record.title, 'London');
+  assert.deepEqual(record.names, ['Londinium']);
+  assert.equal(record.dataset, 'Getty TGN (partial)');
+});
+
+test('PLATO export keeps the place attestation and temporal authority distinct', () => {
+  const output = buildPlatoExport({ places: [{ pleiades: '491687', name: 'Pella', temporal_assertion: { source_temporal_expression: 'Hellenistic period', periodo_definition_uri: 'https://n2t.net/ark:/99152/p06v8w4bh8d', normalized_date_range: { earliest: -350, latest: 30 } } }] });
+  assert.equal(output.export_metadata.format, 'PLATO-oriented JSON-LD');
+  assert.equal(output['@graph'].filter((item) => item['@type']?.endsWith('Attestation')).length, 1);
+  const attestation = output['@graph'].find((item) => item['@type']?.endsWith('Attestation'));
+  assert.equal(attestation['plato:attests_timespan']['plato:periodo_uri'], 'https://n2t.net/ark:/99152/p06v8w4bh8d');
 });
 
 test('Open Context discovery URL is constrained to the allowlisted JSON search API', () => {

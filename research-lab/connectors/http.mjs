@@ -9,7 +9,7 @@ function assertAllowed(url) {
   return parsed;
 }
 
-export async function safeFetch(url, { accept = '*/*', timeoutMs = 15000, offline = false } = {}) {
+export async function safeFetch(url, { accept = '*/*', timeoutMs = 15000, offline = false, method = 'GET', body = undefined, headers = {} } = {}) {
   if (offline) throw new Error('Research network disabled by AWE_RESEARCH_OFFLINE');
   let current = assertAllowed(url);
 
@@ -19,9 +19,11 @@ export async function safeFetch(url, { accept = '*/*', timeoutMs = 15000, offlin
     let response;
     try {
       response = await fetch(current, {
+        method,
+        body,
         redirect: 'manual',
         signal: controller.signal,
-        headers: { Accept: accept, 'User-Agent': USER_AGENT },
+        headers: { Accept: accept, 'User-Agent': USER_AGENT, ...headers },
       });
     } finally {
       clearTimeout(timer);

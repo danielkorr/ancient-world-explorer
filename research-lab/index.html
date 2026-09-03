@@ -61,10 +61,17 @@
     .honesty li { padding:15px 0 15px 24px; border-bottom:1px solid var(--line); color:var(--muted); font-size:14px; position:relative; }
     .honesty li:before { content:'×'; color:var(--rust); position:absolute; left:0; font:20px 'Instrument Serif',serif; }
     .observatory { display:flex; justify-content:space-between; gap:30px; align-items:center; border:1px solid rgba(208,162,76,.35); padding:22px 24px; margin-top:44px; }
+    .temporal-preview { border-color:rgba(208,162,76,.28); }
+    .temporal-copy { display:grid; grid-template-columns:.8fr 1.2fr; gap:48px; align-items:start; }
+    .temporal-copy > p { margin:0; color:var(--muted); font:normal 23px/1.35 'Instrument Serif',serif; max-width:500px; }
+    .temporal-points { border-top:1px solid var(--line); }
+    .temporal-points div { display:grid; grid-template-columns:150px 1fr; gap:20px; padding:14px 0; border-bottom:1px solid var(--line); }
+    .temporal-points strong { color:var(--gold); font:500 11px 'DM Mono',monospace; text-transform:uppercase; letter-spacing:.08em; }
+    .temporal-points span { color:var(--muted); font-size:13px; line-height:1.5; }
     .observatory p { color:var(--muted); font-size:13px; line-height:1.5; margin:5px 0 0; max-width:650px; }
     .observatory .mono { color:var(--gold); white-space:nowrap; }
     .footer-line { margin-top:52px; display:flex; justify-content:space-between; gap:24px; color:var(--muted); font-size:12px; line-height:1.5; }
-    @media (max-width:760px) { .shell { padding:18px 20px 50px; } .top { align-items:flex-start; gap:14px; } .brand { font-size:21px; line-height:1.05; max-width:135px; } .back { max-width:112px; text-align:right; line-height:1.35; } .hero { min-height:640px; display:block; padding-top:90px; } .hero:after { right:4%; top:10%; width:210px; height:210px; } h1 { font-size:70px; } .hero-note { margin-top:76px; max-width:290px; } .steps, .dossier, .honesty { grid-template-columns:1fr; } .steps { display:block; background:none; } .step { border-bottom:1px solid var(--line); } .step h3 { margin-top:22px; } .dossier-intro, .dossier-body { padding:26px; } .dossier-intro h2 { font-size:44px; } .section-head { display:block; } .section-head p { margin-top:8px; } .observatory { display:block; } .observatory .mono { display:block; margin-top:12px; white-space:normal; } .footer-line { display:block; } }
+    @media (max-width:760px) { .shell { padding:18px 20px 50px; } .top { align-items:flex-start; gap:14px; } .brand { font-size:21px; line-height:1.05; max-width:135px; } .back { max-width:112px; text-align:right; line-height:1.35; } .hero { min-height:640px; display:block; padding-top:90px; } .hero:after { right:4%; top:10%; width:210px; height:210px; } h1 { font-size:70px; } .hero-note { margin-top:76px; max-width:290px; } .steps, .dossier, .honesty, .temporal-copy { grid-template-columns:1fr; } .steps { display:block; background:none; } .step { border-bottom:1px solid var(--line); } .step h3 { margin-top:22px; } .dossier-intro, .dossier-body { padding:26px; } .dossier-intro h2 { font-size:44px; } .section-head { display:block; } .section-head p { margin-top:8px; } .temporal-copy { gap:24px; } .temporal-copy > p { font-size:21px; } .temporal-points div { grid-template-columns:1fr; gap:5px; } .observatory { display:block; } .observatory .mono { display:block; margin-top:12px; white-space:normal; } .footer-line { display:block; } }
     @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
   </style>
 </head>
@@ -100,6 +107,17 @@
         <div class="dossier-intro"><span class="stamp" id="dossier-stamp">Research dossier · example</span><h2 id="dossier-title">The crossing is not the conclusion.</h2><p id="dossier-intro-copy">A dossier brings the evidence together without collapsing different kinds of knowledge into one confident sentence.</p></div>
         <div class="dossier-body"><h3>Executive synthesis</h3><p id="dossier-synthesis">Ancient accounts place Alexander at the Granicus, but the exact crossing and battlefield geography remain matters of interpretation.</p><div class="evidence" id="dossier-evidence"><div><strong>Source-supported</strong> Ancient narratives consistently describe a river crossing and battle.</div><div><strong>Qualified</strong> Modern location proposals do not agree on every geographic detail.</div><div><strong>Research lead</strong> Public archaeology records suggest places to inspect, not proof of association.</div><div><strong>Open question</strong> Which physical features best fit the accounts and later landscape?</div></div><nav class="dossier-links" id="dossier-links" aria-label="Continue exploring"></nav></div>
       </article>
+    </section>
+    <section class="section temporal-preview">
+      <div class="section-head"><h2>Every place has more than one life.</h2><p>The temporal layer / under review</p></div>
+      <div class="temporal-copy">
+        <p>A city, road, or battlefield is never only the moment that brought you to it. The Lab follows what happened here before, what happened here afterwards, and how different authorities describe the change.</p>
+        <div class="temporal-points">
+          <div><strong>Keep the words</strong><span>“Hellenistic” or “Roman” stays tied to the source that used it.</span></div>
+          <div><strong>Compare the lenses</strong><span>Different scholarly chronologies can describe the same place differently.</span></div>
+          <div><strong>Show the judgment</strong><span>A public timeline appears only after a researcher has reviewed the authority behind it.</span></div>
+        </div>
+      </div>
     </section>
     <section class="section honesty">
       <h2>What the Lab refuses to do.</h2>

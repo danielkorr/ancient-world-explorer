@@ -60,6 +60,13 @@ function normalize(value) {
   return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
 
+function normalizeSpatial(value) {
+  return normalize(value)
+    .replace(/\brepublic of macedonia\b/g, 'macedonia')
+    .replace(/\bnorth macedonia\b/g, 'macedonia')
+    .replace(/\bancient macedonia\b/g, 'macedonia');
+}
+
 function tokenOverlap(a, b) {
   const left = new Set(normalize(a).split(' ').filter(Boolean));
   const right = new Set(normalize(b).split(' ').filter(Boolean));
@@ -78,7 +85,7 @@ function rangeOverlap(a, b) {
 
 export function rankPeriodODefinitions(index, { expression, spatialHints = [], dateRange = null, limit = 8 } = {}) {
   if (!expression) throw new Error('PeriodO matching requires an expression');
-  const hints = (Array.isArray(spatialHints) ? spatialHints : [spatialHints]).map(normalize).filter(Boolean);
+  const hints = (Array.isArray(spatialHints) ? spatialHints : [spatialHints]).map(normalizeSpatial).filter(Boolean);
   return (index?.records || []).map(record => {
     const labelScore = Math.max(...record.labels.map(label => {
       const candidate = normalize(label);
@@ -87,8 +94,10 @@ export function rankPeriodODefinitions(index, { expression, spatialHints = [], d
       if (candidate.includes(wanted) || wanted.includes(candidate)) return 0.8;
       return tokenOverlap(wanted, candidate) * 0.6;
     }), 0);
-    const scopeText = [record.spatial_description, ...record.spatial_scope.map(item => item.label)].filter(Boolean).join(' ');
-    const scopeScore = hints.length ? Math.max(...hints.map(hint => tokenOverlap(hint, scopeText))) : 0;
+    const scopeLabels = record.spatial_scope.map(item => item.label).filter(Boolean);
+    const scopeText = normalizeSpatial([record.spatial_description, ...scopeLabels].filter(Boolean).join(' '));
+    const breadthPenalty = 0.65 + (0.35 / Math.sqrt(Math.max(1, scopeLabels.length)));
+    const scopeScore = hints.length ? Math.max(...hints.map(hint => tokenOverlap(hint, scopeText) * breadthPenalty)) : 0;
     const dateScore = rangeOverlap(dateRange, record.normalized_date_range);
     const score = Math.round((labelScore * 0.65 + scopeScore * 0.2 + dateScore * 0.15) * 100);
     const rationale = [

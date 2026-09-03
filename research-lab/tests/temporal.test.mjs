@@ -98,6 +98,29 @@ test('PeriodO ranking returns candidates without silently assigning one', () => 
   assert.equal(Object.hasOwn(candidates[0], 'selected_definition_uri'), false);
 });
 
+test('PeriodO spatial ranking recognizes historical and modern Macedonia labels as the same hint', () => {
+  const index = buildPeriodOIndex({ authorities: {
+    p0test: { id: 'p0test', source: { title: 'Scope test' }, periods: {
+      irrelevant: { id: 'irrelevant', label: 'Hellenistic Period', start: { in: { year: '-0323' } }, stop: { in: { year: '-0030' } }, spatialCoverage: [{ label: 'Portugal' }] },
+      macedonian: { id: 'macedonian', label: 'Hellenistic Period', start: { in: { year: '-0323' } }, stop: { in: { year: '-0030' } }, spatialCoverage: [{ label: 'North Macedonia' }] },
+    } },
+  } });
+  const candidates = rankPeriodODefinitions(index, { expression: 'Hellenistic period', spatialHints: ['Macedonia'], dateRange: { earliest: -323, latest: -30 }, limit: 2 });
+  assert.equal(candidates[0].record.id, 'macedonian');
+  assert.ok(candidates[0].rationale.includes('spatial scope match'));
+});
+
+test('PeriodO spatial ranking prefers a narrow regional authority over a broad matching scope', () => {
+  const index = buildPeriodOIndex({ authorities: {
+    p0test: { id: 'p0test', source: { title: 'Scope breadth test' }, periods: {
+      broad: { id: 'broad', label: 'Hellenistic Period', start: { in: { year: '-0323' } }, stop: { in: { year: '-0030' } }, spatialCoverage: ['Portugal', 'Greece', 'North Macedonia', 'Egypt', 'Syria', 'Italy'].map(label => ({ label })) },
+      narrow: { id: 'narrow', label: 'Hellenistic Period', start: { in: { year: '-0323' } }, stop: { in: { year: '-0030' } }, spatialCoverage: [{ label: 'Macedonia' }] },
+    } },
+  } });
+  const candidates = rankPeriodODefinitions(index, { expression: 'Hellenistic period', spatialHints: ['Macedonia'], dateRange: { earliest: -323, latest: -30 }, limit: 2 });
+  assert.equal(candidates[0].record.id, 'narrow');
+});
+
 test('public chronology promotion requires every pilot assignment to be human-selected', () => {
   const pilot = { assignments: [{ annotation_id: 'a1', subject_id: 'alexander:pella', source_temporal_expression: 'Hellenistic period', candidates: [{ uri: 'https://n2t.net/ark:/99152/p06v8w4bh8d', labels: ['Hellenistic'], authority_source: 'Test authority', spatial_scope: [{ label: 'Macedonia' }], normalized_date_range: { earliest: -350, latest: 30 } }] }] };
   assert.throws(() => assertPilotReadyForPublicChronology(pilot, []), /public chronology blocked/i);

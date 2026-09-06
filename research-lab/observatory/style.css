@@ -123,6 +123,11 @@ main { max-width: 1400px; margin: 0 auto; padding: 24px; }
 .temporal-explorer-assignment { border-color: #3e5661; }
 .exploration-note { color: #9fc2dd; }
 .exploration-guide { border-left-color: #9fc2dd; }
+.temporal-review-state { margin: 12px 0 4px; font: 11px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .08em; }
+.temporal-review-state.reviewed { color: #93c6a1; }
+.temporal-review-state.pending { color: #e0bd6c; }
+.temporal-review-state.disputed { color: #e0a39b; }
+.temporal-explorer-actions button { border-color: #7898a4; color: #b9d6df; }
 .periodo-candidate { border: 1px solid var(--line); background: #181814; margin-top: 10px; padding: 12px; }
 .periodo-candidate .claim-top { align-items: center; }
 .periodo-select { border: 1px solid var(--gold); background: transparent; color: var(--gold); padding: 6px 8px; cursor: pointer; }

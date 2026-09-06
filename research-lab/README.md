@@ -147,7 +147,9 @@ Review decisions are appended to `research-lab/.state/reviews.jsonl`; they do no
 VIA data. Its six views include **Research Dossiers**, **Source Relevance**,
 **Archaeology Review**, **Claims & Evidence**, **Temporal Explorer**, and
 **Temporal Authority**. Temporal Explorer is read-only and lets visitors compare
-machine-ranked PeriodO candidates without recording a scholarly decision.
+machine-ranked PeriodO candidates without recording a scholarly decision. Each pilot
+record also shows its current review state and offers a one-click handoff to the
+separate Temporal Authority queue when a researcher wants to act.
 
 ## Source connectors
 

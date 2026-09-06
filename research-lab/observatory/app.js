@@ -224,6 +224,21 @@
     return latestReview('temporal_assertion', annotationId);
   }
 
+  function temporalExplorerReviewState(assignment) {
+    const review = periodoReviewFor(assignment.annotation_id);
+    if (!review) return { label: 'Needs review', tone: 'pending', detail: 'No human decision has been recorded.' };
+    if (review.decision === 'select-definition' && !String(review.note || '').trim()) {
+      return { label: 'Needs confirmation', tone: 'pending', detail: 'An exploratory selection exists, but no confirmed rationale has been recorded.' };
+    }
+    const states = {
+      'select-definition': { label: 'Human-reviewed', tone: 'reviewed', detail: 'A PeriodO definition has been selected with a reviewer rationale.' },
+      'reject-candidates': { label: 'No candidate selected', tone: 'disputed', detail: 'The ranked candidates were rejected for this review pass.' },
+      'mark-disputed': { label: 'Disputed', tone: 'disputed', detail: 'The temporal interpretation remains contested.' },
+      'more-research': { label: 'More research requested', tone: 'pending', detail: 'The current candidates were not sufficient for a decision.' },
+    };
+    return states[review.decision] || { label: 'Review status recorded', tone: 'pending', detail: 'A review decision exists in the research log.' };
+  }
+
   function periodoCandidateCard(assignment, candidate, actions, note, { interactive = true } = {}) {
     const card = el('article', 'periodo-candidate');
     const title = candidate.labels.join(' / ') || 'Unnamed PeriodO definition';
@@ -275,6 +290,7 @@
 
   function temporalExploreCard(assignment) {
     const card = el('article', 'claim temporal-assignment temporal-explorer-assignment');
+    const reviewState = temporalExplorerReviewState(assignment);
     const head = el('div', 'claim-top');
     head.append(el('div', 'claim-field', `${assignment.subject_id} · ${assignment.source_temporal_expression}`), el('div', 'status', 'Exploration only'));
     card.append(head, el('p', '', assignment.source_note));
@@ -282,8 +298,16 @@
     facts.append(el('span', '', `Pleiades ${assignment.pleiades}`));
     const range = chronologyLabel({ early_year: assignment.approximate_date_range.earliest, late_year: assignment.approximate_date_range.latest });
     if (range) facts.append(el('span', '', `Working range: ${range}`));
-    card.append(facts, el('p', 'exploration-note', 'Machine-ranked candidates for comparison. Exploring this view records no scholarly decision.'));
+    card.append(facts, el('p', `temporal-review-state ${reviewState.tone}`, reviewState.label));
+    card.append(el('p', 'muted', reviewState.detail));
+    card.append(el('p', 'exploration-note', 'Machine-ranked candidates for comparison. Exploring this view records no scholarly decision.'));
     assignment.candidates.forEach((candidate) => card.append(periodoCandidateCard(assignment, candidate, null, null, { interactive: false })));
+    const actions = el('div', 'actions temporal-explorer-actions');
+    const reviewButton = el('button', '', 'Open Temporal Authority review');
+    reviewButton.type = 'button';
+    reviewButton.addEventListener('click', () => selectMode('temporal'));
+    actions.append(reviewButton);
+    card.append(actions);
     return card;
   }
 

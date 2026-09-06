@@ -14,6 +14,7 @@
     "research:periodo": "node research-lab/import-periodo.mjs",
     "research:periodo:pilot": "node research-lab/periodo-pilot.mjs",
     "research:periodo:promote": "node research-lab/promote-periodo.mjs",
+    "research:periodo:promote:partial": "node research-lab/promote-periodo.mjs --partial",
     "research:export:plato": "node research-lab/export-periodo-plato.mjs",
 
     "regen:photos": "node scripts/detect-pleiades-photos.mjs",

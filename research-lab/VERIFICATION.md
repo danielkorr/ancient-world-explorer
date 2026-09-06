@@ -57,6 +57,9 @@ been approved for VIA.
   attestations and is materialized under Research Lab state.
 - [x] Public chronology promotion refuses to materialize until every pilot assignment has
   a valid human-selected PeriodO definition.
+- [x] An explicit partial promotion path can materialize only confirmed assignments while
+  listing unresolved pilot assignments separately; it cannot silently treat the pilot as
+  complete.
 
 ## Human scholarly gates
 
@@ -96,7 +99,10 @@ corpus. The human gates above remain required.
 
 There is deliberately no production-write command in the Research Lab. The
 `research:periodo:promote` command is only a readiness gate that writes a review artifact
-inside `.state`; it cannot alter the public static app. A future promotion must be a
-separate, explicit decision after human review.
+inside `.state`; it cannot alter the public static app. `research:periodo:promote:partial`
+is an explicit exception for advancing reviewed places while another pilot assignment
+remains open. Its artifact lists those open assignments and must not be presented as a
+complete pilot chronology. Any future public promotion remains a separate, explicit
+decision after human review.
 If approved, changes should be prepared as a reviewable core-data diff; the research run,
 claim IDs, evidence IDs, conflicts, and reviewer decisions should accompany that diff.

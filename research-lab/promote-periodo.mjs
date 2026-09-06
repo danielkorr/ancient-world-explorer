@@ -1,5 +1,5 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { assertPilotReadyForPublicChronology } from './core/promotion.mjs';
+import { assertPilotReadyForPartialPublicChronology, assertPilotReadyForPublicChronology } from './core/promotion.mjs';
 import { researchPath } from './core/boundary.mjs';
 
 async function readJsonl(file) {
@@ -14,8 +14,20 @@ async function readJsonl(file) {
 
 const pilot = JSON.parse(await readFile(researchPath('periodo', 'pella-aegae-review.json'), 'utf8'));
 const reviews = await readJsonl(researchPath('reviews.jsonl'));
-const assertions = assertPilotReadyForPublicChronology(pilot, reviews);
-const output = { schema_version: 1, status: 'reviewed-ready-for-public-design-review', created_at: new Date().toISOString(), assertions };
+const partial = process.argv.includes('--partial');
+const result = partial
+  ? assertPilotReadyForPartialPublicChronology(pilot, reviews)
+  : { assertions: assertPilotReadyForPublicChronology(pilot, reviews), unresolved_assignments: [] };
+const output = {
+  schema_version: 1,
+  status: partial ? 'partial-reviewed-ready-for-public-design-review' : 'reviewed-ready-for-public-design-review',
+  created_at: new Date().toISOString(),
+  assertions: result.assertions,
+  unresolved_assignments: result.unresolved_assignments,
+  note: partial ? 'Only explicitly confirmed assignments are included. Unresolved pilot assignments remain excluded.' : 'Every pilot assignment has a confirmed human selection.',
+};
 await mkdir(researchPath('periodo'), { recursive: true });
-await writeFile(researchPath('periodo', 'public-chronology-ready.json'), JSON.stringify(output, null, 2) + '\n', 'utf8');
-console.log(`Public chronology gate: ${assertions.length} reviewed assertions ready for design review`);
+const filename = partial ? 'public-chronology-partial-ready.json' : 'public-chronology-ready.json';
+await writeFile(researchPath('periodo', filename), JSON.stringify(output, null, 2) + '\n', 'utf8');
+console.log(`Public chronology ${partial ? 'partial gate' : 'gate'}: ${result.assertions.length} reviewed assertions ready for design review`);
+if (result.unresolved_assignments.length) console.log(`Open assignments: ${result.unresolved_assignments.map((item) => item.subject_id).join(', ')}`);

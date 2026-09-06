@@ -171,6 +171,11 @@ they do not establish a VIA place identity or historical claim automatically. Th
 shape for reviewed or explicitly selected records. It is an export boundary, not a
 replacement for VIA's internal place and assertion model.
 
+The public Research Lab now includes a deliberately small temporal pilot: Pella's
+reviewed PeriodO lens is visible with its source wording, authority, and Macedonian
+scope. Aegae remains visibly under research and is not given a public chronology. This
+is partial disclosure, not completion of the Pella/Aegae pilot.
+
 Run `npm run research:export:plato` to materialize the currently human-selected
 PeriodO pilot attestations under `research-lab/.state/exports/`. With no selections,
 the export is intentionally empty rather than filled with machine-ranked candidates.

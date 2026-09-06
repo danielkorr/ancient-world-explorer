@@ -68,10 +68,23 @@
     .temporal-points div { display:grid; grid-template-columns:150px 1fr; gap:20px; padding:14px 0; border-bottom:1px solid var(--line); }
     .temporal-points strong { color:var(--gold); font:500 11px 'DM Mono',monospace; text-transform:uppercase; letter-spacing:.08em; }
     .temporal-points span { color:var(--muted); font-size:13px; line-height:1.5; }
+    .temporal-pilot { border-color:rgba(208,162,76,.35); }
+    .temporal-pilot-grid { display:grid; grid-template-columns:1.15fr .85fr; gap:1px; background:var(--line); }
+    .temporal-lens, .temporal-open { padding:28px; background:var(--ink-2); }
+    .temporal-lens h3, .temporal-open h3 { margin:0 0 12px; font:normal 30px/1.05 'Instrument Serif',serif; color:var(--paper-2); }
+    .temporal-lens p, .temporal-open p { color:var(--muted); font-size:14px; line-height:1.55; margin:8px 0; }
+    .temporal-meta { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin-top:20px; background:var(--line); }
+    .temporal-meta div { padding:12px; background:#121c21; }
+    .temporal-meta strong { display:block; color:var(--gold); font:500 10px 'DM Mono',monospace; text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; }
+    .temporal-meta span { color:var(--paper-2); font-size:12px; }
+    .temporal-source { display:inline-block; margin-top:17px; color:#b9d6df; border-bottom:1px solid #7898a4; font:500 11px 'DM Mono',monospace; text-transform:uppercase; letter-spacing:.06em; }
+    .temporal-open { background:#1a1c19; border-left:1px solid rgba(208,162,76,.2); }
+    .temporal-open .stamp { color:#d0a24c; border-color:#8d744b; }
+    .temporal-boundary { color:#c4b9a2 !important; }
     .observatory p { color:var(--muted); font-size:13px; line-height:1.5; margin:5px 0 0; max-width:650px; }
     .observatory .mono { color:var(--gold); white-space:nowrap; }
     .footer-line { margin-top:52px; display:flex; justify-content:space-between; gap:24px; color:var(--muted); font-size:12px; line-height:1.5; }
-    @media (max-width:760px) { .shell { padding:18px 20px 50px; } .top { align-items:flex-start; gap:14px; } .brand { font-size:21px; line-height:1.05; max-width:135px; } .back { max-width:112px; text-align:right; line-height:1.35; } .hero { min-height:640px; display:block; padding-top:90px; } .hero:after { right:4%; top:10%; width:210px; height:210px; } h1 { font-size:70px; } .hero-note { margin-top:76px; max-width:290px; } .steps, .dossier, .honesty, .temporal-copy { grid-template-columns:1fr; } .steps { display:block; background:none; } .step { border-bottom:1px solid var(--line); } .step h3 { margin-top:22px; } .dossier-intro, .dossier-body { padding:26px; } .dossier-intro h2 { font-size:44px; } .section-head { display:block; } .section-head p { margin-top:8px; } .temporal-copy { gap:24px; } .temporal-copy > p { font-size:21px; } .temporal-points div { grid-template-columns:1fr; gap:5px; } .observatory { display:block; } .observatory .mono { display:block; margin-top:12px; white-space:normal; } .footer-line { display:block; } }
+    @media (max-width:760px) { .shell { padding:18px 20px 50px; } .top { align-items:flex-start; gap:14px; } .brand { font-size:21px; line-height:1.05; max-width:135px; } .back { max-width:112px; text-align:right; line-height:1.35; } .hero { min-height:640px; display:block; padding-top:90px; } .hero:after { right:4%; top:10%; width:210px; height:210px; } h1 { font-size:70px; } .hero-note { margin-top:76px; max-width:290px; } .steps, .dossier, .honesty, .temporal-copy, .temporal-pilot-grid { grid-template-columns:1fr; } .steps { display:block; background:none; } .step { border-bottom:1px solid var(--line); } .step h3 { margin-top:22px; } .dossier-intro, .dossier-body, .temporal-lens, .temporal-open { padding:26px; } .dossier-intro h2 { font-size:44px; } .section-head { display:block; } .section-head p { margin-top:8px; } .temporal-copy { gap:24px; } .temporal-copy > p { font-size:21px; } .temporal-points div { grid-template-columns:1fr; gap:5px; } .temporal-meta { grid-template-columns:1fr; } .observatory { display:block; } .observatory .mono { display:block; margin-top:12px; white-space:normal; } .footer-line { display:block; } }
     @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
   </style>
 </head>
@@ -119,11 +132,33 @@
         </div>
       </div>
     </section>
+    <section class="section temporal-pilot" id="temporal">
+      <div class="section-head"><h2>A reviewed lens, not the last word.</h2><p>Public temporal pilot / Pella</p></div>
+      <div class="temporal-pilot-grid">
+        <article class="temporal-lens">
+          <span class="stamp">One human-reviewed interpretation</span>
+          <h3 id="temporal-pella-title">Pella / Hellenistic period</h3>
+          <p id="temporal-pella-copy">A Macedonia-scoped Hellenistic Period definition is the best current fit for the reviewed pilot record. The source wording remains visible, and the normalized range remains approximate.</p>
+          <div class="temporal-meta">
+            <div><strong>Source wording</strong><span id="temporal-pella-source">Hellenistic period</span></div>
+            <div><strong>Authority</strong><span id="temporal-pella-authority">FASTI - Home</span></div>
+            <div><strong>Scope</strong><span id="temporal-pella-scope">Macedonia</span></div>
+          </div>
+          <a class="temporal-source" id="temporal-pella-source-link" href="https://n2t.net/ark:/99152/p06v8w4bh8d" target="_blank" rel="noopener noreferrer">View the PeriodO definition â†—</a>
+        </article>
+        <aside class="temporal-open">
+          <span class="stamp">Still under research</span>
+          <h3>Aegae / Early Hellenistic period</h3>
+          <p>The same pilot includes Aegae, but its temporal authority has not been determined yet.</p>
+          <p class="temporal-boundary">No public chronology is inferred for Aegae. Its open status is part of the record.</p>
+        </aside>
+      </div>
+    </section>
     <section class="section honesty">
       <h2>What the Lab refuses to do.</h2>
       <ul><li>Turn a search result into proof.</li><li>Erase disagreement to make a cleaner story.</li><li>Present machine confidence as historical truth.</li><li>Hide the trail from the next reader.</li></ul>
     </section>
-    <section class="observatory"><div><div class="eyebrow">The working Observatory</div><p>The review workspace currently runs locally while the public dossier experience is being prepared. The evidence boundary is real before the interface is public.</p></div><span class="mono">PUBLIC DOSSIERS / NEXT</span></section>
+    <section class="observatory"><div><div class="eyebrow">The working Observatory</div><p>The review workspace continues locally. Public temporal context appears only where a human-reviewed interpretation exists, while open cases remain visibly open.</p></div><span class="mono">PUBLIC TEMPORAL PILOT / PELLA</span></section>
   <div class="footer-line"><span>Nothing here silently becomes fact.</span><span>The Lab begins with Alexander's campaign and grows from there.</span></div>
   </main>
   <script>

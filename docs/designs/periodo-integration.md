@@ -79,6 +79,8 @@ pilot as a dedicated **Temporal Authority** review queue. Review decisions are
 append-only records in Research Lab state, and selecting a definition is limited to
 the ranked candidates produced by the cached pilot artifact.
 
-The pilot remains deliberately outside the public static app. A selected definition
-does not yet change a dossier, a map panel, a chronology label, or any VIA core data.
-That is the required evidence before step 6, public chronology disclosure, can begin.
+The full pilot remains outside the public static app until every assignment is resolved.
+An explicit partial-promotion path now permits a reviewed place to appear in a small
+public temporal pilot, while unresolved places remain marked as under research. The
+partial artifact does not change a map panel, chronology label, or VIA core data. A full
+pilot chronology still requires the strict all-assignments gate.

@@ -120,6 +120,9 @@ main { max-width: 1400px; margin: 0 auto; padding: 24px; }
 .filter select { display: block; margin-top: 3px; border: 1px solid var(--line); background: #181814; color: var(--ink); padding: 7px; }
 .queue-empty { border: 1px dashed var(--line); color: var(--muted); padding: 18px; margin-top: 14px; }
 .temporal-assignment { border-color: #665a3d; background: #201e18; }
+.temporal-explorer-assignment { border-color: #3e5661; }
+.exploration-note { color: #9fc2dd; }
+.exploration-guide { border-left-color: #9fc2dd; }
 .periodo-candidate { border: 1px solid var(--line); background: #181814; margin-top: 10px; padding: 12px; }
 .periodo-candidate .claim-top { align-items: center; }
 .periodo-select { border: 1px solid var(--gold); background: transparent; color: var(--gold); padding: 6px 8px; cursor: pointer; }

@@ -144,8 +144,10 @@ npm run research:serve
 
 The Observatory binds to `127.0.0.1` by default and is intended only for local review.
 Review decisions are appended to `research-lab/.state/reviews.jsonl`; they do not change
-VIA data. Its five review views are **Research Dossiers**, **Source Relevance**,
-**Archaeology Review**, **Claims & Evidence**, and **Temporal Authority**.
+VIA data. Its six views include **Research Dossiers**, **Source Relevance**,
+**Archaeology Review**, **Claims & Evidence**, **Temporal Explorer**, and
+**Temporal Authority**. Temporal Explorer is read-only and lets visitors compare
+machine-ranked PeriodO candidates without recording a scholarly decision.
 
 ## Source connectors
 

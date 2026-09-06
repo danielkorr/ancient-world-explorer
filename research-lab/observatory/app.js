@@ -224,36 +224,39 @@
     return latestReview('temporal_assertion', annotationId);
   }
 
-  function periodoCandidateCard(assignment, candidate, actions, note) {
+  function periodoCandidateCard(assignment, candidate, actions, note, { interactive = true } = {}) {
     const card = el('article', 'periodo-candidate');
     const title = candidate.labels.join(' / ') || 'Unnamed PeriodO definition';
-    const select = el('button', 'periodo-select', 'Select this definition');
-    select.type = 'button';
-    let confirming = false;
-    select.addEventListener('click', () => {
-      if (!note.value.trim()) {
-        let error = card.querySelector('.periodo-review-error');
-        if (!error) {
-          error = el('div', 'error periodo-review-error', 'Add a reviewer rationale before confirming this selection.');
-          card.append(error);
-        }
-        note.focus();
-        return;
-      }
-      if (!confirming) {
-        confirming = true;
-        select.textContent = 'Confirm scholarly selection';
-        select.classList.add('is-confirming');
-        return;
-      }
-      actions.querySelectorAll('button').forEach((node) => { node.disabled = true; });
-      recordPeriodoReview(assignment, 'select-definition', candidate.uri, note.value).catch((error) => {
-        actions.append(el('div', 'error', error.message));
-        actions.querySelectorAll('button').forEach((node) => { node.disabled = false; });
-      });
-    });
     const head = el('div', 'claim-top');
-    head.append(el('div', 'claim-field', title), select);
+    head.append(el('div', 'claim-field', title));
+    if (interactive) {
+      const select = el('button', 'periodo-select', 'Select this definition');
+      select.type = 'button';
+      let confirming = false;
+      select.addEventListener('click', () => {
+        if (!note.value.trim()) {
+          let error = card.querySelector('.periodo-review-error');
+          if (!error) {
+            error = el('div', 'error periodo-review-error', 'Add a reviewer rationale before confirming this selection.');
+            card.append(error);
+          }
+          note.focus();
+          return;
+        }
+        if (!confirming) {
+          confirming = true;
+          select.textContent = 'Confirm scholarly selection';
+          select.classList.add('is-confirming');
+          return;
+        }
+        actions.querySelectorAll('button').forEach((node) => { node.disabled = true; });
+        recordPeriodoReview(assignment, 'select-definition', candidate.uri, note.value).catch((error) => {
+          actions.append(el('div', 'error', error.message));
+          actions.querySelectorAll('button').forEach((node) => { node.disabled = false; });
+        });
+      });
+      head.append(select);
+    }
     card.append(head);
     const facts = el('div', 'lead-facts');
     facts.append(el('span', '', `Match ${candidate.score}/100`));
@@ -267,6 +270,20 @@
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
     card.append(link);
+    return card;
+  }
+
+  function temporalExploreCard(assignment) {
+    const card = el('article', 'claim temporal-assignment temporal-explorer-assignment');
+    const head = el('div', 'claim-top');
+    head.append(el('div', 'claim-field', `${assignment.subject_id} · ${assignment.source_temporal_expression}`), el('div', 'status', 'Exploration only'));
+    card.append(head, el('p', '', assignment.source_note));
+    const facts = el('div', 'lead-facts');
+    facts.append(el('span', '', `Pleiades ${assignment.pleiades}`));
+    const range = chronologyLabel({ early_year: assignment.approximate_date_range.earliest, late_year: assignment.approximate_date_range.latest });
+    if (range) facts.append(el('span', '', `Working range: ${range}`));
+    card.append(facts, el('p', 'exploration-note', 'Machine-ranked candidates for comparison. Exploring this view records no scholarly decision.'));
+    assignment.candidates.forEach((candidate) => card.append(periodoCandidateCard(assignment, candidate, null, null, { interactive: false })));
     return card;
   }
 
@@ -344,6 +361,22 @@
     }
     root.append(head);
     periodoPilot.assignments.forEach((assignment) => root.append(temporalAssignmentCard(assignment)));
+  }
+
+  function renderTemporalExplorer(root) {
+    const head = el('div', 'queue-head');
+    head.append(el('div', 'section-eyebrow', 'PERIODO · EXPLORATION MODE'));
+    head.append(el('h2', '', 'Compare possible temporal lenses'));
+    head.append(el('p', 'muted', 'Browse PeriodO candidates for the Pella and Aegae pilot. This read-only view is for exploration and records no scholarly decision.'));
+    const guide = el('aside', 'review-guide exploration-guide');
+    guide.append(el('strong', '', 'Exploration boundary'));
+    guide.append(el('p', '', 'Candidate rankings are machine-generated research inputs. They are not historical conclusions, and they do not affect VIA’s public chronology.'));
+    root.append(head, guide);
+    if (!periodoPilot) {
+      root.append(el('div', 'queue-empty', 'The PeriodO pilot is not available.'));
+      return;
+    }
+    periodoPilot.assignments.forEach((assignment) => root.append(temporalExploreCard(assignment)));
   }
 
   function reviewState(targetType, targetId) {
@@ -815,6 +848,10 @@
     }
     if (activeMode === 'temporal') {
       renderTemporal(root);
+      return;
+    }
+    if (activeMode === 'temporal-explorer') {
+      renderTemporalExplorer(root);
       return;
     }
     const subject = subjectFor(selectedId);

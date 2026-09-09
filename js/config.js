@@ -11,10 +11,24 @@
 //  NEVER commit a sb_secret_* / service_role key.
 // ═══════════════════════════════════════════════════════════
 
-window.VIA_CONFIG = {
-  SUPABASE_URL: 'https://nqubatkwmosbsadmaugo.supabase.co',
-  SUPABASE_KEY: 'sb_publishable_ZbK9rqINnuN6aabUH_nWSg_2C6I22Xe',
-};
+// The production project remains the default. For branch-local integration
+// testing, append `?backend=local` to the page URL. This explicit opt-in keeps
+// ordinary localhost work pointed at production until a tester asks for the
+// isolated local Supabase stack.
+const viaBackend = new URLSearchParams(location.search).get('backend');
+const viaUseLocalBackend = viaBackend === 'local';
+
+window.VIA_CONFIG = viaUseLocalBackend
+  ? {
+      SUPABASE_URL: 'http://127.0.0.1:54321',
+      SUPABASE_KEY: 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH',
+    }
+  : {
+      SUPABASE_URL: 'https://nqubatkwmosbsadmaugo.supabase.co',
+      SUPABASE_KEY: 'sb_publishable_ZbK9rqINnuN6aabUH_nWSg_2C6I22Xe',
+    };
+
+window.VIA_BACKEND_ENV = viaUseLocalBackend ? 'local' : 'production';
 
 // ── Sibling-page URLs (the mode split) ──────────────────────
 //  VIA ships as two focused pages on one origin: the Roman map at the

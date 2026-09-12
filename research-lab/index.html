@@ -24,6 +24,9 @@
     .eyebrow, .mono { font:500 11px 'DM Mono',monospace; text-transform:uppercase; letter-spacing:.14em; }
     .eyebrow { color:var(--gold); }
     .back { color:var(--muted); font-size:13px; }
+    .lab-tools { display:flex; align-items:center; gap:18px; }
+    .auth-link { color:var(--gold); border-bottom:1px solid rgba(208,162,76,.55); font:500 11px 'DM Mono',monospace; letter-spacing:.08em; text-transform:uppercase; }
+    .auth-link.connected { color:#9fc8a7; border-color:rgba(159,200,167,.55); }
     .hero { min-height:560px; display:grid; grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr); align-items:center; gap:72px; position:relative; }
     .hero:after { content:''; position:absolute; right:5%; top:17%; width:290px; height:290px; border:1px solid rgba(208,162,76,.24); border-radius:50%; box-shadow:0 0 0 26px rgba(208,162,76,.025),0 0 0 52px rgba(208,162,76,.02); pointer-events:none; }
     h1 { font:normal clamp(62px,8vw,116px)/.88 'Instrument Serif',serif; letter-spacing:-.045em; margin:20px 0 28px; max-width:760px; }
@@ -115,12 +118,13 @@
     .observatory .mono { color:var(--gold); white-space:nowrap; }
     .footer-line { margin-top:52px; display:flex; justify-content:space-between; gap:24px; color:var(--muted); font-size:12px; line-height:1.5; }
     @media (max-width:760px) { .shell { padding:18px 20px 50px; } .top { align-items:flex-start; gap:14px; } .brand { font-size:21px; line-height:1.05; max-width:135px; } .back { max-width:112px; text-align:right; line-height:1.35; } .hero { min-height:640px; display:block; padding-top:90px; } .hero:after { right:4%; top:10%; width:210px; height:210px; } h1 { font-size:70px; } .hero-note { margin-top:76px; max-width:290px; } .steps, .dossier, .honesty, .temporal-copy, .temporal-pilot-grid, .contributor { grid-template-columns:1fr; } .steps { display:block; background:none; } .step { border-bottom:1px solid var(--line); } .step h3 { margin-top:22px; } .dossier-intro, .dossier-body, .temporal-lens, .temporal-open, .contributor-intro, .contributor-form-wrap { padding:26px; } .contributor-intro { border-right:0; border-bottom:1px solid var(--line); } .contributor-form { grid-template-columns:1fr; } .contributor-form label.full, .contributor-actions, .contributor-status { grid-column:auto; } .dossier-intro h2 { font-size:44px; } .section-head { display:block; } .section-head p { margin-top:8px; } .temporal-copy { gap:24px; } .temporal-copy > p { font-size:21px; } .temporal-points div { grid-template-columns:1fr; gap:5px; } .temporal-meta { grid-template-columns:1fr; } .observatory { display:block; } .observatory .mono { display:block; margin-top:12px; white-space:normal; } .footer-line { display:block; } }
+    @media (max-width:760px) { .lab-tools { display:block; text-align:right; } .auth-link { display:block; margin-bottom:8px; } }
     @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
   </style>
 </head>
 <body>
   <main class="shell">
-  <header class="top"><div class="brand">VIA <span>/</span> Research Lab</div><a class="back" id="back-link" href="../?map=1">← Return to the map</a></header>
+  <header class="top"><div class="brand">VIA <span>/</span> Research Lab</div><div class="lab-tools"><a class="auth-link" id="contributor-auth-link" href="../?signin=1&amp;backend=staging">Sign in to staging</a><a class="back" id="back-link" href="../?map=1">← Return to the map</a></div></header>
     <section class="hero">
       <div>
         <div class="eyebrow">A public window into the work</div>
@@ -316,6 +320,16 @@
       }
       const contributorHistory = document.getElementById('contributor-history');
       const contributorHistoryContent = document.getElementById('contributor-history-content');
+      const contributorAuthLink = document.getElementById('contributor-auth-link');
+      function refreshContributorAuthLink() {
+        if (!contributorAuthLink || window.VIA_BACKEND_ENV !== 'staging') return;
+        const user = window.VIA && window.VIA.auth && window.VIA.auth.currentUser();
+        if (user) {
+          contributorAuthLink.textContent = 'Staging account connected';
+          contributorAuthLink.classList.add('connected');
+          contributorAuthLink.removeAttribute('href');
+        }
+      }
       async function loadContributorHistory() {
         if (!contributorHistory || window.VIA_BACKEND_ENV !== 'staging' || !window.VIA || !window.VIA.auth) return;
         if (!window.VIA.auth.currentUser()) return;
@@ -335,7 +349,8 @@
         }
       }
       if (window.VIA && window.VIA.auth && window.VIA.auth.onChange) {
-        window.VIA.auth.onChange(loadContributorHistory);
+        window.VIA.auth.onChange(function () { refreshContributorAuthLink(); loadContributorHistory(); });
+        refreshContributorAuthLink();
         loadContributorHistory();
       }
       if (contributorForm) {

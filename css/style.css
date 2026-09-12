@@ -3382,12 +3382,16 @@ path.leaflet-interactive { outline: none !important; }
   font: 27px/1 'Instrument Serif', Georgia, serif;
 }
 .welcome-signin {
-  justify-self: end;
+  justify-self: stretch;
+  width: 100%;
+  max-width: 100%;
   border: 0;
   background: none;
   color: rgba(244,231,209,0.62);
-  padding: 10px 0 0;
+  padding: 10px 20px 0;
   font: 500 var(--fs-12)/1.4 Inter, sans-serif;
+  text-align: right;
+  white-space: normal;
   cursor: pointer;
 }
 .welcome-signin span { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }

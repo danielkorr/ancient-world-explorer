@@ -3254,6 +3254,10 @@ path.leaflet-interactive { outline: none !important; }
   display: grid;
   grid-template-rows: repeat(2, minmax(0, 1fr));
   min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(224,181,98,0.62) rgba(23,11,3,0.92);
 }
 
 .welcome-path {

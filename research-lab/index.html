@@ -62,6 +62,25 @@
     .honesty li:before { content:'×'; color:var(--rust); position:absolute; left:0; font:20px 'Instrument Serif',serif; }
     .observatory { display:flex; justify-content:space-between; gap:30px; align-items:center; border:1px solid rgba(208,162,76,.35); padding:22px 24px; margin-top:44px; }
     .temporal-preview { border-color:rgba(208,162,76,.28); }
+    .contributor { display:grid; grid-template-columns:.9fr 1.1fr; border:1px solid var(--line); background:rgba(24,28,29,.76); }
+    .contributor-intro, .contributor-form-wrap { padding:34px; }
+    .contributor-intro { border-right:1px solid var(--line); }
+    .contributor-intro h2 { margin:18px 0 16px; font:400 42px/1.05 Georgia,serif; color:var(--cream); }
+    .contributor-intro p { margin:0 0 18px; color:var(--muted); line-height:1.7; }
+    .contributor-note { border-left:2px solid var(--blue); padding-left:14px; font-size:13px; }
+    .contributor-form { display:grid; grid-template-columns:1fr 1fr; gap:18px 16px; }
+    .contributor-form label { display:flex; flex-direction:column; gap:8px; color:var(--cream); font-size:12px; letter-spacing:.08em; text-transform:uppercase; }
+    .contributor-form label.full, .contributor-actions, .contributor-status { grid-column:1 / -1; }
+    .contributor-form input, .contributor-form select, .contributor-form textarea { width:100%; border:1px solid rgba(208,162,76,.32); border-radius:0; background:#111615; color:var(--cream); padding:12px 13px; font:15px/1.45 Georgia,serif; letter-spacing:normal; text-transform:none; }
+    .contributor-form textarea { min-height:112px; resize:vertical; }
+    .contributor-form input:focus, .contributor-form select:focus, .contributor-form textarea:focus { outline:2px solid rgba(131,184,207,.7); outline-offset:2px; border-color:var(--blue); }
+    .form-help { color:var(--muted); font-size:11px; letter-spacing:normal; line-height:1.4; text-transform:none; }
+    .contributor-actions { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+    .contributor-submit { border:1px solid var(--gold); background:var(--gold); color:#19150d; padding:12px 18px; font:600 12px/1.2 Arial,sans-serif; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; }
+    .contributor-submit:hover { background:#f0c56d; }
+    .contributor-save { color:var(--muted); font-size:12px; }
+    .contributor-status { display:none; border-left:2px solid var(--gold); padding:12px 14px; color:var(--cream); background:rgba(208,162,76,.08); line-height:1.5; }
+    .contributor-status.visible { display:block; }
     .temporal-copy { display:grid; grid-template-columns:.8fr 1.2fr; gap:48px; align-items:start; }
     .temporal-copy > p { margin:0; color:var(--muted); font:normal 23px/1.35 'Instrument Serif',serif; max-width:500px; }
     .temporal-points { border-top:1px solid var(--line); }
@@ -84,7 +103,7 @@
     .observatory p { color:var(--muted); font-size:13px; line-height:1.5; margin:5px 0 0; max-width:650px; }
     .observatory .mono { color:var(--gold); white-space:nowrap; }
     .footer-line { margin-top:52px; display:flex; justify-content:space-between; gap:24px; color:var(--muted); font-size:12px; line-height:1.5; }
-    @media (max-width:760px) { .shell { padding:18px 20px 50px; } .top { align-items:flex-start; gap:14px; } .brand { font-size:21px; line-height:1.05; max-width:135px; } .back { max-width:112px; text-align:right; line-height:1.35; } .hero { min-height:640px; display:block; padding-top:90px; } .hero:after { right:4%; top:10%; width:210px; height:210px; } h1 { font-size:70px; } .hero-note { margin-top:76px; max-width:290px; } .steps, .dossier, .honesty, .temporal-copy, .temporal-pilot-grid { grid-template-columns:1fr; } .steps { display:block; background:none; } .step { border-bottom:1px solid var(--line); } .step h3 { margin-top:22px; } .dossier-intro, .dossier-body, .temporal-lens, .temporal-open { padding:26px; } .dossier-intro h2 { font-size:44px; } .section-head { display:block; } .section-head p { margin-top:8px; } .temporal-copy { gap:24px; } .temporal-copy > p { font-size:21px; } .temporal-points div { grid-template-columns:1fr; gap:5px; } .temporal-meta { grid-template-columns:1fr; } .observatory { display:block; } .observatory .mono { display:block; margin-top:12px; white-space:normal; } .footer-line { display:block; } }
+    @media (max-width:760px) { .shell { padding:18px 20px 50px; } .top { align-items:flex-start; gap:14px; } .brand { font-size:21px; line-height:1.05; max-width:135px; } .back { max-width:112px; text-align:right; line-height:1.35; } .hero { min-height:640px; display:block; padding-top:90px; } .hero:after { right:4%; top:10%; width:210px; height:210px; } h1 { font-size:70px; } .hero-note { margin-top:76px; max-width:290px; } .steps, .dossier, .honesty, .temporal-copy, .temporal-pilot-grid, .contributor { grid-template-columns:1fr; } .steps { display:block; background:none; } .step { border-bottom:1px solid var(--line); } .step h3 { margin-top:22px; } .dossier-intro, .dossier-body, .temporal-lens, .temporal-open, .contributor-intro, .contributor-form-wrap { padding:26px; } .contributor-intro { border-right:0; border-bottom:1px solid var(--line); } .contributor-form { grid-template-columns:1fr; } .contributor-form label.full, .contributor-actions, .contributor-status { grid-column:auto; } .dossier-intro h2 { font-size:44px; } .section-head { display:block; } .section-head p { margin-top:8px; } .temporal-copy { gap:24px; } .temporal-copy > p { font-size:21px; } .temporal-points div { grid-template-columns:1fr; gap:5px; } .temporal-meta { grid-template-columns:1fr; } .observatory { display:block; } .observatory .mono { display:block; margin-top:12px; white-space:normal; } .footer-line { display:block; } }
     @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
   </style>
 </head>
@@ -120,6 +139,56 @@
         <div class="dossier-intro"><span class="stamp" id="dossier-stamp">Research dossier · example</span><h2 id="dossier-title">The crossing is not the conclusion.</h2><p id="dossier-intro-copy">A dossier brings the evidence together without collapsing different kinds of knowledge into one confident sentence.</p></div>
         <div class="dossier-body"><h3>Executive synthesis</h3><p id="dossier-synthesis">Ancient accounts place Alexander at the Granicus, but the exact crossing and battlefield geography remain matters of interpretation.</p><div class="evidence" id="dossier-evidence"><div><strong>Source-supported</strong> Ancient narratives consistently describe a river crossing and battle.</div><div><strong>Qualified</strong> Modern location proposals do not agree on every geographic detail.</div><div><strong>Research lead</strong> Public archaeology records suggest places to inspect, not proof of association.</div><div><strong>Open question</strong> Which physical features best fit the accounts and later landscape?</div></div><nav class="dossier-links" id="dossier-links" aria-label="Continue exploring"></nav></div>
       </article>
+    </section>
+    <section class="section" id="contribute">
+      <div class="section-head"><h2>Have something to add?</h2><p>An optional contributor path</p></div>
+      <div class="contributor">
+        <div class="contributor-intro">
+          <span class="stamp">Proposal, not edit</span>
+          <h2>Keep the question open.</h2>
+          <p>Researchers, field workers, local experts, and curious readers can propose evidence or a correction. Every proposal keeps its source wording, uncertainty, and provenance visible.</p>
+          <p class="contributor-note">This preview saves only in this browser. It does not change VIA, public chronology, Supabase, or the official record.</p>
+        </div>
+        <div class="contributor-form-wrap">
+          <form class="contributor-form" id="contributor-form">
+            <label>Place or dossier
+              <input name="subject" required maxlength="160" placeholder="e.g. Granicus River">
+            </label>
+            <label>Contribution type
+              <select name="submission_type" required>
+                <option value="">Choose one</option>
+                <option value="claim-correction">Claim correction</option>
+                <option value="new-evidence">New evidence</option>
+                <option value="field-observation">Field observation</option>
+                <option value="interpretation">Interpretation</option>
+                <option value="objection">Objection</option>
+                <option value="research-lead">Research lead</option>
+              </select>
+            </label>
+            <label class="full">Short title
+              <input name="title" required maxlength="180" placeholder="Describe the contribution plainly">
+            </label>
+            <label class="full">What do you propose?
+              <textarea name="proposal" required maxlength="10000" placeholder="State the claim, evidence, observation, or question."></textarea>
+            </label>
+            <label class="full">Why does it matter, and what remains uncertain?
+              <textarea name="rationale" required maxlength="10000" placeholder="Explain the reasoning without presenting it as settled fact."></textarea>
+            </label>
+            <label class="full">How do you know?
+              <textarea name="provenance" required maxlength="10000" placeholder="Cite a source, archive, observation, method, or field experience."></textarea>
+              <span class="form-help">A rationale and provenance statement are required before a proposal can enter review.</span>
+            </label>
+            <label>Contributor context <span class="form-help">Optional</span>
+              <input name="context" maxlength="280" placeholder="Expertise, affiliation, or field experience">
+            </label>
+            <div class="contributor-actions">
+              <button class="contributor-submit" type="submit">Review my proposal</button>
+              <span class="contributor-save">Private local draft · not submitted</span>
+            </div>
+            <div class="contributor-status" id="contributor-status" role="status" aria-live="polite"></div>
+          </form>
+        </div>
+      </div>
     </section>
     <section class="section temporal-preview">
       <div class="section-head"><h2>Every place has more than one life.</h2><p>The temporal layer / under review</p></div>
@@ -222,6 +291,36 @@
       document.getElementById('dossier-links').innerHTML = dossier.links.map(function (link) {
         return '<a href="' + link[1] + '">' + link[0] + ' ↗</a>';
       }).join('');
+      const contributorForm = document.getElementById('contributor-form');
+      const contributorStatus = document.getElementById('contributor-status');
+      const draftKey = 'via.research-lab.contribution-draft.v1';
+      function escapeInline(value) {
+        return String(value).replace(/[&<>]/g, function (char) {
+          return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[char];
+        });
+      }
+      if (contributorForm) {
+        try {
+          const savedDraft = JSON.parse(localStorage.getItem(draftKey) || '{}');
+          Array.prototype.forEach.call(contributorForm.elements, function (field) {
+            if (field.name && savedDraft[field.name]) field.value = savedDraft[field.name];
+          });
+        } catch (error) { /* unavailable storage should not block the public Lab */ }
+        contributorForm.addEventListener('input', function () {
+          const draft = {};
+          Array.prototype.forEach.call(contributorForm.elements, function (field) {
+            if (field.name) draft[field.name] = field.value;
+          });
+          try { localStorage.setItem(draftKey, JSON.stringify(draft)); } catch (error) { /* optional convenience */ }
+        });
+        contributorForm.addEventListener('submit', function (event) {
+          event.preventDefault();
+          if (!contributorForm.reportValidity()) return;
+          const subject = contributorForm.elements.subject.value.trim();
+          contributorStatus.innerHTML = '<strong>Proposal preview ready.</strong> Your draft about ' + escapeInline(subject) + ' is still private and has not been submitted. The next review step will attach evidence and route it to a qualified review queue.';
+          contributorStatus.classList.add('visible');
+        });
+      }
     }());
   </script>
 </body>

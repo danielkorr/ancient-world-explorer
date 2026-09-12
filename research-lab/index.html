@@ -8,6 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4"></script>
+  <script src="../js/config.js?v=3"></script>
+  <script src="../js/auth.js?v=107"></script>
   <style>
     :root { --ink:#10171b; --ink-2:#172329; --paper:#e9e0cf; --paper-2:#f3ecdf; --gold:#d0a24c; --rust:#b96e50; --muted:#a6b1ad; --line:rgba(233,224,207,.18); }
     * { box-sizing:border-box; }
@@ -150,7 +153,7 @@
           <p class="contributor-note">This preview saves only in this browser. It does not change VIA, public chronology, Supabase, or the official record.</p>
         </div>
         <div class="contributor-form-wrap">
-          <form class="contributor-form" id="contributor-form">
+        <form class="contributor-form" id="contributor-form" data-submission-mode="preview">
             <label>Place or dossier
               <input name="subject" required maxlength="160" placeholder="e.g. Granicus River">
             </label>
@@ -313,12 +316,39 @@
           });
           try { localStorage.setItem(draftKey, JSON.stringify(draft)); } catch (error) { /* optional convenience */ }
         });
-        contributorForm.addEventListener('submit', function (event) {
+        contributorForm.addEventListener('submit', async function (event) {
           event.preventDefault();
           if (!contributorForm.reportValidity()) return;
           const subject = contributorForm.elements.subject.value.trim();
-          contributorStatus.innerHTML = '<strong>Proposal preview ready.</strong> Your draft about ' + escapeInline(subject) + ' is still private and has not been submitted. The next review step will attach evidence and route it to a qualified review queue.';
+          const stagingMode = window.VIA_BACKEND_ENV === 'staging';
+          if (!stagingMode) {
+            contributorStatus.innerHTML = '<strong>Proposal preview ready.</strong> Your draft about ' + escapeInline(subject) + ' is still private and has not been submitted. Open this page with <code>?backend=staging</code> to test authenticated staging submission.';
+            contributorStatus.classList.add('visible');
+            return;
+          }
+          const user = window.VIA && window.VIA.auth && window.VIA.auth.currentUser();
+          if (!user) {
+            contributorStatus.innerHTML = '<strong>Sign-in required.</strong> Sign in on the staging app first, then return here to send this proposal to the staging review queue. <a href="../?signin=1&amp;backend=staging">Open staging sign-in â†—</a>';
+            contributorStatus.classList.add('visible');
+            return;
+          }
+          contributorStatus.innerHTML = '<strong>Sending to stagingâ€¦</strong> Your proposal remains quarantined from public chronology.';
           contributorStatus.classList.add('visible');
+          try {
+            const row = await window.VIA.auth.submitContribution({
+              subjectKind: 'dossier',
+              subjectId: params.get('place') || 'granicus',
+              submissionType: contributorForm.elements.submission_type.value,
+              title: contributorForm.elements.title.value.trim(),
+              proposal: contributorForm.elements.proposal.value.trim(),
+              rationale: contributorForm.elements.rationale.value.trim(),
+              provenance: contributorForm.elements.provenance.value.trim(),
+              contributorContext: { text: contributorForm.elements.context.value.trim() },
+            });
+            contributorStatus.innerHTML = '<strong>Proposal received in staging.</strong> It is now <em>proposed</em> and awaits triage. Nothing has changed in VIA public data or chronology. Reference: <code>' + escapeInline(row.id) + '</code>';
+          } catch (error) {
+            contributorStatus.innerHTML = '<strong>Staging submission did not complete.</strong> ' + escapeInline(error.message || 'Please try again after confirming the staging connection.') + ' Your local draft is still preserved.';
+          }
         });
       }
     }());

@@ -178,6 +178,10 @@
     getSiteVisitCount(site) {
       return this._readCheckins().filter(r => r.site_pleiades === site.pleiades).length;
     },
+
+    async submitContribution() {
+      throw new Error('Cloud contribution submission is available in staging only');
+    },
   };
 
   // ── PUBLIC NAMESPACE ─────────────────────────────────────
@@ -442,6 +446,29 @@
       return this._siteCounts.get(site.pleiades) || 0;
     },
 
+    async submitContribution(input) {
+      if (!this._user) throw new Error('Sign in before submitting a contribution');
+      const row = {
+        subject_kind: input.subjectKind,
+        subject_id: input.subjectId,
+        submission_type: input.submissionType,
+        title: input.title,
+        proposal: input.proposal,
+        rationale: input.rationale,
+        provenance: input.provenance,
+        contributor_id: this._user.id,
+        contributor_context: input.contributorContext || {},
+        status: 'proposed',
+      };
+      const { data, error } = await window.VIA_SB
+        .from('research_contributions')
+        .insert(row)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+
     async _loadProfile(userId) {
       const { data } = await window.VIA_SB
         .from('profiles')
@@ -585,6 +612,7 @@
     getCheckin:         s      => backend.getCheckin(s),
     getUserCheckins:    ()     => backend.getUserCheckins(),
     getSiteVisitCount:  s      => backend.getSiteVisitCount(s),
+    submitContribution: input => backend.submitContribution(input),
     onChange:           fn     => { listeners.add(fn); return () => listeners.delete(fn); },
     importLocalCheckins,
     localCheckinCount,

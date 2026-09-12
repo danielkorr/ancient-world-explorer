@@ -3377,6 +3377,17 @@ path.leaflet-interactive { outline: none !important; }
   color: var(--gold);
   font: 27px/1 'Instrument Serif', Georgia, serif;
 }
+.welcome-signin {
+  justify-self: end;
+  border: 0;
+  background: none;
+  color: rgba(244,231,209,0.62);
+  padding: 10px 0 0;
+  font: 500 var(--fs-12)/1.4 Inter, sans-serif;
+  cursor: pointer;
+}
+.welcome-signin span { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
+.welcome-signin:hover span, .welcome-signin:focus-visible span { color: #f0c56d; }
 .welcome-research-copy { display: grid; gap: 2px; min-width: 0; }
 .welcome-research-copy .welcome-path-overline { margin: 0; color: var(--gold); }
 .welcome-research-copy strong { color: rgba(244,231,209,0.96); font: 600 var(--fs-13)/1.2 Inter, sans-serif; }

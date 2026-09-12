@@ -33,20 +33,10 @@ stack; never substitute a service-role or secret key in browser code.
 ## Hosted staging
 
 The branch is linked to the separate project
-`tmbxfqehnmihcllqcrvo` (`ancient-world-explorer-testing`). To test the hosted
-staging API without committing its public key, set the publishable key in the
-browser console for that origin:
-
-```js
-localStorage.setItem('via.staging.supabase.key', 'sb_publishable_…')
-```
-
-Then reload with `?backend=staging`. The staging URL is built into `js/config.js`;
-the key is intentionally local-only. Clear it with:
-
-```js
-localStorage.removeItem('via.staging.supabase.key')
-```
+`tmbxfqehnmihcllqcrvo` (`ancient-world-explorer-testing`) for CLI schema and seed
+verification. The public app configuration remains protected and production-bound;
+staging credentials must be supplied through a future test-only harness or deployment
+configuration, never by modifying the protected core files.
 
 ## Staging clone gate
 

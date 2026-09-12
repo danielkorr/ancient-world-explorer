@@ -15,4 +15,12 @@ window.VIA_PLACE_BRIDGES = Object.freeze([
     confidence: 'high',
     public: true,
   }),
+  Object.freeze({
+    place_key: 'granicus',
+    alexander_stop_id: 'granicus',
+    dossier: 'granicus',
+    relationship: 'campaign-place',
+    confidence: 'high',
+    public: true,
+  }),
 ]);

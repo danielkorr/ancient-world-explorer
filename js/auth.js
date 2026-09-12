@@ -350,9 +350,11 @@
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
         throw new Error('Enter an email to receive a sign-in link');
       }
+      const redirect = new URL(window.location.href);
+      redirect.hash = '';
       const { error } = await window.VIA_SB.auth.signInWithOtp({
         email: trimmed,
-        options: { emailRedirectTo: window.location.origin + window.location.pathname },
+        options: { emailRedirectTo: redirect.origin + redirect.pathname + redirect.search },
       });
       if (error) throw error;
       return { pending: true, email: trimmed };

@@ -469,6 +469,17 @@
       return data;
     },
 
+    async getMyContributions() {
+      if (!this._user) return [];
+      const { data, error } = await window.VIA_SB
+        .from('research_contributions')
+        .select('id, subject_kind, subject_id, submission_type, title, status, created_at')
+        .eq('contributor_id', this._user.id)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+
     async _loadProfile(userId) {
       const { data } = await window.VIA_SB
         .from('profiles')
@@ -613,6 +624,7 @@
     getUserCheckins:    ()     => backend.getUserCheckins(),
     getSiteVisitCount:  s      => backend.getSiteVisitCount(s),
     submitContribution: input => backend.submitContribution(input),
+    getMyContributions: () => backend.getMyContributions ? backend.getMyContributions() : Promise.resolve([]),
     onChange:           fn     => { listeners.add(fn); return () => listeners.delete(fn); },
     importLocalCheckins,
     localCheckinCount,

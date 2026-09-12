@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4"></script>
   <script src="../js/config.js?v=3"></script>
-  <script src="../js/auth.js?v=107"></script>
+  <script src="../js/auth.js?v=108"></script>
   <style>
     :root { --ink:#10171b; --ink-2:#172329; --paper:#e9e0cf; --paper-2:#f3ecdf; --gold:#d0a24c; --rust:#b96e50; --muted:#a6b1ad; --line:rgba(233,224,207,.18); }
     * { box-sizing:border-box; }
@@ -84,6 +84,14 @@
     .contributor-save { color:var(--muted); font-size:12px; }
     .contributor-status { display:none; border-left:2px solid var(--gold); padding:12px 14px; color:var(--cream); background:rgba(208,162,76,.08); line-height:1.5; }
     .contributor-status.visible { display:block; }
+    .contributor-history { display:none; margin-top:16px; border-top:1px solid var(--line); padding-top:22px; }
+    .contributor-history.visible { display:block; }
+    .contributor-history h3 { margin:0 0 12px; color:var(--gold); font:500 11px 'DM Mono',monospace; letter-spacing:.1em; text-transform:uppercase; }
+    .contributor-history p { color:var(--muted); font-size:13px; line-height:1.5; }
+    .proposal-row { display:grid; grid-template-columns:1fr auto; gap:6px 18px; border-top:1px solid var(--line); padding:12px 0; }
+    .proposal-row strong { color:var(--paper-2); font:normal 18px/1.2 'Instrument Serif',serif; }
+    .proposal-row span { color:var(--muted); font-size:12px; }
+    .proposal-status { align-self:start; color:var(--gold) !important; font:500 10px 'DM Mono',monospace !important; letter-spacing:.08em; text-transform:uppercase; }
     .temporal-copy { display:grid; grid-template-columns:.8fr 1.2fr; gap:48px; align-items:start; }
     .temporal-copy > p { margin:0; color:var(--muted); font:normal 23px/1.35 'Instrument Serif',serif; max-width:500px; }
     .temporal-points { border-top:1px solid var(--line); }
@@ -192,6 +200,10 @@
           </form>
         </div>
       </div>
+    </section>
+    <section class="section contributor-history" id="contributor-history" aria-live="polite">
+      <h3>Your staging proposals</h3>
+      <div id="contributor-history-content"><p>Sign in to staging to see proposals associated with this account.</p></div>
     </section>
     <section class="section temporal-preview">
       <div class="section-head"><h2>Every place has more than one life.</h2><p>The temporal layer / under review</p></div>
@@ -302,6 +314,30 @@
           return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[char];
         });
       }
+      const contributorHistory = document.getElementById('contributor-history');
+      const contributorHistoryContent = document.getElementById('contributor-history-content');
+      async function loadContributorHistory() {
+        if (!contributorHistory || window.VIA_BACKEND_ENV !== 'staging' || !window.VIA || !window.VIA.auth) return;
+        if (!window.VIA.auth.currentUser()) return;
+        contributorHistory.classList.add('visible');
+        try {
+          const rows = await window.VIA.auth.getMyContributions();
+          if (!rows.length) {
+            contributorHistoryContent.innerHTML = '<p>No proposals have been submitted from this staging account yet.</p>';
+            return;
+          }
+          contributorHistoryContent.innerHTML = rows.map(function (row) {
+            const date = row.created_at ? new Date(row.created_at).toLocaleDateString() : 'Date pending';
+            return '<div class="proposal-row"><strong>' + escapeInline(row.title) + '</strong><span class="proposal-status">' + escapeInline(row.status) + '</span><span>' + escapeInline(row.submission_type) + ' · ' + escapeInline(row.subject_id) + ' · ' + escapeInline(date) + '</span></div>';
+          }).join('');
+        } catch (error) {
+          contributorHistoryContent.innerHTML = '<p>Staging proposal history is temporarily unavailable. Your submission path remains protected.</p>';
+        }
+      }
+      if (window.VIA && window.VIA.auth && window.VIA.auth.onChange) {
+        window.VIA.auth.onChange(loadContributorHistory);
+        loadContributorHistory();
+      }
       if (contributorForm) {
         try {
           const savedDraft = JSON.parse(localStorage.getItem(draftKey) || '{}');
@@ -346,6 +382,7 @@
               contributorContext: { text: contributorForm.elements.context.value.trim() },
             });
             contributorStatus.innerHTML = '<strong>Proposal received in staging.</strong> It is now <em>proposed</em> and awaits triage. Nothing has changed in VIA public data or chronology. Reference: <code>' + escapeInline(row.id) + '</code>';
+            loadContributorHistory();
           } catch (error) {
             contributorStatus.innerHTML = '<strong>Staging submission did not complete.</strong> ' + escapeInline(error.message || 'Please try again after confirming the staging connection.') + ' Your local draft is still preserved.';
           }

@@ -84,6 +84,8 @@
     .contributor-actions { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
     .contributor-submit { border:1px solid var(--gold); background:var(--gold); color:#19150d; padding:12px 18px; font:600 12px/1.2 Arial,sans-serif; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; }
     .contributor-submit:hover { background:#f0c56d; }
+    .contributor-inline-signin { display:none; color:var(--gold); border-bottom:1px solid rgba(208,162,76,.55); padding:10px 0; font:500 11px 'DM Mono',monospace; letter-spacing:.06em; text-transform:uppercase; }
+    .contributor-inline-signin.visible { display:inline-block; }
     .contributor-save { color:var(--muted); font-size:12px; }
     .contributor-status { display:none; border-left:2px solid var(--gold); padding:12px 14px; color:var(--cream); background:rgba(208,162,76,.08); line-height:1.5; }
     .contributor-status.visible { display:block; }
@@ -198,6 +200,7 @@
             </label>
             <div class="contributor-actions">
               <button class="contributor-submit" type="submit">Review my proposal</button>
+              <a class="contributor-inline-signin" id="contributor-inline-signin" href="../?signin=1">Sign in to contribute</a>
               <span class="contributor-save">Private local draft · not submitted</span>
             </div>
             <div class="contributor-status" id="contributor-status" role="status" aria-live="polite"></div>
@@ -321,12 +324,17 @@
       const contributorHistory = document.getElementById('contributor-history');
       const contributorHistoryContent = document.getElementById('contributor-history-content');
       const contributorAuthLink = document.getElementById('contributor-auth-link');
+      const contributorInlineSignin = document.getElementById('contributor-inline-signin');
       function refreshContributorAuthLink() {
         if (!contributorAuthLink) return;
         const authUrl = new URL('../?signin=1', location.href);
         if (window.VIA_BACKEND_ENV === 'staging') authUrl.searchParams.set('backend', 'staging');
         contributorAuthLink.href = authUrl.href;
         const user = window.VIA && window.VIA.auth && window.VIA.auth.currentUser();
+        if (contributorInlineSignin) {
+          contributorInlineSignin.href = authUrl.href;
+          contributorInlineSignin.classList.toggle('visible', window.VIA_BACKEND_ENV === 'staging' && !user);
+        }
         if (user) {
           contributorAuthLink.textContent = 'Researcher access connected';
           contributorAuthLink.classList.add('connected');
@@ -356,6 +364,7 @@
         refreshContributorAuthLink();
         loadContributorHistory();
       }
+      refreshContributorAuthLink();
       if (contributorForm) {
         try {
           const savedDraft = JSON.parse(localStorage.getItem(draftKey) || '{}');
@@ -382,7 +391,9 @@
           }
           const user = window.VIA && window.VIA.auth && window.VIA.auth.currentUser();
           if (!user) {
-            contributorStatus.innerHTML = '<strong>Sign-in required.</strong> Sign in on the staging app first, then return here to send this proposal to the staging review queue. <a href="../?signin=1&amp;backend=staging">Open staging sign-in â†—</a>';
+            const signInUrl = new URL('../?signin=1', location.href);
+            signInUrl.searchParams.set('backend', 'staging');
+            contributorStatus.innerHTML = '<strong>Sign-in needed to send this proposal.</strong> Your draft is preserved. <a href="' + signInUrl.href + '">Sign in to contribute â†—</a>';
             contributorStatus.classList.add('visible');
             return;
           }

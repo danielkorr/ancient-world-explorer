@@ -143,7 +143,6 @@
           <div class="welcome-glyph" aria-hidden="true">⊕</div>
           <h2 id="welcome-title">Welcome to VIA</h2>
           <p>Two ways into the ancient world.</p>
-          <button class="welcome-heading-signin" type="button" onclick="openAuthModal()">Sign in to VIA</button>
         </header>
 
         <div class="welcome-how" aria-labelledby="welcome-how-title">
@@ -199,7 +198,7 @@
           </div>
         </article>
 
-        <a class="welcome-research-link" href="research-lab/">
+        <a class="welcome-research-link" href="research-lab/" onclick="if(new URLSearchParams(location.search).get('backend')==='staging') this.href='research-lab/?backend=staging';">
           <span class="welcome-research-mark" aria-hidden="true">◌</span>
           <span class="welcome-research-copy">
             <span class="welcome-path-overline">Research Lab</span>

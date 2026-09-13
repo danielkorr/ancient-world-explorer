@@ -124,7 +124,7 @@
 </head>
 <body>
   <main class="shell">
-  <header class="top"><div class="brand">VIA <span>/</span> Research Lab</div><div class="lab-tools"><a class="auth-link" id="contributor-auth-link" href="../?signin=1&amp;backend=staging">Sign in to staging</a><a class="back" id="back-link" href="../?map=1">← Return to the map</a></div></header>
+  <header class="top"><div class="brand">VIA <span>/</span> Research Lab</div><div class="lab-tools"><a class="auth-link" id="contributor-auth-link" href="../?signin=1">Researcher access</a><a class="back" id="back-link" href="../?map=1">← Return to the map</a></div></header>
     <section class="hero">
       <div>
         <div class="eyebrow">A public window into the work</div>
@@ -322,10 +322,13 @@
       const contributorHistoryContent = document.getElementById('contributor-history-content');
       const contributorAuthLink = document.getElementById('contributor-auth-link');
       function refreshContributorAuthLink() {
-        if (!contributorAuthLink || window.VIA_BACKEND_ENV !== 'staging') return;
+        if (!contributorAuthLink) return;
+        const authUrl = new URL('../?signin=1', location.href);
+        if (window.VIA_BACKEND_ENV === 'staging') authUrl.searchParams.set('backend', 'staging');
+        contributorAuthLink.href = authUrl.href;
         const user = window.VIA && window.VIA.auth && window.VIA.auth.currentUser();
         if (user) {
-          contributorAuthLink.textContent = 'Staging account connected';
+          contributorAuthLink.textContent = 'Researcher access connected';
           contributorAuthLink.classList.add('connected');
           contributorAuthLink.removeAttribute('href');
         }

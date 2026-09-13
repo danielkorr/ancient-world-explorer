@@ -3163,22 +3163,6 @@ path.leaflet-interactive { outline: none !important; }
   font-style: italic;
   color: rgba(238,214,176,0.78);
 }
-.welcome-heading-signin {
-  width: 100%;
-  margin-top: 16px;
-  padding: 11px 14px;
-  border: 1px solid rgba(235,190,108,0.86);
-  border-radius: 4px;
-  background: linear-gradient(135deg, #e3b660, #bd8230);
-  color: #1a0d04;
-  font-family: 'Cinzel', serif;
-  font-size: var(--fs-11);
-  font-weight: 700;
-  letter-spacing: 1.6px;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-.welcome-heading-signin:hover, .welcome-heading-signin:focus-visible { filter: brightness(1.08); }
 
 .welcome-how {
   flex: 1 1 auto;

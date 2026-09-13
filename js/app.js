@@ -4597,6 +4597,10 @@ function setAuthState(state) {
 }
 
 function openAuthModal() {
+  // If auth is opened from a direct sign-in route while the welcome splash is
+  // still settling, dismiss the splash so it cannot sit above or behind auth.
+  const welcome = document.getElementById('welcome-modal');
+  if (welcome && welcome.classList.contains('open')) closeWelcome();
   // On mobile the bottom-sheet panel + the modal would otherwise stack
   // visibly. Close the panel first so the modal owns the viewport.
   if (window.innerWidth <= 640 && document.getElementById('info-panel').classList.contains('open')) {

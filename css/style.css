@@ -706,7 +706,7 @@ body.lock-alexander #welcome-body .wb-alexander { display: block; }
 #auth-modal {
   position: fixed;
   inset: 0;
-  z-index: 2000;
+  z-index: 2200;
   display: none;
   align-items: center;
   justify-content: center;

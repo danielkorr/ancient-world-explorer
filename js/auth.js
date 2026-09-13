@@ -529,6 +529,10 @@
   // still force Supabase for backwards compatibility.
 
   function isGuest() {
+    // An explicit staging URL is a deliberate cloud-test choice. Do not let a
+    // stale guest flag from an earlier visit route this device back to the
+    // local backend and make a valid staging sign-in look unavailable.
+    if (window.VIA_BACKEND_ENV === 'staging') return false;
     try {
       const url = new URL(window.location.href);
       if (url.searchParams.get('guest') === '1') return true;

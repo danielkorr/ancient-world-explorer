@@ -4777,6 +4777,18 @@ function refreshAllMarkers() {
 
 let _lastAuthUserId = null;
 
+function redirectAfterAuth() {
+  if (!VIA.auth.currentUser()) return false;
+  const params = new URLSearchParams(location.search);
+  const returnPath = params.get('return');
+  if (!returnPath || !returnPath.startsWith('/') || returnPath.startsWith('//')) return false;
+  const target = new URL(returnPath, location.origin);
+  if (target.origin !== location.origin) return false;
+  if (target.pathname === location.pathname && target.searchParams.get('signin') === '1') return false;
+  window.location.replace(target.href);
+  return true;
+}
+
 VIA.auth.onChange(() => {
   refreshProfilePill();
   refreshCheckinRow();
@@ -4786,12 +4798,21 @@ VIA.auth.onChange(() => {
   const user = VIA.auth.currentUser();
   const currentId = user ? user.id : null;
   if (_lastAuthUserId === null && currentId && VIA.auth.backend === 'supabase') {
-    showImportPromptIfNeeded();
+    if (!redirectAfterAuth()) showImportPromptIfNeeded();
   }
   _lastAuthUserId = currentId;
 });
 
 refreshProfilePill();
+// Auth can hydrate synchronously from the persisted JWT before the listener
+// above is registered. Check once after boot as well so a returning contributor
+// is not stranded on the map splash page.
+setTimeout(() => {
+  redirectAfterAuth();
+}, 0);
+setTimeout(() => {
+  redirectAfterAuth();
+}, 250);
 
 // On boot: if the URL has ?signin=1 (set by guest-mode → cloud transition),
 // pop the sign-in modal automatically.

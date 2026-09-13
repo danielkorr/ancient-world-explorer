@@ -323,6 +323,12 @@
       const contributorHistory = document.getElementById('contributor-history');
       const contributorHistoryContent = document.getElementById('contributor-history-content');
       const contributorAuthLink = document.getElementById('contributor-auth-link');
+      const labParams = new URLSearchParams(location.search);
+      function showSignedInDraftNotice() {
+        if (labParams.get('signedin') !== '1' || !window.VIA || !window.VIA.auth || !window.VIA.auth.currentUser()) return;
+        contributorStatus.innerHTML = '<strong>You are signed in.</strong> Your private draft is ready. Click <em>Review my proposal</em> once more to send it to the staging review queue.';
+        contributorStatus.classList.add('visible');
+      }
       function refreshContributorAuthLink() {
         if (!contributorAuthLink) return;
         const authUrl = new URL('../?signin=1', location.href);
@@ -354,9 +360,10 @@
         }
       }
       if (window.VIA && window.VIA.auth && window.VIA.auth.onChange) {
-        window.VIA.auth.onChange(function () { refreshContributorAuthLink(); loadContributorHistory(); });
+        window.VIA.auth.onChange(function () { refreshContributorAuthLink(); loadContributorHistory(); showSignedInDraftNotice(); });
         refreshContributorAuthLink();
         loadContributorHistory();
+        showSignedInDraftNotice();
       }
       refreshContributorAuthLink();
       if (contributorForm) {
@@ -387,11 +394,15 @@
           if (!user) {
             const signInUrl = new URL('../?signin=1', location.href);
             signInUrl.searchParams.set('backend', 'staging');
-            contributorStatus.innerHTML = '<strong>Sign-in needed to send this proposal.</strong> Your draft is preserved.<br><a class="status-action" href="' + signInUrl.href + '">Sign in to contribute</a>';
+            const returnUrl = new URL(location.href);
+            returnUrl.searchParams.set('signedin', '1');
+            returnUrl.hash = 'contribute';
+            signInUrl.searchParams.set('return', returnUrl.pathname + returnUrl.search + returnUrl.hash);
+            contributorStatus.innerHTML = '<strong>Sign-in needed to send this proposal.</strong> Your draft is saved privately in this browser. After sign-in, you will return here with the form ready. Click <em>Review my proposal</em> once more to submit it.<br><a class="status-action" href="' + signInUrl.href + '">Sign in to contribute</a>';
             contributorStatus.classList.add('visible');
             return;
           }
-          contributorStatus.innerHTML = '<strong>Sending to stagingâ€¦</strong> Your proposal remains quarantined from public chronology.';
+          contributorStatus.innerHTML = '<strong>Sending to staging...</strong> Your proposal remains quarantined from public chronology.';
           contributorStatus.classList.add('visible');
           try {
             const row = await window.VIA.auth.submitContribution({

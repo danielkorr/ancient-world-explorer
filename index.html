@@ -60,7 +60,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=156">
+  <link rel="stylesheet" href="css/style.css?v=157">
 </head>
 <body>
 
@@ -143,6 +143,7 @@
           <div class="welcome-glyph" aria-hidden="true">⊕</div>
           <h2 id="welcome-title">Welcome to VIA</h2>
           <p>Two ways into the ancient world.</p>
+          <button class="welcome-heading-signin" type="button" onclick="openAuthModal()">Sign in to VIA</button>
         </header>
 
         <div class="welcome-how" aria-labelledby="welcome-how-title">
@@ -198,7 +199,6 @@
           </div>
         </article>
 
-        <button class="welcome-signin" type="button" onclick="openAuthModal()">Already have an account? <span>Sign in</span></button>
         <a class="welcome-research-link" href="research-lab/">
           <span class="welcome-research-mark" aria-hidden="true">◌</span>
           <span class="welcome-research-copy">

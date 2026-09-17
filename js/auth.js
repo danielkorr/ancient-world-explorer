@@ -451,6 +451,7 @@
     async submitContribution(input) {
       if (!this._user) throw new Error('Sign in before submitting a contribution');
       const row = {
+        id:              uuid(),
         subject_kind: input.subjectKind,
         subject_id: input.subjectId,
         submission_type: input.submissionType,
@@ -462,13 +463,15 @@
         contributor_context: input.contributorContext || {},
         status: 'proposed',
       };
-      const { data, error } = await window.VIA_SB
+      // Insert-only is intentional. The follow-up `.select().single()` can
+      // wedge on this project's ES256/authenticated read path even when the
+      // insert itself is accepted. The Lab refreshes contribution history
+      // separately after the insert completes.
+      const { error } = await window.VIA_SB
         .from('research_contributions')
-        .insert(row)
-        .select()
-        .single();
+        .insert(row);
       if (error) throw error;
-      return data;
+      return row;
     },
 
     async getMyContributions() {

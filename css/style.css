@@ -2701,6 +2701,27 @@ path.leaflet-interactive { outline: none !important; }
 
   #info-panel.open { transform: translateY(0); }
 
+  /* Panel focus mode: when a site/road panel is open on a phone, the panel IS
+     the screen. Fade out the competing top chrome — brand + top search, era
+     toggle, and the mode tabs/crosslink — so the ONLY things left are the panel
+     and the map's flashing locator in the strip above it. This also uncovers the
+     locator: panToWithPanelOffset (app.js) pushes the selected marker up into
+     that top strip, where #mode-tabs / #mode-crosslink used to sit on top of it.
+     The dock (bottom search) stays — it's the single, thumb-reachable search. */
+  #topbar,
+  #era-toggle-wrap,
+  #mode-tabs,
+  #mode-crosslink {
+    transition: opacity 0.28s ease;
+  }
+  body:has(#info-panel.open) #topbar,
+  body:has(#info-panel.open) #era-toggle-wrap,
+  body:has(#info-panel.open) #mode-tabs,
+  body:has(#info-panel.open) #mode-crosslink {
+    opacity: 0;
+    pointer-events: none;
+  }
+
   #panel-hero { height: 82px; }
   #hero-inner { padding: 0 58px 0 22px; text-align: left; width: 100%; }
   #hero-icon  { display: none; }

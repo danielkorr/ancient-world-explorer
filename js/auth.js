@@ -492,13 +492,27 @@
 
     async getMyContributions() {
       if (!this._user) return [];
-      const { data, error } = await window.VIA_SB
-        .from('research_contributions')
-        .select('id, subject_kind, subject_id, submission_type, title, status, created_at')
-        .eq('contributor_id', this._user.id)
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return data || [];
+      const session = readStoredSession();
+      if (!session || !session.stored || !session.stored.access_token) {
+        throw new Error('Your staging session expired. Sign in again to view proposals.');
+      }
+      const cfg = window.VIA_CONFIG;
+      const url = new URL(`${cfg.SUPABASE_URL}/rest/v1/research_contributions`);
+      url.searchParams.set('select', 'id,subject_kind,subject_id,submission_type,title,status,created_at');
+      url.searchParams.set('contributor_id', `eq.${this._user.id}`);
+      url.searchParams.set('order', 'created_at.desc');
+      const response = await fetch(url, {
+        headers: {
+          apikey: cfg.SUPABASE_KEY,
+          Authorization: `Bearer ${session.stored.access_token}`,
+        },
+      });
+      if (!response.ok) {
+        let detail = '';
+        try { detail = await response.text(); } catch (_) {}
+        throw new Error(detail || `Staging proposal history failed (${response.status})`);
+      }
+      return (await response.json()) || [];
     },
 
     async _loadProfile(userId) {

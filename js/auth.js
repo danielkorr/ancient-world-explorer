@@ -463,14 +463,30 @@
         contributor_context: input.contributorContext || {},
         status: 'proposed',
       };
-      // Insert-only is intentional. The follow-up `.select().single()` can
-      // wedge on this project's ES256/authenticated read path even when the
-      // insert itself is accepted. The Lab refreshes contribution history
-      // separately after the insert completes.
-      const { error } = await window.VIA_SB
-        .from('research_contributions')
-        .insert(row);
-      if (error) throw error;
+      // Use the REST endpoint directly for writes. On this project's ES256
+      // setup, supabase-js can wedge while preparing an authenticated insert,
+      // even though direct PostgREST reads work. Keep the insert return-minimal
+      // and refresh history separately after it completes.
+      const session = readStoredSession();
+      if (!session || !session.stored || !session.stored.access_token) {
+        throw new Error('Your staging session expired. Sign in again before submitting.');
+      }
+      const cfg = window.VIA_CONFIG;
+      const response = await fetch(`${cfg.SUPABASE_URL}/rest/v1/research_contributions`, {
+        method: 'POST',
+        headers: {
+          apikey: cfg.SUPABASE_KEY,
+          Authorization: `Bearer ${session.stored.access_token}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal',
+        },
+        body: JSON.stringify(row),
+      });
+      if (!response.ok) {
+        let detail = '';
+        try { detail = await response.text(); } catch (_) {}
+        throw new Error(detail || `Staging submission failed (${response.status})`);
+      }
       return row;
     },
 

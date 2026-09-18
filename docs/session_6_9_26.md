@@ -13,7 +13,7 @@
 ● Bash(B=~/.claude/skills/gstack/browse/dist/browse
       REPORT_DIR=$(cat /tmp/via-report-dir)…)
   ⎿  [browse] Starting server...
-     Navigated to http://127.0.0.1:8088/ (200)
+     Navigated to [LOCAL_HOST_REDACTED]/ (200)
      Path must be within: C:\Users\danie\AppData\Local\Temp, C:\Users\danie\PycharmProjects\ancient-world-explorer
      … +3 lines (ctrl+o to expand)
   ⎿  (timeout 1m)
@@ -34,8 +34,8 @@
 ● Bash(B=~/.claude/skills/gstack/browse/dist/browse
       LOCAL_SHOTS=$(cat /tmp/via-local-shots)…)
   ⎿  [browse] Starting server...
-     Navigated to http://127.0.0.1:8088/ (200)
-     http://127.0.0.1:8088/
+     Navigated to [LOCAL_HOST_REDACTED]/ (200)
+     [LOCAL_HOST_REDACTED]/
      … +3 lines (ctrl+o to expand)
   ⎿  (timeout 1m)
   ⎿  Allowed by auto mode classifier
@@ -67,7 +67,7 @@
   Bash(B=~/.claude/skills/gstack/browse/dist/browse
 ●     LOCAL_SHOTS=$(cat /tmp/via-local-shots)…)
   ⎿  Waiting…
-     Navigated to http://127.0.0.1:8088/ (200)
+     Navigated to [LOCAL_HOST_REDACTED]/ (200)
 ✻ Bla[browse](Starting server...kens)
      about:blank
 ─────… +4 lines (ctrl+o to expand)─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -97,9 +97,9 @@
   ⎿  Allowed by auto mode classifier
 
 ● Bash(# Confirm server alive
-      curl -s -o /dev/null -w "127: %{http_code}\n" http://127.0.0.1:8088/…)
+      curl -s -o /dev/null -w "127: %{http_code}\n" [LOCAL_HOST_REDACTED]/…)
   ⎿  127: 200
-     localhost: 200
+     [LOCAL_HOST_REDACTED]: 200
      [browse] Starting server...
      … +2 lines (ctrl+o to expand)
   ⎿  Allowed by auto mode classifier
@@ -107,7 +107,7 @@
 ● Write(.cache\design-audit\chain1.json)
   ⎿  Wrote 6 lines to .cache\design-audit\chain1.json
       1 [
-      2   ["goto","http://localhost:8088/"],
+      2   ["goto","[LOCAL_HOST_REDACTED]/"],
       3   ["wait","--networkidle"],
       4   ["viewport","1440x900"],
       5   ["screenshot","C:/Users/danie/PycharmProjects/ancient-world-explorer/.cache/design-audit/screenshots/first-impression.png"]
@@ -126,7 +126,7 @@
 
 ● Write(.cache\design-audit\chain2.json)
   ⎿  Wrote 16 lines to .cache\design-audit\chain2.json
-       2   ["goto","http://localhost:8088/"],
+       2   ["goto","[LOCAL_HOST_REDACTED]/"],
        3   ["wait","--networkidle"],
        4   ["viewport","1440x900"],
        6   ["js","JSON.stringify({fonts:[...new Set([...document.querySelectorAll('*')].slice(0,500).map(e=>getComputedStyle(e).fontFamily))],colors:[...new Set([...document.querySelectorAll('*')].slice(0,500).flatMap(e=
@@ -141,7 +141,7 @@
 ● Bash(B=~/.claude/skills/gstack/browse/dist/browse
       cat .cache/design-audit/chain2.json | $B chain 2>&1 | tail -80)
   ⎿  [browse] Starting server...
-     [goto] Navigated to http://localhost:8088/ (200)
+     [goto] Navigated to [LOCAL_HOST_REDACTED]/ (200)
      … +32 lines (ctrl+o to expand)
   ⎿  (timeout 2m)
   ⎿  Allowed by auto mode classifier
@@ -152,7 +152,7 @@
 
 ● Write(.cache\design-audit\chain3.json)
   ⎿  Wrote 20 lines to .cache\design-audit\chain3.json
-       2   ["goto","http://localhost:8088/"],
+       2   ["goto","[LOCAL_HOST_REDACTED]/"],
        3   ["wait","--networkidle"],
        4   ["viewport","1440x900"],
        5   ["js","try{VIA.auth.signIn('Aulus')}catch(e){e.message}"],
@@ -183,7 +183,7 @@
        1 # VIA — Ancient World Explorer · Design Audit
        2 
        3 **Date:** 2026-06-08
-       4 **Target:** http://localhost:8088/ (Stage 1 + #4 social layer, local pre-deploy)
+       4 **Target:** [LOCAL_HOST_REDACTED]/ (Stage 1 + #4 social layer, local pre-deploy)
        5 **Branch:** main
        6 **Scope:** Single-page map app. Desktop (1440x900) + mobile (375x812).
        7 
@@ -389,7 +389,7 @@
 
 ● Write(.cache\design-audit\chain4.json)
   ⎿  Wrote 22 lines to .cache\design-audit\chain4.json
-       2   ["goto","http://localhost:8088/"],
+       2   ["goto","[LOCAL_HOST_REDACTED]/"],
        3   ["wait","--networkidle"],
        4   ["viewport","375x812"],
        5   ["js","try{VIA.auth.signIn('Aulus')}catch(e){e.message}"],
@@ -418,7 +418,7 @@
 ● Write(.cache\design-audit\chain5.json)
   ⎿  Wrote 13 lines to .cache\design-audit\chain5.json
        1 [
-       2   ["goto","http://localhost:8088/"],
+       2   ["goto","[LOCAL_HOST_REDACTED]/"],
        3   ["wait","--networkidle"],
        4   ["viewport","375x812"],
        5   ["js","try{VIA.auth.signOut()}catch(e){}'ok'"],
@@ -433,7 +433,7 @@
 ●     cat .cache/design-audit/chain5.json | $B chain 2>&1 | tail -25)
   ⎿  Waiting…
      [browse] Starting server...
-✶ Ver[goto] Navigated8to2http://localhost:8088/ (200)
+✶ Ver[goto] Navigated8to2[LOCAL_HOST_REDACTED]/ (200)
      … +19 lines (ctrl+o to expand)
      (timeout 1m)
   ⎿  Allowed by auto mode classifier
@@ -1603,8 +1603,8 @@
   // → "supabase"
 
   // 3. Try signing in (use your real email — magic link arrives)
-  await VIA.auth.signIn('your@email.com')
-  // → { pending: true, email: "your@email.com" }
+  await VIA.auth.signIn('[EMAIL_REDACTED]')
+  // → { pending: true, email: "[EMAIL_REDACTED]" }
   //   Check your inbox, click the link, you're signed in.
 
   // 4. Verify session
@@ -1857,7 +1857,7 @@
       54 -      <input id="auth-name-input" type="text" placeholder="Your traveler name" maxlength="40" autocomplete="off" onkeydown="if(event.key==='Enter')submitSignIn()">                                               
       55 -      <button class="auth-primary" onclick="submitSignIn()">Begin Travels</button>                                                                                                                                
       55 +      <div class="auth-sub">Save your travels across devices. We'll send a sign-in link to your email.</div>                                                                                                      
-      56 +      <input id="auth-email-input" type="email" placeholder="you@example.com" autocomplete="email" inputmode="email" onkeydown="if(event.key==='Enter')submitSignIn()">                                           
+      56 +      <input id="auth-email-input" type="email" placeholder="[EMAIL_REDACTED]" autocomplete="email" inputmode="email" onkeydown="if(event.key==='Enter')submitSignIn()">                                           
       57 +      <div id="auth-error"></div>                                                                                                                                                                                 
       58 +      <button class="auth-primary" id="auth-submit-btn" onclick="submitSignIn()">Send Sign-in Link</button>                                                                                                       
       59 +      <button class="auth-tertiary" onclick="continueAsGuest()">Continue as guest</button>                                                                                                                        
@@ -3276,7 +3276,7 @@
 
   2. If not signed in, the redirect URL is probably the issue
 
-  Supabase only completes auth redirects to URLs you've whitelisted. By default it allows localhost and the dashboard URL — not your GitHub Pages URL. The confirm link probably bounced you to a generic Supabase page instead of
+  Supabase only completes auth redirects to URLs you've whitelisted. By default it allows [LOCAL_HOST_REDACTED] and the dashboard URL — not your GitHub Pages URL. The confirm link probably bounced you to a generic Supabase page instead of
   the app.
 
   Fix in the dashboard:
@@ -3487,7 +3487,7 @@
   You'll get a response that looks like one of these:
 
   If signed in (good):
-  { data: { session: { access_token: "eyJ...", user: { id: "...", email: "danielk.orr@gmail.com" } } }, error: null }
+  { data: { session: { access_token: "eyJ...", user: { id: "...", email: "[EMAIL_REDACTED]" } } }, error: null }
 
   If signed out:
   { data: { session: null }, error: null }
@@ -3513,7 +3513,7 @@
     - Site URL: https://danielkorr.github.io/ancient-world-explorer/
     - Redirect URLs includes: https://danielkorr.github.io/ancient-world-explorer/**
   2. On the live site, click the profile pill in the top-right (says "Sign in") → modal opens
-  3. Type danielk.orr@gmail.com → click Send Sign-in Link
+  3. Type [EMAIL_REDACTED] → click Send Sign-in Link
   4. Modal switches to "Check your inbox"
   5. Wait ~30 seconds for the email to arrive, click the link
   6. You should land back on the live site, signed in (gold-filled D in the profile pill)
@@ -3593,7 +3593,7 @@
     - Port: 465
     - Username: resend
     - Password: the Resend API key
-    - Sender email: any address (Resend lets you use onboarding@resend.dev for testing, or verify your own domain later)
+    - Sender email: any address (Resend lets you use [EMAIL_REDACTED] for testing, or verify your own domain later)
   4. Save. Now you can bump the rate limit to 30/h or higher.
 
   After that, sign-in works freely.
@@ -3688,7 +3688,7 @@
   My bet is door #3.
 
   3. Resend → Supabase SMTP. Signing up on Resend isn't the finish line, you still need to plug their creds into Supabase. In Resend: create an API key (Resend → API Keys → Create), and either verify a domain you own (Domains →
-  Add Domain → DNS records) or use the onboarding@resend.dev sender they give every account for testing. Then in Supabase → Authentication → SMTP Settings → Enable Custom SMTP:
+  Add Domain → DNS records) or use the [EMAIL_REDACTED] sender they give every account for testing. Then in Supabase → Authentication → SMTP Settings → Enable Custom SMTP:
 
   ┌──────────────┬──────────────────────────────────────────────────────────────────────┐
   │    Field     │                                Value                                 │
@@ -3701,7 +3701,7 @@
   ├──────────────┼──────────────────────────────────────────────────────────────────────┤
   │ Password     │ your Resend API key                                                  │
   ├──────────────┼──────────────────────────────────────────────────────────────────────┤
-  │ Sender email │ onboarding@resend.dev (testing) or noreply@yourdomain.com (verified) │
+  │ Sender email │ [EMAIL_REDACTED] (testing) or [EMAIL_REDACTED] (verified) │
   ├──────────────┼──────────────────────────────────────────────────────────────────────┤
   │ Sender name  │ VIA                                                                  │
   └──────────────┴──────────────────────────────────────────────────────────────────────┘
@@ -4338,12 +4338,7 @@
 ✻ Sautéed for 6s
 
 ❯ clicked the sign in link in email. Back to app screen. I'm not signed in. and I'm no longer in incognito mode. here's the url from my                                                                                            
-  browserhttps://danielkorr.github.io/ancient-world-explorer/#access_token=eyJhbGciOiJFUzI1NiIsImtpZCI6IjBiNTFhOWIyLWZjMjItNDAxZS1iN2JlLTAxNGFlZTYzODY1YyIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL25xdWJhdGt3bW9zYnNhZG1hdWdvLnN1cG 
-  FiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIxOGE1MzA1OC1hNTcxLTRmYmYtYmVjNC1lZjQ2OTE1MmYzODIiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzgxMDU0MzY3LCJpYXQiOjE3ODEwNTA3NjcsImVtYWlsIjoiZGFuaWVsay5vcnJAZ21haWwuY29tIiwicGhvbmUiOiIiLCJhcHBfbW 
-  V0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImRhbmllbGsub3JyQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaG9uZV92ZXJpZmllZCI6ZmFsc2UsInN1YiI6IjE4YTUzMDU4LWE1NzEtNG 
-  ZiZi1iZWM0LWVmNDY5MTUyZjM4MiJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6Im90cCIsInRpbWVzdGFtcCI6MTc4MTA1MDc2N31dLCJzZXNzaW9uX2lkIjoiY2UxYmY1YjMtZDhmYS00ZWRkLThlMjAtZTIwZTBiYjMzNjBkIiwiaXNfYW5vbn 
-  ltb3VzIjpmYWxzZX0.huOBCciFibSqDiakNU20n-gk9eicpMZT04gEIfEv_qYfdSYYzNkqHKR2hZFRlGCiZqwMRMwmIRP9BPjxqbiP3g&expires_at=1781054367&expires_in=3600&refresh_token=dijwd6zbn7zr&sb=&token_type=bearer&type=magiclink                   
-
+  [REDACTED: copied Supabase magic-link URL and session tokens]
 ● OK clue-rich situation. Three things:
 
   1. Email link opened in your normal browser, not the incognito window. That's expected — Chrome's default behavior is to open external links in your default profile. To test in incognito, you'd have to copy the URL and paste
@@ -4643,7 +4638,7 @@
       54 +    if (window.VIA_SB && window.location.hash.includes('access_token=')) {                                                                                                                                        
       55 +      const params = new URLSearchParams(window.location.hash.slice(1));                                                                                                                                          
       56 +      const access_token  = params.get('access_token');                                                                                                                                                           
-      57 +      const refresh_token = params.get('refresh_token');                                                                                                                                                          
+      57 +      const refresh-token field omitted                                                                                                                                                          
       60 +          .catch(() => {});                                                                                                                                                                                       
       61 +        history.replaceState(null, '', window.location.pathname + window.location.search);                                                                                                                        
       62 +      }                                                                                                                                                                                                           
@@ -4774,7 +4769,7 @@
 ❯ [Image #36]                                                                                                                                                                                                                      
   ⎿  [Image #36]
 
-● Got it. sb5 B danielk.orr@gmail.com — disabling autoRefreshToken fixes everything. That's the culprit. Tokens last an hour anyway; we can deal with refresh-on-demand later.
+● Got it. sb5 B [EMAIL_REDACTED] — disabling autoRefreshToken fixes everything. That's the culprit. Tokens last an hour anyway; we can deal with refresh-on-demand later.
 
 ● Update(js\auth.js)
   ⎿  Added 1 line, removed 1 line

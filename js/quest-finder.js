@@ -178,8 +178,8 @@
     const el = ensurePanel();
     document.getElementById('finder-title').innerHTML =
       `<span class="finder-swatch" style="--fc:${model.color}"></span>${escapeText(model.label)}`;
-    document.getElementById('finder-sub').textContent =
-      `${model.total} ${model.total === 1 ? 'place' : 'places'} · tap a name to fly there, or a region to zoom in`;
+    document.getElementById('finder-sub').innerHTML =
+      `${model.total} ${model.total === 1 ? 'place' : 'places'} · tap any <b>place</b> to fly to it on the map, or a <b>region heading</b> to zoom to that area`;
     const body = document.getElementById('finder-body');
     body.innerHTML = model.groups.map((g, gi) => {
       const rows = g.items.map((it, ii) =>
@@ -242,12 +242,18 @@
       }
       journeyGoTo(it.index);
     }
+    // Drilled into a single place: the region beacons (zIndexOffset 1600) would sit
+    // on top of the site's pulse and hide it. Clear them so the locator reads clean;
+    // tapping a region heading (focusGroup) brings the bubbles back.
+    if (beaconGroup) beaconGroup.clearLayers();
     // On phones the finder covers the map; close it so the fly + pulse are visible.
     if (window.innerWidth <= 640) closeFinder();
   }
 
   function focusGroup(gi) {
     const g = groups[gi]; if (!g || typeof map === 'undefined') return;
+    // Region view: (re)show the beacons — pickItem clears them on a place drill-down.
+    renderBeacons();
     const pts = g.items.map(it => [it.lat, it.lng]);
     if (pts.length === 1) {
       map.flyTo(pts[0], Math.max(map.getZoom(), 8), { duration: 0.6 });

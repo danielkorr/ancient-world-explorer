@@ -3742,9 +3742,21 @@ path.leaflet-interactive { outline: none !important; }
 .finder-row-name {
   flex: 0 1 auto;
   font-size: var(--fs-14);
+  font-weight: 600;
   color: var(--parchment);
+  /* Read as a tappable link — an underline is the universal "this goes somewhere"
+     affordance, which the old plain text lacked (the "tap a name" hint was doing
+     all the work). Dimmed until hover so the list still scans calmly. */
+  text-decoration: underline;
+  text-decoration-color: var(--gold-dim);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
 }
-.finder-row:hover .finder-row-name { color: var(--gold); }
+.finder-row:hover .finder-row-name,
+.finder-row:focus-visible .finder-row-name {
+  color: var(--gold);
+  text-decoration-color: var(--gold);
+}
 .finder-row-modern {
   flex: 1 1 auto;
   min-width: 0;

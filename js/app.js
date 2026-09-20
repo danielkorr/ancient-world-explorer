@@ -1490,109 +1490,10 @@ function refreshNameLabels() {
 // the marker set itself changes (detail slider / tier filters call this too).
 map.on('zoomend moveend', refreshNameLabels);
 
-// ── EMPIRE INSET ─────────────────────────────────────────
-// A fixed locator map (desktop only — CSS hides #empire-inset on mobile). Shows
-// the DARE atlas at empire scale with a keyless sepia CARTO floor underneath (so
-// it never goes blank where DARE 404s, same floor logic as the main map). A gold
-// rectangle tracks the main map's viewport; clicking flies the main map there.
-// Its own fresh tile-layer instances — a Leaflet TileLayer belongs to one map.
-let empireInset = null;
-function syncEraToggleToInset() {
-  const wrap = document.getElementById('empire-inset');
-  const era = document.getElementById('era-toggle-wrap');
-  if (!wrap || !era || window.matchMedia('(max-width: 640px)').matches) return;
-  const gap = 8;
-  era.style.top = `${Math.round(wrap.offsetTop + wrap.offsetHeight + gap)}px`;
-}
-function buildEmpireInset() {
-  const host = document.getElementById('empire-inset-map');
-  if (!host || empireInset) return;
-  const insetBase = L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png' + (window.VIA_CARTO_KEY_PARAM || ''), { maxZoom: 11 });
-  const insetDare = L.tileLayer(
-    'https://dh.gu.se/tiles/imperium/{z}/{x}/{y}.png', { maxNativeZoom: 11, maxZoom: 11 });
-  const insetMap = L.map(host, {
-    center: [40, 19], zoom: 4, zoomControl: false, attributionControl: false,
-    dragging: false, scrollWheelZoom: false, doubleClickZoom: false,
-    boxZoom: false, keyboard: false, touchZoom: false, tap: false,
-    inertia: false, fadeAnimation: false, layers: [insetBase, insetDare],
-  });
-  // Viewport rectangle — non-interactive so clicks fall through to the map.
-  const rect = L.rectangle(map.getBounds(), {
-    color: '#d4a853', weight: 1.5, fillColor: '#d4a853', fillOpacity: 0.14,
-    interactive: false,
-  }).addTo(insetMap);
-  const syncRect = () => rect.setBounds(map.getBounds());
-  map.on('move zoom', syncRect);
-  // Click anywhere on the inset → fly the main map to that point (keep its zoom).
-  insetMap.on('click', e => map.flyTo(e.latlng, map.getZoom()));
-  // A layer for a mode-specific route overlay (Alexander's campaign path). Drawn
-  // above the rect so the locator shows *where the story goes*, not just basemap.
-  const routeGroup = L.layerGroup().addTo(insetMap);
-  empireInset = { map: insetMap, rect, routeGroup };
-
-  // Collapse / expand. Collapsed = header pill only; invalidate size on expand so
-  // tiles lay out correctly after being display:none.
-  const toggle = document.getElementById('empire-inset-toggle');
-  const wrap = document.getElementById('empire-inset');
-  if (toggle && wrap) {
-    toggle.addEventListener('click', () => {
-      const collapsed = wrap.classList.toggle('collapsed');
-      toggle.textContent = collapsed ? '▸' : '▾';
-      toggle.setAttribute('aria-label', collapsed ? 'Expand the empire inset' : 'Collapse the empire inset');
-      syncEraToggleToInset();
-      if (!collapsed) setTimeout(() => insetMap.invalidateSize(), 0);
-    });
-  }
-  // The host can be sized 0 at boot (just-laid-out flex/grid); settle it once.
-  setTimeout(() => insetMap.invalidateSize(), 0);
-  updateEmpireInset();   // frame + label for the current mode
-  syncEraToggleToInset();
-}
-
-// The inset auto-follows the active mode: Roman empire scale + "The Roman Empire"
-// in Roman mode, Alexander's campaign extent + "The Alexandrian Empire" in
-// campaign mode. Fixed views (not fitBounds) so they're correct even while the
-// inset is collapsed (its map host is display:none then). Desktop-only — the inset
-// is hidden on touch devices — but the label still updates harmlessly.
-function updateEmpireInset() {
-  if (!empireInset) return;
-  const title = document.getElementById('empire-inset-title');
-  if (empireInset.routeGroup) empireInset.routeGroup.clearLayers();
-  if (appMode === 'alexander') {
-    if (title) title.textContent = 'The Alexandrian Empire';
-    // The campaign spans ~53° of longitude (Pella 22°E → the Hyphasis 75°E). At
-    // the old zoom 3 the 184px inset showed only ~32° — it cropped both ends and
-    // sat on the Mesopotamian middle, reading as off-centre. Zoom 2 frames the
-    // whole run, centred on its true midpoint (lng ~49, lat ~33).
-    empireInset.map.setView([33, 49], 2);
-    drawInsetAlexanderRoute();
-  } else {
-    if (title) title.textContent = 'The Roman Empire';
-    // Old zoom 4 showed only Italy + the Adriatic — not "the empire", just its
-    // middle. Zoom 2 frames the whole reach (Iberia → Syria, Africa → Britain)
-    // so the viewport rectangle actually reads as "which corner am I in".
-    empireInset.map.setView([41, 15], 2);
-  }
-}
-
-// Trace Alexander's route across the locator so it reads as *his* campaign, not a
-// blank patch of the Near East. A dark casing under a gold line keeps it legible
-// on the sepia floor (and distinct without relying on colour). Non-interactive —
-// clicks still fall through to the fly-to handler.
-function drawInsetAlexanderRoute() {
-  if (!empireInset || !empireInset.routeGroup || typeof ALEXANDER_ROUTES === 'undefined') return;
-  for (const route of ALEXANDER_ROUTES) {
-    if (!route.coords || route.coords.length < 2) continue;
-    const ll = route.coords.map(c => [c[1], c[0]]);
-    L.polyline(ll, { color: '#2a1c05', weight: 3,   opacity: 0.55, lineCap: 'round', lineJoin: 'round', interactive: false }).addTo(empireInset.routeGroup);
-    L.polyline(ll, { color: '#f0c46a', weight: 1.4, opacity: 1,    lineCap: 'round', lineJoin: 'round', interactive: false }).addTo(empireInset.routeGroup);
-  }
-}
-
-// Skip in QA mode — deterministic fixture keeps chrome minimal and avoids extra
-// tile fetches that slow the headless journeys.
-if (!QA) buildEmpireInset();
+// ── EMPIRE INSET removed ─────────────────────────────────────────
+// The DARE locator mini-map was retired: at empire scale it read as an
+// unhelpful sepia smear (worst in Alexander mode). World context now comes
+// from the brand's "Choose your world" switch + the welcome splash.
 
 // iOS Safari does NOT synthesize a `click` from a tap on a Leaflet divIcon — the
 // ?debug=1 overlay confirmed `touchstart on [DIV]` with no click ever firing, so
@@ -4512,7 +4413,6 @@ function setMode(mode, opts = {}) {
   }
   decorateRoadsLegend();
   raiseOverlays();
-  if (typeof updateEmpireInset === 'function') updateEmpireInset();   // relabel + reframe the locator
   if (typeof refreshJourneyLauncher === 'function') refreshJourneyLauncher();   // show/hide the journey entry point per mode
   refreshBrandSwitch();   // keep the brand's "⇄ <world>" label in sync with the mode
 }
@@ -5609,7 +5509,7 @@ function dismissMobileGuide(persist) {
 })();
 
 // Keyboard activation for the brand (role="button").
-const _brandEl = document.getElementById('app-brand');
+const _brandEl = document.getElementById('app-brand-title');
 if (_brandEl) {
   _brandEl.addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openWelcome(); }

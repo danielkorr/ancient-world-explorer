@@ -62,7 +62,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="../css/style.css?v=163">
+  <link rel="stylesheet" href="../css/style.css?v=166">
 </head>
 <body>
 
@@ -71,13 +71,18 @@
 
 <!-- Top Bar -->
 <div id="topbar" data-testid="main-nav">
-  <div id="app-brand" onclick="openWelcome()" role="button" tabindex="0" title="Choose your world &amp; learn about VIA">
-    <h1 id="app-title">VIA<span id="brand-info" aria-hidden="true">ⓘ</span></h1>
-    <div id="app-subtitle">Ancient World Explorer</div>
-    <!-- Current world + the way to change it. The whole brand block already opens
-         the welcome (where the choice lives); this line names where you are and
-         signals the switch. refreshBrandSwitch() in app.js keeps the label live. -->
-    <div id="brand-switch"><span id="brand-switch-icon" aria-hidden="true">⇄</span> <span id="brand-switch-world">Roman World</span></div>
+  <div id="app-brand" title="Choose your world &amp; learn about VIA">
+    <div id="app-brand-title" onclick="openWelcome()" role="button" tabindex="0">
+      <h1 id="app-title">VIA<span id="brand-info" aria-hidden="true">ⓘ</span></h1>
+      <div id="app-subtitle">Ancient World Explorer</div>
+    </div>
+    <!-- The way back to the splash: names the world you're in (pops in gold) and
+         reads as a button. Its own obvious tap target, sitting at the bottom of
+         the VIA block. refreshBrandSwitch() in app.js keeps the label live. -->
+    <button id="brand-switch" type="button" onclick="openWelcome()" aria-label="Choose your world — currently Roman World">
+      <span id="brand-switch-world">Roman World</span>
+      <span id="brand-switch-cta"><span id="brand-switch-arrow" aria-hidden="true">←</span> Choose your world</span>
+    </button>
   </div>
   <div id="topbar-search" data-testid="site-search">
     <label class="sr-only" for="site-search-input">Search for a site or modern location</label>
@@ -320,18 +325,6 @@
        (detailLevelForZoom / syncDetailToZoom in app.js), not set by hand. -->
 </div>
 
-<!-- Empire inset — a fixed locator map (desktop only). Shows the DARE atlas at
-     empire scale; a gold rectangle tracks the main map's viewport so you always
-     know which corner of the Roman world you're looking at. Click to fly there.
-     app.js (`buildEmpireInset`) builds the inner Leaflet map + viewport rect. -->
-<div id="empire-inset" class="collapsed" data-testid="empire-inset">
-  <div id="empire-inset-head">
-    <span id="empire-inset-title">The Roman Empire</span>
-    <button id="empire-inset-toggle" type="button" aria-label="Expand the empire inset" title="Show locator map">▸</button>
-  </div>
-  <div id="empire-inset-map"></div>
-</div>
-
 <!-- Mobile dock: a slim persistent bottom bar holding just the search field —
      thumb-reachable. The Detail button is gone (Phase 3: detail follows zoom) and
      Key moved to the top bar (#topbar-key). Tapping search opens its overlay (dock
@@ -568,7 +561,7 @@
      VIA_createAncientFloor at map init). -->
 <script src="../js/basemap.js?v=107"></script>
 <script src="../js/research-bridges.js?v=2"></script>
-<script src="../js/app.js?v=174"></script>
+<script src="../js/app.js?v=175"></script>
 <!-- Quest Finder (design options B + C) — inert unless ?finder=1 is present. -->
 <script src="../js/quest-finder.js?v=4"></script>
 

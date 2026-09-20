@@ -225,7 +225,7 @@ body {
 /* ── ERA TOGGLE ── */
 #era-toggle-wrap {
   position: fixed;
-  top: 154px;
+  top: 116px;            /* just below the VIA block (title + Choose-your-world) */
   left: 18px;
   z-index: 905;
   pointer-events: none;
@@ -1354,45 +1354,70 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   color: #c3b3e8;   /* campaign purple, matches the mode tab + cross-link chip */
 }
 
-/* Brand is a button that reopens the welcome modal. */
+/* The VIA block stacks: clickable title/subtitle, then the "Choose your world"
+   switch pill directly beneath (bottom of the block). */
 #app-brand {
+  pointer-events: all;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+/* Title + subtitle: the "About VIA" click target. */
+#app-brand-title {
   cursor: pointer;
-  /* Make the whole title block read as a button — nobody was discovering it was
-     clickable. A padded hit-area + a hover tint/underline + a small ⓘ glyph. */
   border-radius: 6px;
   padding: 4px 8px;
   margin: -4px -8px;
   transition: background 0.15s ease;
 }
-#app-brand:hover { background: rgba(212,168,83,0.09); }
-#app-brand:hover #app-subtitle { text-decoration: underline; text-underline-offset: 2px; }
-#app-brand:hover #brand-info { opacity: 1; }
-#app-brand:focus-visible { outline: 1px solid var(--gold-dim); outline-offset: 3px; }
+#app-brand-title:hover { background: rgba(212,168,83,0.09); }
+#app-brand-title:hover #app-subtitle { text-decoration: underline; text-underline-offset: 2px; }
+#app-brand-title:hover #brand-info { opacity: 1; }
+#app-brand-title:focus-visible { outline: 1px solid var(--gold-dim); outline-offset: 3px; }
 
-/* "⇄ <current world>" — names where you are and that you can switch. Reads as a
-   quiet pill under the subtitle; the brand block's click opens the welcome, where
-   the choice actually lives. Gains a gold outline on hover so it looks tappable. */
+/* "Choose your world" — the visible way back to the splash. The current world
+   name pops in bright gold; the CTA line carries a back-arrow. A gold-outlined
+   pill with a soft glow so it stands out against the map, filling solid on hover.
+   Colour is never the only signal (border + arrow + label carry it too). */
 #brand-switch {
   display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: 3px;
-  padding: 1px 7px;
-  border: 1px solid var(--gold-faint);
-  border-radius: 999px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  padding: 5px 12px;
+  background: linear-gradient(135deg, rgba(212,168,83,0.20), rgba(184,137,58,0.12));
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: 0 2px 14px rgba(212,168,83,0.22);
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+#brand-switch-world {
   font-family: 'Cinzel', serif;
-  font-size: var(--fs-10);
-  letter-spacing: 0.6px;
-  font-weight: 600;
-  color: var(--gold-dim);
-  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
-}
-#brand-switch-icon { font-size: 0.95em; opacity: 0.9; }
-#app-brand:hover #brand-switch {
+  font-weight: 700;
+  font-size: var(--fs-14);
+  letter-spacing: 1px;
+  white-space: nowrap;
   color: var(--gold);
-  border-color: var(--gold-dim);
-  background: rgba(212,168,83,0.10);
+  text-shadow: 0 1px 10px rgba(10,5,0,0.85);
 }
+#brand-switch-cta {
+  font-family: 'Inter', sans-serif;
+  font-size: var(--fs-10);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: rgba(240,230,211,0.92);
+}
+#brand-switch-arrow { font-weight: 700; color: var(--gold); }
+#brand-switch:hover {
+  background: linear-gradient(135deg, var(--gold), #b8893a);
+  box-shadow: 0 3px 20px rgba(212,168,83,0.45);
+}
+#brand-switch:hover #brand-switch-world,
+#brand-switch:hover #brand-switch-cta,
+#brand-switch:hover #brand-switch-arrow { color: var(--ink); text-shadow: none; }
 #brand-info {
   font-size: 0.5em;
   vertical-align: super;
@@ -2275,10 +2300,17 @@ path.leaflet-interactive { outline: none !important; }
     align-items: flex-start;
   }
   #app-brand      {
-    max-width: 132px;
+    max-width: 176px;         /* room for the "Choose your world" pill */
+    gap: 5px;
+  }
+  #app-brand-title {
     padding: 3px 4px;
     margin: -3px -4px;
   }
+  /* Smaller pill on phones, but still the pop + arrow. */
+  #brand-switch        { padding: 4px 9px; }
+  #brand-switch-world  { font-size: var(--fs-11); letter-spacing: 0.4px; }
+  #brand-switch-cta    { font-size: var(--fs-8); }
   #app-title      { font-size: var(--fs-18); letter-spacing: 3px; }
   #app-subtitle   {
     display: block;
@@ -2313,14 +2345,15 @@ path.leaflet-interactive { outline: none !important; }
     transform: none;
     width: 100%;
   }
-  /* Era toggle slides up to fill the gap the top search left behind — it stays
-     pinned at the top, unchanged in function. */
+  /* Era toggle sits directly under the VIA block (title + Choose-your-world pill),
+     left-aligned so it never collides with the pill. Search lives in the dock, so
+     the top-left column is just brand -> switch -> era. */
   #era-toggle-wrap {
-    top: calc(env(safe-area-inset-top, 0px) + 46px);
+    top: calc(env(safe-area-inset-top, 0px) + 92px);
     left: max(10px, env(safe-area-inset-left, 0px));
-    right: max(10px, env(safe-area-inset-right, 0px));
+    right: auto;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     z-index: 910;
   }
   #site-search-input {
@@ -3045,67 +3078,9 @@ path.leaflet-interactive { outline: none !important; }
   line-height: 1.1;
 }
 
-/* ── EMPIRE INSET ──────────────────────────────────────────
-   Bottom-left locator map. Sepia-tinted to sit in the ancient palette; the
-   viewport rectangle is drawn by Leaflet (gold) inside. Desktop only. */
-#empire-inset {
-  position: fixed;
-  left: 18px;
-  top: 114px;            /* stacked between the experience tabs and era toggle */
-  width: 184px;
-  z-index: 900;
-  background: var(--ink-panel);
-  border: 1px solid var(--gold-dim);
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
-  user-select: none;
-}
-#empire-inset-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 6px 4px 10px;
-  border-bottom: 1px solid var(--gold-faint);
-}
-#empire-inset-title {
-  font-family: 'Cinzel', serif;
-  font-size: var(--fs-10);
-  font-weight: 600;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--gold);
-}
-#empire-inset-toggle {
-  background: none;
-  border: none;
-  color: var(--gold);
-  font-size: var(--fs-13);
-  line-height: 1;
-  cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 4px;
-}
-#empire-inset-toggle:hover { background: var(--gold-faint); }
-#empire-inset-map {
-  width: 100%;
-  height: 132px;
-  cursor: pointer;
-  filter: sepia(0.32) saturate(0.92) contrast(0.96);
-}
-#empire-inset.collapsed #empire-inset-map { display: none; }
-
-@media (max-width: 640px) {
-  /* Keep the map full-bleed on phones — the inset is a desktop affordance. */
-  #empire-inset { display: none; }
-}
-/* Also hide it on any touch device regardless of orientation — a phone in
-   LANDSCAPE is wider than 640px and would otherwise fall back to the desktop
-   layout and re-show the inset (the reported "messy in landscape" clutter). A
-   coarse primary pointer = phone/tablet; touch-laptops (fine primary) keep it. */
-@media (pointer: coarse) {
-  #empire-inset { display: none !important; }
-}
+/* (Empire inset locator map removed — the DARE mini-map read as an unhelpful
+   sepia smear at empire scale. World context now comes from the brand's
+   "Choose your world" switch + the welcome splash.) */
 
 /* ── REDUCED MOTION ──────────────────────────────────────────────────────
    Respect the OS "reduce motion" setting. Kill the ambient/infinite pulses

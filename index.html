@@ -370,12 +370,12 @@
   <div class="legend-row legend-layer-row active" id="legend-sites-toggle" data-testid="sites-layer-row" data-layer="sites" role="button" tabindex="0" onclick="toggleLayer('sites')"><div class="legend-dot" style="background:var(--gold)"></div>Sites &amp; Cities</div>
   <div class="legend-row legend-layer-row" id="legend-alexander-toggle" data-testid="alexander-layer-row" data-layer="alexander" role="button" tabindex="0" onclick="toggleLayer('alexander')"><div class="legend-line alexander"></div>Alexander</div>
   <div class="legend-sep legend-layers-sep"></div>
-   <div id="quest-site-filters" class="legend-section">
-     <div class="legend-hint">Tap to filter<button id="legend-info-btn" onclick="openLegendInfo()" aria-label="What do these terms mean?" title="What do these mean?">?</button></div>
-     <div class="legend-row" data-testid="site-tier-filter" data-tier="photo" role="button" tabindex="0" onclick="toggleTier('photo')"><div class="legend-dot" style="background:#ff9e2c"></div>Photo Quest</div>
-     <div class="legend-row" data-testid="site-tier-filter" data-tier="location" role="button" tabindex="0" onclick="toggleTier('location')"><div class="legend-dot diamond" style="background:#2b8cde"></div>Location Quest</div>
-     <div class="legend-row" data-testid="site-tier-filter" data-tier="text" role="button" tabindex="0" onclick="toggleTier('text')"><div class="legend-dot triangle" style="background:#b15ad6"></div>Text Quest</div>
-   </div>
+     <div id="quest-site-filters" class="legend-section">
+       <div class="legend-hint">Tap to filter<button id="legend-info-btn" onclick="openLegendInfo()" aria-label="What do these terms mean?" title="What do these mean?">?</button></div>
+     <div class="legend-row" data-testid="site-tier-filter" data-tier="documented" role="button" tabindex="0" onclick="toggleTier('documented')"><div class="legend-dot" style="background:#b89a6a"></div>Documented</div>
+       <div class="legend-row" data-testid="site-tier-filter" data-tier="photo" role="button" tabindex="0" onclick="toggleTier('photo')"><div class="legend-dot" style="background:#ff9e2c"></div>Photo Quest</div>
+       <div class="legend-row" data-testid="site-tier-filter" data-tier="location" role="button" tabindex="0" onclick="toggleTier('location')"><div class="legend-dot diamond" style="background:#2b8cde"></div>Location Quest</div>
+     </div>
    <div id="road-certainty-filters" class="legend-section">
      <div class="legend-hint">Roads · certainty<button id="road-info-btn" onclick="openLegendInfo()" aria-label="What do road certainty terms mean?" title="What do these mean?">?</button></div>
      <div class="legend-row" data-testid="road-certainty-filter" data-cert="c" role="button" tabindex="0" onclick="toggleCert('c')"><div class="legend-line solid"></div>Certain</div>
@@ -551,7 +551,7 @@
      VIA_createAncientFloor at map init). -->
 <script src="js/basemap.js?v=107"></script>
 <script src="js/research-bridges.js?v=2"></script>
-<script src="js/app.js?v=177"></script>
+<script src="js/app.js?v=178"></script>
 <!-- Quest Finder (design options B + C) — inert unless ?finder=1 is present. -->
 <script src="js/quest-finder.js?v=4"></script>
 

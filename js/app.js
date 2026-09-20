@@ -5176,7 +5176,7 @@ function openLegendInfo() {
   const list = document.getElementById('legend-info-list');
   if (!list) return;
   const shapeClass = { location: 'diamond', text: 'triangle' };
-  const siteRows = ['documented', 'photo', 'location', 'text']
+  const siteRows = ['documented', 'photo', 'location']
     .filter(t => tierCounts[t])
     .map(t => {
       const info = TIER_INFO[t];
@@ -5209,6 +5209,7 @@ function closeLegendInfo() {
 // today) are hidden entirely — a dead, do-nothing row just confuses. The row
 // reappears automatically once data for that tier exists.
 function decorateLegend() {
+  // The visible key is intentionally limited to Documented, Photo, and Location.
   document.querySelectorAll('#quest-legend .legend-row[data-tier]').forEach(row => {
     const n = tierCounts[row.dataset.tier] || 0;
     // Keep empty quest types visible so the key teaches the full model.

@@ -209,7 +209,7 @@ const SITES_CURATED = [
     desc:"Birthplace of Emperor Constantine the Great (c. 272 AD), who was proclaimed emperor at Eboracum but transformed the Roman world from his birthplace's province. Constantine's victory over Licinius at Naissus in 316 AD opened the path to sole rule. The city's Roman remains are surprisingly little-visited." },
 
   { id:"singidunum", name:"Singidunum", modern:"Belgrade, Serbia", type:"fortress", livius:"https://www.livius.org/articles/place/singidunum-belgrade/", omnesviae:"https://omnesviae.org/#TPPlace1648",
-    lat:44.8176, lng:20.4633, period:"1st c. AD – present", pleiades:"207447", rome_days:16,
+    lat:44.8176, lng:20.4633, period:"1st c. AD – present", pleiades:"207443", rome_days:16,
     desc:"A legionary fortress at the confluence of the Sava and Danube rivers — one of the most strategically important positions on the entire frontier. Emperor Jovian was born here. The Roman remains lie beneath modern Belgrade, with some visible in the Kalemegdan fortress." },
 
   // ── GREECE & BALKANS ─────────────────────────────────────

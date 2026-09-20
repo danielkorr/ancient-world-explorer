@@ -3625,3 +3625,197 @@ path.leaflet-interactive { outline: none !important; }
   #welcome-quest-modal { align-items: flex-start; padding: 10px; }
   #welcome-quest-card { width: 100%; max-height: calc(100dvh - 20px); padding: 34px 22px 24px; }
 }
+
+/* ── QUEST FINDER (design options B + C, ?finder=1) ─────────────────────────
+   C · Finder panel: a left-hand index of every site in the tapped category,
+   grouped by region (Roman) or phase (Alexander). Desktop it sits opposite the
+   right-hand info panel so both coexist; mobile it's a bottom sheet that closes
+   on row-tap so the fly + pulse are visible. B · count-beacons are Leaflet
+   divIcons styled below. */
+#finder-panel {
+  position: fixed;
+  top: 96px;
+  left: 12px;
+  width: 320px;
+  max-height: calc(100vh - 120px);
+  display: none;
+  flex-direction: column;
+  background: var(--ink-panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 14px 42px rgba(0,0,0,0.55);
+  z-index: 938;                 /* below the info panel (940) so tapped sites win */
+  overflow: hidden;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+#finder-panel.open { display: flex; }
+
+#finder-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 14px 8px;
+}
+#finder-title {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: 'Cinzel', serif;
+  font-size: var(--fs-16);
+  color: var(--gold);
+  line-height: 1.2;
+}
+.finder-swatch {
+  width: 12px; height: 12px;
+  flex: 0 0 auto;
+  border-radius: 3px;
+  background: var(--fc, var(--gold));
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.4);
+}
+#finder-close {
+  flex: 0 0 auto;
+  width: 30px; height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--parchment);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+#finder-close:hover { color: var(--gold); border-color: var(--gold-dim); }
+
+#finder-sub {
+  margin: 0;
+  padding: 0 14px 10px;
+  font-size: var(--fs-12);
+  color: rgba(240,230,211,0.62);
+  line-height: 1.35;
+}
+
+#finder-body {
+  overflow-y: auto;
+  padding: 0 6px 12px;
+}
+
+.finder-group { margin-bottom: 6px; }
+.finder-group-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 8px 6px;
+  font-family: 'Cinzel', serif;
+  font-size: var(--fs-12);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: rgba(240,230,211,0.82);
+  cursor: pointer;
+  border-radius: 8px;
+}
+.finder-group-head:hover { background: var(--gold-faint); color: var(--gold); }
+.finder-group-label { flex: 1; }
+.finder-group-count {
+  flex: 0 0 auto;
+  min-width: 22px;
+  padding: 1px 7px;
+  text-align: center;
+  border-radius: 999px;
+  font-family: 'Inter', sans-serif;
+  font-size: var(--fs-11);
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--fc, var(--gold));
+}
+
+.finder-list { list-style: none; margin: 0; padding: 0; }
+.finder-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.finder-row:hover { background: var(--gold-faint); }
+.finder-row-name {
+  flex: 0 1 auto;
+  font-size: var(--fs-14);
+  color: var(--parchment);
+}
+.finder-row:hover .finder-row-name { color: var(--gold); }
+.finder-row-modern {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--fs-12);
+  color: rgba(240,230,211,0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.finder-row-visited {
+  flex: 0 0 auto;
+  color: #4caf6a;
+  font-size: var(--fs-13);
+  font-weight: 700;
+}
+
+/* B · count-beacons — an always-visible pill on the map. The NUMBER is the
+   primary channel (colour-blind safe); the tint is secondary. */
+.finder-beacon { background: none; border: none; }
+.finder-beacon-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transform: translate(-50%, -50%);
+  padding: 3px 10px 3px 3px;
+  border: 1.5px solid var(--fc, var(--gold));
+  border-radius: 999px;
+  background: var(--ink-panel);
+  color: var(--parchment);
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.45);
+}
+.finder-beacon-btn:hover { border-color: var(--gold); color: var(--gold); }
+.finder-beacon-btn .fb-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px; height: 22px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--fc, var(--gold));
+  color: var(--ink);
+  font-size: var(--fs-13);
+  font-weight: 700;
+}
+.finder-beacon-btn .fb-label {
+  font-size: var(--fs-12);
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 640px) {
+  /* Bottom sheet, mirroring the info panel. It closes on row-tap (quest-finder.js)
+     so it never fights the info panel for the screen. */
+  #finder-panel {
+    top: auto;
+    bottom: calc(var(--dock-h) + 8px);
+    left: 8px;
+    right: 8px;
+    width: auto;
+    max-height: calc(100dvh - var(--dock-h) - 120px);
+    border-radius: 16px;
+  }
+  .finder-row { padding: 10px; }            /* fatter tap targets */
+  .finder-group-head { padding: 10px 10px 7px; }
+  /* When the finder is the active sheet, fade the top chrome like the info panel
+     does, so the beacons + map read cleanly behind it. */
+  body:has(#finder-panel.open) #topbar,
+  body:has(#finder-panel.open) #era-toggle-wrap {
+    opacity: 0;
+    pointer-events: none;
+  }
+}

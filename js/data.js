@@ -42,12 +42,12 @@ const SITES_CURATED = [
     desc:"Buried by the same eruption as Pompeii but engulfed by pyroclastic surge, Herculaneum's organic materials — wooden furniture, food, papyrus scrolls — survived in extraordinary condition. A wealthy seaside resort whose excavated streets are among the most atmospheric Roman remains in existence." },
 
   { id:"baiae", name:"Baiae", modern:"Bacoli, Italy", type:"city", omnesviae:"https://omnesviae.org/#TPPlace1472",
-    lat:40.8426, lng:14.0733, period:"2nd c. BC – 8th c. AD", pleiades:"432649", rome_days:5,
+    lat:40.8426, lng:14.0733, period:"2nd c. BC – 8th c. AD", pleiades:"432716", rome_days:5,
     photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Tempio%20di%20Venere%20(Baia)%201.JPG", credit:"Mentnafunangann", license:"CC BY-SA 3.0" },
     desc:"The most fashionable seaside resort in the Roman world, Baiae attracted emperors and aristocrats seeking pleasure, hot springs, and debauchery. Julius Caesar, Augustus, Nero, and Hadrian all kept villas here. In AD 59, Nero staged a banquet at Baiae before orchestrating the murder of his own mother, Agrippina the Younger, one of antiquity's most notorious matricides (Tacitus, Annals 14). Much of ancient Baiae has sunk beneath the Bay of Naples due to volcanic activity — its ruins are now explored by divers." },
 
   { id:"puteoli", name:"Puteoli", modern:"Pozzuoli, Italy", type:"port", omnesviae:"https://omnesviae.org/#TPPlace1473",
-    lat:40.8264, lng:14.1204, period:"6th c. BC – present", pleiades:"432812", rome_days:5,
+    lat:40.8264, lng:14.1204, period:"6th c. BC – present", pleiades:"432815", rome_days:5,
     desc:"Before Ostia was developed, Puteoli was Rome's primary port for eastern trade — grain from Egypt, spices from Arabia, goods from across the Mediterranean all passed through here. Paul the Apostle landed at Puteoli on his way to Rome. The amphitheater is among the best preserved in Italy." },
 
   { id:"cumae", name:"Cumae", modern:"Cuma, Italy", type:"city", livius:"https://www.livius.org/articles/place/cumae/", omnesviae:"https://omnesviae.org/#TPPlace1470",
@@ -69,7 +69,7 @@ const SITES_CURATED = [
     desc:"Three Greek temples standing in near-perfect condition in a coastal plain south of Naples — among the best-preserved Greek temples anywhere in the world. The Temple of Neptune (actually Hera) is particularly magnificent. The site museum holds the unique Tomb of the Diver, with its extraordinary painted ceiling." },
 
   { id:"brundisium", name:"Brundisium", modern:"Brindisi, Italy", type:"port", omnesviae:"https://omnesviae.org/#TPPlace1375",
-    lat:40.6326, lng:17.9399, period:"4th c. BC – present", pleiades:"442573", rome_days:8,
+    lat:40.6326, lng:17.9399, period:"4th c. BC – present", pleiades:"442509", rome_days:8,
     desc:"The great terminus of the Via Appia and Rome's gateway to Greece and the East. Virgil died here in 19 BC returning ill from Greece. The column marking the end of the Via Appia — 580 Roman miles from Rome — still stands near the harbor." },
 
   { id:"tarentum", name:"Tarentum", modern:"Taranto, Italy", type:"city", livius:"https://www.livius.org/articles/place/tarentum/", omnesviae:"https://omnesviae.org/#TPPlace1380",
@@ -81,7 +81,7 @@ const SITES_CURATED = [
     desc:"Rome's northeastern gateway, Aquileia grew into one of the largest cities of the western empire. The early Christian basilica preserves the finest 4th-century mosaic floor in existence — over 760 square meters. Attila the Hun destroyed it in 452 AD; refugees founded Venice in the lagoons to the west." },
 
   { id:"mediolanum", name:"Mediolanum", modern:"Milan, Italy", type:"capital", livius:"https://www.livius.org/articles/place/mediolanum-milan/", omnesviae:"https://omnesviae.org/#OVPlace413",
-    lat:45.4654, lng:9.1900, period:"400 BC – present", pleiades:"138220", rome_days:7,
+    lat:45.4654, lng:9.1900, period:"400 BC – present", pleiades:"383706", rome_days:7,
     desc:"Western capital of the Roman Empire from 286 to 402 AD. Constantine issued the Edict of Milan here in 313 AD, ending the persecution of Christians. The columns of San Lorenzo survive from a 4th-century imperial bath complex beneath the modern city." },
 
   { id:"ravenna", name:"Ravenna", modern:"Ravenna, Italy", type:"capital", livius:"https://www.livius.org/articles/place/ravenna/", omnesviae:"https://omnesviae.org/#TPPlace1140",
@@ -89,7 +89,7 @@ const SITES_CURATED = [
     desc:"The final capital of the Western Roman Empire, chosen for its impenetrable marshes. The mosaics of Ravenna — in the Mausoleum of Galla Placidia, the Baptisteries, and Sant'Apollinare Nuovo — are among the greatest works of late antique art in existence." },
 
   { id:"ariminium", name:"Ariminium", modern:"Rimini, Italy", type:"city", omnesviae:"https://omnesviae.org/#TPPlace1144",
-    lat:44.0647, lng:12.3376, period:"268 BC – present", pleiades:"413213", rome_days:4,
+    lat:44.0647, lng:12.3376, period:"268 BC – present", pleiades:"393379", rome_days:4,
     desc:"An important colony at the junction of the Via Flaminia and Via Aemilia. The Arch of Augustus (27 BC) and the Tiberius Bridge (AD 14–21) still stand and are among Italy's best-preserved Roman monuments." },
 
   { id:"syracusae", name:"Syracusae", modern:"Syracuse, Sicily, Italy", type:"city", livius:"https://www.livius.org/articles/place/syracuse/", omnesviae:"https://omnesviae.org/#TPPlace1511",
@@ -116,7 +116,7 @@ const SITES_CURATED = [
     desc:"The Maison Carrée — a complete Roman temple — stands virtually intact after 2,000 years. The amphitheater still hosts events. The nearby Pont du Gard, a three-tiered aqueduct bridge carrying water 50km to the city, is one of the great engineering achievements of antiquity." },
 
   { id:"massilia", name:"Massilia", modern:"Marseille, France", type:"port",
-    lat:43.2965, lng:5.3698, period:"600 BC – present", pleiades:"148107", rome_days:16,
+    lat:43.2965, lng:5.3698, period:"600 BC – present", pleiades:"148127", rome_days:16,
     desc:"Greece's greatest western colony, founded by Phocaean sailors around 600 BC. Massilia's explorers included Pytheas, who reached Britain and possibly Iceland. Julius Caesar besieged it in 49 BC for backing Pompey. Continuously inhabited for 2,600 years." },
 
   { id:"narbo", name:"Narbo Martius", modern:"Narbonne, France", type:"city", livius:"https://www.livius.org/articles/place/narbo-narbonne/", omnesviae:"https://omnesviae.org/#TPPlace766",
@@ -129,11 +129,11 @@ const SITES_CURATED = [
     desc:"Founded by Augustus to replace the nearby Gallic capital of Bibracte, Augustodunum was planned as a showpiece of Roman urbanism in Gaul. Two Roman gates — the Porte d'Arroux and Porte Saint-André — still stand to nearly full height, among the best-preserved city gates in the Roman world." },
 
   { id:"burdigala", name:"Burdigala", modern:"Bordeaux, France", type:"city", omnesviae:"https://omnesviae.org/#TPPlace697",
-    lat:44.8378, lng:-0.5800, period:"1st c. BC – present", pleiades:"138231", rome_days:22,
+    lat:44.8378, lng:-0.5800, period:"1st c. BC – present", pleiades:"138248", rome_days:22,
     desc:"A prosperous river port in Aquitania, Burdigala grew wealthy on wine and Atlantic trade. The Roman amphitheater (Palais Gallien) survives in the city center. The poet Ausonius, tutor to the Emperor Gratian and later his chief minister, was born and died here." },
 
   { id:"caesaraugusta", name:"Caesaraugusta", modern:"Zaragoza, Spain", type:"city", livius:"https://www.livius.org/articles/place/caesaraugusta/", omnesviae:"https://omnesviae.org/#OVPlace40",
-    lat:41.6488, lng:-0.8773, period:"14 BC – present", pleiades:"246349", rome_days:25,
+    lat:41.6488, lng:-0.8773, period:"14 BC – present", pleiades:"246344", rome_days:25,
     desc:"Founded by Augustus and named after himself, Caesaraugusta on the Ebro was a major veteran colony and road hub. The Roman forum, port, baths, and theater have been extensively excavated; four Roman museums now display the city's ancient remains." },
 
   { id:"emerita", name:"Emerita Augusta", modern:"Mérida, Spain", type:"capital", livius:"https://www.livius.org/articles/place/augusta-emerita/", omnesviae:"https://omnesviae.org/#OVPlace124",
@@ -163,16 +163,16 @@ const SITES_CURATED = [
     desc:"Founded as a legionary fortress in 71 AD, Eboracum became the effective capital of northern Britain. Emperor Septimius Severus died here in 211 AD. Constantine the Great was proclaimed Emperor at Eboracum in 306 AD. The Multangular Tower survives from the Roman fortification." },
 
   { id:"aquaesulis", name:"Aquae Sulis", modern:"Bath, UK", type:"city", livius:"https://www.livius.org/articles/place/aquae-sulis/", omnesviae:"https://omnesviae.org/#OVPlace477",
-    lat:51.3837, lng:-2.3591, period:"1st c. AD – present", pleiades:"79420", rome_days:31,
+    lat:51.3837, lng:-2.3591, period:"1st c. AD – present", pleiades:"79299", rome_days:31,
     desc:"Built around Britain's only naturally hot springs, Aquae Sulis was a sacred healing spa dedicated to the goddess Sulis Minerva. The Roman baths are the best-preserved bathing complex in northern Europe, still fed by the same thermal spring that pumps 1.3 million liters daily at 46°C." },
 
   { id:"camulodunum", name:"Camulodunum", modern:"Colchester, UK", type:"city", livius:"https://www.livius.org/articles/place/camulodunum/", omnesviae:"https://omnesviae.org/#TPPlace542",
-    lat:51.8855, lng:0.8988, period:"1st c. BC – present", pleiades:"79350", rome_days:29,
+    lat:51.8855, lng:0.8988, period:"1st c. BC – present", pleiades:"79393", rome_days:29,
     desc:"The first Roman capital of Britannia and site of Britain's first Roman temple — dedicated to the deified Claudius. Boudica destroyed Camulodunum in 60 AD, massacring its inhabitants; the burnt layer is visible in excavations. The circuit of Roman walls largely survives." },
 
   { id:"isca", name:"Isca Silurum", modern:"Caerleon, Wales, UK", type:"fortress", livius:"https://www.livius.org/articles/place/isca/", omnesviae:"https://omnesviae.org/#OVPlace463",
-    lat:51.6086, lng:-2.9534, period:"AD 75 – 4th c. AD", pleiades:"79388", rome_days:32,
-    quest:"photo",
+    lat:51.6086, lng:-2.9534, period:"AD 75 – 4th c. AD", pleiades:"79532", rome_days:32,
+    photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Caerleon-Roman%20Prysg%20Field%20Barracks.JPG", credit:"Pwimageglow", license:"Public domain" },
     desc:"One of only three permanent legionary fortresses in Roman Britain (alongside Eboracum and Deva), Isca housed the Legio II Augusta for over 200 years. The amphitheater — the best-preserved Roman amphitheater in Britain — the baths, and the barracks are all visible. Tennyson set his Arthurian legends here." },
 
   { id:"housesteads", name:"Vercovicium", modern:"Housesteads, Northumberland, UK", type:"fortress", livius:"https://www.livius.org/articles/place/vercovicium/",
@@ -195,16 +195,16 @@ const SITES_CURATED = [
     desc:"One of the great Danubian fortresses, at its peak housing 50,000 soldiers and civilians. Marcus Aurelius commanded his campaigns from here. Septimius Severus was proclaimed emperor by his legions at Carnuntum in 193 AD. The reconstructed quarter gives a vivid impression of frontier life." },
 
   { id:"aquincum", name:"Aquincum", modern:"Budapest, Hungary", type:"fortress", livius:"https://www.livius.org/articles/place/aquincum/", omnesviae:"https://omnesviae.org/#TPPlace1554",
-    lat:47.5741, lng:19.0402, period:"1st c. AD – 4th c. AD", pleiades:"197140", rome_days:17,
+    lat:47.5741, lng:19.0402, period:"1st c. AD – 4th c. AD", pleiades:"197131", rome_days:17,
     desc:"Legionary fortress and capital of Pannonia Inferior in what is now Óbuda (Old Buda). Emperor Hadrian served here as governor before his accession. Budapest's famous thermal baths trace their origin to Roman bathing culture on this site." },
 
   { id:"sirmium", name:"Sirmium", modern:"Sremska Mitrovica, Serbia", type:"capital", livius:"https://www.livius.org/articles/place/sirmium-sremska-mitrovica/", omnesviae:"https://omnesviae.org/#TPPlace1657",
-    lat:44.9667, lng:19.6167, period:"1st c. BC – 5th c. AD", pleiades:"207505", rome_days:14,
+    lat:44.9667, lng:19.6167, period:"1st c. BC – 5th c. AD", pleiades:"207447", rome_days:14,
     quest:"photo",
     desc:"One of four co-capitals of the late Roman Empire, Sirmium was the most fought-over city of the 3rd and 4th centuries — nine emperors were born, lived, or died here. Called 'Mother of Cities' and 'Mistress of the World'. Extensive excavations continue beneath the modern town." },
 
   { id:"naissus", name:"Naissus", modern:"Niš, Serbia", type:"city", omnesviae:"https://omnesviae.org/#TPPlace1784",
-    lat:43.3216, lng:21.8960, period:"1st c. BC – present", pleiades:"207306", rome_days:20,
+    lat:43.3216, lng:21.8960, period:"1st c. BC – present", pleiades:"207303", rome_days:20,
     quest:"photo",
     desc:"Birthplace of Emperor Constantine the Great (c. 272 AD), who was proclaimed emperor at Eboracum but transformed the Roman world from his birthplace's province. Constantine's victory over Licinius at Naissus in 316 AD opened the path to sole rule. The city's Roman remains are surprisingly little-visited." },
 
@@ -239,7 +239,7 @@ const SITES_CURATED = [
   // ── ASIA MINOR ───────────────────────────────────────────
 
   { id:"nicaea", name:"Nicaea", modern:"İznik, Turkey", type:"city", livius:"https://www.livius.org/articles/place/nicaea-iznik/", omnesviae:"https://omnesviae.org/#TPPlace1849",
-    lat:40.4333, lng:29.7167, period:"3rd c. BC – Byzantine", pleiades:"511366", rome_days:27,
+    lat:40.4333, lng:29.7167, period:"3rd c. BC – Byzantine", pleiades:"511268", rome_days:27,
     quest:"photo",
     desc:"Site of the First Council of Nicaea (325 AD), where Emperor Constantine convened 300 bishops to define Christian orthodoxy and produce the Nicene Creed — one of the most consequential meetings in world history. The beautifully preserved Roman walls and gates, the lakeshore setting, and the ruins of Hagia Sophia (an earlier one than Istanbul's) make Nicaea deeply atmospheric and remarkably undervisited." },
 
@@ -327,12 +327,12 @@ const SITES_CURATED = [
     desc:"Home to one of the largest Roman amphitheaters ever built — holding 35,000 spectators and rivaling the Colosseum in scale. Rising from the flat Tunisian plain like a mirage, El Djem's amphitheater is one of the most dramatic Roman monuments in existence. Emperor Gordian I was proclaimed here in 238 AD." },
 
   { id:"leptismagna", name:"Leptis Magna", modern:"Al Khums, Libya", type:"city", livius:"https://www.livius.org/articles/place/lepcis-magna/", omnesviae:"https://omnesviae.org/#TPPlace300",
-    lat:32.6376, lng:14.2919, period:"7th c. BC – Arab conquest", pleiades:"344456", rome_days:9,
+    lat:32.6376, lng:14.2919, period:"7th c. BC – Arab conquest", pleiades:"344448", rome_days:9,
     rome_mode:"sea",
     desc:"Birthplace of Emperor Septimius Severus, who lavished the resources of the empire on his hometown. Arguably the most spectacular and best-preserved Roman city in existence — vast marble forums, basilicas, baths, a theater, a lighthouse harbor, and a triumphal arch. Remote and relatively unvisited: profoundly moving." },
 
   { id:"sabratha", name:"Sabratha", modern:"Sabratha, Libya", type:"city", livius:"https://www.livius.org/articles/place/sabratha/", omnesviae:"https://omnesviae.org/#TPPlace289",
-    lat:32.8000, lng:12.4833, period:"4th c. BC – Arab conquest", pleiades:"344518", rome_days:8,
+    lat:32.8000, lng:12.4833, period:"4th c. BC – Arab conquest", pleiades:"344282", rome_days:8,
     rome_mode:"sea",
     desc:"A Phoenician trading post that grew into a prosperous Roman city. Its theater — three stories of marble columns facing the sea — is one of the most beautiful in the Roman world. Apuleius, author of The Golden Ass, stood trial here on charges of using magic to win a wealthy widow's hand." },
 
@@ -341,7 +341,7 @@ const SITES_CURATED = [
     desc:"Founded by Trajan in 100 AD as a veteran colony, Timgad is the textbook example of Roman urban planning: a perfect grid, forum, library, 14 baths, a theater, triumphal arch — all laid out by military surveyors in a single campaign. Dubbed the 'Pompeii of Africa', abandoned and preserved under sand for centuries." },
 
   { id:"caesarea_maur", name:"Caesarea Mauretaniae", modern:"Cherchell, Algeria", type:"capital", livius:"https://www.livius.org/articles/place/iol-caesarea/", omnesviae:"https://omnesviae.org/#OVPlace506",
-    lat:36.5908, lng:2.2086, period:"3rd c. BC – Arab conquest", pleiades:"295276", rome_days:12,
+    lat:36.5908, lng:2.2086, period:"3rd c. BC – Arab conquest", pleiades:"295279", rome_days:12,
     rome_mode:"sea",
     photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Argel%203.jpg", credit:"LBM1948", license:"CC BY-SA 4.0" },
     desc:"Capital of Mauretania Caesariensis, named for Augustus Caesar by King Juba II — a Numidian prince educated in Rome who married Cleopatra Selene, daughter of Antony and Cleopatra. Juba transformed the city into a showcase of Hellenistic art. The local museum holds exceptional Roman sculptures and mosaics, including a stunning portrait of Cleopatra Selene herself." },

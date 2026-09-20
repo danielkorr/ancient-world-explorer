@@ -3812,9 +3812,12 @@ path.leaflet-interactive { outline: none !important; }
   .finder-row { padding: 10px; }            /* fatter tap targets */
   .finder-group-head { padding: 10px 10px 7px; }
   /* When the finder is the active sheet, fade the top chrome like the info panel
-     does, so the beacons + map read cleanly behind it. */
+     does, so the beacons + map read cleanly behind it — including the mode tabs
+     (Roman World / Alexander's Empire), which otherwise sit above the sheet. */
   body:has(#finder-panel.open) #topbar,
-  body:has(#finder-panel.open) #era-toggle-wrap {
+  body:has(#finder-panel.open) #era-toggle-wrap,
+  body:has(#finder-panel.open) #mode-tabs,
+  body:has(#finder-panel.open) #mode-crosslink {
     opacity: 0;
     pointer-events: none;
   }

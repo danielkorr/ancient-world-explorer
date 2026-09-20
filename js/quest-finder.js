@@ -214,9 +214,17 @@
 
     el.classList.add('open');
     el.setAttribute('aria-hidden', 'false');
+    // Defer scroll past layout: the panel just flipped display:none→flex (mobile),
+    // so its scroll geometry isn't settled this frame — scrollIntoView would no-op.
     if (scrollToKey) {
-      const sec = body.querySelector(`.finder-group[data-key="${scrollToKey}"]`);
-      if (sec) sec.scrollIntoView({ block: 'start', behavior: 'auto' });
+      requestAnimationFrame(() => {
+        const sec = body.querySelector(`.finder-group[data-key="${scrollToKey}"]`);
+        if (sec) {
+          // Scroll only the panel container (not the page) so the section sits at
+          // its top edge — subtract the two rects instead of scrollIntoView.
+          body.scrollTop += sec.getBoundingClientRect().top - body.getBoundingClientRect().top;
+        }
+      });
     } else {
       body.scrollTop = 0;
     }
@@ -246,11 +254,14 @@
     } else {
       map.flyToBounds(L.latLngBounds(pts).pad(0.25), { maxZoom: 9, duration: 0.6 });
     }
-    // Bring the tapped region's section to the top of the list.
+    // Bring the tapped region's section to the top of the list (container only).
     const body = document.getElementById('finder-body');
     if (body) {
       const sec = body.querySelector(`.finder-group[data-key="${g.key}"]`);
-      if (sec) sec.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      if (sec) {
+        const top = body.scrollTop + sec.getBoundingClientRect().top - body.getBoundingClientRect().top;
+        body.scrollTo({ top, behavior: 'smooth' });
+      }
     }
   }
 

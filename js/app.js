@@ -5211,8 +5211,10 @@ function closeLegendInfo() {
 function decorateLegend() {
   document.querySelectorAll('#quest-legend .legend-row[data-tier]').forEach(row => {
     const n = tierCounts[row.dataset.tier] || 0;
-    row.style.display = n === 0 ? 'none' : '';
-    if (n === 0) return;
+    // Keep empty quest types visible so the key teaches the full model.
+    row.style.display = '';
+    row.classList.toggle('disabled', n === 0);
+    row.setAttribute('aria-disabled', n === 0 ? 'true' : 'false');
     let badge = row.querySelector('.legend-count');
     if (!badge) {
       badge = document.createElement('span');

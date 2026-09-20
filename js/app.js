@@ -4431,6 +4431,7 @@ const layerState = { roads:true, sites:true, alexander:false, names:false };
 
 function toggleLayer(which) {
   dismissMobileGuide(true);
+  if (which === 'roads') showLegendContext('roads');
   layerState[which] = !layerState[which];
   const btn = document.getElementById('btn-' + which);
   btn.classList.toggle('active', layerState[which]);
@@ -4473,6 +4474,20 @@ function toggleLayer(which) {
     refreshAlexanderLayer();
     if (layerState.alexander) fitAlexanderBoundsOnce();
   }
+}
+
+// The map key is contextual: quest filters are introduced by the splash-page
+// Quests entry, while road certainty appears when the user turns on Roman Roads.
+// Keeping the context on the legend itself lets desktop and the mobile Key sheet
+// share the same state without duplicating controls.
+function showLegendContext(context) {
+  const legend = document.getElementById('quest-legend');
+  if (!legend || (context !== 'quests' && context !== 'roads')) return;
+  legend.classList.add('context-open');
+  legend.classList.toggle('show-quests', context === 'quests');
+  legend.classList.toggle('show-roads', context === 'roads');
+  legend.classList.add('mobile-open');
+  syncKeyExpanded(true);
 }
 
 // Filtering quests is meaningless with the sites layer hidden, so engaging any
@@ -5161,7 +5176,7 @@ function openLegendInfo() {
   const list = document.getElementById('legend-info-list');
   if (!list) return;
   const shapeClass = { location: 'diamond', text: 'triangle' };
-  list.innerHTML = ['documented', 'photo', 'location', 'text']
+  const siteRows = ['documented', 'photo', 'location', 'text']
     .filter(t => tierCounts[t])
     .map(t => {
       const info = TIER_INFO[t];
@@ -5173,7 +5188,16 @@ function openLegendInfo() {
                   <div class="li-blurb">${info.blurb}</div>
                 </div>
               </div>`;
-    }).join('');
+     }).join('');
+  const roadRows = Object.entries(CERT_INFO).map(([cert, info]) => `
+    <div class="li-row">
+      <div class="legend-line ${cert === 'c' ? 'solid' : cert === 'j' ? 'dashed' : 'dotted'}"></div>
+      <div class="li-text">
+        <div class="li-title">${info.label} road</div>
+        <div class="li-blurb">${info.blurb}</div>
+      </div>
+    </div>`).join('');
+  list.innerHTML = siteRows + '<div class="li-section-title">Roman road certainty</div>' + roadRows;
   document.getElementById('legend-info').classList.add('open');
 }
 
@@ -5399,9 +5423,14 @@ function closeWelcome() {
 
 function openWelcomeQuest() {
   const welcome = document.getElementById('welcome-modal');
-  const quest   = document.getElementById('welcome-quest-modal');
   if (welcome) welcome.classList.remove('open');
-  if (quest) quest.classList.add('open');
+  try { localStorage.setItem('via.welcomed', '1'); } catch (e) {}
+  if (VIA_LOCK === 'alexander') {
+    location.href = '../?map=1&quests=1';
+    return;
+  }
+  if (appMode !== 'roman') setMode('roman');
+  showLegendContext('quests');
 }
 
 function closeWelcomeQuest(returnToWelcome = true) {
@@ -5499,13 +5528,17 @@ function dismissMobileGuide(persist) {
   try { welcomed = localStorage.getItem('via.welcomed') === '1'; } catch (e) {}
   const autoSignin = /[?&]signin=1/.test(location.search);
   const directMap = /[?&]map=1(?:&|$)/.test(location.search);
+  const questEntry = /[?&]quests=1(?:&|$)/.test(location.search);
   // The root URL is the product's front door, so it should remain an explorable
   // landing page even after a visitor has previously dismissed the intro. The
   // focused Roman/Alexander pages stay direct-entry map views via VIA_LOCK.
   const isLandingRoute = !VIA_LOCK &&
     !/\/alexander-the-great-campaigns(?:\/|$)/i.test(location.pathname);
   if ((isLandingRoute || !welcomed) && !autoSignin && !directMap) openWelcome();
-  else showMobileGuide();
+  else {
+    showMobileGuide();
+    if (questEntry) showLegendContext('quests');
+  }
 })();
 
 // Keyboard activation for the brand (role="button").

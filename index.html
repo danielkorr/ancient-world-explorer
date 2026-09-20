@@ -60,7 +60,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=166">
+  <link rel="stylesheet" href="css/style.css?v=167">
 </head>
 <body>
 
@@ -177,13 +177,12 @@
               <span>Pleiades for places, Itiner-e for roads, and ORBIS for travel.</span>
             </div>
           </div>
+          <button class="welcome-quest-link" type="button" onclick="openWelcomeQuest()">
+            <span class="welcome-quest-name">Quests</span>
+            <span>Help close the gaps in the ancient record.</span>
+            <span class="welcome-quest-action">Explore the quests <span aria-hidden="true">→</span></span>
+          </button>
         </div>
-
-        <button class="welcome-quest-link" type="button" onclick="openWelcomeQuest()">
-          <span class="welcome-quest-name">Quests</span>
-          <span>For those who want a genuine challenge</span>
-          <span class="welcome-quest-action">Learn how quests work →</span>
-        </button>
       </section>
 
       <section class="welcome-paths" aria-label="Choose an experience">
@@ -207,15 +206,6 @@
           </div>
         </article>
 
-        <a class="welcome-research-link" href="research-lab/" onclick="if(new URLSearchParams(location.search).get('backend')==='staging') this.href='research-lab/?backend=staging';">
-          <span class="welcome-research-mark" aria-hidden="true">◌</span>
-          <span class="welcome-research-copy">
-            <span class="welcome-path-overline">Research Lab</span>
-            <strong>Go behind the map</strong>
-            <span>Follow the sources, disagreements, and open questions behind one historical place.</span>
-          </span>
-          <span class="welcome-research-arrow" aria-hidden="true">↗</span>
-        </a>
       </section>
     </div>
   </div>
@@ -380,16 +370,18 @@
   <div class="legend-row legend-layer-row active" id="legend-sites-toggle" data-testid="sites-layer-row" data-layer="sites" role="button" tabindex="0" onclick="toggleLayer('sites')"><div class="legend-dot" style="background:var(--gold)"></div>Sites &amp; Cities</div>
   <div class="legend-row legend-layer-row" id="legend-alexander-toggle" data-testid="alexander-layer-row" data-layer="alexander" role="button" tabindex="0" onclick="toggleLayer('alexander')"><div class="legend-line alexander"></div>Alexander</div>
   <div class="legend-sep legend-layers-sep"></div>
-  <div class="legend-hint">Tap to filter<button id="legend-info-btn" onclick="openLegendInfo()" aria-label="What do these terms mean?" title="What do these mean?">?</button></div>
-  <div class="legend-row" data-testid="site-tier-filter" data-tier="documented" role="button" tabindex="0" onclick="toggleTier('documented')"><div class="legend-dot" style="background:#b89a6a"></div>Documented</div>
-  <div class="legend-row" data-testid="site-tier-filter" data-tier="photo" role="button" tabindex="0" onclick="toggleTier('photo')"><div class="legend-dot" style="background:#ff9e2c"></div>Photo Quest</div>
-  <div class="legend-row" data-testid="site-tier-filter" data-tier="location" role="button" tabindex="0" onclick="toggleTier('location')"><div class="legend-dot diamond" style="background:#2b8cde"></div>Location Quest</div>
-  <div class="legend-row" data-testid="site-tier-filter" data-tier="text" role="button" tabindex="0" onclick="toggleTier('text')"><div class="legend-dot triangle" style="background:#b15ad6"></div>Text Quest</div>
-  <div class="legend-sep"></div>
-  <div class="legend-hint">Roads · certainty</div>
-  <div class="legend-row" data-testid="road-certainty-filter" data-cert="c" role="button" tabindex="0" onclick="toggleCert('c')"><div class="legend-line solid"></div>Certain</div>
-  <div class="legend-row" data-testid="road-certainty-filter" data-cert="j" role="button" tabindex="0" onclick="toggleCert('j')"><div class="legend-line dashed"></div>Conjectured</div>
-  <div class="legend-row" data-testid="road-certainty-filter" data-cert="h" role="button" tabindex="0" onclick="toggleCert('h')"><div class="legend-line dotted"></div>Hypothetical</div>
+   <div id="quest-site-filters" class="legend-section">
+     <div class="legend-hint">Tap to filter<button id="legend-info-btn" onclick="openLegendInfo()" aria-label="What do these terms mean?" title="What do these mean?">?</button></div>
+     <div class="legend-row" data-testid="site-tier-filter" data-tier="photo" role="button" tabindex="0" onclick="toggleTier('photo')"><div class="legend-dot" style="background:#ff9e2c"></div>Photo Quest</div>
+     <div class="legend-row" data-testid="site-tier-filter" data-tier="location" role="button" tabindex="0" onclick="toggleTier('location')"><div class="legend-dot diamond" style="background:#2b8cde"></div>Location Quest</div>
+     <div class="legend-row" data-testid="site-tier-filter" data-tier="text" role="button" tabindex="0" onclick="toggleTier('text')"><div class="legend-dot triangle" style="background:#b15ad6"></div>Text Quest</div>
+   </div>
+   <div id="road-certainty-filters" class="legend-section">
+     <div class="legend-hint">Roads · certainty<button id="road-info-btn" onclick="openLegendInfo()" aria-label="What do road certainty terms mean?" title="What do these mean?">?</button></div>
+     <div class="legend-row" data-testid="road-certainty-filter" data-cert="c" role="button" tabindex="0" onclick="toggleCert('c')"><div class="legend-line solid"></div>Certain</div>
+     <div class="legend-row" data-testid="road-certainty-filter" data-cert="j" role="button" tabindex="0" onclick="toggleCert('j')"><div class="legend-line dashed"></div>Conjectured</div>
+     <div class="legend-row" data-testid="road-certainty-filter" data-cert="h" role="button" tabindex="0" onclick="toggleCert('h')"><div class="legend-line dotted"></div>Hypothetical</div>
+   </div>
   </div><!-- /#roman-legend -->
   <!-- Campaign legend — shown only in Alexander mode (body.mode-alexander). Phase is
        carried by the NUMBER + label as the primary channels; the color tint is
@@ -429,7 +421,7 @@
   <div id="legend-info-card">
     <button class="auth-close" onclick="closeLegendInfo()">✕</button>
     <h2 class="auth-title">What's on the map</h2>
-    <div class="auth-sub">Every site is one of these. Tap a tier in the legend to show only those.</div>
+    <div class="auth-sub">Quest types and road certainty terms, explained in plain language.</div>
     <div id="legend-info-list"></div>
     <button class="auth-secondary" onclick="closeLegendInfo()">Got it</button>
   </div>
@@ -559,7 +551,7 @@
      VIA_createAncientFloor at map init). -->
 <script src="js/basemap.js?v=107"></script>
 <script src="js/research-bridges.js?v=2"></script>
-<script src="js/app.js?v=175"></script>
+<script src="js/app.js?v=176"></script>
 <!-- Quest Finder (design options B + C) — inert unless ?finder=1 is present. -->
 <script src="js/quest-finder.js?v=4"></script>
 

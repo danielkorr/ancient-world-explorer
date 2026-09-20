@@ -1099,10 +1099,17 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   border: 1px solid rgba(212,168,83,0.4);
   border-radius: 8px;
   padding: 11px 15px;
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: 7px;
 }
+
+/* The key is earned by an intentional entry point: Quests reveals the quest
+   rows, while Roman Roads reveals the certainty rows. */
+#quest-legend.context-open { display: flex; }
+#quest-legend .legend-section { display: none; }
+#quest-legend.show-quests #quest-site-filters,
+#quest-legend.show-roads #road-certainty-filters { display: block; }
 
 /* Small affordance so it's clear the legend rows are now controls, not a
    static key. */
@@ -1480,6 +1487,15 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 }
 .li-count { font-size: var(--fs-10); color: rgba(212,168,83,0.7); font-variant-numeric: tabular-nums; }
 .li-blurb { font-size: var(--fs-12); line-height: 1.5; color: var(--text-body); }
+.li-section-title {
+  padding: 15px 0 2px;
+  border-top: 1px solid rgba(212,168,83,0.24);
+  font-family: 'Cinzel', serif;
+  font-size: var(--fs-10);
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: rgba(212,168,83,0.82);
+}
 
 .legend-dot {
   width: 10px; height: 10px;
@@ -2710,7 +2726,8 @@ path.leaflet-interactive { outline: none !important; }
     max-height: calc(100dvh - var(--dock-h) - 130px);
     overflow-y: auto;
   }
-  #quest-legend.mobile-open { display: flex; }
+  #quest-legend.mobile-open,
+  #quest-legend.context-open.mobile-open { display: flex; }
   .legend-hint { font-size: var(--fs-8); }
   .legend-row { font-size: var(--fs-11); letter-spacing: 0.5px; padding: 3px 0; }
   .legend-dot { width: 9px; height: 9px; }

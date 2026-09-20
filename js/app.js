@@ -545,6 +545,7 @@ function showRoadsToast(cert) {
   const info = CERT_INFO[cert];
   const el   = document.getElementById('legend-toast');
   if (!info || !el) return;
+  setLegendToastContext('roads');
   document.getElementById('legend-toast-title').textContent = `${info.label} roads · ${(certCounts[cert] || 0).toLocaleString()}`;
   document.getElementById('legend-toast-body').textContent  = info.blurb;
   el.classList.add('show');
@@ -5111,14 +5112,22 @@ let _toastTimer = null;
 
 function hideLegendToast() {
   const el = document.getElementById('legend-toast');
-  if (el) el.classList.remove('show');
+  if (el) el.classList.remove('show', 'context-quests', 'context-roads');
   clearTimeout(_toastTimer);
+}
+
+function setLegendToastContext(context) {
+  const el = document.getElementById('legend-toast');
+  if (!el) return;
+  el.classList.toggle('context-quests', context === 'quests');
+  el.classList.toggle('context-roads', context === 'roads');
 }
 
 function showLegendToast(tier) {
   const info = TIER_INFO[tier];
   const el   = document.getElementById('legend-toast');
   if (!info || !el) return;
+  setLegendToastContext('quests');
   document.getElementById('legend-toast-title').textContent = `${info.label} · ${tierCounts[tier]}`;
   document.getElementById('legend-toast-body').textContent  = info.blurb;
   el.classList.add('show');

@@ -1111,6 +1111,20 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 #quest-legend.show-quests #quest-site-filters,
 #quest-legend.show-roads #road-certainty-filters { display: block; }
 
+/* Contextual keys stay beside the control that introduced them. The quest key
+   belongs to the era switch; the road key belongs to the Roman Roads chip. */
+#quest-legend.show-quests {
+  top: 160px;
+  right: auto;
+  bottom: auto;
+  left: 18px;
+}
+#quest-legend.show-roads {
+  right: auto;
+  bottom: 128px;
+  left: 18px;
+}
+
 /* Small affordance so it's clear the legend rows are now controls, not a
    static key. */
 .legend-hint {
@@ -1217,6 +1231,38 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
   font-size: var(--fs-12);
   line-height: 1.45;
   color: rgba(240,230,211,0.92);
+}
+#legend-toast-close {
+  position: absolute;
+  top: 8px;
+  right: 9px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid rgba(212,168,83,0.35);
+  border-radius: 50%;
+  background: rgba(212,168,83,0.08);
+  color: var(--gold);
+  cursor: pointer;
+  font-size: var(--fs-11);
+}
+#legend-toast-close:hover { background: rgba(212,168,83,0.18); }
+
+/* The explanation is an anchored detail card, not a detached snackbar. */
+#legend-toast {
+  left: 18px;
+  right: auto;
+  bottom: auto;
+  width: min(380px, calc(100vw - 36px));
+  padding: 18px 42px 18px 19px;
+  pointer-events: none;
+  transform: translateY(14px);
+}
+#legend-toast.context-quests { top: 160px; }
+#legend-toast.context-roads { bottom: 128px; }
+#legend-toast.show {
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
 /* Legend explainer modal — reuses the shared modal look. */
@@ -2728,6 +2774,13 @@ path.leaflet-interactive { outline: none !important; }
   }
   #quest-legend.mobile-open,
   #quest-legend.context-open.mobile-open { display: flex; }
+  #quest-legend.show-quests,
+  #quest-legend.show-roads {
+    top: auto;
+    left: 12px;
+    right: 12px;
+    bottom: calc(var(--dock-h) + 10px);
+  }
   .legend-hint { font-size: var(--fs-8); }
   .legend-row { font-size: var(--fs-11); letter-spacing: 0.5px; padding: 3px 0; }
   .legend-dot { width: 9px; height: 9px; }
@@ -2741,6 +2794,19 @@ path.leaflet-interactive { outline: none !important; }
   #quest-legend .legend-layer-row   { display: flex; }
   .legend-layer-row:not(.active) { opacity: 0.4; }
   .legend-layer-row .legend-line { width: 18px; }
+
+  #legend-toast,
+  #legend-toast.context-quests,
+  #legend-toast.context-roads {
+    top: auto;
+    left: 50%;
+    right: auto;
+    bottom: calc(var(--dock-h) + 96px);
+    width: min(340px, 88vw);
+    padding: 18px 42px 18px 17px;
+    transform: translateX(-50%) translateY(14px);
+  }
+  #legend-toast.show { transform: translateX(-50%) translateY(0); }
 
   /* Panel becomes a floating card on mobile */
   :root {

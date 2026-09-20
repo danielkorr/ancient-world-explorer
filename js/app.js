@@ -549,6 +549,7 @@ function showRoadsToast(cert) {
   document.getElementById('legend-toast-title').textContent = `${info.label} roads · ${(certCounts[cert] || 0).toLocaleString()}`;
   document.getElementById('legend-toast-body').textContent  = info.blurb;
   el.classList.add('show');
+  positionLegendToast();
   clearTimeout(_toastTimer);
   _toastTimer = setTimeout(() => el.classList.remove('show'), 4800);
 }
@@ -4432,7 +4433,23 @@ const layerState = { roads:true, sites:true, alexander:false, names:false };
 
 function toggleLayer(which) {
   dismissMobileGuide(true);
+  const legend = document.getElementById('quest-legend');
+  const revealingRoadKey = which === 'roads' && !legend?.classList.contains('show-roads');
   if (which === 'roads') showLegendContext('roads');
+  // The first Roads click is the entry point to the certainty key. Do not make
+  // that same click turn the road layer off underneath the newly opened key.
+  if (revealingRoadKey) {
+    if (!layerState.roads) {
+      layerState.roads = true;
+      document.getElementById('btn-roads').classList.add('active');
+      document.getElementById('legend-roads-toggle')?.classList.add('active');
+      for (const g of [itinereRoadsGroup, roadsGroup]) {
+        if (g && !map.hasLayer(g)) map.addLayer(g);
+      }
+    }
+    decorateRoadsLegend();
+    return;
+  }
   layerState[which] = !layerState[which];
   const btn = document.getElementById('btn-' + which);
   btn.classList.toggle('active', layerState[which]);
@@ -4489,7 +4506,36 @@ function showLegendContext(context) {
   legend.classList.toggle('show-roads', context === 'roads');
   legend.classList.add('mobile-open');
   syncKeyExpanded(true);
+  positionContextualLegend();
 }
+
+function positionContextualLegend() {
+  const legend = document.getElementById('quest-legend');
+  if (!legend || window.innerWidth <= 640 || !legend.classList.contains('context-open')) return;
+  if (legend.classList.contains('show-roads')) {
+    const roadsButton = document.getElementById('btn-roads');
+    if (!roadsButton) return;
+    const buttonRect = roadsButton.getBoundingClientRect();
+    const gap = 8;
+    legend.style.top = `${Math.max(12, buttonRect.top - legend.offsetHeight - gap)}px`;
+    legend.style.bottom = 'auto';
+  } else {
+    legend.style.top = '160px';
+    legend.style.bottom = 'auto';
+  }
+  positionLegendToast();
+}
+
+function positionLegendToast() {
+  const toast = document.getElementById('legend-toast');
+  const legend = document.getElementById('quest-legend');
+  if (!toast || !legend || window.innerWidth <= 640 || !toast.classList.contains('show')) return;
+  const rect = legend.getBoundingClientRect();
+  toast.style.top = `${rect.top}px`;
+  toast.style.bottom = 'auto';
+}
+
+window.addEventListener('resize', positionContextualLegend);
 
 // Filtering quests is meaningless with the sites layer hidden, so engaging any
 // quest filter turns Sites & Cities back on. The group is always on the map now,
@@ -5131,6 +5177,7 @@ function showLegendToast(tier) {
   document.getElementById('legend-toast-title').textContent = `${info.label} · ${tierCounts[tier]}`;
   document.getElementById('legend-toast-body').textContent  = info.blurb;
   el.classList.add('show');
+  positionLegendToast();
   clearTimeout(_toastTimer);
   _toastTimer = setTimeout(() => el.classList.remove('show'), 4800);
 }

@@ -363,10 +363,12 @@ body.mode-alexander #campaign-legend { display: block; }
   border-radius: 5px;
   box-shadow: 0 4px 18px rgba(0,0,0,0.4);
 }
-body.lock-roman #mode-tabs,
-body.lock-alexander #mode-tabs { display: none; }
-body.lock-roman #mode-crosslink,
-body.lock-alexander #mode-crosslink { display: flex; }
+/* World selection now lives on the welcome splash + the brand's "⇄ <world>"
+   switch line, so the on-map mode selector is retired everywhere: the tab pair
+   and the sibling cross-links never render. (Elements + lock JS are kept so the
+   per-page lock still drives chrome/welcome variant.) */
+#mode-tabs,
+#mode-crosslink { display: none !important; }
 
 /* ── PHASE 3: split-unlock subtractions ──
    On the Roman-locked page the Alexander layer chip + legend row are dead
@@ -1366,6 +1368,31 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 #app-brand:hover #app-subtitle { text-decoration: underline; text-underline-offset: 2px; }
 #app-brand:hover #brand-info { opacity: 1; }
 #app-brand:focus-visible { outline: 1px solid var(--gold-dim); outline-offset: 3px; }
+
+/* "⇄ <current world>" — names where you are and that you can switch. Reads as a
+   quiet pill under the subtitle; the brand block's click opens the welcome, where
+   the choice actually lives. Gains a gold outline on hover so it looks tappable. */
+#brand-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 3px;
+  padding: 1px 7px;
+  border: 1px solid var(--gold-faint);
+  border-radius: 999px;
+  font-family: 'Cinzel', serif;
+  font-size: var(--fs-10);
+  letter-spacing: 0.6px;
+  font-weight: 600;
+  color: var(--gold-dim);
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+#brand-switch-icon { font-size: 0.95em; opacity: 0.9; }
+#app-brand:hover #brand-switch {
+  color: var(--gold);
+  border-color: var(--gold-dim);
+  background: rgba(212,168,83,0.10);
+}
 #brand-info {
   font-size: 0.5em;
   vertical-align: super;

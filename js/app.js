@@ -1526,7 +1526,10 @@ function buildEmpireInset() {
   map.on('move zoom', syncRect);
   // Click anywhere on the inset → fly the main map to that point (keep its zoom).
   insetMap.on('click', e => map.flyTo(e.latlng, map.getZoom()));
-  empireInset = { map: insetMap, rect };
+  // A layer for a mode-specific route overlay (Alexander's campaign path). Drawn
+  // above the rect so the locator shows *where the story goes*, not just basemap.
+  const routeGroup = L.layerGroup().addTo(insetMap);
+  empireInset = { map: insetMap, rect, routeGroup };
 
   // Collapse / expand. Collapsed = header pill only; invalidate size on expand so
   // tiles lay out correctly after being display:none.
@@ -1555,12 +1558,35 @@ function buildEmpireInset() {
 function updateEmpireInset() {
   if (!empireInset) return;
   const title = document.getElementById('empire-inset-title');
+  if (empireInset.routeGroup) empireInset.routeGroup.clearLayers();
   if (appMode === 'alexander') {
     if (title) title.textContent = 'The Alexandrian Empire';
-    empireInset.map.setView([34, 48], 3);   // Greece → the Indus, campaign extent
+    // The campaign spans ~53° of longitude (Pella 22°E → the Hyphasis 75°E). At
+    // the old zoom 3 the 184px inset showed only ~32° — it cropped both ends and
+    // sat on the Mesopotamian middle, reading as off-centre. Zoom 2 frames the
+    // whole run, centred on its true midpoint (lng ~49, lat ~33).
+    empireInset.map.setView([33, 49], 2);
+    drawInsetAlexanderRoute();
   } else {
     if (title) title.textContent = 'The Roman Empire';
-    empireInset.map.setView([40, 19], 4);    // Mediterranean empire scale
+    // Old zoom 4 showed only Italy + the Adriatic — not "the empire", just its
+    // middle. Zoom 2 frames the whole reach (Iberia → Syria, Africa → Britain)
+    // so the viewport rectangle actually reads as "which corner am I in".
+    empireInset.map.setView([41, 15], 2);
+  }
+}
+
+// Trace Alexander's route across the locator so it reads as *his* campaign, not a
+// blank patch of the Near East. A dark casing under a gold line keeps it legible
+// on the sepia floor (and distinct without relying on colour). Non-interactive —
+// clicks still fall through to the fly-to handler.
+function drawInsetAlexanderRoute() {
+  if (!empireInset || !empireInset.routeGroup || typeof ALEXANDER_ROUTES === 'undefined') return;
+  for (const route of ALEXANDER_ROUTES) {
+    if (!route.coords || route.coords.length < 2) continue;
+    const ll = route.coords.map(c => [c[1], c[0]]);
+    L.polyline(ll, { color: '#2a1c05', weight: 3,   opacity: 0.55, lineCap: 'round', lineJoin: 'round', interactive: false }).addTo(empireInset.routeGroup);
+    L.polyline(ll, { color: '#f0c46a', weight: 1.4, opacity: 1,    lineCap: 'round', lineJoin: 'round', interactive: false }).addTo(empireInset.routeGroup);
   }
 }
 
@@ -4488,6 +4514,15 @@ function setMode(mode, opts = {}) {
   raiseOverlays();
   if (typeof updateEmpireInset === 'function') updateEmpireInset();   // relabel + reframe the locator
   if (typeof refreshJourneyLauncher === 'function') refreshJourneyLauncher();   // show/hide the journey entry point per mode
+  refreshBrandSwitch();   // keep the brand's "⇄ <world>" label in sync with the mode
+}
+
+// The brand's "⇄ <world>" line is the on-map cue for which world you're in and
+// the entry to change it (the brand click opens the welcome, where the choice
+// lives). Keep its label in step with appMode.
+function refreshBrandSwitch() {
+  const el = document.getElementById('brand-switch-world');
+  if (el) el.textContent = appMode === 'alexander' ? "Alexander's Empire" : 'Roman World';
 }
 
 // ── LAYER TOGGLES ────────────────────────────────────────

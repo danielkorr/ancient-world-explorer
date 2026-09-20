@@ -62,7 +62,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="../css/style.css?v=153">
+  <link rel="stylesheet" href="../css/style.css?v=163">
 </head>
 <body>
 
@@ -71,9 +71,13 @@
 
 <!-- Top Bar -->
 <div id="topbar" data-testid="main-nav">
-  <div id="app-brand" onclick="openWelcome()" role="button" tabindex="0" title="About VIA — what this is & where the data comes from">
+  <div id="app-brand" onclick="openWelcome()" role="button" tabindex="0" title="Choose your world &amp; learn about VIA">
     <h1 id="app-title">VIA<span id="brand-info" aria-hidden="true">ⓘ</span></h1>
     <div id="app-subtitle">Ancient World Explorer</div>
+    <!-- Current world + the way to change it. The whole brand block already opens
+         the welcome (where the choice lives); this line names where you are and
+         signals the switch. refreshBrandSwitch() in app.js keeps the label live. -->
+    <div id="brand-switch"><span id="brand-switch-icon" aria-hidden="true">⇄</span> <span id="brand-switch-world">Roman World</span></div>
   </div>
   <div id="topbar-search" data-testid="site-search">
     <label class="sr-only" for="site-search-input">Search for a site or modern location</label>
@@ -199,6 +203,16 @@
             <button type="button" class="welcome-path-cta" onclick="chooseWelcomeExperience('alexander')">Trace Alexander&rsquo;s Campaign <span aria-hidden="true">→</span></button>
           </div>
         </article>
+
+        <a class="welcome-research-link" href="research-lab/" onclick="if(new URLSearchParams(location.search).get('backend')==='staging') this.href='research-lab/?backend=staging';">
+          <span class="welcome-research-mark" aria-hidden="true">◌</span>
+          <span class="welcome-research-copy">
+            <span class="welcome-path-overline">Research Lab</span>
+            <strong>Go behind the map</strong>
+            <span>Follow the sources, disagreements, and open questions behind one historical place.</span>
+          </span>
+          <span class="welcome-research-arrow" aria-hidden="true">↗</span>
+        </a>
       </section>
     </div>
   </div>
@@ -530,12 +544,12 @@
 
 <!-- Data + App. ?v= must match the value on css/style.css above — bump both
      together each deploy to force fresh assets past the cache. -->
-<script src="../js/config.js?v=109"></script>
+<script src="../js/config.js?v=111"></script>
 <script src="../js/orbis-days.js?v=106"></script>
 <!-- Client-side ORBIS routing logic (small). The heavy graph it reads
      (js/orbis-graph.js) is LAZY-loaded by app.js on first route request. -->
 <script src="../js/orbis-route.js?v=121"></script>
-<script src="../js/sites-pleiades.js?v=106"></script>
+<script src="../js/sites-pleiades.js?v=107"></script>
 <script src="../js/sites-vici.js?v=106"></script>
 <script src="../js/vici-links.js?v=106"></script>
 <script src="../js/sites-linked-data.js?v=107"></script>
@@ -545,16 +559,18 @@
      document.write'd here synchronously before data.js/app.js, which blocked
      time-to-interactive on the single heaviest asset in the app. -->
 <!-- (roads-itinere.js load moved into js/app.js) -->
-<script src="../js/data.js?v=131"></script>
+<script src="../js/data.js?v=135"></script>
 <script src="../js/alexander.js?v=112"></script>
 <script src="../js/alexander-photos.js?v=7"></script>
 <script src="../js/site-photos.js?v=1"></script>
-<script src="../js/auth.js?v=106"></script>
+<script src="../js/auth.js?v=113"></script>
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
 <script src="../js/basemap.js?v=107"></script>
-<script src="../js/research-bridges.js?v=1"></script>
-<script src="../js/app.js?v=169"></script>
+<script src="../js/research-bridges.js?v=2"></script>
+<script src="../js/app.js?v=174"></script>
+<!-- Quest Finder (design options B + C) — inert unless ?finder=1 is present. -->
+<script src="../js/quest-finder.js?v=4"></script>
 
 </body>
 </html>

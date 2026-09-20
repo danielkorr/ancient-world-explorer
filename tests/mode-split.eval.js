@@ -11,6 +11,18 @@
   const st = () => V.getState();
   const cssDisp = sel => { const e = document.querySelector(sel); return e ? getComputedStyle(e).display : null; };
   const idDisp  = id  => { const e = document.getElementById(id); return e ? getComputedStyle(e).display : null; };
+  const present = sel => !!document.querySelector(sel);
+  const brandWorld = () => (document.getElementById('brand-switch-world')?.textContent || '').trim();
+  // New contract: the on-map mode selector (tabs + sibling cross-links) is retired
+  // in every state — world choice lives on the welcome splash + the brand's
+  // "⇄ <world>" line. Both paths are always offered on the welcome (no per-lock
+  // variant), and the brand line names the active world.
+  const selectorRetired = () => {
+    ok('mode-tabs-hidden', idDisp('mode-tabs') === 'none');
+    ok('mode-crosslink-hidden', idDisp('mode-crosslink') === 'none');
+    ok('welcome-offers-roman', present('.welcome-path-roman'));
+    ok('welcome-offers-alexander', present('.welcome-path-alexander'));
+  };
   // SITES / ALEXANDER_STOPS are script-scoped globals (top-level const), NOT on
   // window — reference them as bare globals through a typeof guard.
   const AS = (typeof ALEXANDER_STOPS !== 'undefined') ? ALEXANDER_STOPS : [];
@@ -22,14 +34,8 @@
     ok('roman-page-mode', st().pageMode === 'roman');
     ok('roman-appmode', st().appMode === 'roman');
     ok('roman-body-class', document.body.classList.contains('lock-roman'));
-    ok('roman-tabs-hidden', idDisp('mode-tabs') === 'none');
-    ok('roman-crosslink-shown', idDisp('mode-crosslink') !== 'none');
-    ok('roman-shows-to-alexander', cssDisp('.mode-cross.to-alexander') !== 'none');
-    ok('roman-hides-to-roman', cssDisp('.mode-cross.to-roman') === 'none');
-    ok('roman-welcome-variant',
-      cssDisp('#welcome-body .wb-roman') === 'block' &&
-      cssDisp('#welcome-body .wb-alexander') === 'none' &&
-      cssDisp('#welcome-body .wb-dual') === 'none');
+    selectorRetired();
+    ok('roman-brand-world', brandWorld() === 'Roman World');
     ok('roman-key-namespaced', V.pageKey('via.welcomed') === 'via.welcomed.roman');
     // The Alexander cross-link chip must build a valid sibling deep-link.
     const stop = AS[0];
@@ -42,14 +48,8 @@
     ok('alex-page-mode', st().pageMode === 'alexander');
     ok('alex-appmode', st().appMode === 'alexander');
     ok('alex-body-class', document.body.classList.contains('lock-alexander'));
-    ok('alex-tabs-hidden', idDisp('mode-tabs') === 'none');
-    ok('alex-crosslink-shown', idDisp('mode-crosslink') !== 'none');
-    ok('alex-shows-to-roman', cssDisp('.mode-cross.to-roman') !== 'none');
-    ok('alex-hides-to-alexander', cssDisp('.mode-cross.to-alexander') === 'none');
-    ok('alex-welcome-variant',
-      cssDisp('#welcome-body .wb-alexander') === 'block' &&
-      cssDisp('#welcome-body .wb-roman') === 'none' &&
-      cssDisp('#welcome-body .wb-dual') === 'none');
+    selectorRetired();
+    ok('alex-brand-world', brandWorld() === "Alexander's Empire");
     ok('alex-key-namespaced', V.pageKey('via.welcomed') === 'via.welcomed.alexander');
     // The Roman cross-link chip must build a valid sibling deep-link.
     const site = SS.find(s => s.pleiades);
@@ -86,13 +86,11 @@
     ok('launcher-returns-after-close', st().journeyLauncherShown === true);
 
   } else {
-    // ?lock=none — the dev / back-compat state: both tabs, no cross-link.
+    // ?lock=none — the dev / back-compat state. The on-map selector is retired
+    // here too; switching happens via the welcome + brand line.
     ok('none-lock-null', lock === null || lock === undefined);
-    ok('none-tabs-shown', idDisp('mode-tabs') !== 'none');
-    ok('none-crosslink-hidden', idDisp('mode-crosslink') === 'none');
-    ok('none-roman-tab', !!document.querySelector('[data-testid="mode-roman"]'));
-    ok('none-alexander-tab', !!document.querySelector('[data-testid="mode-alexander"]'));
-    ok('none-welcome-dual', cssDisp('#welcome-body .wb-dual') !== 'none');
+    selectorRetired();
+    ok('none-brand-world', brandWorld() === 'Roman World');
   }
 
   return JSON.stringify({ lock: lock === null ? 'none' : lock, failed: fails.length, fails });

@@ -14,13 +14,14 @@
 // Additive by design: one new file + CSS + a script tag. It reads app.js globals
 // (SITES, map, focusSite, ALEXANDER_STOPS, …) which share the classic-script
 // global lexical scope, and overrides the legend taps via CAPTURE-phase listeners
-// so app.js itself is left untouched (keeps merges with Codex clean). Gated on
-// ?finder=1 until it earns a permanent home.
+// so app.js itself is left untouched (keeps merges with Codex clean). Shipped on
+// by default (the ?finder=1 gate was dropped once it earned its home); pass
+// ?finder=0 to opt out for a clean-map screenshot.
 (function () {
   'use strict';
 
-  const ENABLED = new URLSearchParams(location.search).has('finder');
-  if (!ENABLED) return;
+  const q = new URLSearchParams(location.search);
+  if (q.get('finder') === '0') return;
 
   // ── Region model (Roman) ────────────────────────────────────────────────
   // Nearest-anchor bucketing: every site lands in exactly one region (no gaps,

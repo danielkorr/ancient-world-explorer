@@ -153,6 +153,40 @@ function mapType(placeTypes = []) {
   return 'city';
 }
 
+// Non-point Pleiades feature types split into two tiers, because the two quest
+// kinds have DIFFERENT eligibility:
+//
+//   ABSTRACT — features with no single photographable physical referent: an
+//     administrative/geographic area (province, region), a body of open water
+//     (sea, lake), or a human group (people, tribe). "Photograph the province
+//     of Venetia" / "GPS the Ausonian Sea" are both nonsense. These are NEVER a
+//     quest of any kind — documented reference places only.
+//
+//   LINEAR_OR_AREAL — features with real physical remains but no single GPS
+//     point: rivers, aqueducts, canals, mountains, islands. You CAN photograph a
+//     river or an aqueduct (so they stay photo-eligible), but you can't "verify
+//     their coordinates" with one GPS reading, so they're never a Location Quest.
+//
+// Location Quest ⇒ point-like (excluded by EITHER set). Photo Quest ⇒ not
+// ABSTRACT. Gates trip only when EVERY declared feature type is non-point, so a
+// settlement on a river (['settlement','river']) stays a normal point site.
+const ABSTRACT_FEATURES = new Set([
+  'region', 'province', 'province-2', 'province-roman', 'district', 'territory',
+  'sea', 'water-open', 'water-inland', 'lake', 'lagoon', 'gulf', 'bay', 'marsh',
+  'people', 'tribe', 'ethnic-group', 'desert', 'plain',
+  'label',   // cartographic annotation ("place the label here"), not a real feature — transparent to both gates
+]);
+const LINEAR_OR_AREAL_FEATURES = new Set([
+  ...ABSTRACT_FEATURES,
+  'river', 'stream', 'canal', 'aqueduct', 'spring', 'well', 'waterfall',
+  'mountain', 'mountain-range', 'ridge', 'valley', 'plateau', 'forest',
+  'island', 'archipelago', 'peninsula', 'cape', 'promontory',
+]);
+
+const every = (fts, set) => fts.length > 0 && fts.every(t => set.has(t));
+function isAbstractFeature(featureTypes = []) { return every(featureTypes, ABSTRACT_FEATURES); }
+function isNonPointFeature(featureTypes = []) { return every(featureTypes, LINEAR_OR_AREAL_FEATURES); }
+
 function isRomanEra(timePeriods = []) {
   return timePeriods.some(p => ROMAN_PERIODS.has(p));
 }
@@ -197,7 +231,12 @@ function transformRow(p) {
     rome_days: 0,
     desc:     p.description.trim().replace(/\s+/g, ' '),
   };
-  if (precision === 'rough') site.quest = 'location';
+  // Abstract features (province, sea, region, people…) are documented reference
+  // places, never any quest — flag survives to the photo overlay, stripped
+  // before emit. Location Quest = rough coordinates AND a point to actually find
+  // (excludes rivers/mountains/aqueducts too — real, but not a single GPS point).
+  site._abstract = isAbstractFeature(featureTypes);
+  if (precision === 'rough' && !isNonPointFeature(featureTypes)) site.quest = 'location';
   site._descLen = site.desc.length;
   return site;
 }
@@ -346,11 +385,14 @@ async function main() {
   const photos = await loadPhotoOverlay();
   let photoTagged = 0;
   for (const s of sites) {
-    if (s.quest) continue;
+    if (s.quest || s._abstract) continue;   // abstract features are never a quest
     const p = photos[s.pleiades];
     if (p && p.has_photo === false) { s.quest = 'photo'; photoTagged++; }
   }
   console.log(`✓ photo-quest overlay applied: ${photoTagged} sites tagged`);
+
+  // Strip the transient abstract marker now that both quest gates have read it.
+  sites = sites.map(({ _abstract, ...rest }) => rest);
 
   const byType = sites.reduce((m, s) => (m[s.type] = (m[s.type] || 0) + 1, m), {});
   console.log(`  by type:`, byType);

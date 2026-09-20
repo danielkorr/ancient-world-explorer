@@ -210,7 +210,6 @@ const SITES_CURATED = [
 
   { id:"singidunum", name:"Singidunum", modern:"Belgrade, Serbia", type:"fortress", livius:"https://www.livius.org/articles/place/singidunum-belgrade/", omnesviae:"https://omnesviae.org/#TPPlace1648",
     lat:44.8176, lng:20.4633, period:"1st c. AD – present", pleiades:"207447", rome_days:16,
-    quest:"location",
     desc:"A legionary fortress at the confluence of the Sava and Danube rivers — one of the most strategically important positions on the entire frontier. Emperor Jovian was born here. The Roman remains lie beneath modern Belgrade, with some visible in the Kalemegdan fortress." },
 
   // ── GREECE & BALKANS ─────────────────────────────────────
@@ -282,7 +281,6 @@ const SITES_CURATED = [
 
   { id:"dura_europos", name:"Dura-Europos", modern:"Deir ez-Zor, Syria", type:"fortress", livius:"https://www.livius.org/articles/place/dura-europos/",
     lat:34.7492, lng:40.7278, period:"3rd c. BC – AD 256", pleiades:"893990", rome_days:42,
-    quest:"location",
     desc:"A remarkable frontier garrison city on the Euphrates, Dura-Europos was captured and abandoned by the Sasanian Persians in 256 AD and never reoccupied, preserving it intact beneath the desert. The excavated synagogue murals and the earliest known Christian house-church were both found here. Access is extremely difficult due to the Syrian conflict." },
 
   { id:"gerasa", name:"Gerasa", modern:"Jerash, Jordan", type:"city", livius:"https://www.livius.org/articles/place/gerasa-jerash/",

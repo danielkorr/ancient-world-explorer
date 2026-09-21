@@ -63,6 +63,7 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'aegae',
+    links: [{ label: 'Livius', url: 'https://www.livius.org/articles/place/aegae-vergina/' }],
     name: 'Aegae',
     modern: 'Vergina, Greece',
     lat: 40.486,
@@ -676,6 +677,7 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'gedrosian-route',
+    links: [{ label: 'Livius', url: 'https://www.livius.org/sources/content/arrian/anabasis/alexander-in-the-gedrosian-desert/' }],
     name: 'Gedrosian Route',
     modern: 'Makran / Balochistan',
     lat: 26.3,
@@ -710,6 +712,7 @@ const ALEXANDER_STOPS = [
   },
   {
     id: 'opis',
+    links: [{ label: 'Livius', url: 'https://www.livius.org/articles/person/alexander-the-great/alexander-2.15/' }],
     name: 'Opis',
     modern: 'near Baghdad, Iraq',
     lat: 33.45,

@@ -26,7 +26,7 @@ const QUEST = {
     shape: 'circle',
     icon:  '📷',
     label: 'Photo Quest · Open',
-    text:  'No photo is linked to this place’s Wikidata record — the cross-reference Pleiades relies on. Be the traveler who closes the gap.',
+    text:  'No qualifying image is linked to the Wikidata record Pleiades cross-references. Photos may exist elsewhere; help connect one to the scholarly record.',
     pitch: 'This isn’t a Pleiades photo field — Pleiades doesn’t have one. VIA checks whether the Wikidata item Pleiades cross-references has an image on file, and this one doesn’t. A photo of the place may already exist online; if so, add it to Wikimedia Commons and set it as that item’s image, and the record catches up automatically.',
     cta:   'Take this Quest →',
   },
@@ -924,6 +924,7 @@ function showAlexanderPanel(stop, layer) {
   pendingClosePulseSiteId = null;
 
   currentPanelKind = 'alexander';
+  invalidateHeroPhoto();
   currentPanelSite = null;
   currentPanelAlexanderStop = stop;
   currentSegmentMeta = null;
@@ -1786,13 +1787,21 @@ function viciSized(url, w) {
 function commonsSized(url, w) {
   return `${url}${url.includes('?') ? '&' : '?'}width=${w}`;
 }
+// Roman and Alexander panels share one hero element. In-flight image loads must
+// not repaint that element after the user has opened a different record.
+let heroPhotoGeneration = 0;
+function invalidateHeroPhoto() {
+  heroPhotoGeneration += 1;
+}
 function setHeroPhoto(hero, heroIcon, url, grad, position = 'center', sizeFn = viciSized) {
+  const generation = ++heroPhotoGeneration;
   const thumb = sizeFn(url, 48);
   const full  = sizeFn(url, 800);
   hero.style.background  = `${grad}, url("${thumb}") ${position}/cover no-repeat`;
   heroIcon.style.opacity = '0';
   const img = new Image();
   img.onload = () => {
+    if (generation !== heroPhotoGeneration) return;
     hero.style.background = `${grad}, url("${full}") ${position}/cover no-repeat`;
   };
   img.src = full;
@@ -1804,6 +1813,7 @@ function romanSitePhoto(site) {
 }
 
 function applyRomanSiteHero(hero, heroIcon, heroCredit, site, color) {
+  invalidateHeroPhoto();
   const photo = romanSitePhoto(site);
   if (photo && photo.thumb) {
     setHeroPhoto(hero, heroIcon, photo.thumb,
@@ -3984,6 +3994,7 @@ function showSegmentPanel(meta, latlngs, segIds) {
     }
     heroCredit.style.display = '';
   } else {
+    invalidateHeroPhoto();
     hero.style.background = `radial-gradient(ellipse at center, ${col}18 0%, #110a00 70%)`;
     heroIcon.style.opacity = '';
     heroCredit.style.display = 'none';

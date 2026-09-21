@@ -3,1228 +3,1389 @@
 // Alexander campaign stops use js/alexander-photos.js instead.
 window.SITE_PHOTOS = {
   "29492": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Iraq%3B_Nimrud_-_Assyria%2C_Lamassu%27s_Guarding_Palace_Entrance.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Iraq%3B_Nimrud_-_Assyria%2C_Lamassu%27s_Guarding_Palace_Entrance.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Iraq%3B_Nimrud_-_Assyria%2C_Lamassu%27s_Guarding_Palace_Entrance.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Iraq%3B_Nimrud_-_Assyria%2C_Lamassu%27s_Guarding_Palace_Entrance.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "M.chohan",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Iraq;_Nimrud_-_Assyria,_Lamassu%27s_Guarding_Palace_Entrance.jpg"
   },
   "49863": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/SL_Anuradhapura_asv2020-01_img11_Ruwanwelisaya_Stupa.jpg/960px-SL_Anuradhapura_asv2020-01_img11_Ruwanwelisaya_Stupa.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/0/04/SL_Anuradhapura_asv2020-01_img11_Ruwanwelisaya_Stupa.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/04/SL_Anuradhapura_asv2020-01_img11_Ruwanwelisaya_Stupa.jpg/960px-SL_Anuradhapura_asv2020-01_img11_Ruwanwelisaya_Stupa.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/0/04/SL_Anuradhapura_asv2020-01_img11_Ruwanwelisaya_Stupa.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "A.Savin",
     "license": "FAL",
     "source": "https://commons.wikimedia.org/wiki/File:SL_Anuradhapura_asv2020-01_img11_Ruwanwelisaya_Stupa.jpg"
   },
   "49958": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Prehistoric_Rock_shelters_at_Dantapuram_03.jpg/960px-Prehistoric_Rock_shelters_at_Dantapuram_03.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/2/20/Prehistoric_Rock_shelters_at_Dantapuram_03.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/20/Prehistoric_Rock_shelters_at_Dantapuram_03.jpg/960px-Prehistoric_Rock_shelters_at_Dantapuram_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/2/20/Prehistoric_Rock_shelters_at_Dantapuram_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Adityamadhav83",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Prehistoric_Rock_shelters_at_Dantapuram_03.jpg"
   },
   "50034": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/SL_Kandy_asv2020-01_img10_Arthurs_Seat_view.jpg/960px-SL_Kandy_asv2020-01_img10_Arthurs_Seat_view.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/5/55/SL_Kandy_asv2020-01_img10_Arthurs_Seat_view.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/55/SL_Kandy_asv2020-01_img10_Arthurs_Seat_view.jpg/960px-SL_Kandy_asv2020-01_img10_Arthurs_Seat_view.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/5/55/SL_Kandy_asv2020-01_img10_Arthurs_Seat_view.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "A.Savin",
     "license": "FAL",
     "source": "https://commons.wikimedia.org/wiki/File:SL_Kandy_asv2020-01_img10_Arthurs_Seat_view.jpg"
   },
   "50075": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/SL_Kurunegala_asv2020-01_img07.jpg/960px-SL_Kurunegala_asv2020-01_img07.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/2/2b/SL_Kurunegala_asv2020-01_img07.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2b/SL_Kurunegala_asv2020-01_img07.jpg/960px-SL_Kurunegala_asv2020-01_img07.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/2/2b/SL_Kurunegala_asv2020-01_img07.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "A.Savin",
     "license": "FAL",
     "source": "https://commons.wikimedia.org/wiki/File:SL_Kurunegala_asv2020-01_img07.jpg"
   },
-  "79420": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/DevaMinervaPlan%28bq%29.jpg/960px-DevaMinervaPlan%28bq%29.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/2/28/DevaMinervaPlan%28bq%29.jpg",
-    "credit": "Łukasz Nurczyński",
-    "license": "CC BY-SA 4.0",
-    "source": "https://commons.wikimedia.org/wiki/File:DevaMinervaPlan(bq).jpg"
+  "79299": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Diliff",
+    "license": "CC BY 2.5",
+    "source": "https://commons.wikimedia.org/wiki/File:Roman_Baths_in_Bath_Spa,_England_-_July_2006.jpg"
+  },
+  "79393": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/The_Roman_Town_Wall%2C_Head_Street_to_the_Balkerne_Gate_3.JPG/960px-The_Roman_Town_Wall%2C_Head_Street_to_the_Balkerne_Gate_3.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c0/The_Roman_Town_Wall%2C_Head_Street_to_the_Balkerne_Gate_3.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Maria",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:The_Roman_Town_Wall,_Head_Street_to_the_Balkerne_Gate_3.JPG"
+  },
+  "79532": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8b/Caerleon-Roman_Prysg_Field_Barracks.JPG/960px-Caerleon-Roman_Prysg_Field_Barracks.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Caerleon-Roman_Prysg_Field_Barracks.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Pwimageglow (talk)",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Caerleon-Roman_Prysg_Field_Barracks.JPG"
   },
   "79565": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/2/24/Boundary_of_Ilchester_-_geograph.org.uk_-_1412173.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/2/24/Boundary_of_Ilchester_-_geograph.org.uk_-_1412173.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/2/24/Boundary_of_Ilchester_-_geograph.org.uk_-_1412173.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/2/24/Boundary_of_Ilchester_-_geograph.org.uk_-_1412173.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Steve Barnes",
     "license": "CC BY-SA 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:Boundary_of_Ilchester_-_geograph.org.uk_-_1412173.jpg"
   },
   "79574": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Londinium_Arch%C3%A4ologische_Karte.png/960px-Londinium_Arch%C3%A4ologische_Karte.png",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/2/24/Londinium_Arch%C3%A4ologische_Karte.png",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/24/Londinium_Arch%C3%A4ologische_Karte.png/960px-Londinium_Arch%C3%A4ologische_Karte.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/2/24/Londinium_Arch%C3%A4ologische_Karte.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Fremantleboy 06 July 2007",
     "license": "CC BY 2.5",
     "source": "https://commons.wikimedia.org/wiki/File:Londinium_Arch%C3%A4ologische_Karte.png"
   },
   "79621": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/8/86/St.Peter%27s_church%2C_Norton_Disney%2C_Lincs._-_geograph.org.uk_-_57416.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/8/86/St.Peter%27s_church%2C_Norton_Disney%2C_Lincs._-_geograph.org.uk_-_57416.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/8/86/St.Peter%27s_church%2C_Norton_Disney%2C_Lincs._-_geograph.org.uk_-_57416.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/8/86/St.Peter%27s_church%2C_Norton_Disney%2C_Lincs._-_geograph.org.uk_-_57416.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Richard Croft",
     "license": "CC BY-SA 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:St.Peter%27s_church,_Norton_Disney,_Lincs._-_geograph.org.uk_-_57416.jpg"
   },
   "79696": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Stonea_Iron_Age_Fort_Panorama.jpg/960px-Stonea_Iron_Age_Fort_Panorama.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Stonea_Iron_Age_Fort_Panorama.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/Stonea_Iron_Age_Fort_Panorama.jpg/960px-Stonea_Iron_Age_Fort_Panorama.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Stonea_Iron_Age_Fort_Panorama.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Bob Castle",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Stonea_Iron_Age_Fort_Panorama.jpg"
   },
   "89175": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Constantine_York_Minster.jpg/960px-Constantine_York_Minster.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/6/69/Constantine_York_Minster.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/69/Constantine_York_Minster.jpg/960px-Constantine_York_Minster.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/6/69/Constantine_York_Minster.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "York Minster",
     "license": "CC BY-SA 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:Constantine_York_Minster.jpg"
   },
   "89198": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/7/70/Waterfall_on_Allt_Bun_an_Eas%2C_West_coast_of_Jura_-_geograph.org.uk_-_41305.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/7/70/Waterfall_on_Allt_Bun_an_Eas%2C_West_coast_of_Jura_-_geograph.org.uk_-_41305.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/7/70/Waterfall_on_Allt_Bun_an_Eas%2C_West_coast_of_Jura_-_geograph.org.uk_-_41305.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/7/70/Waterfall_on_Allt_Bun_an_Eas%2C_West_coast_of_Jura_-_geograph.org.uk_-_41305.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Tony Page",
     "license": "CC BY-SA 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:Waterfall_on_Allt_Bun_an_Eas,_West_coast_of_Jura_-_geograph.org.uk_-_41305.jpg"
   },
   "89311": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Housesteads_Fort2.jpg/960px-Housesteads_Fort2.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Housesteads_Fort2.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e3/Housesteads_Fort2.jpg/960px-Housesteads_Fort2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Housesteads_Fort2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Fryslan0109 at en.wikipedia",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Housesteads_Fort2.jpg"
   },
   "108833": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Fanums_du_sanctuaire_gallo-romain_de_B%C3%BB.jpg/960px-Fanums_du_sanctuaire_gallo-romain_de_B%C3%BB.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Fanums_du_sanctuaire_gallo-romain_de_B%C3%BB.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c7/Fanums_du_sanctuaire_gallo-romain_de_B%C3%BB.jpg/960px-Fanums_du_sanctuaire_gallo-romain_de_B%C3%BB.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Fanums_du_sanctuaire_gallo-romain_de_B%C3%BB.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Kilyann Le Hen",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Fanums_du_sanctuaire_gallo-romain_de_B%C3%BB.jpg"
   },
   "108852": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Berthouville_Mairie.jpg/960px-Berthouville_Mairie.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/0/08/Berthouville_Mairie.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/Berthouville_Mairie.jpg/960px-Berthouville_Mairie.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/0/08/Berthouville_Mairie.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Stanzilla",
     "license": "CC BY 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Berthouville_Mairie.jpg"
   },
+  "108928": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/Ferme_d%27Ithe.jpg/960px-Ferme_d%27Ithe.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c0/Ferme_d%27Ithe.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Microb78",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Ferme_d%27Ithe.jpg"
+  },
   "118857": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Blashauskapelle.JPG/960px-Blashauskapelle.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Blashauskapelle.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/Blashauskapelle.JPG/960px-Blashauskapelle.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Blashauskapelle.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Veleius 23:36, 2. Jul. 2010 (CEST)",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Blashauskapelle.JPG"
   },
   "128376": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Carnuntum_Petronell.JPG/960px-Carnuntum_Petronell.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Carnuntum_Petronell.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cd/Carnuntum_Petronell.JPG/960px-Carnuntum_Petronell.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Carnuntum_Petronell.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Vladimir Drzik",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Carnuntum_Petronell.JPG"
   },
   "128537": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Wien.Hofburg10.jpg/960px-Wien.Hofburg10.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/e/ee/Wien.Hofburg10.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ee/Wien.Hofburg10.jpg/960px-Wien.Hofburg10.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/e/ee/Wien.Hofburg10.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Georges Jansoone",
     "license": "CC BY 2.5",
     "source": "https://commons.wikimedia.org/wiki/File:Wien.Hofburg10.jpg"
   },
-  "138220": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Barrou_%C3%A9glise.jpg/960px-Barrou_%C3%A9glise.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/7/7f/Barrou_%C3%A9glise.jpg",
-    "credit": "Joël Thibault",
-    "license": "CC BY-SA 4.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Barrou_%C3%A9glise.jpg"
-  },
   "138606": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Vue_de_Barzan.jpg/960px-Vue_de_Barzan.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Vue_de_Barzan.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0c/Vue_de_Barzan.jpg/960px-Vue_de_Barzan.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Vue_de_Barzan.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Cobber17",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Vue_de_Barzan.jpg"
   },
-  "148107": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Lattes_-_Mus%C3%A9e_Henri-Prades_-_Vue_du_site_arch%C3%A9ologique_de_Lattara.JPG/960px-Lattes_-_Mus%C3%A9e_Henri-Prades_-_Vue_du_site_arch%C3%A9ologique_de_Lattara.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/2/20/Lattes_-_Mus%C3%A9e_Henri-Prades_-_Vue_du_site_arch%C3%A9ologique_de_Lattara.JPG",
-    "credit": "Arnaud Fafournoux",
-    "license": "CC BY-SA 3.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Lattes_-_Mus%C3%A9e_Henri-Prades_-_Vue_du_site_arch%C3%A9ologique_de_Lattara.JPG"
+  "148012": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/17/Barbegal_aqueduct_01.jpg/960px-Barbegal_aqueduct_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/1/17/Barbegal_aqueduct_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "maarjaara",
+    "license": "CC BY 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Barbegal_aqueduct_01.jpg"
   },
   "148142": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/France-002364_-_Square_House_%2815867600545%29.jpg/960px-France-002364_-_Square_House_%2815867600545%29.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/d/de/France-002364_-_Square_House_%2815867600545%29.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/de/France-002364_-_Square_House_%2815867600545%29.jpg/960px-France-002364_-_Square_House_%2815867600545%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/d/de/France-002364_-_Square_House_%2815867600545%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Dennis G. Jarvis",
     "license": "CC BY-SA 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:France-002364_-_Square_House_(15867600545).jpg"
   },
+  "148217": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/32/Arenes_arles.JPG/960px-Arenes_arles.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/3/32/Arenes_arles.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Original uploader (WT-fr) OT Arles at French Wikivoyage",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Arenes_arles.JPG"
+  },
+  "149496": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/Pont_du_Gard_BLS.jpg/960px-Pont_du_Gard_BLS.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/4/42/Pont_du_Gard_BLS.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Benh LIEU SONG (Flickr)",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Pont_du_Gard_BLS.jpg"
+  },
   "157802": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Albintimilium_-_Insulae.jpg/960px-Albintimilium_-_Insulae.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/d/db/Albintimilium_-_Insulae.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/Albintimilium_-_Insulae.jpg/960px-Albintimilium_-_Insulae.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/d/db/Albintimilium_-_Insulae.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Stefano Costa",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Albintimilium_-_Insulae.jpg"
   },
   "167717": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/5/54/Roman_theatre_in_Lyon.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/5/54/Roman_theatre_in_Lyon.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/5/54/Roman_theatre_in_Lyon.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/5/54/Roman_theatre_in_Lyon.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Vincent.bloch (Vincent Bloch)",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Roman_theatre_in_Lyon.jpg"
   },
   "177460": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Autun_theatre_2.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Autun_theatre_2.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Autun_theatre_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Autun_theatre_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Christophe.Finot",
     "license": "CC BY-SA 1.0",
     "source": "https://commons.wikimedia.org/wiki/File:Autun_theatre_2.jpg"
   },
   "177659": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Site-romain-Heria.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Site-romain-Heria.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Site-romain-Heria.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Site-romain-Heria.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Neri.jp",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Site-romain-Heria.jpg"
   },
   "187290": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Porto_fluviale_di_Aquileia.jpg/960px-Porto_fluviale_di_Aquileia.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Porto_fluviale_di_Aquileia.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/Porto_fluviale_di_Aquileia.jpg/960px-Porto_fluviale_di_Aquileia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Porto_fluviale_di_Aquileia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Zavijavah",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Porto_fluviale_di_Aquileia.jpg"
   },
   "187438": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Centum_prata_%28Kempraten%29_-_Meienbergstrasse_2012-01-16_14-31-20.JPG/960px-Centum_prata_%28Kempraten%29_-_Meienbergstrasse_2012-01-16_14-31-20.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Centum_prata_%28Kempraten%29_-_Meienbergstrasse_2012-01-16_14-31-20.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f4/Centum_prata_%28Kempraten%29_-_Meienbergstrasse_2012-01-16_14-31-20.JPG/960px-Centum_prata_%28Kempraten%29_-_Meienbergstrasse_2012-01-16_14-31-20.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Centum_prata_%28Kempraten%29_-_Meienbergstrasse_2012-01-16_14-31-20.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Roland zh",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Centum_prata_(Kempraten)_-_Meienbergstrasse_2012-01-16_14-31-20.JPG"
   },
   "197427": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/HR_-Porec2.JPG/960px-HR_-Porec2.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/d/d8/HR_-Porec2.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d8/HR_-Porec2.JPG/960px-HR_-Porec2.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/d/d8/HR_-Porec2.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Hobe / Holger Behr",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:HR_-Porec2.JPG"
   },
+  "197488": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/35/Episcopal_Center_%28Salona%29_03.jpg/960px-Episcopal_Center_%28Salona%29_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/3/35/Episcopal_Center_%28Salona%29_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Bernard Gagnon",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Episcopal_Center_(Salona)_03.jpg"
+  },
   "207447": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Sirmium%2C_Imperial_Palace.jpg/960px-Sirmium%2C_Imperial_Palace.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Sirmium%2C_Imperial_Palace.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0d/Sirmium%2C_Imperial_Palace.jpg/960px-Sirmium%2C_Imperial_Palace.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Sirmium%2C_Imperial_Palace.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "sm022",
     "license": "CC BY 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Sirmium,_Imperial_Palace.jpg"
   },
   "226697": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/%D0%90%D0%BD%D1%82%D0%B8%D1%87%D0%BD%D0%B5_%D0%BC%D1%96%D1%81%D1%82%D0%BE_%D0%9D%D1%96%D0%BA%D0%BE%D0%BD%D1%96%D0%B9%2C_%D1%84%D0%BE%D1%82%D0%BE_3.jpg/960px-%D0%90%D0%BD%D1%82%D0%B8%D1%87%D0%BD%D0%B5_%D0%BC%D1%96%D1%81%D1%82%D0%BE_%D0%9D%D1%96%D0%BA%D0%BE%D0%BD%D1%96%D0%B9%2C_%D1%84%D0%BE%D1%82%D0%BE_3.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/f/fe/%D0%90%D0%BD%D1%82%D0%B8%D1%87%D0%BD%D0%B5_%D0%BC%D1%96%D1%81%D1%82%D0%BE_%D0%9D%D1%96%D0%BA%D0%BE%D0%BD%D1%96%D0%B9%2C_%D1%84%D0%BE%D1%82%D0%BE_3.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fe/%D0%90%D0%BD%D1%82%D0%B8%D1%87%D0%BD%D0%B5_%D0%BC%D1%96%D1%81%D1%82%D0%BE_%D0%9D%D1%96%D0%BA%D0%BE%D0%BD%D1%96%D0%B9%2C_%D1%84%D0%BE%D1%82%D0%BE_3.jpg/960px-%D0%90%D0%BD%D1%82%D0%B8%D1%87%D0%BD%D0%B5_%D0%BC%D1%96%D1%81%D1%82%D0%BE_%D0%9D%D1%96%D0%BA%D0%BE%D0%BD%D1%96%D0%B9%2C_%D1%84%D0%BE%D1%82%D0%BE_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/f/fe/%D0%90%D0%BD%D1%82%D0%B8%D1%87%D0%BD%D0%B5_%D0%BC%D1%96%D1%81%D1%82%D0%BE_%D0%9D%D1%96%D0%BA%D0%BE%D0%BD%D1%96%D0%B9%2C_%D1%84%D0%BE%D1%82%D0%BE_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Дмитрий Жданов",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:%D0%90%D0%BD%D1%82%D0%B8%D1%87%D0%BD%D0%B5_%D0%BC%D1%96%D1%81%D1%82%D0%BE_%D0%9D%D1%96%D0%BA%D0%BE%D0%BD%D1%96%D0%B9,_%D1%84%D0%BE%D1%82%D0%BE_3.jpg"
   },
+  "246344": {
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Augusto_Prima_Porta_%28Zaragoza%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Augusto_Prima_Porta_%28Zaragoza%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Stuardo Herrera",
+    "license": "CC BY 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Augusto_Prima_Porta_(Zaragoza).jpg"
+  },
   "246410": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/LaGraufesenqueGrandFourDePotiers.jpg/960px-LaGraufesenqueGrandFourDePotiers.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/8/81/LaGraufesenqueGrandFourDePotiers.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/81/LaGraufesenqueGrandFourDePotiers.jpg/960px-LaGraufesenqueGrandFourDePotiers.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/8/81/LaGraufesenqueGrandFourDePotiers.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Claude Valette",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:LaGraufesenqueGrandFourDePotiers.jpg"
   },
   "246566": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Photos-0020.jpg/960px-Photos-0020.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/a/af/Photos-0020.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/Photos-0020.jpg/960px-Photos-0020.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/a/af/Photos-0020.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Xaviateur",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Photos-0020.jpg"
   },
   "256155": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Maqueta_Emerita-Augusta.JPG/960px-Maqueta_Emerita-Augusta.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/8/87/Maqueta_Emerita-Augusta.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/87/Maqueta_Emerita-Augusta.JPG/960px-Maqueta_Emerita-Augusta.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/8/87/Maqueta_Emerita-Augusta.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Yuntero",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Maqueta_Emerita-Augusta.JPG"
   },
   "265817": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/ConsolatdeMar2.jpg/960px-ConsolatdeMar2.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/e/e7/ConsolatdeMar2.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e7/ConsolatdeMar2.jpg/960px-ConsolatdeMar2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/e/e7/ConsolatdeMar2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Paucabot",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:ConsolatdeMar2.jpg"
   },
   "265849": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Edificio_Atrio_Toscano1.JPG/960px-Edificio_Atrio_Toscano1.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/5/52/Edificio_Atrio_Toscano1.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/Edificio_Atrio_Toscano1.JPG/960px-Edificio_Atrio_Toscano1.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/5/52/Edificio_Atrio_Toscano1.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Nanosanchez",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Edificio_Atrio_Toscano1.JPG"
   },
   "265928": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/92/Bas%C3%ADlica_Tolmo_Minateda.png",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/9/92/Bas%C3%ADlica_Tolmo_Minateda.png",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/92/Bas%C3%ADlica_Tolmo_Minateda.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/9/92/Bas%C3%ADlica_Tolmo_Minateda.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Laclac",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Bas%C3%ADlica_Tolmo_Minateda.png"
   },
   "275740": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Volubilis%2CMorocco.jpg/960px-Volubilis%2CMorocco.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/7/78/Volubilis%2CMorocco.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/78/Volubilis%2CMorocco.jpg/960px-Volubilis%2CMorocco.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/7/78/Volubilis%2CMorocco.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Marcin Sochacki (Wanted)",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Volubilis,Morocco.jpg"
   },
-  "295276": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Argel_3.jpg/960px-Argel_3.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Argel_3.jpg",
-    "credit": "LBM1948",
-    "license": "CC BY-SA 4.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Argel_3.jpg"
+  "295279": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/Forum_cherchell.JPG/960px-Forum_cherchell.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Forum_cherchell.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Yelles",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Forum_cherchell.JPG"
+  },
+  "305142": {
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Western-mediterranean-rome-hadrian.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Western-mediterranean-rome-hadrian.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Kazvorpal",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Western-mediterranean-rome-hadrian.jpg"
   },
   "314912": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Bulla_Regia_%28413045219%29.jpg/960px-Bulla_Regia_%28413045219%29.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Bulla_Regia_%28413045219%29.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f6/Bulla_Regia_%28413045219%29.jpg/960px-Bulla_Regia_%28413045219%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Bulla_Regia_%28413045219%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "hubbers",
     "license": "CC BY-SA 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:Bulla_Regia_(413045219).jpg"
   },
   "314921": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Tunisie_Carthage_Ruines_08.JPG/960px-Tunisie_Carthage_Ruines_08.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Tunisie_Carthage_Ruines_08.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a7/Tunisie_Carthage_Ruines_08.JPG/960px-Tunisie_Carthage_Ruines_08.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Tunisie_Carthage_Ruines_08.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Calips",
     "license": "CC BY 2.5",
     "source": "https://commons.wikimedia.org/wiki/File:Tunisie_Carthage_Ruines_08.JPG"
   },
   "315223": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Dougga%2C_Beja.jpg/960px-Dougga%2C_Beja.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/7/79/Dougga%2C_Beja.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/79/Dougga%2C_Beja.jpg/960px-Dougga%2C_Beja.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/7/79/Dougga%2C_Beja.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Emna Trabelsi",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Dougga,_Beja.jpg"
   },
   "334636": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Timgad_Ruins_Panorama.jpg/960px-Timgad_Ruins_Panorama.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Timgad_Ruins_Panorama.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Timgad_Ruins_Panorama.jpg/960px-Timgad_Ruins_Panorama.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Timgad_Ruins_Panorama.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Hamza-sia",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Timgad_Ruins_Panorama.jpg"
   },
+  "344282": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/Theatre_of_Sabratha%2C_Libya.jpg/960px-Theatre_of_Sabratha%2C_Libya.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Theatre_of_Sabratha%2C_Libya.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Wikimedia Commons",
+    "license": "CC BY-SA 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Theatre_of_Sabratha,_Libya.jpg"
+  },
   "344386": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Guellala.jpg/960px-Guellala.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/a/ad/Guellala.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Guellala.jpg/960px-Guellala.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/a/ad/Guellala.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Hegor",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Guellala.jpg"
   },
-  "344456": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Marcus_Aurelius_Arch_Tripoli_Libya.jpg/960px-Marcus_Aurelius_Arch_Tripoli_Libya.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Marcus_Aurelius_Arch_Tripoli_Libya.jpg",
-    "credit": "Daniel and Kate Pett",
-    "license": "CC BY 2.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Marcus_Aurelius_Arch_Tripoli_Libya.jpg"
+  "344448": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Leptis_Magna_%2829%29_%288288918733%29.jpg/960px-Leptis_Magna_%2829%29_%288288918733%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/3/33/Leptis_Magna_%2829%29_%288288918733%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "joepyrek from Richmond, Va, USA",
+    "license": "CC BY-SA 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Leptis_Magna_(29)_(8288918733).jpg"
   },
   "373778": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/CireneTermeTraiano.jpg/960px-CireneTermeTraiano.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/1/18/CireneTermeTraiano.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/CireneTermeTraiano.jpg/960px-CireneTermeTraiano.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/1/18/CireneTermeTraiano.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "MM",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:CireneTermeTraiano.jpg"
   },
   "393480": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Basilica_of_San_Vitale.jpg/960px-Basilica_of_San_Vitale.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/5/51/Basilica_of_San_Vitale.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Basilica_of_San_Vitale.jpg/960px-Basilica_of_San_Vitale.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/5/51/Basilica_of_San_Vitale.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Commonists",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Basilica_of_San_Vitale.jpg"
   },
   "403260": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Panorama_Porto_Ercole.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Panorama_Porto_Ercole.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Panorama_Porto_Ercole.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Panorama_Porto_Ercole.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Petitverdot: Matteo Vinattieri",
     "license": "CC BY 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Panorama_Porto_Ercole.jpg"
   },
   "413199": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Metauro_%C3%A0_San_Angelo_in_Vado.jpg/960px-Metauro_%C3%A0_San_Angelo_in_Vado.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Metauro_%C3%A0_San_Angelo_in_Vado.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/Metauro_%C3%A0_San_Angelo_in_Vado.jpg/960px-Metauro_%C3%A0_San_Angelo_in_Vado.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Metauro_%C3%A0_San_Angelo_in_Vado.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Adri08",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Metauro_%C3%A0_San_Angelo_in_Vado.jpg"
   },
-  "413213": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/San_Bonaventura_Monterano.JPG/960px-San_Bonaventura_Monterano.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/6/60/San_Bonaventura_Monterano.JPG",
-    "credit": "Livioandronico2013",
-    "license": "CC BY-SA 3.0",
-    "source": "https://commons.wikimedia.org/wiki/File:San_Bonaventura_Monterano.JPG"
-  },
   "413389": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Volsinii%2C_areadel.JPG/960px-Volsinii%2C_areadel.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Volsinii%2C_areadel.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e3/Volsinii%2C_areadel.JPG/960px-Volsinii%2C_areadel.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Volsinii%2C_areadel.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Karmelakap",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Volsinii,_areadel.JPG"
   },
   "422808": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Rom_flughafen_01.jpg/960px-Rom_flughafen_01.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Rom_flughafen_01.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1c/Rom_flughafen_01.jpg/960px-Rom_flughafen_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Rom_flughafen_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Ra Boe",
     "license": "CC BY-SA 2.5",
     "source": "https://commons.wikimedia.org/wiki/File:Rom_flughafen_01.jpg"
   },
   "422824": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Albano_Laziale_-_Le_antiche_terme_romane_di_Cellomaio.jpg/960px-Albano_Laziale_-_Le_antiche_terme_romane_di_Cellomaio.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Albano_Laziale_-_Le_antiche_terme_romane_di_Cellomaio.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8a/Albano_Laziale_-_Le_antiche_terme_romane_di_Cellomaio.jpg/960px-Albano_Laziale_-_Le_antiche_terme_romane_di_Cellomaio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Albano_Laziale_-_Le_antiche_terme_romane_di_Cellomaio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Deblu68",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Albano_Laziale_-_Le_antiche_terme_romane_di_Cellomaio.jpg"
   },
+  "422837": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/Domus_rovine_6.JPG/960px-Domus_rovine_6.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c0/Domus_rovine_6.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Zanner",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Domus_rovine_6.JPG"
+  },
   "422850": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Barco_Borghese_1.jpg/960px-Barco_Borghese_1.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Barco_Borghese_1.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ac/Barco_Borghese_1.jpg/960px-Barco_Borghese_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Barco_Borghese_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Gigi er Gigliola",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Barco_Borghese_1.jpg"
   },
   "422995": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Frigidarium_Terme_del_Foro_Ostia_Antica_2006-09-08.jpg/960px-Frigidarium_Terme_del_Foro_Ostia_Antica_2006-09-08.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/6/68/Frigidarium_Terme_del_Foro_Ostia_Antica_2006-09-08.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/68/Frigidarium_Terme_del_Foro_Ostia_Antica_2006-09-08.jpg/960px-Frigidarium_Terme_del_Foro_Ostia_Antica_2006-09-08.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/6/68/Frigidarium_Terme_del_Foro_Ostia_Antica_2006-09-08.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Marie-Lan Nguyen (User:Jastrow)",
     "license": "CC BY 2.5",
     "source": "https://commons.wikimedia.org/wiki/File:Frigidarium_Terme_del_Foro_Ostia_Antica_2006-09-08.jpg"
   },
   "423013": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/2012-09-07_Palestrina_panorama.jpg/960px-2012-09-07_Palestrina_panorama.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/7/76/2012-09-07_Palestrina_panorama.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/2012-09-07_Palestrina_panorama.jpg/960px-2012-09-07_Palestrina_panorama.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/7/76/2012-09-07_Palestrina_panorama.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Sergio D'Afflitto",
     "license": "CC BY-SA 3.0 it",
     "source": "https://commons.wikimedia.org/wiki/File:2012-09-07_Palestrina_panorama.jpg"
   },
   "423025": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Colosseum_in_Rome%2C_Italy_-_April_2007.jpg/960px-Colosseum_in_Rome%2C_Italy_-_April_2007.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/5/53/Colosseum_in_Rome%2C_Italy_-_April_2007.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/53/Colosseum_in_Rome%2C_Italy_-_April_2007.jpg/960px-Colosseum_in_Rome%2C_Italy_-_April_2007.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/5/53/Colosseum_in_Rome%2C_Italy_-_April_2007.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Diliff",
     "license": "CC BY-SA 2.5",
     "source": "https://commons.wikimedia.org/wiki/File:Colosseum_in_Rome,_Italy_-_April_2007.jpg",
     "position": "center 52%"
   },
   "423030": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Monastero_del_Sacro_Speco_in_Subiaco.jpg/960px-Monastero_del_Sacro_Speco_in_Subiaco.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Monastero_del_Sacro_Speco_in_Subiaco.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3b/Monastero_del_Sacro_Speco_in_Subiaco.jpg/960px-Monastero_del_Sacro_Speco_in_Subiaco.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Monastero_del_Sacro_Speco_in_Subiaco.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "High Contrast",
     "license": "CC BY 3.0 de",
     "source": "https://commons.wikimedia.org/wiki/File:Monastero_del_Sacro_Speco_in_Subiaco.jpg"
   },
   "423052": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/StPaul.jpg/960px-StPaul.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c0/StPaul.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/StPaul.jpg/960px-StPaul.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c0/StPaul.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "StPaul.jpg",
     "license": "CC BY 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:StPaul.jpg"
   },
   "423130": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/4/49/Villa_Muti_seventeenth_century_print_of_Matteo_Greuter_1620_img054.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/4/49/Villa_Muti_seventeenth_century_print_of_Matteo_Greuter_1620_img054.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/4/49/Villa_Muti_seventeenth_century_print_of_Matteo_Greuter_1620_img054.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/4/49/Villa_Muti_seventeenth_century_print_of_Matteo_Greuter_1620_img054.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Luiclemens at English Wikipedia",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Villa_Muti_seventeenth_century_print_of_Matteo_Greuter_1620_img054.jpg"
   },
   "432622": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Casina_Vanvitelliana3.jpg/960px-Casina_Vanvitelliana3.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Casina_Vanvitelliana3.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/Casina_Vanvitelliana3.jpg/960px-Casina_Vanvitelliana3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Casina_Vanvitelliana3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Armando Mancini",
     "license": "CC BY-SA 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:Casina_Vanvitelliana3.jpg"
   },
+  "432716": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/04/Baia_crater_edge.jpg/960px-Baia_crater_edge.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/0/04/Baia_crater_edge.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Kleuske",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Baia_crater_edge.jpg"
+  },
   "432744": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Pozzuoli_NASA_ISS004-E-5376_added_names.jpg/960px-Pozzuoli_NASA_ISS004-E-5376_added_names.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Pozzuoli_NASA_ISS004-E-5376_added_names.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d5/Pozzuoli_NASA_ISS004-E-5376_added_names.jpg/960px-Pozzuoli_NASA_ISS004-E-5376_added_names.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Pozzuoli_NASA_ISS004-E-5376_added_names.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "NASA",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Pozzuoli_NASA_ISS004-E-5376_added_names.jpg"
   },
   "432754": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Capua_Antica_Amphitheatre.jpg/960px-Capua_Antica_Amphitheatre.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Capua_Antica_Amphitheatre.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bf/Capua_Antica_Amphitheatre.jpg/960px-Capua_Antica_Amphitheatre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Capua_Antica_Amphitheatre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Rico Heil",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Capua_Antica_Amphitheatre.jpg"
   },
   "432808": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Cumae_acropolis_seen_from_lower_city_AvL.JPG/960px-Cumae_acropolis_seen_from_lower_city_AvL.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Cumae_acropolis_seen_from_lower_city_AvL.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/Cumae_acropolis_seen_from_lower_city_AvL.JPG/960px-Cumae_acropolis_seen_from_lower_city_AvL.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Cumae_acropolis_seen_from_lower_city_AvL.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "AlexanderVanLoon",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Cumae_acropolis_seen_from_lower_city_AvL.JPG"
   },
+  "432815": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c9/Pozzuoli.JPG/960px-Pozzuoli.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c9/Pozzuoli.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Wikimedia Commons",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Pozzuoli.JPG"
+  },
   "432873": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Antigua_ciudad_de_Herculano%2C_Italia%2C_2023-03-27%2C_DD_141.jpg/960px-Antigua_ciudad_de_Herculano%2C_Italia%2C_2023-03-27%2C_DD_141.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Antigua_ciudad_de_Herculano%2C_Italia%2C_2023-03-27%2C_DD_141.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d9/Antigua_ciudad_de_Herculano%2C_Italia%2C_2023-03-27%2C_DD_141.jpg/960px-Antigua_ciudad_de_Herculano%2C_Italia%2C_2023-03-27%2C_DD_141.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Antigua_ciudad_de_Herculano%2C_Italia%2C_2023-03-27%2C_DD_141.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Diego Delso",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Antigua_ciudad_de_Herculano,_Italia,_2023-03-27,_DD_141.jpg"
   },
   "432886": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Centrodidocumentazione01.JPG/960px-Centrodidocumentazione01.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Centrodidocumentazione01.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8a/Centrodidocumentazione01.JPG/960px-Centrodidocumentazione01.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Centrodidocumentazione01.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "PAsK",
     "license": "CC BY 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Centrodidocumentazione01.JPG"
   },
   "433032": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Pompeii_%284873744179%29.jpg/960px-Pompeii_%284873744179%29.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Pompeii_%284873744179%29.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5f/Pompeii_%284873744179%29.jpg/960px-Pompeii_%284873744179%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Pompeii_%284873744179%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Glen Scarborough from The Central Coast, Australia",
     "license": "CC BY 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:Pompeii_(4873744179).jpg"
   },
-  "442573": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Egnazia_from_the_sky.jpg/960px-Egnazia_from_the_sky.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Egnazia_from_the_sky.jpg",
-    "credit": "parolediburro",
-    "license": "CC BY-SA 2.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Egnazia_from_the_sky.jpg"
-  },
   "442733": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/View_of_Paestum_with_dji.jpg/960px-View_of_Paestum_with_dji.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/3/38/View_of_Paestum_with_dji.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/38/View_of_Paestum_with_dji.jpg/960px-View_of_Paestum_with_dji.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/3/38/View_of_Paestum_with_dji.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "PaestumPaestum",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:View_of_Paestum_with_dji.jpg"
   },
   "452295": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Caulonia_2.jpeg/960px-Caulonia_2.jpeg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/4/45/Caulonia_2.jpeg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/Caulonia_2.jpeg/960px-Caulonia_2.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/4/45/Caulonia_2.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Fragomeni Antonio",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Caulonia_2.jpeg"
   },
   "452362": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Sorgente_del_fiume_Mercure_a_Viggianello.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Sorgente_del_fiume_Mercure_a_Viggianello.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Sorgente_del_fiume_Mercure_a_Viggianello.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Sorgente_del_fiume_Mercure_a_Viggianello.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Roberti Massimo",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Sorgente_del_fiume_Mercure_a_Viggianello.jpg"
   },
   "452457": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Sibari-scavi-teatro.jpg/960px-Sibari-scavi-teatro.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/3/30/Sibari-scavi-teatro.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/Sibari-scavi-teatro.jpg/960px-Sibari-scavi-teatro.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/3/30/Sibari-scavi-teatro.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Mboesch",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Sibari-scavi-teatro.jpg"
   },
   "452489": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Piana_Sant%27Eufemia_-_Il_maricello.jpg/960px-Piana_Sant%27Eufemia_-_Il_maricello.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Piana_Sant%27Eufemia_-_Il_maricello.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ac/Piana_Sant%27Eufemia_-_Il_maricello.jpg/960px-Piana_Sant%27Eufemia_-_Il_maricello.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Piana_Sant%27Eufemia_-_Il_maricello.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "il Morellide",
     "license": "CC BY-SA 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:Piana_Sant%27Eufemia_-_Il_maricello.jpg"
   },
   "462086": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Agrigento_4m1.jpg/960px-Agrigento_4m1.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Agrigento_4m1.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a2/Agrigento_4m1.jpg/960px-Agrigento_4m1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Agrigento_4m1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "jschoenhofer",
     "license": "CC BY-SA 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:Agrigento_4m1.jpg"
   },
   "462379": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Milazzo_Stadtansicht.jpg/960px-Milazzo_Stadtansicht.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Milazzo_Stadtansicht.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ac/Milazzo_Stadtansicht.jpg/960px-Milazzo_Stadtansicht.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Milazzo_Stadtansicht.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Clemensfranz",
     "license": "CC BY 2.5",
     "source": "https://commons.wikimedia.org/wiki/File:Milazzo_Stadtansicht.jpg"
   },
   "462503": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Ortigia_dall%27alto.jpg/960px-Ortigia_dall%27alto.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Ortigia_dall%27alto.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/Ortigia_dall%27alto.jpg/960px-Ortigia_dall%27alto.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Ortigia_dall%27alto.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Agostino Artnoir Sella",
     "license": "CC BY-SA 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:Ortigia_dall%27alto.jpg"
   },
+  "491741": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/95/Thessalonica_Montage_L.png/960px-Thessalonica_Montage_L.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/9/95/Thessalonica_Montage_L.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "SilentResident (compilation, sources to attribute see above; if any of the sources used in the Montage are removed from Wikimedia Commons, or better ones are found, please inform its creator so that they can update it. You can contact the creator by leaving a message here: [1])",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Thessalonica_Montage_L.png"
+  },
   "501434": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Dardanelles_landsat.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Dardanelles_landsat.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Dardanelles_landsat.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Dardanelles_landsat.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "NASA",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Dardanelles_landsat.jpg"
   },
   "501645": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Ancient_Topiros%2C_Nestos%2C_Greece.jpg/960px-Ancient_Topiros%2C_Nestos%2C_Greece.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Ancient_Topiros%2C_Nestos%2C_Greece.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3a/Ancient_Topiros%2C_Nestos%2C_Greece.jpg/960px-Ancient_Topiros%2C_Nestos%2C_Greece.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Ancient_Topiros%2C_Nestos%2C_Greece.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "DocWoKav",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Ancient_Topiros,_Nestos,_Greece.jpg"
   },
   "511218": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Bandirma_Cyzicus_2874.jpg/960px-Bandirma_Cyzicus_2874.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/b/be/Bandirma_Cyzicus_2874.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/be/Bandirma_Cyzicus_2874.jpg/960px-Bandirma_Cyzicus_2874.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/b/be/Bandirma_Cyzicus_2874.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Dosseman",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Bandirma_Cyzicus_2874.jpg"
   },
   "520998": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Byzantine_Constantinople-en.png/960px-Byzantine_Constantinople-en.png",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Byzantine_Constantinople-en.png",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/Byzantine_Constantinople-en.png/960px-Byzantine_Constantinople-en.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Byzantine_Constantinople-en.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Cplakidas",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Byzantine_Constantinople-en.png"
   },
   "530824": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/94/Butrint%2C_Albania.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/9/94/Butrint%2C_Albania.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/94/Butrint%2C_Albania.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/9/94/Butrint%2C_Albania.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Marc Morell",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Butrint,_Albania.jpg"
   },
   "540726": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Delfi_Apollons_tempel.jpg/960px-Delfi_Apollons_tempel.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Delfi_Apollons_tempel.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/Delfi_Apollons_tempel.jpg/960px-Delfi_Apollons_tempel.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Delfi_Apollons_tempel.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Helen Simonsson",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Delfi_Apollons_tempel.jpg"
   },
   "540880": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/GionaMountain.jpg/960px-GionaMountain.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/e/e0/GionaMountain.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/GionaMountain.jpg/960px-GionaMountain.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/e/e0/GionaMountain.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Georgosn",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:GionaMountain.jpg"
   },
   "550406": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Izmir016.jpg/960px-Izmir016.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Izmir016.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3b/Izmir016.jpg/960px-Izmir016.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Izmir016.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Georges Jansoone JoJan",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Izmir016.jpg"
   },
   "550771": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Izmir016.jpg/960px-Izmir016.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Izmir016.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3b/Izmir016.jpg/960px-Izmir016.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Izmir016.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Georges Jansoone JoJan",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Izmir016.jpg"
   },
   "550812": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Temple_of_Trajan%2C_Pergamon_01.jpg/960px-Temple_of_Trajan%2C_Pergamon_01.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Temple_of_Trajan%2C_Pergamon_01.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c1/Temple_of_Trajan%2C_Pergamon_01.jpg/960px-Temple_of_Trajan%2C_Pergamon_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Temple_of_Trajan%2C_Pergamon_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Bernard Gagnon",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Temple_of_Trajan,_Pergamon_01.jpg"
   },
   "570098": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Metochi_and_Arachnaion.JPG/960px-Metochi_and_Arachnaion.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/8/80/Metochi_and_Arachnaion.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/80/Metochi_and_Arachnaion.JPG/960px-Metochi_and_Arachnaion.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/8/80/Metochi_and_Arachnaion.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Schuppi",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Metochi_and_Arachnaion.JPG"
   },
   "570182": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Tempio_di_Apollo_e_Acrocorinto.jpg/960px-Tempio_di_Apollo_e_Acrocorinto.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Tempio_di_Apollo_e_Acrocorinto.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3c/Tempio_di_Apollo_e_Acrocorinto.jpg/960px-Tempio_di_Apollo_e_Acrocorinto.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Tempio_di_Apollo_e_Acrocorinto.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Davide Mauro",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Tempio_di_Apollo_e_Acrocorinto.jpg"
   },
   "570482": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Acropolis_Palaiokastro_6.JPG/960px-Acropolis_Palaiokastro_6.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c0/Acropolis_Palaiokastro_6.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/Acropolis_Palaiokastro_6.JPG/960px-Acropolis_Palaiokastro_6.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c0/Acropolis_Palaiokastro_6.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Schuppi",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Acropolis_Palaiokastro_6.JPG"
   },
   "570491": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Lions-Gate-Mycenae.jpg/960px-Lions-Gate-Mycenae.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/2/25/Lions-Gate-Mycenae.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/Lions-Gate-Mycenae.jpg/960px-Lions-Gate-Mycenae.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/2/25/Lions-Gate-Mycenae.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Andreas Trepte",
     "license": "CC BY-SA 2.5",
     "source": "https://commons.wikimedia.org/wiki/File:Lions-Gate-Mycenae.jpg"
   },
+  "570548": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a2/%CE%91%CF%81%CF%87%CE%B1%CE%AF%CE%BF_%CE%A0%CE%B1%CE%BB%CE%BB%CE%AC%CE%BD%CF%84%CE%B9%CE%BF1.02592.jpg/960px-%CE%91%CF%81%CF%87%CE%B1%CE%AF%CE%BF_%CE%A0%CE%B1%CE%BB%CE%BB%CE%AC%CE%BD%CF%84%CE%B9%CE%BF1.02592.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/a/a2/%CE%91%CF%81%CF%87%CE%B1%CE%AF%CE%BF_%CE%A0%CE%B1%CE%BB%CE%BB%CE%AC%CE%BD%CF%84%CE%B9%CE%BF1.02592.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Apostolos Papageorgiou",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:%CE%91%CF%81%CF%87%CE%B1%CE%AF%CE%BF_%CE%A0%CE%B1%CE%BB%CE%BB%CE%AC%CE%BD%CF%84%CE%B9%CE%BF1.02592.jpg"
+  },
   "570668": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Sikyon_ancient_theatre.jpg/960px-Sikyon_ancient_theatre.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/0/06/Sikyon_ancient_theatre.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/06/Sikyon_ancient_theatre.jpg/960px-Sikyon_ancient_theatre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/0/06/Sikyon_ancient_theatre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Future Perfect at Sunrise",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Sikyon_ancient_theatre.jpg"
   },
   "570708": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Teichos_Dymaion_northern_wall.jpg/960px-Teichos_Dymaion_northern_wall.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Teichos_Dymaion_northern_wall.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4b/Teichos_Dymaion_northern_wall.jpg/960px-Teichos_Dymaion_northern_wall.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Teichos_Dymaion_northern_wall.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Siga",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Teichos_Dymaion_northern_wall.jpg"
   },
+  "570711": {
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/3/30/Apollo_of_Tenea_Glyptothek_Munich_168.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/3/30/Apollo_of_Tenea_Glyptothek_Munich_168.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Wikimedia Commons",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Apollo_of_Tenea_Glyptothek_Munich_168.jpg"
+  },
   "579878": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Sanctuary_of_the_Deme_Artemida_-_panoramio.jpg/960px-Sanctuary_of_the_Deme_Artemida_-_panoramio.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/d/df/Sanctuary_of_the_Deme_Artemida_-_panoramio.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/df/Sanctuary_of_the_Deme_Artemida_-_panoramio.jpg/960px-Sanctuary_of_the_Deme_Artemida_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/d/df/Sanctuary_of_the_Deme_Artemida_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "annysuomo",
     "license": "CC BY 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Sanctuary_of_the_Deme_Artemida_-_panoramio.jpg"
   },
   "579885": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Akropolis_2015.jpg/960px-Akropolis_2015.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/6/65/Akropolis_2015.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Akropolis_2015.jpg/960px-Akropolis_2015.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/6/65/Akropolis_2015.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Thomas Wolf, www.foto-tw.de",
     "license": "CC BY-SA 3.0 de",
     "source": "https://commons.wikimedia.org/wiki/File:Akropolis_2015.jpg"
   },
   "585128": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/7/70/Lange_Mauern.png",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/7/70/Lange_Mauern.png",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/7/70/Lange_Mauern.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/7/70/Lange_Mauern.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Wikimedia Commons",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Lange_Mauern.png"
   },
   "589796": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Gortyn_5.jpg/960px-Gortyn_5.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Gortyn_5.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1c/Gortyn_5.jpg/960px-Gortyn_5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Gortyn_5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Olaf Tausch",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Gortyn_5.jpg"
   },
   "589805": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Heiligtum_Kato_Symi_030.jpg/960px-Heiligtum_Kato_Symi_030.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/b/bd/Heiligtum_Kato_Symi_030.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bd/Heiligtum_Kato_Symi_030.jpg/960px-Heiligtum_Kato_Symi_030.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/b/bd/Heiligtum_Kato_Symi_030.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Olaf Tausch",
     "license": "CC BY 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Heiligtum_Kato_Symi_030.jpg"
   },
   "590012": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Paros_Andiparos_Despotiko_Luftbild_01.jpg/960px-Paros_Andiparos_Despotiko_Luftbild_01.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/f/f5/Paros_Andiparos_Despotiko_Luftbild_01.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f5/Paros_Andiparos_Despotiko_Luftbild_01.jpg/960px-Paros_Andiparos_Despotiko_Luftbild_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/f/f5/Paros_Andiparos_Despotiko_Luftbild_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Olaf Tausch",
     "license": "CC BY 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Paros_Andiparos_Despotiko_Luftbild_01.jpg"
   },
   "599612": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Ephesus_-_Celsus_Library.jpg/960px-Ephesus_-_Celsus_Library.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Ephesus_-_Celsus_Library.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/Ephesus_-_Celsus_Library.jpg/960px-Ephesus_-_Celsus_Library.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Ephesus_-_Celsus_Library.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Bernard Gagnon",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Ephesus_-_Celsus_Library.jpg"
   },
   "619103": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/9c/MonumentumAncyranum28Nov2004.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/9/9c/MonumentumAncyranum28Nov2004.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/9c/MonumentumAncyranum28Nov2004.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/9/9c/MonumentumAncyranum28Nov2004.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "No machine-readable author provided. Ori~ assumed (based on copyright claims).",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:MonumentumAncyranum28Nov2004.jpg"
   },
+  "638776": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Aspendos_Amphitheatre.jpg/960px-Aspendos_Amphitheatre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/6/60/Aspendos_Amphitheatre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Saffron Blaze",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Aspendos_Amphitheatre.jpg"
+  },
+  "639048": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/50/Perge_city_overview.jpg/960px-Perge_city_overview.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/5/50/Perge_city_overview.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Saffron Blaze",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Perge_city_overview.jpg"
+  },
+  "639051": {
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Phaselis_axb01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Phaselis_axb01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Alexander Buschorn at de.wikipedia",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Phaselis_axb01.jpg"
+  },
   "648555": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Y%C3%BCm%C3%BCktepe%2C_Mersin.JPG/960px-Y%C3%BCm%C3%BCktepe%2C_Mersin.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/0/06/Y%C3%BCm%C3%BCktepe%2C_Mersin.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/06/Y%C3%BCm%C3%BCktepe%2C_Mersin.JPG/960px-Y%C3%BCm%C3%BCktepe%2C_Mersin.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/0/06/Y%C3%BCm%C3%BCktepe%2C_Mersin.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Nedim Ardoğa",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Y%C3%BCm%C3%BCktepe,_Mersin.JPG"
   },
   "648789": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/8/83/Ulucami%2C_Tarsus%2C_Mersin_Province.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/8/83/Ulucami%2C_Tarsus%2C_Mersin_Province.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/8/83/Ulucami%2C_Tarsus%2C_Mersin_Province.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/8/83/Ulucami%2C_Tarsus%2C_Mersin_Province.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Nedim Ardoğa",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Ulucami,_Tarsus,_Mersin_Province.jpg"
   },
   "658378": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Anazarbus_klikya_city_south_gate.jpg/960px-Anazarbus_klikya_city_south_gate.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/6/62/Anazarbus_klikya_city_south_gate.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/Anazarbus_klikya_city_south_gate.jpg/960px-Anazarbus_klikya_city_south_gate.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/6/62/Anazarbus_klikya_city_south_gate.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "MUSTAFA TOR at English Wikipedia",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Anazarbus_klikya_city_south_gate.jpg"
   },
   "658381": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Antiochia_su_Oronte.PNG/960px-Antiochia_su_Oronte.PNG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/1/19/Antiochia_su_Oronte.PNG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/19/Antiochia_su_Oronte.PNG/960px-Antiochia_su_Oronte.PNG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/1/19/Antiochia_su_Oronte.PNG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Cristiano64",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Antiochia_su_Oronte.PNG"
   },
   "658427": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Harran_beehive_houses_%282%29.JPG/960px-Harran_beehive_houses_%282%29.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/1/18/Harran_beehive_houses_%282%29.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Harran_beehive_houses_%282%29.JPG/960px-Harran_beehive_houses_%282%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/1/18/Harran_beehive_houses_%282%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Zhengan",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Harran_beehive_houses_(2).JPG"
   },
   "658465": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Museum_of_Anatolian_Civilizations091.jpg/960px-Museum_of_Anatolian_Civilizations091.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Museum_of_Anatolian_Civilizations091.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Museum_of_Anatolian_Civilizations091.jpg/960px-Museum_of_Anatolian_Civilizations091.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Museum_of_Anatolian_Civilizations091.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Georges Jansoone (JoJan)",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Museum_of_Anatolian_Civilizations091.jpg"
   },
   "668331": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Palmyra_theater02%28js%29.jpg/960px-Palmyra_theater02%28js%29.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/3/33/Palmyra_theater02%28js%29.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Palmyra_theater02%28js%29.jpg/960px-Palmyra_theater02%28js%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/3/33/Palmyra_theater02%28js%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Jerzy Strzelecki",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Palmyra_theater02(js).jpg"
   },
   "678106": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Damascus_coll.jpg/960px-Damascus_coll.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Damascus_coll.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e5/Damascus_coll.jpg/960px-Damascus_coll.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Damascus_coll.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "See above.",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Damascus_coll.jpg"
   },
   "678158": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/General_View_of_Jerash.jpg/960px-General_View_of_Jerash.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/e/eb/General_View_of_Jerash.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/General_View_of_Jerash.jpg/960px-General_View_of_Jerash.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/e/eb/General_View_of_Jerash.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "JoTB",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:General_View_of_Jerash.jpg"
   },
   "678401": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/%D7%A7%D7%99%D7%A1%D7%A8%D7%99%D7%94_%D7%94%D7%A2%D7%AA%D7%99%D7%A7%D7%94.jpg/960px-%D7%A7%D7%99%D7%A1%D7%A8%D7%99%D7%94_%D7%94%D7%A2%D7%AA%D7%99%D7%A7%D7%94.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/3/3a/%D7%A7%D7%99%D7%A1%D7%A8%D7%99%D7%94_%D7%94%D7%A2%D7%AA%D7%99%D7%A7%D7%94.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3a/%D7%A7%D7%99%D7%A1%D7%A8%D7%99%D7%94_%D7%94%D7%A2%D7%AA%D7%99%D7%A7%D7%94.jpg/960px-%D7%A7%D7%99%D7%A1%D7%A8%D7%99%D7%94_%D7%94%D7%A2%D7%AA%D7%99%D7%A7%D7%94.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/3/3a/%D7%A7%D7%99%D7%A1%D7%A8%D7%99%D7%94_%D7%94%D7%A2%D7%AA%D7%99%D7%A7%D7%94.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Idomeir",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:%D7%A7%D7%99%D7%A1%D7%A8%D7%99%D7%94_%D7%94%D7%A2%D7%AA%D7%99%D7%A7%D7%94.jpg"
   },
   "687828": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Migdal-Afek-11-ne.jpg/960px-Migdal-Afek-11-ne.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Migdal-Afek-11-ne.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/Migdal-Afek-11-ne.jpg/960px-Migdal-Afek-11-ne.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Migdal-Afek-11-ne.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Bukvoed",
     "license": "CC BY 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Migdal-Afek-11-ne.jpg"
   },
   "687928": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Dome_of_the_Rock_seen_from_the_Mount_of_Olives_%2812395649153%29_%28cropped%29.jpg/960px-Dome_of_the_Rock_seen_from_the_Mount_of_Olives_%2812395649153%29_%28cropped%29.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/8/86/Dome_of_the_Rock_seen_from_the_Mount_of_Olives_%2812395649153%29_%28cropped%29.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/86/Dome_of_the_Rock_seen_from_the_Mount_of_Olives_%2812395649153%29_%28cropped%29.jpg/960px-Dome_of_the_Rock_seen_from_the_Mount_of_Olives_%2812395649153%29_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/8/86/Dome_of_the_Rock_seen_from_the_Mount_of_Olives_%2812395649153%29_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "askii",
     "license": "CC BY-SA 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:Dome_of_the_Rock_seen_from_the_Mount_of_Olives_(12395649153)_(cropped).jpg"
   },
   "687968": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Israel-2013-Aerial_21-Masada.jpg/960px-Israel-2013-Aerial_21-Masada.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/1/14/Israel-2013-Aerial_21-Masada.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/14/Israel-2013-Aerial_21-Masada.jpg/960px-Israel-2013-Aerial_21-Masada.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/1/14/Israel-2013-Aerial_21-Masada.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Godot13",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Israel-2013-Aerial_21-Masada.jpg"
   },
   "687988": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/NizanaFrDo0078.JPG/960px-NizanaFrDo0078.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c8/NizanaFrDo0078.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c8/NizanaFrDo0078.JPG/960px-NizanaFrDo0078.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c8/NizanaFrDo0078.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Acer11",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:NizanaFrDo0078.JPG"
   },
   "687995": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Aerial_jordan.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Aerial_jordan.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Aerial_jordan.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Aerial_jordan.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "User:Matthäus Wander",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Aerial_jordan.jpg"
   },
+  "688011": {
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Kumeran4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Kumeran4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Tamarah",
+    "license": "CC BY-SA 2.5",
+    "source": "https://commons.wikimedia.org/wiki/File:Kumeran4.jpg"
+  },
   "697725": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/The_Treasury%2C_Petra%2C_Jordan5.jpg/960px-The_Treasury%2C_Petra%2C_Jordan5.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/7/7c/The_Treasury%2C_Petra%2C_Jordan5.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/The_Treasury%2C_Petra%2C_Jordan5.jpg/960px-The_Treasury%2C_Petra%2C_Jordan5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/7/7c/The_Treasury%2C_Petra%2C_Jordan5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Diego Delso",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:The_Treasury,_Petra,_Jordan5.jpg"
   },
   "697737": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Qasr_Al-Hallbat_complex.jpg/960px-Qasr_Al-Hallbat_complex.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Qasr_Al-Hallbat_complex.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0d/Qasr_Al-Hallbat_complex.jpg/960px-Qasr_Al-Hallbat_complex.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Qasr_Al-Hallbat_complex.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "TheLastShot",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Qasr_Al-Hallbat_complex.jpg"
   },
+  "707534": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/aa/ANCIENT_KITION%2C_LARNACA%2C_CYPRUS.jpg/960px-ANCIENT_KITION%2C_LARNACA%2C_CYPRUS.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/a/aa/ANCIENT_KITION%2C_LARNACA%2C_CYPRUS.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "JERRYE AND ROY KLOTZ MD",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:ANCIENT_KITION,_LARNACA,_CYPRUS.jpg"
+  },
   "727070": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Alexandrie_Th%C3%A9%C3%A2tre_romain_2.jpg/960px-Alexandrie_Th%C3%A9%C3%A2tre_romain_2.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/d/db/Alexandrie_Th%C3%A9%C3%A2tre_romain_2.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/Alexandrie_Th%C3%A9%C3%A2tre_romain_2.jpg/960px-Alexandrie_Th%C3%A9%C3%A2tre_romain_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/d/db/Alexandrie_Th%C3%A9%C3%A2tre_romain_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Codex",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Alexandrie_Th%C3%A9%C3%A2tre_romain_2.jpg",
     "position": "center 45%"
   },
+  "727153": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/84/Ruines_de_la_cit%C3%A9_portuaire_de_Marea.jpg/960px-Ruines_de_la_cit%C3%A9_portuaire_de_Marea.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/8/84/Ruines_de_la_cit%C3%A9_portuaire_de_Marea.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "isawnyu",
+    "license": "CC BY 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Ruines_de_la_cit%C3%A9_portuaire_de_Marea.jpg"
+  },
   "776143": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/4/45/AinAmurSite.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/4/45/AinAmurSite.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/4/45/AinAmurSite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/4/45/AinAmurSite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Roland Unger",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:AinAmurSite.jpg"
   },
   "795875": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/The_Temple_of_Dendur_MET_DP240337.jpg/960px-The_Temple_of_Dendur_MET_DP240337.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c5/The_Temple_of_Dendur_MET_DP240337.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/The_Temple_of_Dendur_MET_DP240337.jpg/960px-The_Temple_of_Dendur_MET_DP240337.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c5/The_Temple_of_Dendur_MET_DP240337.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Wikimedia Commons",
     "license": "CC0",
     "source": "https://commons.wikimedia.org/wiki/File:The_Temple_of_Dendur_MET_DP240337.jpg"
   },
   "814688": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Madeena_masjid_nabavi_12122008230.jpg/960px-Madeena_masjid_nabavi_12122008230.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Madeena_masjid_nabavi_12122008230.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cd/Madeena_masjid_nabavi_12122008230.jpg/960px-Madeena_masjid_nabavi_12122008230.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Madeena_masjid_nabavi_12122008230.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Bluemangoa2z at Malayalam Wikipedia",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Madeena_masjid_nabavi_12122008230.jpg"
   },
   "854745": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/%D0%A0%D1%8B%D0%B1%D0%BE%D0%B7%D0%B0%D1%81%D0%BE%D0%BB%D0%BE%D1%87%D0%BD%D1%8B%D0%B5_%D0%B2%D0%B0%D0%BD%D0%BD%D1%8B_%D0%BD%D0%B0_%D0%A2%D0%B8%D1%80%D0%B8%D1%82%D0%B0%D0%BA%D0%B5.jpg/960px-%D0%A0%D1%8B%D0%B1%D0%BE%D0%B7%D0%B0%D1%81%D0%BE%D0%BB%D0%BE%D1%87%D0%BD%D1%8B%D0%B5_%D0%B2%D0%B0%D0%BD%D0%BD%D1%8B_%D0%BD%D0%B0_%D0%A2%D0%B8%D1%80%D0%B8%D1%82%D0%B0%D0%BA%D0%B5.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/7/7e/%D0%A0%D1%8B%D0%B1%D0%BE%D0%B7%D0%B0%D1%81%D0%BE%D0%BB%D0%BE%D1%87%D0%BD%D1%8B%D0%B5_%D0%B2%D0%B0%D0%BD%D0%BD%D1%8B_%D0%BD%D0%B0_%D0%A2%D0%B8%D1%80%D0%B8%D1%82%D0%B0%D0%BA%D0%B5.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/%D0%A0%D1%8B%D0%B1%D0%BE%D0%B7%D0%B0%D1%81%D0%BE%D0%BB%D0%BE%D1%87%D0%BD%D1%8B%D0%B5_%D0%B2%D0%B0%D0%BD%D0%BD%D1%8B_%D0%BD%D0%B0_%D0%A2%D0%B8%D1%80%D0%B8%D1%82%D0%B0%D0%BA%D0%B5.jpg/960px-%D0%A0%D1%8B%D0%B1%D0%BE%D0%B7%D0%B0%D1%81%D0%BE%D0%BB%D0%BE%D1%87%D0%BD%D1%8B%D0%B5_%D0%B2%D0%B0%D0%BD%D0%BD%D1%8B_%D0%BD%D0%B0_%D0%A2%D0%B8%D1%80%D0%B8%D1%82%D0%B0%D0%BA%D0%B5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/7/7e/%D0%A0%D1%8B%D0%B1%D0%BE%D0%B7%D0%B0%D1%81%D0%BE%D0%BB%D0%BE%D1%87%D0%BD%D1%8B%D0%B5_%D0%B2%D0%B0%D0%BD%D0%BD%D1%8B_%D0%BD%D0%B0_%D0%A2%D0%B8%D1%80%D0%B8%D1%82%D0%B0%D0%BA%D0%B5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Kbda3200",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:%D0%A0%D1%8B%D0%B1%D0%BE%D0%B7%D0%B0%D1%81%D0%BE%D0%BB%D0%BE%D1%87%D0%BD%D1%8B%D0%B5_%D0%B2%D0%B0%D0%BD%D0%BD%D1%8B_%D0%BD%D0%B0_%D0%A2%D0%B8%D1%80%D0%B8%D1%82%D0%B0%D0%BA%D0%B5.jpg"
   },
+  "874362": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cd/Turkey%2C_Van%2C_Edremit.jpg/960px-Turkey%2C_Van%2C_Edremit.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Turkey%2C_Van%2C_Edremit.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Salih Karayel",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Turkey,_Van,_Edremit.jpg"
+  },
   "874602": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Statue_Gudea_Met_59.2.jpg/960px-Statue_Gudea_Met_59.2.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/0/01/Statue_Gudea_Met_59.2.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/Statue_Gudea_Met_59.2.jpg/960px-Statue_Gudea_Met_59.2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/0/01/Statue_Gudea_Met_59.2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Wikimedia Commons",
     "license": "CC BY 2.5",
     "source": "https://commons.wikimedia.org/wiki/File:Statue_Gudea_Met_59.2.jpg"
   },
   "874621": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/4/46/Nineveh_mashki_gate_from_west.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/4/46/Nineveh_mashki_gate_from_west.JPG",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/4/46/Nineveh_mashki_gate_from_west.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/4/46/Nineveh_mashki_gate_from_west.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Photo by Fredarch.",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Nineveh_mashki_gate_from_west.JPG"
   },
   "874732": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Tell_Barri_1.jpg/960px-Tell_Barri_1.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Tell_Barri_1.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9b/Tell_Barri_1.jpg/960px-Tell_Barri_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Tell_Barri_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Zoeperkoe",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Tell_Barri_1.jpg"
   },
   "893945": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ashur_%28Qal%27at_Sherqat%29-115188.jpg/960px-Ashur_%28Qal%27at_Sherqat%29-115188.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Ashur_%28Qal%27at_Sherqat%29-115188.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/Ashur_%28Qal%27at_Sherqat%29-115188.jpg/960px-Ashur_%28Qal%27at_Sherqat%29-115188.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Ashur_%28Qal%27at_Sherqat%29-115188.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Véronique Dauge",
     "license": "CC BY-SA 3.0 igo",
     "source": "https://commons.wikimedia.org/wiki/File:Ashur_(Qal%27at_Sherqat)-115188.jpg"
   },
   "893976": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Ctesiphon%2C_Iraq%2C_1932.jpg/960px-Ctesiphon%2C_Iraq%2C_1932.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/5/50/Ctesiphon%2C_Iraq%2C_1932.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/50/Ctesiphon%2C_Iraq%2C_1932.jpg/960px-Ctesiphon%2C_Iraq%2C_1932.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/5/50/Ctesiphon%2C_Iraq%2C_1932.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Unknown authorUnknown author (American Colony Photo Department)",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Ctesiphon,_Iraq,_1932.jpg"
   },
   "893990": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/DuraEuropos-TempleOfBel.jpg/960px-DuraEuropos-TempleOfBel.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/3/32/DuraEuropos-TempleOfBel.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/32/DuraEuropos-TempleOfBel.jpg/960px-DuraEuropos-TempleOfBel.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/3/32/DuraEuropos-TempleOfBel.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Heretiq",
     "license": "CC BY-SA 2.5",
     "source": "https://commons.wikimedia.org/wiki/File:DuraEuropos-TempleOfBel.jpg"
   },
   "912829": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Choghamish.jpg/960px-Choghamish.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Choghamish.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/Choghamish.jpg/960px-Choghamish.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Choghamish.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Motabassem. The original uploader was Motabassem at Persian Wikipedia.",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Choghamish.jpg"
   },
   "981527": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Bab_al-Amud_-_Damascus_Gate%2C_Jerusalem.jpg/960px-Bab_al-Amud_-_Damascus_Gate%2C_Jerusalem.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Bab_al-Amud_-_Damascus_Gate%2C_Jerusalem.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/Bab_al-Amud_-_Damascus_Gate%2C_Jerusalem.jpg/960px-Bab_al-Amud_-_Damascus_Gate%2C_Jerusalem.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Bab_al-Amud_-_Damascus_Gate%2C_Jerusalem.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Davidbena",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Bab_al-Amud_-_Damascus_Gate,_Jerusalem.jpg"
   },
   "32694358": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Museo_archeologico_dei_Campi_Flegrei_61.JPG/960px-Museo_archeologico_dei_Campi_Flegrei_61.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Museo_archeologico_dei_Campi_Flegrei_61.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8e/Museo_archeologico_dei_Campi_Flegrei_61.JPG/960px-Museo_archeologico_dei_Campi_Flegrei_61.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Museo_archeologico_dei_Campi_Flegrei_61.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Daniel Ventura",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Museo_archeologico_dei_Campi_Flegrei_61.JPG"
   },
   "55660936": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Priniatikos_Pyrgos_27.jpg/960px-Priniatikos_Pyrgos_27.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Priniatikos_Pyrgos_27.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/Priniatikos_Pyrgos_27.jpg/960px-Priniatikos_Pyrgos_27.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Priniatikos_Pyrgos_27.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Olaf Tausch",
     "license": "CC BY 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Priniatikos_Pyrgos_27.jpg"
   },
   "58129442": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/K%C3%BCltepeOberstadtPalast.jpg/960px-K%C3%BCltepeOberstadtPalast.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/c/cd/K%C3%BCltepeOberstadtPalast.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cd/K%C3%BCltepeOberstadtPalast.jpg/960px-K%C3%BCltepeOberstadtPalast.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/cd/K%C3%BCltepeOberstadtPalast.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Klaus-Peter Simon",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:K%C3%BCltepeOberstadtPalast.jpg"
   },
+  "66376536": {
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Artemistempel_Sardes.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Artemistempel_Sardes.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Klaus-Peter Simon",
+    "license": "CC BY 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Artemistempel_Sardes.jpg"
+  },
   "124501558": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/3/3d/Pianta_della_fontana_di_SE_dell%27Agor%C3%A0_di_Atene.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/3/3d/Pianta_della_fontana_di_SE_dell%27Agor%C3%A0_di_Atene.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/3/3d/Pianta_della_fontana_di_SE_dell%27Agor%C3%A0_di_Atene.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/3/3d/Pianta_della_fontana_di_SE_dell%27Agor%C3%A0_di_Atene.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Saralinda90",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Pianta_della_fontana_di_SE_dell%27Agor%C3%A0_di_Atene.jpg"
   },
   "132886213": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Palatin_Rom.jpg/960px-Palatin_Rom.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Palatin_Rom.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5f/Palatin_Rom.jpg/960px-Palatin_Rom.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Palatin_Rom.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Stefan Bauer, http://www.ferras.at",
     "license": "CC BY-SA 2.5",
     "source": "https://commons.wikimedia.org/wiki/File:Palatin_Rom.jpg"
   },
   "143098101": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Stoa_Poikile_1.jpg/960px-Stoa_Poikile_1.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/b/be/Stoa_Poikile_1.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/be/Stoa_Poikile_1.jpg/960px-Stoa_Poikile_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/b/be/Stoa_Poikile_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Tomisti",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Stoa_Poikile_1.jpg"
   },
   "170198552": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Faiyum_Oasis_by_Zorbey_Tun%C3%A7er.jpg/960px-Faiyum_Oasis_by_Zorbey_Tun%C3%A7er.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Faiyum_Oasis_by_Zorbey_Tun%C3%A7er.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8b/Faiyum_Oasis_by_Zorbey_Tun%C3%A7er.jpg/960px-Faiyum_Oasis_by_Zorbey_Tun%C3%A7er.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Faiyum_Oasis_by_Zorbey_Tun%C3%A7er.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "cynic zagor (Zorbey Tunçer)",
     "license": "CC BY-SA 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:Faiyum_Oasis_by_Zorbey_Tun%C3%A7er.jpg"
   },
   "177059114": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/6/69/Pier_Great_Palace_Istanbul_%281%29.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/6/69/Pier_Great_Palace_Istanbul_%281%29.JPG",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/6/69/Pier_Great_Palace_Istanbul_%281%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/6/69/Pier_Great_Palace_Istanbul_%281%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Gryffindor",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Pier_Great_Palace_Istanbul_(1).JPG"
   },
   "205387552": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Praedia_di_Giulia_Felice_%282%29.jpg/960px-Praedia_di_Giulia_Felice_%282%29.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Praedia_di_Giulia_Felice_%282%29.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e7/Praedia_di_Giulia_Felice_%282%29.jpg/960px-Praedia_di_Giulia_Felice_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Praedia_di_Giulia_Felice_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Marco Ebreo",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Praedia_di_Giulia_Felice_(2).jpg"
   },
+  "212723843": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/%D8%A8%D8%B1%D9%83_%D8%B3%D9%84%D9%8A%D9%85%D8%A7%D9%86_%D8%A7%D8%B1%D8%B7%D8%A7%D8%B3.jpg/960px-%D8%A8%D8%B1%D9%83_%D8%B3%D9%84%D9%8A%D9%85%D8%A7%D9%86_%D8%A7%D8%B1%D8%B7%D8%A7%D8%B3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/b/b9/%D8%A8%D8%B1%D9%83_%D8%B3%D9%84%D9%8A%D9%85%D8%A7%D9%86_%D8%A7%D8%B1%D8%B7%D8%A7%D8%B3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "حمزة راشد",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:%D8%A8%D8%B1%D9%83_%D8%B3%D9%84%D9%8A%D9%85%D8%A7%D9%86_%D8%A7%D8%B1%D8%B7%D8%A7%D8%B3.jpg"
+  },
   "215749623": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Palmira_Tempio_di_Allat_Atena_-_GAR_-_7-01.jpg/960px-Palmira_Tempio_di_Allat_Atena_-_GAR_-_7-01.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/5/52/Palmira_Tempio_di_Allat_Atena_-_GAR_-_7-01.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/Palmira_Tempio_di_Allat_Atena_-_GAR_-_7-01.jpg/960px-Palmira_Tempio_di_Allat_Atena_-_GAR_-_7-01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/5/52/Palmira_Tempio_di_Allat_Atena_-_GAR_-_7-01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Gianfranco Gazzetti",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Palmira_Tempio_di_Allat_Atena_-_GAR_-_7-01.jpg"
   },
   "222740561": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/File%2C_Asu%C3%A1n%2C_Egipto%2C_2022-04-01%2C_DD_142.jpg/960px-File%2C_Asu%C3%A1n%2C_Egipto%2C_2022-04-01%2C_DD_142.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/4/40/File%2C_Asu%C3%A1n%2C_Egipto%2C_2022-04-01%2C_DD_142.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/File%2C_Asu%C3%A1n%2C_Egipto%2C_2022-04-01%2C_DD_142.jpg/960px-File%2C_Asu%C3%A1n%2C_Egipto%2C_2022-04-01%2C_DD_142.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/4/40/File%2C_Asu%C3%A1n%2C_Egipto%2C_2022-04-01%2C_DD_142.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Diego Delso",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:File,_Asu%C3%A1n,_Egipto,_2022-04-01,_DD_142.jpg"
   },
   "243075423": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Temple_of_Veiovis_-_Tabularium_-_Rome_2016.jpg/960px-Temple_of_Veiovis_-_Tabularium_-_Rome_2016.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/4/48/Temple_of_Veiovis_-_Tabularium_-_Rome_2016.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/48/Temple_of_Veiovis_-_Tabularium_-_Rome_2016.jpg/960px-Temple_of_Veiovis_-_Tabularium_-_Rome_2016.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/4/48/Temple_of_Veiovis_-_Tabularium_-_Rome_2016.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "José Luiz",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Temple_of_Veiovis_-_Tabularium_-_Rome_2016.jpg"
   },
   "361164677": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/TelMichal007.jpg/960px-TelMichal007.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c4/TelMichal007.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c4/TelMichal007.jpg/960px-TelMichal007.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/c4/TelMichal007.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Ori~",
     "license": "Attribution",
     "source": "https://commons.wikimedia.org/wiki/File:TelMichal007.jpg"
   },
   "406270378": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Palazzo_dei_penitenzieri%2C_cortile_02.JPG/960px-Palazzo_dei_penitenzieri%2C_cortile_02.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/8/80/Palazzo_dei_penitenzieri%2C_cortile_02.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/80/Palazzo_dei_penitenzieri%2C_cortile_02.JPG/960px-Palazzo_dei_penitenzieri%2C_cortile_02.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/8/80/Palazzo_dei_penitenzieri%2C_cortile_02.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "sailko",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Palazzo_dei_penitenzieri,_cortile_02.JPG"
   },
   "413309734": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Poldokhtar.JPG/960px-Poldokhtar.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/3/30/Poldokhtar.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/Poldokhtar.JPG/960px-Poldokhtar.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/3/30/Poldokhtar.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Poldokhtar1392",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Poldokhtar.JPG"
   },
   "415689443": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Metroon_del_Agora_de_Atenas.JPG/960px-Metroon_del_Agora_de_Atenas.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/4/49/Metroon_del_Agora_de_Atenas.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/49/Metroon_del_Agora_de_Atenas.JPG/960px-Metroon_del_Agora_de_Atenas.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/4/49/Metroon_del_Agora_de_Atenas.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Dorieo",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Metroon_del_Agora_de_Atenas.JPG"
   },
   "451696383": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Monti_-_muro_della_Suburra_e_casa_dei_cavalieri_di_Rodi_-_retro_1050880-1.JPG/960px-Monti_-_muro_della_Suburra_e_casa_dei_cavalieri_di_Rodi_-_retro_1050880-1.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/0/06/Monti_-_muro_della_Suburra_e_casa_dei_cavalieri_di_Rodi_-_retro_1050880-1.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/06/Monti_-_muro_della_Suburra_e_casa_dei_cavalieri_di_Rodi_-_retro_1050880-1.JPG/960px-Monti_-_muro_della_Suburra_e_casa_dei_cavalieri_di_Rodi_-_retro_1050880-1.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/0/06/Monti_-_muro_della_Suburra_e_casa_dei_cavalieri_di_Rodi_-_retro_1050880-1.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Lalupa",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Monti_-_muro_della_Suburra_e_casa_dei_cavalieri_di_Rodi_-_retro_1050880-1.JPG"
   },
   "516051730": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/MSV_GP_2015-08-14_10-23-17.jpg/960px-MSV_GP_2015-08-14_10-23-17.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/f/f3/MSV_GP_2015-08-14_10-23-17.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f3/MSV_GP_2015-08-14_10-23-17.jpg/960px-MSV_GP_2015-08-14_10-23-17.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/f/f3/MSV_GP_2015-08-14_10-23-17.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Dominik Hagmann",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:MSV_GP_2015-08-14_10-23-17.jpg"
   },
+  "518854572": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/Shema_Alef_02.jpg/960px-Shema_Alef_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/2/29/Shema_Alef_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Yael Alef",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Shema_Alef_02.jpg"
+  },
   "527986452": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Lawrence_Alma-Tadema_02.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Lawrence_Alma-Tadema_02.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Lawrence_Alma-Tadema_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Lawrence_Alma-Tadema_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Lawrence Alma-Tadema",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Lawrence_Alma-Tadema_02.jpg"
   },
   "538561167": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Trier_Barbarathermen.jpg/960px-Trier_Barbarathermen.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/4/40/Trier_Barbarathermen.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Trier_Barbarathermen.jpg/960px-Trier_Barbarathermen.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/4/40/Trier_Barbarathermen.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Stefan Kühn",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Trier_Barbarathermen.jpg"
   },
   "543726021": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Anavarza_Castle.jpg/960px-Anavarza_Castle.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Anavarza_Castle.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/Anavarza_Castle.jpg/960px-Anavarza_Castle.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Anavarza_Castle.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Nedim Ardoğa",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Anavarza_Castle.jpg"
   },
   "573299847": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/9e/SanctuaryofArtemisBrauronia3D.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/9/9e/SanctuaryofArtemisBrauronia3D.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/9e/SanctuaryofArtemisBrauronia3D.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/9/9e/SanctuaryofArtemisBrauronia3D.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "CyberMonk",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:SanctuaryofArtemisBrauronia3D.jpg"
   },
   "643273747": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Ancient_Roman_baths_of_hot_water%2C_San_Casciano_Dei_Bagni%2C_Tuscany%2C_Italy.jpg/960px-Ancient_Roman_baths_of_hot_water%2C_San_Casciano_Dei_Bagni%2C_Tuscany%2C_Italy.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/7/70/Ancient_Roman_baths_of_hot_water%2C_San_Casciano_Dei_Bagni%2C_Tuscany%2C_Italy.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/70/Ancient_Roman_baths_of_hot_water%2C_San_Casciano_Dei_Bagni%2C_Tuscany%2C_Italy.jpg/960px-Ancient_Roman_baths_of_hot_water%2C_San_Casciano_Dei_Bagni%2C_Tuscany%2C_Italy.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/7/70/Ancient_Roman_baths_of_hot_water%2C_San_Casciano_Dei_Bagni%2C_Tuscany%2C_Italy.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Albarubescens Own work",
     "license": "CC BY 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Ancient_Roman_baths_of_hot_water,_San_Casciano_Dei_Bagni,_Tuscany,_Italy.jpg"
   },
   "652231746": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/The_Antinoeion%2C_Hadrian%27s_Villa_%2816224047975%29.jpg/960px-The_Antinoeion%2C_Hadrian%27s_Villa_%2816224047975%29.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/0/0a/The_Antinoeion%2C_Hadrian%27s_Villa_%2816224047975%29.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0a/The_Antinoeion%2C_Hadrian%27s_Villa_%2816224047975%29.jpg/960px-The_Antinoeion%2C_Hadrian%27s_Villa_%2816224047975%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/0/0a/The_Antinoeion%2C_Hadrian%27s_Villa_%2816224047975%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Carole Raddato from FRANKFURT, Germany",
     "license": "CC BY-SA 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:The_Antinoeion,_Hadrian%27s_Villa_(16224047975).jpg"
   },
   "660025690": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Monument_of_the_Eponymous_Heroes.jpg/960px-Monument_of_the_Eponymous_Heroes.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/3/37/Monument_of_the_Eponymous_Heroes.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/37/Monument_of_the_Eponymous_Heroes.jpg/960px-Monument_of_the_Eponymous_Heroes.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/3/37/Monument_of_the_Eponymous_Heroes.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Викидим",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Monument_of_the_Eponymous_Heroes.jpg"
   },
   "668575405": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Arco_rom%C3%A1nico_en_la_bas%C3%ADlica_de_Recopolis.jpg/960px-Arco_rom%C3%A1nico_en_la_bas%C3%ADlica_de_Recopolis.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/9/91/Arco_rom%C3%A1nico_en_la_bas%C3%ADlica_de_Recopolis.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Arco_rom%C3%A1nico_en_la_bas%C3%ADlica_de_Recopolis.jpg/960px-Arco_rom%C3%A1nico_en_la_bas%C3%ADlica_de_Recopolis.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/9/91/Arco_rom%C3%A1nico_en_la_bas%C3%ADlica_de_Recopolis.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Fergon",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Arco_rom%C3%A1nico_en_la_bas%C3%ADlica_de_Recopolis.jpg"
   },
   "678434580": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/PalestrinaForoBasilicaPalazzoSeminario2.jpg/960px-PalestrinaForoBasilicaPalazzoSeminario2.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/8/85/PalestrinaForoBasilicaPalazzoSeminario2.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/85/PalestrinaForoBasilicaPalazzoSeminario2.jpg/960px-PalestrinaForoBasilicaPalazzoSeminario2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/8/85/PalestrinaForoBasilicaPalazzoSeminario2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "MM",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:PalestrinaForoBasilicaPalazzoSeminario2.jpg"
   },
   "678676209": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Basilica_of_Maxentius2.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Basilica_of_Maxentius2.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Basilica_of_Maxentius2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Basilica_of_Maxentius2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Hiro-o",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Basilica_of_Maxentius2.jpg"
   },
   "680348962": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Siligo_-_Chiesa_di_Santa_Maria_di_Mesumundu_%2801%29.JPG/960px-Siligo_-_Chiesa_di_Santa_Maria_di_Mesumundu_%2801%29.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/a/af/Siligo_-_Chiesa_di_Santa_Maria_di_Mesumundu_%2801%29.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/Siligo_-_Chiesa_di_Santa_Maria_di_Mesumundu_%2801%29.JPG/960px-Siligo_-_Chiesa_di_Santa_Maria_di_Mesumundu_%2801%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/a/af/Siligo_-_Chiesa_di_Santa_Maria_di_Mesumundu_%2801%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Gianni Careddu",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Siligo_-_Chiesa_di_Santa_Maria_di_Mesumundu_(01).JPG"
   },
   "704746176": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Wykopaliska_buddyjskie_-_Hadda_-_001544s.jpg/960px-Wykopaliska_buddyjskie_-_Hadda_-_001544s.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/c/ca/Wykopaliska_buddyjskie_-_Hadda_-_001544s.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ca/Wykopaliska_buddyjskie_-_Hadda_-_001544s.jpg/960px-Wykopaliska_buddyjskie_-_Hadda_-_001544s.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/ca/Wykopaliska_buddyjskie_-_Hadda_-_001544s.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Marek Gawęcki",
     "license": "CC BY-SA 3.0 pl",
     "source": "https://commons.wikimedia.org/wiki/File:Wykopaliska_buddyjskie_-_Hadda_-_001544s.jpg"
   },
   "714055238": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/City_of_David%2C_Southern_Wall_Temple_Mount_Kidron_Valley_Ophel_and_Siloam.jpg/960px-City_of_David%2C_Southern_Wall_Temple_Mount_Kidron_Valley_Ophel_and_Siloam.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/e/e1/City_of_David%2C_Southern_Wall_Temple_Mount_Kidron_Valley_Ophel_and_Siloam.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e1/City_of_David%2C_Southern_Wall_Temple_Mount_Kidron_Valley_Ophel_and_Siloam.jpg/960px-City_of_David%2C_Southern_Wall_Temple_Mount_Kidron_Valley_Ophel_and_Siloam.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/e/e1/City_of_David%2C_Southern_Wall_Temple_Mount_Kidron_Valley_Ophel_and_Siloam.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Matson Collection",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:City_of_David,_Southern_Wall_Temple_Mount_Kidron_Valley_Ophel_and_Siloam.jpg"
   },
   "758514868": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Cairo_-_Coptic_area_-_Roman_Tower.JPG/960px-Cairo_-_Coptic_area_-_Roman_Tower.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Cairo_-_Coptic_area_-_Roman_Tower.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/Cairo_-_Coptic_area_-_Roman_Tower.JPG/960px-Cairo_-_Coptic_area_-_Roman_Tower.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Cairo_-_Coptic_area_-_Roman_Tower.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Daniel Mayer",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Cairo_-_Coptic_area_-_Roman_Tower.JPG"
   },
+  "812127749": {
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/70/Aqueduc_du_Gier_-_Chaponost_-_Arches_apr%C3%A8s_r%C3%A9novation_2009-2010.JPG/960px-Aqueduc_du_Gier_-_Chaponost_-_Arches_apr%C3%A8s_r%C3%A9novation_2009-2010.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/7/70/Aqueduc_du_Gier_-_Chaponost_-_Arches_apr%C3%A8s_r%C3%A9novation_2009-2010.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "credit": "Arnaud Fafournoux",
+    "license": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Aqueduc_du_Gier_-_Chaponost_-_Arches_apr%C3%A8s_r%C3%A9novation_2009-2010.JPG"
+  },
   "814364493": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Grotta-Seiano-HDR.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Grotta-Seiano-HDR.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Grotta-Seiano-HDR.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Grotta-Seiano-HDR.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Diego Menna",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Grotta-Seiano-HDR.jpg"
   },
   "816091000": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Ara_Pacis_%28SW%29.jpg/960px-Ara_Pacis_%28SW%29.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Ara_Pacis_%28SW%29.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3c/Ara_Pacis_%28SW%29.jpg/960px-Ara_Pacis_%28SW%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Ara_Pacis_%28SW%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Rabax63",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Ara_Pacis_(SW).jpg"
   },
   "820631036": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Obelisco_de_Teodosio%2C_Estambul%2C_Turqu%C3%ADa%2C_2024-09-28%2C_DD_129.jpg/960px-Obelisco_de_Teodosio%2C_Estambul%2C_Turqu%C3%ADa%2C_2024-09-28%2C_DD_129.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Obelisco_de_Teodosio%2C_Estambul%2C_Turqu%C3%ADa%2C_2024-09-28%2C_DD_129.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bc/Obelisco_de_Teodosio%2C_Estambul%2C_Turqu%C3%ADa%2C_2024-09-28%2C_DD_129.jpg/960px-Obelisco_de_Teodosio%2C_Estambul%2C_Turqu%C3%ADa%2C_2024-09-28%2C_DD_129.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Obelisco_de_Teodosio%2C_Estambul%2C_Turqu%C3%ADa%2C_2024-09-28%2C_DD_129.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Diego Delso",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Obelisco_de_Teodosio,_Estambul,_Turqu%C3%ADa,_2024-09-28,_DD_129.jpg"
   },
   "827790769": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Nubia_NASA-WW_places_german.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Nubia_NASA-WW_places_german.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Nubia_NASA-WW_places_german.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Nubia_NASA-WW_places_german.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "User Udimu on de.wikipedia",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Nubia_NASA-WW_places_german.jpg"
   },
   "865200669": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Forum_%28Paestum%29_01.jpg/960px-Forum_%28Paestum%29_01.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Forum_%28Paestum%29_01.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Forum_%28Paestum%29_01.jpg/960px-Forum_%28Paestum%29_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Forum_%28Paestum%29_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Superchilum",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Forum_(Paestum)_01.jpg"
   },
   "877521473": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Troy_forecourt_of_the_Athena_temple_7711.jpg/960px-Troy_forecourt_of_the_Athena_temple_7711.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Troy_forecourt_of_the_Athena_temple_7711.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6e/Troy_forecourt_of_the_Athena_temple_7711.jpg/960px-Troy_forecourt_of_the_Athena_temple_7711.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Troy_forecourt_of_the_Athena_temple_7711.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Dosseman",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Troy_forecourt_of_the_Athena_temple_7711.jpg"
   },
   "914715153": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/AthenaeumMadonnaLoreto-AulaCentraleGradoni.jpg/960px-AthenaeumMadonnaLoreto-AulaCentraleGradoni.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/0/06/AthenaeumMadonnaLoreto-AulaCentraleGradoni.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/06/AthenaeumMadonnaLoreto-AulaCentraleGradoni.jpg/960px-AthenaeumMadonnaLoreto-AulaCentraleGradoni.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/0/06/AthenaeumMadonnaLoreto-AulaCentraleGradoni.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "MM",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:AthenaeumMadonnaLoreto-AulaCentraleGradoni.jpg"
   },
   "917294321": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Wikiraduno_Verona_ott_2023_abc27_area_archeologica_di_Corte_Sgarzerie.jpg/960px-Wikiraduno_Verona_ott_2023_abc27_area_archeologica_di_Corte_Sgarzerie.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Wikiraduno_Verona_ott_2023_abc27_area_archeologica_di_Corte_Sgarzerie.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b1/Wikiraduno_Verona_ott_2023_abc27_area_archeologica_di_Corte_Sgarzerie.jpg/960px-Wikiraduno_Verona_ott_2023_abc27_area_archeologica_di_Corte_Sgarzerie.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Wikiraduno_Verona_ott_2023_abc27_area_archeologica_di_Corte_Sgarzerie.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Patafisik",
     "license": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Wikiraduno_Verona_ott_2023_abc27_area_archeologica_di_Corte_Sgarzerie.jpg"
   },
   "927063702": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Snake_column_Hippodrome_Constantinople_2007.jpg/960px-Snake_column_Hippodrome_Constantinople_2007.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Snake_column_Hippodrome_Constantinople_2007.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/Snake_column_Hippodrome_Constantinople_2007.jpg/960px-Snake_column_Hippodrome_Constantinople_2007.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Snake_column_Hippodrome_Constantinople_2007.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Gryffindor This panoramic image was created with Autostitch (stitched images may differ from reality).",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Snake_column_Hippodrome_Constantinople_2007.jpg"
   },
   "929651744": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/OlympicRaceTrackOlympia.JPG/960px-OlympicRaceTrackOlympia.JPG",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/f/f9/OlympicRaceTrackOlympia.JPG",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f9/OlympicRaceTrackOlympia.JPG/960px-OlympicRaceTrackOlympia.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/f/f9/OlympicRaceTrackOlympia.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Dwaipayanc",
     "license": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:OlympicRaceTrackOlympia.JPG"
   },
   "969121823": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Areopagus_from_the_Acropolis.jpg/960px-Areopagus_from_the_Acropolis.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/7/7e/Areopagus_from_the_Acropolis.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/Areopagus_from_the_Acropolis.jpg/960px-Areopagus_from_the_Acropolis.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/7/7e/Areopagus_from_the_Acropolis.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "ajbear AKA KiltBear https://www.flickr.com/photos/ajbear/",
     "license": "CC BY-SA 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:Areopagus_from_the_Acropolis.jpg"
   },
   "975276180": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Vatican_Necropolis_01.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Vatican_Necropolis_01.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Vatican_Necropolis_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Vatican_Necropolis_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Blue 439",
     "license": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Vatican_Necropolis_01.jpg"
   },
   "999238742": {
-    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/National_Archaeological_Museum_of_Naples_-_Tyrannicide_group_-_Harmodius_and_Aristogeiton.jpg/960px-National_Archaeological_Museum_of_Naples_-_Tyrannicide_group_-_Harmodius_and_Aristogeiton.jpg",
-    "full": "https://upload.wikimedia.org/wikipedia/commons/0/09/National_Archaeological_Museum_of_Naples_-_Tyrannicide_group_-_Harmodius_and_Aristogeiton.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/09/National_Archaeological_Museum_of_Naples_-_Tyrannicide_group_-_Harmodius_and_Aristogeiton.jpg/960px-National_Archaeological_Museum_of_Naples_-_Tyrannicide_group_-_Harmodius_and_Aristogeiton.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "full": "https://upload.wikimedia.org/wikipedia/commons/0/09/National_Archaeological_Museum_of_Naples_-_Tyrannicide_group_-_Harmodius_and_Aristogeiton.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "credit": "Elliott Brown",
     "license": "CC BY 2.0",
     "source": "https://commons.wikimedia.org/wiki/File:National_Archaeological_Museum_of_Naples_-_Tyrannicide_group_-_Harmodius_and_Aristogeiton.jpg"

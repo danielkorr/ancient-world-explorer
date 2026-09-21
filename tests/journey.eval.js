@@ -23,7 +23,7 @@
   ok('selector-marker', !!one('site-marker'));
   ok('selector-layer-controls', !!one('layer-controls'));
   ok('selector-filter-panel', !!one('filter-panel'));
-  ok('selector-tier-filters', document.querySelectorAll('[data-testid="site-tier-filter"]').length === 4);
+  ok('selector-tier-filters', document.querySelectorAll('[data-testid="site-tier-filter"]').length === 3);
   ok('selector-road-filters', document.querySelectorAll('[data-testid="road-certainty-filter"]').length === 3);
 
   // Journey 1 - search for and open a known curated site.

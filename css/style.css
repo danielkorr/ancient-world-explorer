@@ -1207,6 +1207,27 @@ button.auth-secondary + button.auth-tertiary { margin-top: 8px; }
 }
 #legend-info-btn:hover { background: rgba(212,168,83,0.18); color: var(--gold); }
 
+.legend-context-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-left: 8px;
+  padding: 0;
+  border: 1px solid rgba(212,168,83,0.45);
+  border-radius: 50%;
+  background: rgba(212,168,83,0.06);
+  color: rgba(212,168,83,0.95);
+  cursor: pointer;
+  font-family: sans-serif;
+  font-size: 10px;
+  line-height: 1;
+  vertical-align: middle;
+}
+.legend-context-close:hover,
+.legend-context-close:focus-visible { background: rgba(212,168,83,0.18); color: var(--gold); }
+
 /* Legend term toast — slides up when a tier is selected, fades on its own. */
 #legend-toast {
   position: fixed;

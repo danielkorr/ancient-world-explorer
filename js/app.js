@@ -4520,6 +4520,20 @@ function showLegendContext(context) {
   positionContextualLegend();
 }
 
+function closeLegendContext(event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  const legend = document.getElementById('quest-legend');
+  if (!legend) return;
+  legend.classList.remove('context-open', 'show-quests', 'show-roads', 'mobile-open');
+  document.body.classList.remove('dock-key-open');
+  syncKeyExpanded(false);
+  hideLegendToast();
+  if (typeof syncDockButtons === 'function') syncDockButtons();
+}
+
 function positionContextualLegend() {
   const legend = document.getElementById('quest-legend');
   if (!legend || window.innerWidth <= 640 || !legend.classList.contains('context-open')) return;

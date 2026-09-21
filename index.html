@@ -60,7 +60,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=168">
+  <link rel="stylesheet" href="css/style.css?v=169">
 </head>
 <body>
 
@@ -377,7 +377,7 @@
        <div class="legend-row" data-testid="site-tier-filter" data-tier="location" role="button" tabindex="0" onclick="toggleTier('location')"><div class="legend-dot diamond" style="background:#2b8cde"></div>Location Quest</div>
      </div>
    <div id="road-certainty-filters" class="legend-section">
-     <div class="legend-hint">Roads · certainty<button id="road-info-btn" onclick="openLegendInfo()" aria-label="What do road certainty terms mean?" title="What do these mean?">?</button></div>
+       <div class="legend-hint">Roads · certainty<button id="road-info-btn" onclick="openLegendInfo()" aria-label="What do road certainty terms mean?" title="What do these mean?">?</button><button id="road-filter-close" class="legend-context-close" onclick="closeLegendContext(event)" aria-label="Close Roman Roads filters" title="Close Roman Roads filters">✕</button></div>
      <div class="legend-row" data-testid="road-certainty-filter" data-cert="c" role="button" tabindex="0" onclick="toggleCert('c')"><div class="legend-line solid"></div>Certain</div>
      <div class="legend-row" data-testid="road-certainty-filter" data-cert="j" role="button" tabindex="0" onclick="toggleCert('j')"><div class="legend-line dashed"></div>Conjectured</div>
      <div class="legend-row" data-testid="road-certainty-filter" data-cert="h" role="button" tabindex="0" onclick="toggleCert('h')"><div class="legend-line dotted"></div>Hypothetical</div>
@@ -552,7 +552,7 @@
      VIA_createAncientFloor at map init). -->
 <script src="js/basemap.js?v=107"></script>
 <script src="js/research-bridges.js?v=2"></script>
-<script src="js/app.js?v=180"></script>
+<script src="js/app.js?v=181"></script>
 <!-- Quest Finder (design options B + C) — inert unless ?finder=1 is present. -->
 <script src="js/quest-finder.js?v=4"></script>
 

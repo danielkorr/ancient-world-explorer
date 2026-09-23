@@ -552,5 +552,9 @@ const SITES = (() => {
       if (v.elevation) { s.elevation = true; if (!s.quest) s.quest = 'photo'; }
     }
   }
-  return out;
+  // Drop null-island [0,0] records: a handful of Pleiades imports carry 0/0 as a
+  // "no usable coordinate" placeholder (Attapinis, Ara Alexandri, Mugilla, …). They
+  // rendered as stray markers in the Gulf of Guinea and skewed any fit-to-sites.
+  // (Coverage-tier already drops these upstream; the foreground set didn't.)
+  return out.filter(s => !(s.lat === 0 && s.lng === 0));
 })();

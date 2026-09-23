@@ -755,19 +755,29 @@ function fitAlexanderBounds() {
   requestAnimationFrame(() => map.fitBounds(L.latLngBounds(pts), { padding: [36, 36] }));
 }
 
+// Roman empire envelope (lat/lng). The foreground catalogue carries a handful of
+// records that would wreck a naive fit-to-all-sites: null-island [0,0] placeholders,
+// and eastern/Indian-Ocean outliers (Rhapta at -7.8°, a port near 94°E). Including
+// them drags the fit's centre out into the Atlantic and leaves the map on empty sea.
+// This envelope still frames the real frontiers — Britannia (~59°N), Iberia (~-9°),
+// Egypt (~24°N), and Mesopotamia (~45°E).
+const ROMAN_ENVELOPE = { minLat: 24, maxLat: 60, minLng: -12, maxLng: 46 };
+
 function fitRomanModeView() {
+  const e = ROMAN_ENVELOPE;
   const pts = [];
   if (typeof SITES !== 'undefined') {
-    for (const site of SITES) {
-      if (typeof site.lat === 'number' && typeof site.lng === 'number') pts.push([site.lat, site.lng]);
+    for (const s of SITES) {
+      if (typeof s.lat !== 'number' || typeof s.lng !== 'number') continue;
+      if (s.lat === 0 && s.lng === 0) continue;                       // null island
+      if (s.lat < e.minLat || s.lat > e.maxLat || s.lng < e.minLng || s.lng > e.maxLng) continue;
+      pts.push([s.lat, s.lng]);
     }
   }
-  if (!pts.length) {
-    requestAnimationFrame(() => map.setView([38.5, 17.0], 5));
-    return;
-  }
   const isMobile = window.innerWidth <= 640;
-  requestAnimationFrame(() => map.fitBounds(L.latLngBounds(pts), {
+  const bounds = pts.length ? L.latLngBounds(pts)
+                            : L.latLngBounds([[30, -10], [55, 40]]);  // fixed empire fallback
+  requestAnimationFrame(() => map.fitBounds(bounds, {
     paddingTopLeft: [36, 36],
     paddingBottomRight: isMobile ? [36, 96] : [36, 36],
     maxZoom: 5,
@@ -5779,6 +5789,19 @@ if (_brandEl) {
     u.searchParams.delete('alexander');
     history.replaceState(null, '', u.toString());
   } catch (e) {}
+})();
+
+// ── Initial Roman framing ──
+// The map boots at a fixed center/zoom (see L.map(...) above). Alexander gets framed
+// on load via applyModeLock → setMode('alexander') → fitAlexanderBounds, but the Roman
+// page (lock === appMode === 'roman') skips that setMode, so nothing ever framed the
+// empire on first load — it sat on the hardcoded Ionian-Sea point, which reads badly
+// off-centre on wide desktops. Frame it here, AFTER the deep-link IIFEs so they win:
+// a shared ?site opens a panel; a shared ?mode=alexander already switched modes.
+(function fitInitialRomanView() {
+  if (appMode !== 'roman') return;                                              // Alexander already framed
+  if (document.getElementById('info-panel').classList.contains('open')) return; // ?site / return-state took the view
+  fitRomanModeView();
 })();
 
 // ── QA drive + assert API (?qa=1) ──

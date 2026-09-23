@@ -284,7 +284,14 @@
 
   function closeFinder() {
     const el = panelEl();
-    if (el) { el.classList.remove('open'); el.setAttribute('aria-hidden', 'true'); }
+    if (el) {
+      // Move focus out BEFORE hiding: the browser blocks aria-hidden on an ancestor
+      // of the focused element (e.g. #finder-close keeps focus after a click), which
+      // logs a WAI-ARIA console warning. Blur the descendant first.
+      if (el.contains(document.activeElement) && document.activeElement.blur) document.activeElement.blur();
+      el.classList.remove('open');
+      el.setAttribute('aria-hidden', 'true');
+    }
     if (beaconGroup) beaconGroup.clearLayers();
     activeCategory = null;
     groups = [];

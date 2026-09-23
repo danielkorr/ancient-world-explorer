@@ -3903,13 +3903,31 @@ function openDockPanel(which) {
   setDockTab(which);
 }
 
-function bindDock() {
-  // Reparent the topbar search into the dock's search overlay — mobile only, so
-  // desktop keeps its in-topbar search untouched.
-  const isMobile = window.matchMedia('(max-width: 640px)').matches;
-  const host   = document.getElementById('dock-search-panel');
+// Put the single search field where the current viewport wants it: on mobile it
+// rides inside the dock's search overlay (opened by the Sites tab); on desktop it
+// sits in the topbar between the brand and the profile pill. There's ONE input
+// (one bindSiteSearch path), so we move it rather than duplicate it. Runs at boot
+// AND whenever the viewport crosses the 640px breakpoint — otherwise resizing
+// desktop→mobile leaves it stranded in the topbar, showing two search bars.
+const DOCK_MQ = window.matchMedia('(max-width: 640px)');
+function placeSearch() {
   const search = document.getElementById('topbar-search');
-  if (isMobile && host && search && search.parentElement !== host) host.appendChild(search);
+  const dockHost = document.getElementById('dock-search-panel');
+  const topbar = document.getElementById('topbar');
+  const topbarRight = document.getElementById('topbar-right');
+  if (!search || !dockHost || !topbar) return;
+  if (DOCK_MQ.matches) {
+    if (search.parentElement !== dockHost) dockHost.appendChild(search);
+  } else if (search.parentElement !== topbar) {
+    topbar.insertBefore(search, topbarRight);   // back to its desktop slot
+  }
+}
+
+function bindDock() {
+  placeSearch();
+  // Re-place the search field on breakpoint change (also closes any open dock panel
+  // so we never leave the mobile overlay half-open after growing to desktop).
+  DOCK_MQ.addEventListener('change', () => { closeDockPanels(); placeSearch(); });
 
   const mBtn = document.getElementById('dock-map');
   const sBtn = document.getElementById('dock-search');

@@ -342,6 +342,7 @@ body.mode-alexander #btn-sites,
 body.mode-alexander #btn-names,
 body.mode-alexander #detail-control,
 body.mode-alexander #dock-curation,
+body.mode-alexander #dock-quest,
 body.mode-alexander #roman-legend { display: none; }
 /* Campaign legend: hidden by default, shown only in Alexander mode. */
 #campaign-legend { display: none; }
@@ -2412,17 +2413,11 @@ path.leaflet-interactive { outline: none !important; }
     text-overflow: ellipsis;
   }
   #topbar-right   { gap: 6px; align-items: center; }
-  /* Key folded up from the dock (Phase 3): a slim pill next to the profile pill. */
-  #topbar-key {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 5px 10px; border-radius: 999px;
-    background: var(--gold); color: var(--ink);
-    border: 1px solid var(--gold);
-    font-family: 'Cinzel', serif; font-size: var(--fs-11); font-weight: 600;
-    letter-spacing: 0.4px; line-height: 1; cursor: pointer;
-  }
-  #topbar-key svg { display: block; flex: 0 0 auto; }
-  #topbar-key[aria-expanded="true"] { background: var(--ink-panel); color: var(--gold); border-color: var(--gold-dim); }
+  /* Key moved back down into the bottom nav (Variant 3 pill dock: the Key tab).
+     The topbar pill is retired on mobile; the profile pill is the only topbar-right
+     control now. #topbar-key stays in the DOM (its aria-expanded is kept in lockstep
+     by syncKeyExpanded) but is not shown. */
+  #topbar-key { display: none; }
   /* Search moved off the top bar into the dock (see #dock-search-panel). The
      input + results are reparented into the search overlay at boot, so here we
      reset the topbar-search positioning to flow inside that panel. */
@@ -2490,12 +2485,30 @@ path.leaflet-interactive { outline: none !important; }
     text-transform: uppercase;
     cursor: pointer;
   }
-  .dock-btn[aria-expanded="true"] {
+  .dock-btn[aria-expanded="true"],
+  .dock-btn[aria-current="page"] {
     border-color: var(--gold);
     color: var(--gold);
     background: rgba(212,168,83,0.12);
   }
   .dock-btn svg { display: block; }
+
+  /* ── Variant 3 pill dock: four equal Map · Sites · Quest · Key tabs ── */
+  .dock-tab {
+    gap: 5px;
+    padding: 0 8px;
+    letter-spacing: 0.8px;
+    font-size: var(--fs-10);
+  }
+  .dock-tab svg { flex: 0 0 auto; }
+  .dock-tab-label { line-height: 1; }
+  /* Quest carries the Photo-Quest orange as a REDUNDANT accent when active — the
+     camera glyph is the real signal, so this stays colorblind-safe. */
+  .dock-btn.dock-quest[aria-current="page"] {
+    border-color: #ff9e2c;
+    color: #ff9e2c;
+    background: rgba(255,158,44,0.14);
+  }
   /* Search leads the row (≈1.6× a button) — its SIZE marks it primary, not a
      different shape. It stays an input affordance (Inter, sentence case) on
      purpose; a Cinzel-caps placeholder would read as a button, not a field.

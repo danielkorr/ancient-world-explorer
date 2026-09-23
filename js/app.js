@@ -3816,12 +3816,56 @@ function bindSiteSearch() {
 // on desktop and the panels keep their existing desktop homes.
 const DOCK_PANELS = ['search', 'curation', 'key'];
 const DOCK_BTN_ID = { search: 'dock-search', curation: 'dock-curation', key: 'dock-key' };
+// The four bottom-nav tabs (Variant 3 pill dock). 'map' and 'quest' aren't dock
+// PANELS — Map is home, Quest opens the finder — so their active state is carried
+// by aria-current, alongside the panel buttons' aria-expanded. CSS lights up either.
+const DOCK_TAB_ID = { map: 'dock-map', search: 'dock-search', quest: 'dock-quest', key: 'dock-key' };
+
+// Mark exactly one bottom-nav tab as current. Panel buttons (search/key) still get
+// aria-expanded from syncDockButtons; this adds the persistent current-tab mark that
+// covers the non-panel tabs (Map, Quest) too.
+function setDockTab(which) {
+  for (const k in DOCK_TAB_ID) {
+    const el = document.getElementById(DOCK_TAB_ID[k]);
+    if (!el) continue;
+    if (k === which) el.setAttribute('aria-current', 'page');
+    else el.removeAttribute('aria-current');
+  }
+}
 
 function syncDockButtons() {
   const open = DOCK_PANELS.find(p => document.body.classList.contains('dock-' + p + '-open'));
   for (const p of DOCK_PANELS) {
     const btn = document.getElementById(DOCK_BTN_ID[p]);
     if (btn) btn.setAttribute('aria-expanded', p === open ? 'true' : 'false');
+  }
+}
+
+// Map tab = "home": dismiss whatever chrome is up (dock panel, detail card, finder)
+// to reveal the full-bleed map. Doesn't force a re-fit — closePanel already glides
+// back to the pre-panel view; a plain map browse just clears the overlays.
+function goHome() {
+  const hadPanel = closeDockPanels();
+  if (document.getElementById('info-panel').classList.contains('open')) closePanel();
+  if (window.VIA && typeof window.VIA.closeFinder === 'function') window.VIA.closeFinder();
+  dismissMobileGuide(true);
+  setDockTab('map');
+}
+
+// Quest tab → the quest finder (browse/checklist of contributable sites), opened at
+// the Photo Quest tier. No standalone upload flow exists; the finder IS the quest
+// surface. Clears any open dock panel / detail card first (single surface at a time).
+function openQuestFinder() {
+  closeDockPanels();
+  if (document.getElementById('info-panel').classList.contains('open')) closePanel();
+  dismissMobileGuide(true);
+  if (window.VIA && typeof window.VIA.openFinder === 'function') {
+    window.VIA.openFinder({ kind: 'tier', key: 'photo', color: '#ff9e2c' });
+    setDockTab('quest');
+  } else {
+    // Finder script missing (?finder=0 or load error) — fall back to the Key panel's
+    // quest tiers so the tab still does something quest-shaped.
+    openDockPanel('key');
   }
 }
 
@@ -3836,6 +3880,7 @@ function closeDockPanels() {
   const lg = document.getElementById('quest-legend');
   if (lg) lg.classList.remove('mobile-open');
   syncDockButtons();
+  setDockTab('map');   // panels closed → Map (home) is the current tab
   return had;
 }
 
@@ -3855,6 +3900,7 @@ function openDockPanel(which) {
   }
   dismissMobileGuide(true);
   syncDockButtons();
+  setDockTab(which);
 }
 
 function bindDock() {
@@ -3865,10 +3911,14 @@ function bindDock() {
   const search = document.getElementById('topbar-search');
   if (isMobile && host && search && search.parentElement !== host) host.appendChild(search);
 
+  const mBtn = document.getElementById('dock-map');
   const sBtn = document.getElementById('dock-search');
+  const qBtn = document.getElementById('dock-quest');
   const cBtn = document.getElementById('dock-curation');
   const kBtn = document.getElementById('dock-key');
+  if (mBtn) mBtn.addEventListener('click', goHome);
   if (sBtn) sBtn.addEventListener('click', () => openDockPanel('search'));
+  if (qBtn) qBtn.addEventListener('click', openQuestFinder);
   if (cBtn) cBtn.addEventListener('click', () => openDockPanel('curation'));
   if (kBtn) kBtn.addEventListener('click', () => openDockPanel('key'));
 
@@ -4532,6 +4582,7 @@ function closeLegendContext(event) {
   syncKeyExpanded(false);
   hideLegendToast();
   if (typeof syncDockButtons === 'function') syncDockButtons();
+  if (typeof setDockTab === 'function') setDockTab('map');
 }
 
 function positionContextualLegend() {
@@ -5239,6 +5290,7 @@ function closeMobileLegend() {
   document.body.classList.remove('dock-key-open');
   syncKeyExpanded(false);
   if (typeof syncDockButtons === 'function') syncDockButtons();
+  if (typeof setDockTab === 'function') setDockTab('map');
 }
 document.addEventListener('click', (e) => {
   const lg = document.getElementById('quest-legend');
@@ -5251,6 +5303,7 @@ document.addEventListener('click', (e) => {
   document.body.classList.remove('dock-key-open');
   syncKeyExpanded(false);
   if (typeof syncDockButtons === 'function') syncDockButtons();
+  if (typeof setDockTab === 'function') setDockTab('map');
 }, true);
 
 function openLegendInfo() {

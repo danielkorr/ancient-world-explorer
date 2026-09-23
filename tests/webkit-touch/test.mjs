@@ -148,27 +148,83 @@ try {
     !document.getElementById('info-panel').classList.contains('open'));
   ok('tap on empty map closed the panel', closed);
 
-  // 3b) real TAP on the topbar Key button opens the legend sheet (Phase 3: Key
-  // folded up from the dock). Native <button onclick>, so a tap synthesizes a
-  // click — this confirms the folded-up Key is tappable on the real WebKit engine.
-  const keyXY = await page.evaluate(() => {
-    const b = document.getElementById('topbar-key');
+  // 3b) The bottom-nav pill dock (Map · Sites · Quest · Key). Each tab is a native
+  // <button onclick>, so a tap synthesizes a click — but the load-bearing risk is a
+  // WebKit *repaint* failure after the body-class / mobile-open toggles these handlers
+  // do (VIA's "mobile Safari doesn't repaint after a class toggle" lesson, which
+  // Chromium/`browse` structurally can't see). So we tap each tab on the real engine
+  // and assert the surface it drives is actually open. Helper: center of a dock tab.
+  const tabXY = (id) => page.evaluate((tid) => {
+    const b = document.getElementById(tid);
     if (!b) return null;
     const r = b.getBoundingClientRect();
     return (r.width && r.height) ? { x: r.left + r.width / 2, y: r.top + r.height / 2 } : null;
-  }).catch(() => null);
-  ok('topbar Key button rendered (mobile)', !!keyXY);
+  }, id).catch(() => null);
+
+  // Key tab → the legend sheet (replaces the retired #topbar-key; Key moved back down
+  // into the dock in the Variant 3 pill dock). Round-trip: tap opens, tap closes.
+  const keyXY = await tabXY('dock-key');
+  ok('dock Key tab rendered (mobile)', !!keyXY);
   if (keyXY) {
     await page.touchscreen.tap(keyXY.x, keyXY.y);
     await sleep(300);
     const legendOpen = await page.evaluate(() =>
       document.getElementById('quest-legend').classList.contains('mobile-open'));
-    ok('tap topbar Key opens the legend sheet', legendOpen);
+    ok('tap dock Key opens the legend sheet', legendOpen);
     await page.touchscreen.tap(keyXY.x, keyXY.y);   // tap again to close (round-trip)
     await sleep(300);
     const legendClosed = await page.evaluate(() =>
       !document.getElementById('quest-legend').classList.contains('mobile-open'));
-    ok('tap topbar Key again closes the legend sheet', legendClosed);
+    ok('tap dock Key again closes the legend sheet', legendClosed);
+  }
+
+  // Sites tab → the search overlay (reparented topbar search rides in #dock-search-panel).
+  const searchXY = await tabXY('dock-search');
+  ok('dock Sites tab rendered (mobile)', !!searchXY);
+  if (searchXY) {
+    await page.touchscreen.tap(searchXY.x, searchXY.y);
+    await sleep(300);
+    const searchOpen = await page.evaluate(() => ({
+      cls: document.body.classList.contains('dock-search-open'),
+      panel: getComputedStyle(document.getElementById('dock-search-panel')).display !== 'none',
+    }));
+    ok('tap dock Sites opens the search overlay', searchOpen.cls && searchOpen.panel);
+  }
+
+  // Quest tab → the quest finder at the Photo Quest tier (VIA.openFinder). Also proves
+  // the finder script initialises + paints under WebKit. Tapping it must also enforce
+  // single-surface: the search overlay opened above closes.
+  const questXY = await tabXY('dock-quest');
+  ok('dock Quest tab rendered (mobile)', !!questXY);
+  if (questXY) {
+    await page.touchscreen.tap(questXY.x, questXY.y);
+    await sleep(400);
+    const finder = await page.evaluate(() => {
+      const f = document.getElementById('finder-panel');
+      return {
+        visible: !!f && getComputedStyle(f).display !== 'none',
+        questCurrent: document.getElementById('dock-quest').getAttribute('aria-current') === 'page',
+        searchClosed: !document.body.classList.contains('dock-search-open'),
+      };
+    });
+    ok('tap dock Quest opens the finder (WebKit paint + init)', finder.visible);
+    ok('dock Quest marked current + single-surface (search closed)',
+       finder.questCurrent && finder.searchClosed);
+  }
+
+  // Map tab = home → dismiss all chrome (dock panels + finder) to reveal the map.
+  const mapXY = await tabXY('dock-map');
+  ok('dock Map tab rendered (mobile)', !!mapXY);
+  if (mapXY) {
+    await page.touchscreen.tap(mapXY.x, mapXY.y);
+    await sleep(300);
+    const home = await page.evaluate(() => ({
+      noPanel: !['search', 'curation', 'key'].some(p => document.body.classList.contains('dock-' + p + '-open')),
+      finderHidden: (() => { const f = document.getElementById('finder-panel'); return !f || getComputedStyle(f).display === 'none'; })(),
+      mapCurrent: document.getElementById('dock-map').getAttribute('aria-current') === 'page',
+    }));
+    ok('tap dock Map clears all chrome (home)', home.noPanel && home.finderHidden);
+    ok('dock Map marked current after home', home.mapCurrent);
   }
 
   // 3c) Phase 3: detail follows ZOOM (the slider is gone). Zoom out → Highlights

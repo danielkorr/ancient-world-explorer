@@ -62,7 +62,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="../css/style.css?v=166">
+  <link rel="stylesheet" href="../css/style.css?v=170">
 </head>
 <body>
 
@@ -179,13 +179,12 @@
               <span>Pleiades for places, Itiner-e for roads, and ORBIS for travel.</span>
             </div>
           </div>
+          <button class="welcome-quest-link" type="button" onclick="openWelcomeQuest()">
+            <span class="welcome-quest-name">Quests</span>
+            <span>Help close the gaps in the ancient record.</span>
+            <span class="welcome-quest-action">Explore the quests <span aria-hidden="true">→</span></span>
+          </button>
         </div>
-
-        <button class="welcome-quest-link" type="button" onclick="openWelcomeQuest()">
-          <span class="welcome-quest-name">Quests</span>
-          <span>For those who want a genuine challenge</span>
-          <span class="welcome-quest-action">Learn how quests work →</span>
-        </button>
       </section>
 
       <section class="welcome-paths" aria-label="Choose an experience">
@@ -209,15 +208,6 @@
           </div>
         </article>
 
-        <a class="welcome-research-link" href="research-lab/" onclick="if(new URLSearchParams(location.search).get('backend')==='staging') this.href='research-lab/?backend=staging';">
-          <span class="welcome-research-mark" aria-hidden="true">◌</span>
-          <span class="welcome-research-copy">
-            <span class="welcome-path-overline">Research Lab</span>
-            <strong>Go behind the map</strong>
-            <span>Follow the sources, disagreements, and open questions behind one historical place.</span>
-          </span>
-          <span class="welcome-research-arrow" aria-hidden="true">↗</span>
-        </a>
       </section>
     </div>
   </div>
@@ -325,16 +315,30 @@
        (detailLevelForZoom / syncDetailToZoom in app.js), not set by hand. -->
 </div>
 
-<!-- Mobile dock: a slim persistent bottom bar holding just the search field —
-     thumb-reachable. The Detail button is gone (Phase 3: detail follows zoom) and
-     Key moved to the top bar (#topbar-key). Tapping search opens its overlay (dock
-     controller in app.js). Mobile-only; hidden on desktop, where the topbar search
-     + #bottom-controls remain. The map stays full-bleed; chrome on demand. -->
+<!-- Mobile dock: a slim persistent bottom tab bar — thumb-reachable, four equal
+     Cinzel pills (Map · Sites · Quest · Key). Account stays the topbar profile pill.
+     Map = home (dismiss chrome to reveal the map); Sites opens the search overlay;
+     Quest opens the quest finder (VIA.openFinder); Key opens the legend/filters.
+     All handled by the dock controller + goHome/openQuestFinder in app.js. Mobile-only;
+     hidden on desktop, where the topbar search + #bottom-controls remain. The Detail
+     button is gone (Phase 3: detail follows zoom). -->
 <div id="dock" data-testid="mobile-dock">
-  <button id="dock-search" class="dock-btn dock-search-field" type="button"
-          aria-haspopup="dialog" aria-expanded="false" aria-controls="dock-search-panel">
-    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    <span class="dock-search-placeholder">Search sites, roads, or locations</span>
+  <button id="dock-map" class="dock-btn dock-tab" type="button" aria-current="page" aria-label="Map — return to the map">
+    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3 4 5v16l5-2 6 2 5-2V3l-5 2-6-2Z"/><path d="M9 3v16M15 5v16"/></svg>
+    <span class="dock-tab-label">Map</span>
+  </button>
+  <button id="dock-search" class="dock-btn dock-tab" type="button"
+          aria-haspopup="dialog" aria-expanded="false" aria-controls="dock-search-panel" aria-label="Search sites, roads, or locations">
+    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+    <span class="dock-tab-label">Sites</span>
+  </button>
+  <button id="dock-quest" class="dock-btn dock-tab dock-quest" type="button" aria-label="Quests — find sites to help document">
+    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4Z"/><circle cx="12" cy="13.5" r="3"/></svg>
+    <span class="dock-tab-label">Quest</span>
+  </button>
+  <button id="dock-key" class="dock-btn dock-tab" type="button" aria-expanded="false" aria-controls="quest-legend" aria-label="Legend &amp; filters">
+    <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M3 5h18l-7 8.2V21l-4-2.2v-5.6z" fill="currentColor"/></svg>
+    <span class="dock-tab-label">Key</span>
   </button>
 </div>
 <!-- Scrim behind the open search panel; tap to dismiss. -->
@@ -382,16 +386,18 @@
   <div class="legend-row legend-layer-row active" id="legend-sites-toggle" data-testid="sites-layer-row" data-layer="sites" role="button" tabindex="0" onclick="toggleLayer('sites')"><div class="legend-dot" style="background:var(--gold)"></div>Sites &amp; Cities</div>
   <div class="legend-row legend-layer-row" id="legend-alexander-toggle" data-testid="alexander-layer-row" data-layer="alexander" role="button" tabindex="0" onclick="toggleLayer('alexander')"><div class="legend-line alexander"></div>Alexander</div>
   <div class="legend-sep legend-layers-sep"></div>
-  <div class="legend-hint">Tap to filter<button id="legend-info-btn" onclick="openLegendInfo()" aria-label="What do these terms mean?" title="What do these mean?">?</button></div>
-  <div class="legend-row" data-testid="site-tier-filter" data-tier="documented" role="button" tabindex="0" onclick="toggleTier('documented')"><div class="legend-dot" style="background:#b89a6a"></div>Documented</div>
-  <div class="legend-row" data-testid="site-tier-filter" data-tier="photo" role="button" tabindex="0" onclick="toggleTier('photo')"><div class="legend-dot" style="background:#ff9e2c"></div>Photo Quest</div>
-  <div class="legend-row" data-testid="site-tier-filter" data-tier="location" role="button" tabindex="0" onclick="toggleTier('location')"><div class="legend-dot diamond" style="background:#2b8cde"></div>Location Quest</div>
-  <div class="legend-row" data-testid="site-tier-filter" data-tier="text" role="button" tabindex="0" onclick="toggleTier('text')"><div class="legend-dot triangle" style="background:#b15ad6"></div>Text Quest</div>
-  <div class="legend-sep"></div>
-  <div class="legend-hint">Roads · certainty</div>
-  <div class="legend-row" data-testid="road-certainty-filter" data-cert="c" role="button" tabindex="0" onclick="toggleCert('c')"><div class="legend-line solid"></div>Certain</div>
-  <div class="legend-row" data-testid="road-certainty-filter" data-cert="j" role="button" tabindex="0" onclick="toggleCert('j')"><div class="legend-line dashed"></div>Conjectured</div>
-  <div class="legend-row" data-testid="road-certainty-filter" data-cert="h" role="button" tabindex="0" onclick="toggleCert('h')"><div class="legend-line dotted"></div>Hypothetical</div>
+     <div id="quest-site-filters" class="legend-section">
+       <div class="legend-hint">Tap to filter<button id="legend-info-btn" onclick="openLegendInfo()" aria-label="What do these terms mean?" title="What do these mean?">?</button></div>
+     <div class="legend-row" data-testid="site-tier-filter" data-tier="documented" role="button" tabindex="0" onclick="toggleTier('documented')"><div class="legend-dot" style="background:#b89a6a"></div>Documented</div>
+       <div class="legend-row" data-testid="site-tier-filter" data-tier="photo" role="button" tabindex="0" onclick="toggleTier('photo')"><div class="legend-dot" style="background:#ff9e2c"></div>Photo Quest</div>
+       <div class="legend-row" data-testid="site-tier-filter" data-tier="location" role="button" tabindex="0" onclick="toggleTier('location')"><div class="legend-dot diamond" style="background:#2b8cde"></div>Location Quest</div>
+     </div>
+   <div id="road-certainty-filters" class="legend-section">
+       <div class="legend-hint">Roads · certainty<button id="road-info-btn" onclick="openLegendInfo()" aria-label="What do road certainty terms mean?" title="What do these mean?">?</button><button id="road-filter-close" class="legend-context-close" onclick="closeLegendContext(event)" aria-label="Close Roman Roads filters" title="Close Roman Roads filters">✕</button></div>
+     <div class="legend-row" data-testid="road-certainty-filter" data-cert="c" role="button" tabindex="0" onclick="toggleCert('c')"><div class="legend-line solid"></div>Certain</div>
+     <div class="legend-row" data-testid="road-certainty-filter" data-cert="j" role="button" tabindex="0" onclick="toggleCert('j')"><div class="legend-line dashed"></div>Conjectured</div>
+     <div class="legend-row" data-testid="road-certainty-filter" data-cert="h" role="button" tabindex="0" onclick="toggleCert('h')"><div class="legend-line dotted"></div>Hypothetical</div>
+   </div>
   </div><!-- /#roman-legend -->
   <!-- Campaign legend — shown only in Alexander mode (body.mode-alexander). Phase is
        carried by the NUMBER + label as the primary channels; the color tint is
@@ -422,6 +428,7 @@
 
 <!-- Legend term toast (slides up when a tier is selected) -->
 <div id="legend-toast" aria-live="polite">
+  <button id="legend-toast-close" type="button" onclick="hideLegendToast()" aria-label="Close explanation">✕</button>
   <div id="legend-toast-title"></div>
   <div id="legend-toast-body"></div>
 </div>
@@ -431,7 +438,7 @@
   <div id="legend-info-card">
     <button class="auth-close" onclick="closeLegendInfo()">✕</button>
     <h2 class="auth-title">What's on the map</h2>
-    <div class="auth-sub">Every site is one of these. Tap a tier in the legend to show only those.</div>
+    <div class="auth-sub">Quest types and road certainty terms, explained in plain language.</div>
     <div id="legend-info-list"></div>
     <button class="auth-secondary" onclick="closeLegendInfo()">Got it</button>
   </div>
@@ -553,15 +560,15 @@
      time-to-interactive on the single heaviest asset in the app. -->
 <!-- (roads-itinere.js load moved into js/app.js) -->
 <script src="../js/data.js?v=135"></script>
-<script src="../js/alexander.js?v=112"></script>
+<script src="../js/alexander.js?v=113"></script>
 <script src="../js/alexander-photos.js?v=7"></script>
-<script src="../js/site-photos.js?v=1"></script>
+<script src="../js/site-photos.js?v=2"></script>
 <script src="../js/auth.js?v=113"></script>
 <!-- Stadia/Stamen ancient-mode basemap floor; must load before app.js (it calls
      VIA_createAncientFloor at map init). -->
 <script src="../js/basemap.js?v=107"></script>
 <script src="../js/research-bridges.js?v=2"></script>
-<script src="../js/app.js?v=175"></script>
+<script src="../js/app.js?v=182"></script>
 <!-- Quest Finder (design options B + C) — inert unless ?finder=1 is present. -->
 <script src="../js/quest-finder.js?v=4"></script>
 

@@ -60,7 +60,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=169">
+  <link rel="stylesheet" href="css/style.css?v=170">
 </head>
 <body>
 
@@ -313,16 +313,30 @@
        (detailLevelForZoom / syncDetailToZoom in app.js), not set by hand. -->
 </div>
 
-<!-- Mobile dock: a slim persistent bottom bar holding just the search field —
-     thumb-reachable. The Detail button is gone (Phase 3: detail follows zoom) and
-     Key moved to the top bar (#topbar-key). Tapping search opens its overlay (dock
-     controller in app.js). Mobile-only; hidden on desktop, where the topbar search
-     + #bottom-controls remain. The map stays full-bleed; chrome on demand. -->
+<!-- Mobile dock: a slim persistent bottom tab bar — thumb-reachable, four equal
+     Cinzel pills (Map · Sites · Quest · Key). Account stays the topbar profile pill.
+     Map = home (dismiss chrome to reveal the map); Sites opens the search overlay;
+     Quest opens the quest finder (VIA.openFinder); Key opens the legend/filters.
+     All handled by the dock controller + goHome/openQuestFinder in app.js. Mobile-only;
+     hidden on desktop, where the topbar search + #bottom-controls remain. The Detail
+     button is gone (Phase 3: detail follows zoom). -->
 <div id="dock" data-testid="mobile-dock">
-  <button id="dock-search" class="dock-btn dock-search-field" type="button"
-          aria-haspopup="dialog" aria-expanded="false" aria-controls="dock-search-panel">
-    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    <span class="dock-search-placeholder">Search sites, roads, or locations</span>
+  <button id="dock-map" class="dock-btn dock-tab" type="button" aria-current="page" aria-label="Map — return to the map">
+    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3 4 5v16l5-2 6 2 5-2V3l-5 2-6-2Z"/><path d="M9 3v16M15 5v16"/></svg>
+    <span class="dock-tab-label">Map</span>
+  </button>
+  <button id="dock-search" class="dock-btn dock-tab" type="button"
+          aria-haspopup="dialog" aria-expanded="false" aria-controls="dock-search-panel" aria-label="Search sites, roads, or locations">
+    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+    <span class="dock-tab-label">Sites</span>
+  </button>
+  <button id="dock-quest" class="dock-btn dock-tab dock-quest" type="button" aria-label="Quests — find sites to help document">
+    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4Z"/><circle cx="12" cy="13.5" r="3"/></svg>
+    <span class="dock-tab-label">Quest</span>
+  </button>
+  <button id="dock-key" class="dock-btn dock-tab" type="button" aria-expanded="false" aria-controls="quest-legend" aria-label="Legend &amp; filters">
+    <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M3 5h18l-7 8.2V21l-4-2.2v-5.6z" fill="currentColor"/></svg>
+    <span class="dock-tab-label">Key</span>
   </button>
 </div>
 <!-- Scrim behind the open search panel; tap to dismiss. -->
@@ -552,7 +566,7 @@
      VIA_createAncientFloor at map init). -->
 <script src="js/basemap.js?v=107"></script>
 <script src="js/research-bridges.js?v=2"></script>
-<script src="js/app.js?v=181"></script>
+<script src="js/app.js?v=182"></script>
 <!-- Quest Finder (design options B + C) — inert unless ?finder=1 is present. -->
 <script src="js/quest-finder.js?v=4"></script>
 

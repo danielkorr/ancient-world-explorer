@@ -26,8 +26,8 @@ const QUEST = {
     shape: 'circle',
     icon:  '📷',
     label: 'Photo Quest · Open',
-    text:  'No qualifying image is linked to the Wikidata record Pleiades cross-references. Photos may exist elsewhere; help connect one to the scholarly record.',
-    pitch: 'This isn’t a Pleiades photo field — Pleiades doesn’t have one. VIA checks whether the Wikidata item Pleiades cross-references has an image on file, and this one doesn’t. A photo of the place may already exist online; if so, add it to Wikimedia Commons and set it as that item’s image, and the record catches up automatically.',
+    text:  'No qualifying image is linked to the Wikidata record Pleiades cross-references. Photos may exist elsewhere; contribute a suitable image directly through Pleiades Participate.',
+    pitch: 'Help document this place with a photograph. Contribute directly to Pleiades using its participation guidance; you choose the account and licensing terms. VIA does not collect, approve, or forward submissions.',
     cta:   'Take this Quest →',
   },
   location: {
@@ -1859,6 +1859,14 @@ function applyRomanSiteHero(hero, heroIcon, heroCredit, site, color) {
   return false;
 }
 
+function renderArgoMedia(site) {
+  const panel=document.getElementById('argo-media-panel'); if(!panel)return;
+  const entry=site&&site.pleiades&&window.ARGO_SITE_MEDIA&&window.ARGO_SITE_MEDIA[site.pleiades]; if(!entry){panel.hidden=true;return;} panel.hidden=false;
+  const img=document.getElementById('argo-media-image'),cap=document.getElementById('argo-media-caption'),credit=document.getElementById('argo-media-credit'),switches=document.getElementById('argo-media-switches'); switches.replaceChildren();
+  const choose=i=>{const x=entry.assets[i];img.src=x.src;img.alt=x.caption;cap.textContent=x.caption;credit.replaceChildren();const by=document.createElement('span');by.textContent=x.credit+' · CC BY 4.0. ';const src=document.createElement('a');src.href=x.source;src.target='_blank';src.rel='noopener noreferrer';src.textContent='Source';const lic=document.createElement('a');lic.href=x.license;lic.target='_blank';lic.rel='noopener noreferrer';lic.textContent='License';credit.append(by,src,document.createTextNode(' · '),lic);[...switches.children].forEach((b,n)=>b.setAttribute('aria-pressed',String(n===i)));};
+  entry.assets.forEach((x,i)=>{const b=document.createElement('button');b.type='button';b.textContent=x.label;b.setAttribute('aria-pressed','false');b.addEventListener('click',()=>choose(i));switches.appendChild(b);});choose(0);
+}
+
 function showPanel(site) {
   // Journey routing: if a route is armed, the next place the user opens (marker,
   // cluster, or coverage — all funnel here) is the DESTINATION, not a panel to
@@ -1949,6 +1957,7 @@ function showPanel(site) {
   document.getElementById('panel-desc').textContent        = site.coverage
     ? 'Documented place from the Pleiades gazetteer — a minimal record. Open Pleiades below for sources, dating, and cross-references.'
     : (site.desc || '');
+  renderArgoMedia(site);
 
   // ORBIS card — live values from the Stanford ORBIS network.
   // Direct Pleiades match wins; else nearest ORBIS node within 75km;
@@ -4939,6 +4948,10 @@ function openQuestModal() {
   document.getElementById('quest-modal-glyph').textContent = q.icon;
   document.getElementById('quest-modal-title').textContent = `${q.label.replace(' · Open','')} · ${site.name}`;
   document.getElementById('quest-modal-pitch').textContent = q.pitch;
+  const tagBox=document.getElementById('quest-machine-tag'), tagValue=document.getElementById('quest-machine-tag-value');
+  const pleiadesId=String(site.pleiades||'');
+  if(tagBox&&tagValue){if(/^\d+$/.test(pleiadesId)){tagValue.textContent='pleiades:depicts='+pleiadesId;tagBox.hidden=false;}else{tagValue.textContent='';tagBox.hidden=true;}}
+
 
   // Step 1's "Travel there." sub-line gets concrete coords + ORBIS days if known.
   const coords = `${Math.abs(site.lat).toFixed(3)}°${site.lat>=0?'N':'S'}, ${Math.abs(site.lng).toFixed(3)}°${site.lng>=0?'E':'W'}`;
@@ -4948,6 +4961,12 @@ function openQuestModal() {
   document.getElementById('quest-modal-coords').textContent = `${coords}${days}.`;
 
   document.getElementById('quest-modal').classList.add('open');
+}
+
+function copyQuestMachineTag() {
+  const value=document.getElementById('quest-machine-tag-value')?.textContent||'';
+  if(!/^pleiades:depicts=\d+$/.test(value))return;
+  navigator.clipboard?.writeText(value).then(()=>{const b=document.getElementById('quest-machine-tag-copy');if(b){const t=b.textContent;b.textContent='Copied';setTimeout(()=>b.textContent=t,1800);}}).catch(()=>{});
 }
 
 function closeQuestModal() {
@@ -5109,7 +5128,7 @@ const TIER_INFO = {
   photo: {
     label: 'Photo Quest',
     color: QUEST.photo.color,
-    blurb: 'No image is linked to the Wikidata record Pleiades cross-references — even if photos of the place exist elsewhere. Add one to Wikimedia Commons/Wikidata to close the gap.',
+    blurb: 'No image is linked to the Wikidata record Pleiades cross-references. Help document the place by contributing directly through Pleiades Participate.',
   },
   location: {
     label: 'Location Quest',

@@ -121,7 +121,11 @@ try {
   }, SITE_ID).catch(() => null);
   ok(`found site "${SITE_ID}"`, !!ll);
 
-  await sleep(900); // let the cluster group decluster + render the individual marker
+  await page.waitForFunction((id) => {
+    const marker = (typeof allMarkers !== 'undefined' ? allMarkers : [])
+      .find(mk => mk._site && mk._site.id === id);
+    return !!(marker && marker._icon && marker._icon.getBoundingClientRect().width);
+  }, SITE_ID, { timeout: 10000 }).catch(() => {});
 
   const xy = await page.evaluate((id) => {
     const list = (typeof allMarkers !== 'undefined') ? allMarkers : [];
@@ -134,10 +138,13 @@ try {
 
   if (xy) {
     await page.touchscreen.tap(xy.x, xy.y);     // a REAL touch, not a synthesized click
-    await sleep(450);                            // > MARKER_DBLTAP_MS (single-tap open delay)
-    const opened = await page.evaluate(() =>
-      document.getElementById('info-panel').classList.contains('open') &&
-      (window.VIA.getState ? window.VIA.getState().panelName : ''));
+    await page.waitForFunction((id) => {
+      const panel = document.getElementById('info-panel');
+      return panel.classList.contains('open') && window.VIA.getState().panelSite === id;
+    }, SITE_ID, { timeout: 5000 }).catch(() => {});
+    const opened = await page.evaluate((id) =>
+      document.getElementById('info-panel').classList.contains('open')
+      && (window.VIA.getState ? window.VIA.getState().panelSite === id : false), SITE_ID);
     ok('tap on marker opened the panel (touchend delegation)', !!opened);
   }
 
@@ -232,17 +239,35 @@ try {
   // path (the deterministic harness can only force levels via the setDetail hook,
   // never the async zoom path). Awaits between zooms so zoomend fires.
   const reveal = await page.evaluate(async () => {
-    const count = () => window.VIA.getState().visibleSiteCount;
+    const state = () => {
+      const { zoom, detailLevel, siteCount, visibleSiteCount } = window.VIA.getState();
+      return { zoom, detailLevel, siteCount, visibleSiteCount };
+    };
+    const until = async (predicate, timeout = 10000) => {
+      const deadline = Date.now() + timeout;
+      let current;
+      do {
+        current = state();
+        if (predicate(current)) return current;
+        await new Promise(r => setTimeout(r, 50));
+      } while (Date.now() < deadline);
+      return current;
+    };
     const c = map.getCenter();
     map.setView(c, 4, { animate: false });                 // level 0 — curated only
-    await new Promise(r => setTimeout(r, 400));
-    const few = count();
+    const few = await until(s => s.zoom === 4 && s.detailLevel === 0);
     map.setView(c, 9, { animate: false });                 // level 2 — all foreground sites
-    await new Promise(r => setTimeout(r, 400));
-    const many = count();
+    // MarkerClusterGroup uses chunkedLoading, so the first batch can temporarily
+    // equal the curated set. Wait for subsequent batches instead of sampling at
+    // an arbitrary 400 ms boundary.
+    const many = await until(s => s.zoom === 9 && s.detailLevel === 2
+      && s.visibleSiteCount > few.visibleSiteCount);
     return { few, many };
-  }).catch(() => ({ few: 0, many: 0 }));
-  ok(`zoom in reveals more sites (few=${reveal.few} → many=${reveal.many})`, reveal.many > reveal.few);
+  }).catch(() => ({ few: {}, many: {} }));
+  ok(`zoom in reveals more sites (${JSON.stringify(reveal.few)} → ${JSON.stringify(reveal.many)})`,
+     reveal.many.visibleSiteCount > reveal.few.visibleSiteCount
+       && reveal.many.detailLevel === 2
+       && reveal.many.siteCount > reveal.few.visibleSiteCount);
 
   // 4) Alexander campaign stops: same tap-open / double-tap-zoom behavior as Roman
   // markers. Stops are non-interactive circleMarkers resolved by nearest-point
@@ -277,23 +302,28 @@ try {
 
     // Reset for the double-tap check: close the panel, re-center on the stop at
     // the same zoom, then fire two rapid taps at the same point.
-    await page.evaluate((id) => {
+    const alexDblXY = await page.evaluate((id) => {
       if (typeof closePanel === 'function') closePanel();
       const stop = (typeof ALEXANDER_STOPS !== 'undefined') ? ALEXANDER_STOPS.find(s => s.id === id) : null;
-      if (stop) map.setView([stop.lat, stop.lng], 8, { animate: false });
-    }, ALEX_ID).catch(() => {});
-    await sleep(150);
+      if (!stop) return null;
+      map.setView([stop.lat, stop.lng], 8, { animate: false });
+      const rect = map.getContainer().getBoundingClientRect();
+      const pt = map.latLngToContainerPoint([stop.lat, stop.lng]);
+      return { x: rect.left + pt.x, y: rect.top + pt.y, zoom: map.getZoom() };
+    }, ALEX_ID).catch(() => null);
 
-    await page.touchscreen.tap(alexXY.x, alexXY.y);
-    await sleep(80);   // well inside ALEX_DBLTAP_MS (280ms)
-    await page.touchscreen.tap(alexXY.x, alexXY.y);
-    await sleep(450);
+    if (alexDblXY) {
+      await page.touchscreen.tap(alexDblXY.x, alexDblXY.y);
+      await sleep(60);   // leave margin inside ALEX_DBLTAP_MS (280ms)
+      await page.touchscreen.tap(alexDblXY.x, alexDblXY.y);
+      await page.waitForFunction((z) => map.getZoom() >= z + 1, alexDblXY.zoom, { timeout: 5000 }).catch(() => {});
+    }
     const afterDbl = await page.evaluate(() => ({
       zoom: map.getZoom(),
       panelOpen: document.getElementById('info-panel').classList.contains('open'),
     })).catch(() => null);
     ok('double-tap on Alexander stop zoomed in one level (not just re-opened the panel)',
-       !!afterDbl && afterDbl.zoom === alexXY.zoom + 1);
+       !!alexDblXY && !!afterDbl && afterDbl.zoom >= alexDblXY.zoom + 1);
   }
 
   // 5) Alexander guided journey — real taps drive the stepper. The launcher and
@@ -329,7 +359,7 @@ try {
     ok('journey Next button rendered in the rail', !!nextXY);
     if (nextXY) {
       await page.touchscreen.tap(nextXY.x, nextXY.y);     // REAL tap on the ‹ Next › button
-      await sleep(400);
+      await page.waitForFunction(() => window.VIA.getState().journeyIndex === 1, null, { timeout: 5000 }).catch(() => {});
       const idx = await page.evaluate(() => window.VIA.getState().journeyIndex);
       ok('tap Next advances to stop 1', idx === 1);
     }

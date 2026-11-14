@@ -232,17 +232,35 @@ try {
   // path (the deterministic harness can only force levels via the setDetail hook,
   // never the async zoom path). Awaits between zooms so zoomend fires.
   const reveal = await page.evaluate(async () => {
-    const count = () => window.VIA.getState().visibleSiteCount;
+    const state = () => {
+      const { zoom, detailLevel, siteCount, visibleSiteCount } = window.VIA.getState();
+      return { zoom, detailLevel, siteCount, visibleSiteCount };
+    };
+    const until = async (predicate, timeout = 10000) => {
+      const deadline = Date.now() + timeout;
+      let current;
+      do {
+        current = state();
+        if (predicate(current)) return current;
+        await new Promise(r => setTimeout(r, 50));
+      } while (Date.now() < deadline);
+      return current;
+    };
     const c = map.getCenter();
     map.setView(c, 4, { animate: false });                 // level 0 — curated only
-    await new Promise(r => setTimeout(r, 400));
-    const few = count();
+    const few = await until(s => s.zoom === 4 && s.detailLevel === 0);
     map.setView(c, 9, { animate: false });                 // level 2 — all foreground sites
-    await new Promise(r => setTimeout(r, 400));
-    const many = count();
+    // MarkerClusterGroup uses chunkedLoading, so the first batch can temporarily
+    // equal the curated set. Wait for subsequent batches instead of sampling at
+    // an arbitrary 400 ms boundary.
+    const many = await until(s => s.zoom === 9 && s.detailLevel === 2
+      && s.visibleSiteCount > few.visibleSiteCount);
     return { few, many };
-  }).catch(() => ({ few: 0, many: 0 }));
-  ok(`zoom in reveals more sites (few=${reveal.few} → many=${reveal.many})`, reveal.many > reveal.few);
+  }).catch(() => ({ few: {}, many: {} }));
+  ok(`zoom in reveals more sites (${JSON.stringify(reveal.few)} → ${JSON.stringify(reveal.many)})`,
+     reveal.many.visibleSiteCount > reveal.few.visibleSiteCount
+       && reveal.many.detailLevel === 2
+       && reveal.many.siteCount > reveal.few.visibleSiteCount);
 
   // 4) Alexander campaign stops: same tap-open / double-tap-zoom behavior as Roman
   // markers. Stops are non-interactive circleMarkers resolved by nearest-point

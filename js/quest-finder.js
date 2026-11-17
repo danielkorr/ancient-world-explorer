@@ -273,6 +273,14 @@
   }
 
   function openFinder(category) {
+    // Single surface on phones: the finder replaces any open dock panel / Key
+    // sheet / detail card. The legend tier-row path arrives here without going
+    // through app.js's openQuestFinder, so the closes have to live here too.
+    if (window.innerWidth <= 640) {
+      if (typeof closeDockPanels === 'function') closeDockPanels();
+      const info = document.getElementById('info-panel');
+      if (info && info.classList.contains('open') && typeof closePanel === 'function') closePanel();
+    }
     activeCategory = category;
     const model = category.kind === 'phase' ? buildPhaseModel() : buildTierModel(category.key);
     if (!model.total) { closeFinder(); return; }
@@ -280,6 +288,9 @@
     groups = model.groups;
     renderBeacons();
     renderPanel(model, category.scrollTo);
+    // The finder IS the quest surface — light the Quest tab (no-op on desktop,
+    // where the dock is hidden).
+    if (typeof setDockTab === 'function') setDockTab('quest');
   }
 
   function closeFinder() {
@@ -295,6 +306,8 @@
     if (beaconGroup) beaconGroup.clearLayers();
     activeCategory = null;
     groups = [];
+    // Finder gone → Map (home) is the current tab again.
+    if (typeof setDockTab === 'function') setDockTab('map');
   }
 
   function escapeText(s) {

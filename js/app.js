@@ -1877,6 +1877,9 @@ function showPanel(site) {
   }
   hideLegendToast();
   closeDockPanels();      // the detail card is the one open surface now
+  // On phones the finder covers the map, so the card replaces it; desktop keeps
+  // the finder sidebar open alongside the panel.
+  if (window.innerWidth <= 640 && window.VIA && typeof window.VIA.closeFinder === 'function') window.VIA.closeFinder();
   // A pending close-pulse is a one-shot tied to the site just focused via search.
   // Opening any other panel (e.g. a marker tap) cancels it so it can't pulse a
   // stale site after this panel closes. focusSite re-sets it after this returns.
@@ -3875,6 +3878,14 @@ function goHome() {
 // the Photo Quest tier. No standalone upload flow exists; the finder IS the quest
 // surface. Clears any open dock panel / detail card first (single surface at a time).
 function openQuestFinder() {
+  // Tapping the active Quest tab dismisses the finder — same toggle contract as
+  // the dock panel buttons.
+  const fp = document.getElementById('finder-panel');
+  if (fp && fp.classList.contains('open')) {
+    if (window.VIA && typeof window.VIA.closeFinder === 'function') window.VIA.closeFinder();
+    setDockTab('map');
+    return;
+  }
   closeDockPanels();
   if (document.getElementById('info-panel').classList.contains('open')) closePanel();
   dismissMobileGuide(true);
@@ -3907,8 +3918,10 @@ function openDockPanel(which) {
   const wasOpen = document.body.classList.contains('dock-' + which + '-open');
   closeDockPanels();
   if (wasOpen) return;                       // tapping the active button closes it
-  // Only one map surface at a time — opening a dock panel dismisses the detail card.
+  // Only one map surface at a time — opening a dock panel dismisses the detail card
+  // and the quest finder (it lives outside the dock but is still a surface).
   if (document.getElementById('info-panel').classList.contains('open')) closePanel();
+  if (window.VIA && typeof window.VIA.closeFinder === 'function') window.VIA.closeFinder();
   document.body.classList.add('dock-' + which + '-open');
   if (which === 'key') {
     const lg = document.getElementById('quest-legend');
@@ -4034,6 +4047,7 @@ function showSegmentPanel(meta, latlngs, segIds) {
   _lastSegmentArgs = { segIds };
   hideLegendToast();
   closeDockPanels();      // the detail card is the one open surface now
+  if (window.innerWidth <= 640 && window.VIA && typeof window.VIA.closeFinder === 'function') window.VIA.closeFinder();
 
   const cert = meta && meta.cert;
   const ci   = CERT_INFO[cert] || { label: 'Roman road', blurb: 'A segment of the Itiner-e Roman road network.' };
@@ -4663,7 +4677,11 @@ function ensureSitesLayerOn() {
 // ── KEYBOARD ─────────────────────────────────────────────
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeLegendInfo(); closeQuestModal(); closeAuthModal(); closePanel(); }
+  if (e.key === 'Escape') {
+    closeLegendInfo(); closeQuestModal(); closeAuthModal(); closePanel();
+    closeDockPanels();
+    if (window.VIA && typeof window.VIA.closeFinder === 'function') window.VIA.closeFinder();
+  }
 });
 
 // ── AUTH + CHECK-INS ─────────────────────────────────────

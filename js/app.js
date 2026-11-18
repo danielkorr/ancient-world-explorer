@@ -288,6 +288,15 @@ const pageKey = (base) => `${base}.${PAGE_MODE}`;
 // each of the two pages links to itself (not a hardcoded origin) — correct on
 // localhost, the Roman page, and the Alexander subpath alike.
 const selfUrl = (qs) => location.origin + location.pathname + (qs ? '?' + qs : '');
+// Deep-link URLs for every quest email/share — resolved at boot by openSharedSite /
+// openSharedRoad (bottom of file) so the recipient lands on that exact panel.
+// Sites key on Pleiades id (stable across rebuilds), falling back to the VIA site
+// id; roads key on the Itiner-e route-segment id.
+const siteDeepLink = (site) => selfUrl(`site=${encodeURIComponent(site.pleiades || site.id)}`);
+const roadDeepLink = (segIds) => {
+  const id = (segIds || []).find(x => x != null);
+  return id != null ? selfUrl(`road=${encodeURIComponent(id)}`) : selfUrl();
+};
 
 // L.LayerGroup has no bringToFront. Re-add each group in stacking order
 // (bottom to top) to put them above any tile layer just inserted under
@@ -4248,7 +4257,7 @@ function showSegmentPanel(meta, latlngs, segIds) {
   let emailBtn = '';
   if (cert === 'j' || cert === 'h') {
     const eName = (meta && meta.name) ? meta.name : 'a Roman road';
-    const eUrl  = selfUrl();
+    const eUrl  = roadDeepLink(segIds);
     const eSubj = `A VIA quest: help verify the Roman road ${eName} (${ci.label.toLowerCase()})`;
     const eBody = `${ci.label} Roman road: ${eName}.\n\nThis stretch of the ancient road network isn't field-verified. Walking or photographing it can help confirm the alignment.\n\nExplore it on VIA:\n${eUrl}\n\n${VIA_BLURB}\n\n#VIAquest`;
     emailBtn = `
@@ -5037,7 +5046,7 @@ function siteQuestEmailPayload(site) {
   const q     = QUEST[site.quest] || QUEST.photo;
   const label = q.label.replace(' · Open', '');
   const where = site.modern ? `${site.name} (${site.modern})` : site.name;
-  const url   = selfUrl(`site=${site.pleiades}`);
+  const url   = siteDeepLink(site);
   const cta   = /closes the gap/i.test(q.text) ? '' : ' Be the traveler who closes the gap.';
   return {
     subject: `A VIA quest: help document ${site.name} (${label})`,
@@ -5060,7 +5069,7 @@ async function shareQuest() {
   const where = site.modern ? `${site.name} (${site.modern})` : site.name;
   // A VIA deep-link, NOT the raw Pleiades page: it opens the actual place in VIA
   // (Pleiades is one tap away in the panel) and unfurls with the OG card.
-  const url   = selfUrl(`site=${site.pleiades}`);
+  const url   = siteDeepLink(site);
   // Put EVERYTHING — context + the one link — in a single text block, and do NOT
   // pass navigator.share's separate `url` field. Share targets cherry-pick fields
   // inconsistently (Gmail keeps only `url`, Outlook keeps only `text`, neither
@@ -5102,10 +5111,9 @@ async function shareRoadSegment() {
   const certLabel = (CERT_INFO[m.cert] || {}).label || 'Roman';
   const name = m.name || 'a Roman road';
   // Share a VIA link, not itiner-e.org — that bare external page never showed the
-  // VIA card and dropped people outside the app. No per-segment deep-link exists
-  // (the static Itiner-e dump has no stable segment id), so use the VIA home URL:
-  // it unfurls the VIA card and lands the recipient in the experience.
-  const url  = selfUrl();
+  // VIA card and dropped people outside the app. Deep-links to this exact stretch
+  // (?road=<Itiner-e segment id>); VIA home only when the road has no segment id.
+  const url  = roadDeepLink(_lastSegmentArgs && _lastSegmentArgs.segIds);
   // Single self-contained message (see shareQuest) — context + one link, no
   // separate `url` field, so every share target shows the full thing.
   const message =
@@ -5607,6 +5615,7 @@ bindDock();
 // later (buildItinereBaseline). ?qa=1 skips it entirely — deterministic tests stay
 // light, exactly as the old index.html document.write guard did.
 let _roadsState = 'idle';
+const _afterRoadsBuilt = [];
 function ensureRoadsLoaded() {
   if (QA || _roadsState !== 'idle') return;
   _roadsState = 'loading';
@@ -5616,8 +5625,16 @@ function ensureRoadsLoaded() {
   // regenerated — this used to live in index.html as ?v=119.
   s.src = ASSET_BASE + 'js/roads-itinere.js?v=119';
   s.async = true;
-  s.onload = () => { _roadsState = 'ready'; buildItinereBaseline(); };
-  s.onerror = () => { _roadsState = 'error'; };
+  s.onload = () => {
+    _roadsState = 'ready';
+    buildItinereBaseline();
+    // Callers that need the segments (e.g. the ?road= deep-link) queue here.
+    _afterRoadsBuilt.splice(0).forEach(fn => { try { fn(); } catch (e) {} });
+  };
+  s.onerror = () => {
+    _roadsState = 'error';
+    _afterRoadsBuilt.splice(0).forEach(fn => { try { fn(); } catch (e) {} });  // let waiters fall back
+  };
   document.head.appendChild(s);
 }
 if (!QA) {
@@ -5818,7 +5835,8 @@ if (_brandEl) {
   let id = null;
   try { id = new URL(location.href).searchParams.get('site'); } catch (e) {}
   if (!id) return;
-  const site = SITES.find(s => String(s.pleiades) === String(id));
+  const site = SITES.find(s => String(s.pleiades) === String(id))
+            || SITES.find(s => String(s.id) === String(id));   // sites with no Pleiades id
   if (!site) return;
   const wm = document.getElementById('welcome-modal');
   if (wm) wm.classList.remove('open');           // don't stack over the shared site
@@ -5830,6 +5848,44 @@ if (_brandEl) {
     u.searchParams.delete('site');
     history.replaceState(null, '', u.toString());
   } catch (e) {}
+})();
+
+// ── Deep-link: ?road=<Itiner-e segment id> ──
+// Road-quest emails/shares point here so the link opens that exact stretch:
+// highlighted, framed, with its panel open (the same panel a tap on it gives).
+let sharedRoadPending = false;   // read by fitInitialRomanView: the road will frame itself
+(function openSharedRoad() {
+  let id = null;
+  try { id = new URL(location.href).searchParams.get('road'); } catch (e) {}
+  if (!id) return;
+  sharedRoadPending = true;
+  const wm = document.getElementById('welcome-modal');
+  if (wm) wm.classList.remove('open');           // don't stack over the shared road
+  dismissMobileGuide(false);
+  try {
+    const u = new URL(location.href);
+    u.searchParams.delete('road');
+    history.replaceState(null, '', u.toString());
+  } catch (e) {}
+  const open = () => {
+    sharedRoadPending = false;
+    const seg = itinereSegs.find(s => s.id != null && String(s.id) === String(id));
+    if (!seg) { fitRomanModeView(); return; }   // unknown id: fall back to the empire view
+    const all = highlightItinere({ name: seg.meta && seg.meta.name, segs: [seg] });
+    showSegmentPanel(seg.meta, seg.ll, [seg.id]);
+    panelReturnView = null;   // the road is the star; closePanel keeps the framing
+    if (all.length) {
+      const bounds = L.latLngBounds(all);
+      // Cap the zoom: a single segment can be a few hundred metres, and fitting it
+      // exactly lands at street level with no sense of where the road is.
+      requestAnimationFrame(() => map.fitBounds(bounds, { ...roadFitPadding(), maxZoom: 11 }));
+    }
+  };
+  // The Itiner-e segments load lazily after first paint (ensureRoadsLoaded), so
+  // they usually aren't built yet at boot: queue, and start the load now rather
+  // than waiting for the idle callback.
+  if (itinereSegs.length) open();
+  else { _afterRoadsBuilt.push(open); ensureRoadsLoaded(); }
 })();
 
 // ── Deep-link: ?mode=alexander (optionally &alexander=<stop-id>) ──
@@ -5869,6 +5925,7 @@ if (_brandEl) {
 (function fitInitialRomanView() {
   if (appMode !== 'roman') return;                                              // Alexander already framed
   if (document.getElementById('info-panel').classList.contains('open')) return; // ?site / return-state took the view
+  if (sharedRoadPending) return;                                                // ?road frames itself once roads load
   fitRomanModeView();
 })();
 

@@ -2070,10 +2070,11 @@ function showPanel(site) {
   let emailBtn = '';
   if (quest) {
     const pay = siteQuestEmailPayload(site);
+    _panelEmailPayload = pay;
     emailBtn = `
-    <a href="${questMailto(pay.subject, pay.body)}" class="p-btn p-btn-email" data-testid="panel-email">
+    <a href="${questMailto(pay.subject, pay.body)}" class="p-btn p-btn-email" data-testid="panel-email" onclick="return onPanelEmailClick(event, this)">
       <span class="p-btn-icon">✉️</span>
-      <div><div class="p-btn-main">Email this quest</div><div class="p-btn-sub">Opens your mail app — subject &amp; message ready</div></div>
+      <div><div class="p-btn-main">Email this quest</div><div class="p-btn-sub">Copies a message with a live link, then opens your mail app</div></div>
     </a>`;
   }
 
@@ -4260,10 +4261,11 @@ function showSegmentPanel(meta, latlngs, segIds) {
     const eUrl  = roadDeepLink(segIds);
     const eSubj = `A VIA quest: help verify the Roman road ${eName} (${ci.label.toLowerCase()})`;
     const eBody = `${ci.label} Roman road: ${eName}.\n\nThis stretch of the ancient road network isn't field-verified. Walking or photographing it can help confirm the alignment.\n\nExplore it on VIA:\n${eUrl}\n\n${VIA_BLURB}\n\n#VIAquest`;
+    _panelEmailPayload = { subject: eSubj, body: eBody };
     emailBtn = `
-    <a href="${questMailto(eSubj, eBody)}" class="p-btn p-btn-email" data-testid="panel-email">
+    <a href="${questMailto(eSubj, eBody)}" class="p-btn p-btn-email" data-testid="panel-email" onclick="return onPanelEmailClick(event, this)">
       <span class="p-btn-icon">✉️</span>
-      <div><div class="p-btn-main">Email this quest</div><div class="p-btn-sub">Opens your mail app — subject &amp; message ready</div></div>
+      <div><div class="p-btn-main">Email this quest</div><div class="p-btn-sub">Copies a message with a live link, then opens your mail app</div></div>
     </a>`;
   }
 
@@ -5054,11 +5056,67 @@ function siteQuestEmailPayload(site) {
   };
 }
 
+// ── Email with a LIVE link ──
+// mailto: can only pre-fill plain text, and mail apps (new Outlook, confirmed on a
+// real test send) don't turn a pre-filled URL into a link, not even for the
+// recipient. So: put the message on the clipboard as HTML with a real <a>, open
+// the mail app with the subject + a one-line paste prompt, and the user pastes.
+// Falls back to the plain-text mailto (the button's own href) wherever the rich
+// clipboard isn't available or is refused.
+const QUEST_EMAIL_PASTE_PROMPT =
+  'Paste here (Ctrl+V, or long-press → Paste): your VIA quest, with a working link, is on your clipboard. Then delete this line.';
+
+// Plain-text email body → minimal HTML: paragraphs + line breaks kept, and every
+// http(s) URL turned into a real link (its visible text is the URL itself).
+function questEmailHtml(body) {
+  const paras = String(body).split(/\n{2,}/).map(p =>
+    escapeHtml(p)
+      .replace(/https?:\/\/[^\s<]+/g, u => `<a href="${u}">${u}</a>`)
+      .replace(/\n/g, '<br>'));
+  return `<div>${paras.map(p => `<p>${p}</p>`).join('')}</div>`;
+}
+
+// Payload of the Email button in the open panel (site or road). Set when the
+// panel renders so the click handler reads exactly what the href was built from.
+let _panelEmailPayload = null;
+
+// Returns false when it took over the click (rich copy path), true to let the
+// anchor's plain mailto: href proceed.
+function sendQuestEmail(pay, ev, btn) {
+  if (!pay) return true;
+  const plainHref = questMailto(pay.subject, pay.body);
+  const canRich = window.isSecureContext && navigator.clipboard &&
+                  typeof navigator.clipboard.write === 'function' && typeof ClipboardItem === 'function';
+  if (!canRich) { if (!ev) window.location.href = plainHref; return true; }
+  if (ev) ev.preventDefault();
+  let item;
+  try {
+    item = new ClipboardItem({
+      'text/html':  new Blob([questEmailHtml(pay.body)], { type: 'text/html' }),
+      'text/plain': new Blob([pay.body], { type: 'text/plain' }),
+    });
+  } catch (e) { window.location.href = plainHref; return false; }
+  navigator.clipboard.write([item]).then(() => {
+    const label = btn && (btn.querySelector('.p-btn-main') || btn);
+    if (label) {
+      const orig = label.textContent;
+      label.textContent = '✓ Copied: paste it into the email';
+      setTimeout(() => { label.textContent = orig; }, 4000);
+    }
+    window.location.href = questMailto(pay.subject, QUEST_EMAIL_PASTE_PROMPT);
+  }, () => { window.location.href = plainHref; });
+  return false;
+}
+
+// Panel "Email this quest" anchor (site + road) → inline onclick.
+function onPanelEmailClick(ev, btn) {
+  return sendQuestEmail(_panelEmailPayload, ev, btn);
+}
+
 // Quest-modal "Email this quest" button → opens the mail app for the open site.
 function emailCurrentQuest() {
   if (!currentPanelSite) return;
-  const pay = siteQuestEmailPayload(currentPanelSite);
-  window.location.href = questMailto(pay.subject, pay.body);
+  sendQuestEmail(siteQuestEmailPayload(currentPanelSite), null, document.getElementById('quest-email-btn'));
 }
 
 async function shareQuest() {

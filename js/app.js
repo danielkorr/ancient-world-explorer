@@ -4159,7 +4159,8 @@ function showSegmentPanel(meta, latlngs, segIds) {
     document.getElementById('quest-banner-text').textContent = (cert === 'h')
       ? 'Hypothetical route, little direct evidence. Field photos or notes here can improve the map.'
       : 'Inferred route, not field-verified. Walking or photographing it can confirm the alignment.';
-    document.getElementById('quest-banner-cta').textContent  = 'Share this stretch →';
+    // Desktop runs the email flow (see shareRoadSegment); phones get the share sheet.
+    document.getElementById('quest-banner-cta').textContent  = COARSE_POINTER ? 'Share this stretch →' : 'Email this stretch →';
   } else {
     banner.className = '';
   }
@@ -4257,13 +4258,10 @@ function showSegmentPanel(meta, latlngs, segIds) {
   // matching the site flow. mailto: with a real subject + body.
   let emailBtn = '';
   if (cert === 'j' || cert === 'h') {
-    const eName = (meta && meta.name) ? meta.name : 'a Roman road';
-    const eUrl  = roadDeepLink(segIds);
-    const eSubj = `A VIA quest: help verify the Roman road ${eName} (${ci.label.toLowerCase()})`;
-    const eBody = `${ci.label} Roman road: ${eName}.\n\nThis stretch of the ancient road network isn't field-verified. Walking or photographing it can help confirm the alignment.\n\nExplore it on VIA:\n${eUrl}\n\n${VIA_BLURB}\n\n#VIAquest`;
-    _panelEmailPayload = { subject: eSubj, body: eBody };
+    const ePay = roadQuestEmailPayload(meta, segIds);
+    _panelEmailPayload = ePay;
     emailBtn = `
-    <a href="${questMailto(eSubj, eBody)}" class="p-btn p-btn-email" data-testid="panel-email" onclick="return onPanelEmailClick(event, this)">
+    <a href="${questMailto(ePay.subject, ePay.body)}" class="p-btn p-btn-email" data-testid="panel-email" onclick="return onPanelEmailClick(event, this)">
       <span class="p-btn-icon">✉️</span>
       <div><div class="p-btn-main">Email this quest</div><div class="p-btn-sub">Copies a message with a live link, then opens your mail app</div></div>
     </a>`;
@@ -5163,9 +5161,31 @@ function onQuestCtaClick() {
 
 // Share a road stretch with #VIAquest — the road analogue of shareQuest. No
 // modal (and no contribution pipeline yet); this just spreads the quest.
+// Subject + body for emailing a ROAD quest. Single source of truth shared by the
+// panel's "Email this quest" button and (on desktop) the "Share this stretch" CTA.
+function roadQuestEmailPayload(meta, segIds) {
+  const ci   = CERT_INFO[meta && meta.cert] || { label: 'Roman road' };
+  const name = (meta && meta.name) ? meta.name : 'a Roman road';
+  const url  = roadDeepLink(segIds);
+  return {
+    subject: `A VIA quest: help verify the Roman road ${name} (${ci.label.toLowerCase()})`,
+    body: `${ci.label} Roman road: ${name}.\n\nThis stretch of the ancient road network isn't field-verified. Walking or photographing it can help confirm the alignment.\n\nExplore it on VIA:\n${url}\n\n${VIA_BLURB}\n\n#VIAquest`,
+  };
+}
+
 async function shareRoadSegment() {
   const m = currentSegmentMeta;
   if (!m) return;
+  // Desktop: the OS share sheet hands mail apps text only (no subject, and new
+  // Outlook leaves the URL dead), so run the email flow instead: real subject +
+  // live link. Phones keep the share sheet (Messages/WhatsApp, where a subject
+  // doesn't matter). Must stay synchronous up to here so the clipboard write
+  // still counts as part of the user's tap.
+  if (!COARSE_POINTER) {
+    sendQuestEmail(roadQuestEmailPayload(m, _lastSegmentArgs && _lastSegmentArgs.segIds),
+                   null, document.getElementById('quest-banner-cta'));
+    return;
+  }
   const certLabel = (CERT_INFO[m.cert] || {}).label || 'Roman';
   const name = m.name || 'a Roman road';
   // Share a VIA link, not itiner-e.org — that bare external page never showed the

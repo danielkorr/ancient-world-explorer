@@ -3962,3 +3962,13 @@ path.leaflet-interactive { outline: none !important; }
 
 /* ARGO reviewed media and direct contribution controls */
 .argo-media-panel{margin:16px 0;padding:14px;border:1px solid #8c744d66;border-radius:8px;background:#17130e}.argo-media-panel[hidden]{display:none}.argo-media-heading{color:#dfc58c;font:600 12px Cinzel,serif;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}.argo-media-switches{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}.argo-media-switches button,.quest-external-link{cursor:pointer;border:1px solid #8c744d;border-radius:5px;padding:7px 10px;color:#f1dfb8;background:#211b12;text-decoration:none}.argo-media-switches button[aria-pressed="true"]{background:#574426;border-color:#d6b875}.argo-media-panel figure{margin:0}.argo-media-panel img{display:block;width:100%;max-height:360px;object-fit:contain;background:#090807}.argo-media-panel figcaption,.argo-media-credit{color:#d0c6b3;font-size:12px;line-height:1.5;margin-top:8px}.argo-media-credit a{color:#e5c477;margin-left:4px}.quest-external-link{display:block;text-align:center;margin:8px 0}.quest-machine-tag{margin:12px 0;padding:10px;border:1px solid #8c744d;border-radius:6px;color:#e7dcc8}.quest-machine-tag[hidden]{display:none}.quest-machine-tag label{display:block;font-size:12px;margin-bottom:6px}.quest-machine-tag code{display:inline-block;margin-right:8px;color:#f4d58e}.quest-machine-tag button{padding:6px 9px;background:#211b12;color:#f1dfb8;border:1px solid #8c744d;border-radius:4px}
+
+/* Curated in-panel figure (site.figure): image shown whole, caption + attribution below */
+.site-figure{margin:16px 0;padding:14px;border:1px solid #8c744d66;border-radius:8px;background:#17130e}
+.site-figure[hidden]{display:none}
+.site-figure-heading{color:#dfc58c;font:600 12px Cinzel,serif;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.site-figure figure{margin:0}
+.site-figure img{display:block;width:100%;height:auto;max-height:360px;object-fit:contain;background:#090807;border-radius:4px}
+.site-figure figcaption{color:#e7dcc8;font-size:13px;line-height:1.55;margin-top:10px}
+.site-figure-credit{color:#a89c86;font-size:11px;line-height:1.5;margin-top:8px}
+.site-figure-credit a{color:#e5c477}

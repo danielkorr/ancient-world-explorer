@@ -464,6 +464,24 @@ const SITES_CURATED = [
     photo:{ url:"https://commons.wikimedia.org/wiki/Special:FilePath/Perge%20city%20overview.jpg", credit:"Saffron Blaze", license:"CC BY-SA 3.0" },
     desc:"Birthplace of the mathematician Apollonius of Perga, who codified the study of conic sections, Perge was one of the leading cities of Roman Pamphylia. Its colonnaded main street channels water down its center from a monumental nymphaeum at the city's northern gate, past a stadium, baths, and one of the best-preserved city gates of the ancient world." },
 
+  // Curated override of the generated Pleiades record (same id + pleiades, so it
+  // wins the dedup in SITES below). Adds the bronze plaque as an in-panel figure
+  // (`figure` → renderSiteFigure in app.js): shown whole with its Commons
+  // description + attribution beneath. Not a hero photo: the plaque is a modern
+  // depiction, not the site, so quest:"photo" stays (Wikidata still has no P18).
+  { id:"unnamed-roman-bridge-at-mainz", name:"Unnamed Roman bridge at Mainz", modern:"", type:"city",
+    lat:50.0062, lng:8.2776, period:"Late Antiquity", pleiades:"110239", rome_days:0, quest:"photo",
+    figure:{
+      url:"https://commons.wikimedia.org/wiki/Special:FilePath/02%20R%C3%B6merbr%C3%BCcke%20(Mainz).%20Bronze%20Plate%20retouched.jpg",
+      alt:"Modern bronze plaque depicting the Roman bridge over the Rhine at Mainz",
+      heading:"Bridge plaque",
+      caption:"Modern bronze plate of the Roman bridge at Mainz. The plate is attached to the pier of the Theodor-Heuss-Brücke on the left bank of the Rhine, ca. 30 m from the past location of the ancient bridge. The construction date of the stone pier bridge has been antedated by recent research to 30 AD.",
+      credit:"Gun Powder Ma (retouched by AlMare)",
+      license:"CC BY-SA 3.0",
+      licenseUrl:"https://creativecommons.org/licenses/by-sa/3.0/",
+      source:"https://commons.wikimedia.org/wiki/File:02_R%C3%B6merbr%C3%BCcke_(Mainz)._Bronze_Plate_retouched.jpg" },
+    desc:"Romans built a bridge over the Rhine river at Mogontiacum soon after 27 CE, based on dendrochronological evidence. This bridge likely replaced an earlier pontoon bridge. The first-century CE bridge spanned some 400 meters and was supported by 21 piers. The bridge facilitated an important road link and was repaired multiple times in antiquity. It may be the bridge pictured on a medallion issued by Constantius I Chlorus. The modern Theodor Heuss Bridge (Mainz-Wiesbaden) that was rebuilt following the Second World War stands at or near the point in the river once spanned by the Roman bridge." },
+
 ];
 
 

@@ -60,7 +60,7 @@
 
   <!-- App styles. The ?v= token busts browser/Safari cache on each deploy —
        bump it whenever css/js change so a normal refresh picks them up. -->
-  <link rel="stylesheet" href="css/style.css?v=171">
+  <link rel="stylesheet" href="css/style.css?v=172">
 </head>
 <body>
 
@@ -484,6 +484,8 @@
     <div class="p-rule"></div>
     <div id="panel-period"></div>
     <div id="panel-desc"></div>
+    <!-- Curated in-panel figure (site.figure) — image shown whole + caption + attribution -->
+    <section id="site-figure" class="site-figure" data-testid="site-figure" hidden aria-label="Site image"><div id="site-figure-heading" class="site-figure-heading"></div><figure><img id="site-figure-image" alt="" loading="lazy"><figcaption id="site-figure-caption"></figcaption></figure><div id="site-figure-credit" class="site-figure-credit"></div></section>
     <section id="argo-media-panel" class="argo-media-panel" data-testid="argo-media-panel" hidden aria-label="ARGO site imagery"><div class="argo-media-heading">ARGO source imagery</div><div id="argo-media-switches" class="argo-media-switches" role="group" aria-label="Choose image type"></div><figure><img id="argo-media-image" alt="" loading="lazy"><figcaption id="argo-media-caption"></figcaption></figure><div id="argo-media-credit" class="argo-media-credit"></div></section>
     <!-- Live Pleiades enrichment — description/names fetched on panel open -->
     <div id="pleiades-detail-card"></div>
@@ -560,7 +562,7 @@
      document.write'd here synchronously before data.js/app.js, which blocked
      time-to-interactive on the single heaviest asset in the app. -->
 <!-- (roads-itinere.js load moved into js/app.js) -->
-<script src="js/data.js?v=136"></script>
+<script src="js/data.js?v=137"></script>
 <script src="js/alexander.js?v=113"></script>
 <script src="js/alexander-photos.js?v=7"></script>
 <script src="js/site-photos.js?v=2"></script>
@@ -570,7 +572,7 @@
      VIA_createAncientFloor at map init). -->
 <script src="js/basemap.js?v=107"></script>
 <script src="js/research-bridges.js?v=2"></script>
-<script src="js/app.js?v=186"></script>
+<script src="js/app.js?v=187"></script>
 <!-- Quest Finder (design options B + C) — inert unless ?finder=1 is present. -->
 <script src="js/quest-finder.js?v=6"></script>
 

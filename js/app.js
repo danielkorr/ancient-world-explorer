@@ -1010,6 +1010,7 @@ function showAlexanderPanel(stop, layer) {
   document.getElementById('panel-period').textContent = `${stop.year_label || ''} · ${(phase && phase.label) || 'Alexander campaign'} · ${stop.type || 'event'}`;
   document.getElementById('panel-desc').textContent = [stop.desc, stop.significance].filter(Boolean).join(' ');
   document.getElementById('panel-desc').style.whiteSpace = '';
+  renderSiteFigure(null);  // Roman-site-only section
 
   document.getElementById('orbis-card').classList.remove('visible');
   document.getElementById('quest-progress').style.display = 'none';
@@ -1867,6 +1868,34 @@ function renderArgoMedia(site) {
   entry.assets.forEach((x,i)=>{const b=document.createElement('button');b.type='button';b.textContent=x.label;b.setAttribute('aria-pressed','false');b.addEventListener('click',()=>choose(i));switches.appendChild(b);});choose(0);
 }
 
+// Curated in-panel figure (site.figure in data.js): an image shown whole, with a
+// descriptive caption and full attribution (author · license · source) beneath.
+// For images that aren't a photo of the site itself (e.g. a plaque), so they
+// don't belong in the cover-cropped hero.
+function renderSiteFigure(site) {
+  const panel = document.getElementById('site-figure'); if (!panel) return;
+  const f = site && site.figure;
+  if (!f || !f.url) { panel.hidden = true; return; }
+  panel.hidden = false;
+  document.getElementById('site-figure-heading').textContent = f.heading || 'Image';
+  const img = document.getElementById('site-figure-image');
+  img.src = commonsSized(f.url, 800);
+  img.alt = f.alt || f.caption || site.name;
+  document.getElementById('site-figure-caption').textContent = f.caption || '';
+  const credit = document.getElementById('site-figure-credit');
+  credit.replaceChildren();
+  credit.append(document.createTextNode(
+    `${f.credit ? '© ' + f.credit : 'Wikimedia Commons'}${f.license ? ' · ' + f.license : ''} · via Wikimedia Commons. `));
+  const link = (href, text) => {
+    const a = document.createElement('a');
+    a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = text;
+    return a;
+  };
+  if (f.source) credit.append(link(f.source, 'Source'));
+  if (f.source && f.licenseUrl) credit.append(document.createTextNode(' · '));
+  if (f.licenseUrl) credit.append(link(f.licenseUrl, 'License'));
+}
+
 function showPanel(site) {
   // Journey routing: if a route is armed, the next place the user opens (marker,
   // cluster, or coverage — all funnel here) is the DESTINATION, not a panel to
@@ -1960,6 +1989,7 @@ function showPanel(site) {
   document.getElementById('panel-desc').textContent        = site.coverage
     ? 'Documented place from the Pleiades gazetteer — a minimal record. Open Pleiades below for sources, dating, and cross-references.'
     : (site.desc || '');
+  renderSiteFigure(site);
   renderArgoMedia(site);
 
   // ORBIS card — live values from the Stanford ORBIS network.
@@ -4158,6 +4188,7 @@ function showSegmentPanel(meta, latlngs, segIds) {
   document.getElementById('checkin-row').style.display    = 'none';
   document.getElementById('linked-data-card').innerHTML   = '';  // site-only
   document.getElementById('pleiades-detail-card').innerHTML = ''; // site-only
+  renderSiteFigure(null);                                       // site-only
   panelOpenToken++;  // invalidate any in-flight site Pleiades fetch
 
   // Places along this stretch — the roads↔sites bridge. Each row jumps to that
